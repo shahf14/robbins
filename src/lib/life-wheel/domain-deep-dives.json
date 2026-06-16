@@ -1,0 +1,146 @@
+{
+  "health": {
+    "he": {
+      "opening": "התחום הזה קובע כמה אנרגיה, יציבות וכוח יש לך כדי להופיע טוב בשאר תחומי החיים.",
+      "whyImportant": "כשהגוף חלש, עייף או מוזנח, גם המיינד, הקריירה והמשפחה נפגעים. בריאות טובה היא לא רק \"לא להיות חולה\", אלא בסיס לאנרגיה, נוכחות וביצועים.",
+      "includes": ["שינה", "תזונה", "כושר", "אנרגיה יומית", "כאבים ועייפות", "בדיקות והרגלים בריאותיים", "תחושת חיוניות"],
+      "score1": "אתה מרגיש עייף רוב הזמן, הגוף מגביל אותך, אין לך שגרה בסיסית של שינה, תנועה או תזונה, והתחום הזה פוגע בתפקוד היומיומי שלך.",
+      "score10": "אתה מרגיש אנרגטי, יציב וחזק ברוב הימים. יש לך שגרה שתומכת בגוף שלך, ואתה מרגיש שהבריאות שלך עוזרת לך להופיע טוב יותר בעבודה, בבית ובחיים.",
+      "selfCheck": "מה הדבר הקטן ביותר שאם תשפר אותו השבוע, ייתן לך הכי הרבה אנרגיה?"
+    },
+    "en": {
+      "opening": "This area determines how much energy, stability, and strength you have to show up well in the rest of your life.",
+      "whyImportant": "When your body is weak, tired, or neglected, your mind, career, and family life suffer too. Good health is not just \"not being sick\" — it is the foundation for energy, presence, and performance.",
+      "includes": ["Sleep", "Nutrition", "Fitness", "Daily energy", "Pain and fatigue", "Checkups and healthy habits", "Sense of vitality"],
+      "score1": "You feel tired most of the time, your body limits you, you lack a basic routine of sleep, movement, or nutrition, and this area hurts your day-to-day functioning.",
+      "score10": "You feel energetic, steady, and strong on most days. You have routines that support your body, and you feel your health helps you show up better at work, at home, and in life.",
+      "selfCheck": "What is the smallest thing you could improve this week that would give you the most energy?"
+    }
+  },
+  "time": {
+    "he": {
+      "opening": "התחום הזה בודק עד כמה אתה מצליח לנהל את החיים שלך בצורה מודעת, ולא רק להגיב למה שקורה.",
+      "whyImportant": "הוא עוסק באיזון בין משפחה, קריירה והתפתחות אישית, וביכולת לפעול גם כשאין מוטיבציה. בלי משמעת ופוקוס, גם מטרות טובות נשארות בראש.",
+      "includes": ["תכנון יום ושבוע", "סדרי עדיפויות", "עמידה בהחלטות", "פוקוס", "התמדה", "איזון בין משפחה, עבודה וזמן אישי", "יכולת לפעול בלי להיות תלוי במצב רוח"],
+      "score1": "היום שלך מתנהל בעיקר לפי לחץ, הסחות ודחיינות. אתה מרגיש שאין זמן למה שחשוב באמת, מתקשה להתמיד, והרבה החלטות נשארות בראש ולא הופכות לפעולה.",
+      "score10": "יש לך סדר יום ברור וגמיש, אתה יודע מה חשוב, מצליח לשמור מקום למשפחה, קריירה והתפתחות אישית, ופועל בעקביות גם בימים שבהם אין לך הרבה מוטיבציה.",
+      "selfCheck": "מה הדבר החשוב שאתה יודע שצריך לקרות השבוע, אבל כרגע לא מקבל מקום ביומן?"
+    },
+    "en": {
+      "opening": "This area checks how well you manage your life intentionally — not just react to what happens.",
+      "whyImportant": "It is about balancing family, career, and personal growth, and about acting even when motivation is low. Without discipline and focus, even good goals stay in your head.",
+      "includes": ["Daily and weekly planning", "Priorities", "Following through on decisions", "Focus", "Consistency", "Balance between family, work, and personal time", "Acting without depending on mood"],
+      "score1": "Your day runs mostly on pressure, distractions, and procrastination. You feel there is no time for what truly matters, you struggle to stay consistent, and many decisions stay in your head instead of becoming action.",
+      "score10": "You have a clear, flexible daily rhythm. You know what matters, make room for family, career, and personal growth, and act consistently even on low-motivation days.",
+      "selfCheck": "What important thing do you know should happen this week but currently has no place in your calendar?"
+    }
+  },
+  "wealth": {
+    "he": {
+      "opening": "התחום הזה בודק את היציבות, השליטה והביטחון הכלכלי שלך — לא רק כמה יש בחשבון, אלא כמה המצב משרת אותך.",
+      "whyImportant": "לחץ כלכלי משפיע על שינה, זוגיות, החלטות ותחושת חופש. כשהכסף מנוהל, יש פחות מתח ויותר מקום לבחור בכוונה.",
+      "includes": ["הכנסות", "חיסכון", "חובות", "השקעות", "הוצאות והרגלים כלכליים", "תכנון פיננסי", "תחושת ביטחון כלכלי"],
+      "score1": "אתה מרגיש לחץ כלכלי, קשה לסגור חודש, אין תמונה ברורה של הכסף, והמצב הכלכלי מגביל החלטות או יוצר מתח מתמיד.",
+      "score10": "יש לך שליטה על ההכנסות וההוצאות, חיסכון או תוכנית ברורה, פחות לחץ סביב כסף, ותחושה שהמצב הכלכלי תומך בחיים שאתה רוצה.",
+      "selfCheck": "איזו החלטה כלכלית קטנה שתדחה כבר זמן רב תוריד הכי הרבה מתח מהשבוע שלך?"
+    },
+    "en": {
+      "opening": "This area checks your financial stability, control, and security — not just how much is in the account, but how well money serves you.",
+      "whyImportant": "Financial stress affects sleep, relationships, decisions, and your sense of freedom. When money is managed, there is less tension and more room to choose intentionally.",
+      "includes": ["Income", "Savings", "Debt", "Investments", "Spending and money habits", "Financial planning", "Sense of financial security"],
+      "score1": "You feel financial pressure, struggle to close the month, lack a clear picture of your money, and your finances limit decisions or create constant stress.",
+      "score10": "You control income and spending, have savings or a clear plan, feel less stress around money, and sense that your finances support the life you want.",
+      "selfCheck": "What small financial decision you have been postponing would remove the most stress from your week?"
+    }
+  },
+  "career": {
+    "he": {
+      "opening": "התחום הזה בודק את הכיוון, ההתקדמות והמשמעות שאתה חווה בעבודה ובקריירה.",
+      "whyImportant": "קריירה טובה לא אומרת רק הצלחה חיצונית — אלא תחושה שאתה מתקדם, מממש יכולות ועובד על משהו שחשוב לך. כשהקריירה תקועה, זה משפיע על ביטחון, אנרגיה וזהות.",
+      "includes": ["עבודה נוכחית", "התקדמות מקצועית", "מיומנויות ולמידה", "נראות וביצועים", "כיוון וייעוד", "איזון עבודה-חיים", "תחושת משמעות בעבודה"],
+      "score1": "אתה מרגיש תקוע, לא מרוצה מהכיוון, אין התקדמות מורגשת, והעבודה מרגישה יותר כמו משימה מאשר מסלול שמתאים לך.",
+      "score10": "אתה מרגיש שאתה מתקדם, מממש יכולות, יודע לאן אתה הולך מקצועית, ומרגיש שהעבודה שלך תורמת למשהו שחשוב לך.",
+      "selfCheck": "מה הצעד המקצועי הקטן ביותר שאם תעשה אותו השבוע, יזיז אותך הכי הרבה קדימה?"
+    },
+    "en": {
+      "opening": "This area checks the direction, progress, and meaning you experience in work and career.",
+      "whyImportant": "A good career is not only external success — it is feeling you are advancing, using your strengths, and working on something that matters. When career feels stuck, it affects confidence, energy, and identity.",
+      "includes": ["Current work", "Professional growth", "Skills and learning", "Visibility and output", "Direction and purpose", "Work-life balance", "Sense of meaning at work"],
+      "score1": "You feel stuck, unhappy with the direction, see no real progress, and work feels more like a task than a path that fits you.",
+      "score10": "You feel you are advancing, using your abilities, know where you are headed professionally, and sense your work contributes to something that matters to you.",
+      "selfCheck": "What is the smallest professional step you could take this week that would move you furthest forward?"
+    }
+  },
+  "relationships": {
+    "he": {
+      "opening": "התחום הזה בודק את איכות הקשרים הקרובים שלך ואת רמת ההשקעה שלך בהם.",
+      "whyImportant": "קשרים טובים לא נמדדים רק בזה שאין ריבים, אלא בזה שיש תקשורת, אמון, מחוות, תמיכה ויכולת להתמודד עם מתחים.",
+      "includes": ["זוגיות", "חברים", "משפחה קרובה", "תקשורת", "אמון", "הקשבה", "מחוות יזומות", "פתרון קונפליקטים", "נוכחות רגשית"],
+      "score1": "יש ריחוק, חוסר תקשורת, מתחים לא פתורים או תחושה שאתה לא באמת משקיע בקשרים החשובים לך. קשרים משמעותיים נשחקים בגלל חוסר זמן, חוסר תשומת לב או הימנעות משיחות חשובות.",
+      "score10": "אתה משקיע באופן פעיל בקשרים החשובים לך. יש תקשורת פתוחה, אמון, מחוות קטנות, זמן איכות ויכולת לפתור מתחים בלי להתרחק או לברוח.",
+      "selfCheck": "איזו מחווה קטנה לאדם חשוב בחיים שלך יכולה לחזק את הקשר כבר השבוע?"
+    },
+    "en": {
+      "opening": "This area checks the quality of your close relationships and how much you invest in them.",
+      "whyImportant": "Good relationships are not measured only by the absence of conflict — but by communication, trust, gestures, support, and the ability to handle tension.",
+      "includes": ["Partnership", "Friends", "Close family", "Communication", "Trust", "Listening", "Proactive gestures", "Conflict resolution", "Emotional presence"],
+      "score1": "There is distance, poor communication, unresolved tension, or a sense that you are not really investing in the relationships that matter. Meaningful connections erode because of lack of time, attention, or avoidance of important conversations.",
+      "score10": "You actively invest in the relationships that matter. There is open communication, trust, small gestures, quality time, and the ability to resolve tension without withdrawing or running away.",
+      "selfCheck": "What small gesture toward someone important in your life could strengthen the connection this week?"
+    }
+  },
+  "house_family": {
+    "he": {
+      "opening": "התחום הזה בודק את האווירה, היציבות והתמיכה שאתה חווה בבית ובמשפחה.",
+      "whyImportant": "בית יציב נותן בסיס לשאר החיים. כשיש כאוס, מתח או עומס בלתי נשא, קשה להתמקד, לנוח ולהתקדם בשאר התחומים.",
+      "includes": ["ילדים", "אווירה משפחתית", "סדר בבית", "שגרות יומיומיות", "חלוקת אחריות", "זמן משפחתי", "תחושת ביטחון ובית"],
+      "score1": "הבית מרגיש עמוס, לא מסודר או מתוח. יש כאוס יומיומי, קשה לשמור על שגרה, והאווירה בבית מורידה אנרגיה במקום לתמוך.",
+      "score10": "הבית מרגיש יציב, רגוע ותומך. יש שגרות שעובדות, אחריות מסודרת, ואתה מרגיש שהבית נותן לך בסיס טוב לחזור אליו.",
+      "selfCheck": "איזו שגרה קטנה בבית, אם תייצב אותה השבוע, תוריד הכי הרבה כאוס מהיומיום?"
+    },
+    "en": {
+      "opening": "This area checks the atmosphere, stability, and support you experience at home and in your family life.",
+      "whyImportant": "A stable home gives a foundation for everything else. When there is chaos, tension, or unbearable load, it is hard to focus, rest, and advance in other areas.",
+      "includes": ["Children", "Family atmosphere", "Home order", "Daily routines", "Shared responsibility", "Family time", "Sense of safety and home"],
+      "score1": "Home feels overloaded, messy, or tense. Daily life is chaotic, routines are hard to keep, and the atmosphere drains energy instead of supporting you.",
+      "score10": "Home feels stable, calm, and supportive. Routines work, responsibilities are manageable, and you feel home gives you a solid base to return to.",
+      "selfCheck": "What small home routine, if stabilized this week, would remove the most daily chaos?"
+    }
+  },
+  "mind": {
+    "he": {
+      "opening": "התחום הזה בודק את מצב המחשבות, הרגשות והביטחון הפנימי שלך.",
+      "whyImportant": "המיינד משפיע על כל החלטה, קשר ופעולה. כשיש לחץ, חרדה או דיבור עצמי שלילי, קשה לחשוב בבהירות ולפעול בכיוון הנכון.",
+      "includes": ["דיבור עצמי", "ביטחון עצמי", "מוטיבציה", "חרדה", "מצב רוח", "פוקוס מנטלי", "אמונות מגבילות", "ויסות רגשי"],
+      "score1": "אתה מרגיש מוצף, לחוץ או תקוע בראש. דיבור עצמי שלילי, חרדה או חוסר מוטיבציה מקשים עליך לחשוב בבהירות ולפעול.",
+      "score10": "אתה מרגיש צלול, יציב ורגוע ברוב הימים. הראש והרגשות עובדים איתך — יש ביטחון, מוטיבציה ויכולת להתמודד עם אתגרים בלי להישחק.",
+      "selfCheck": "איזה מחשבה או דפוס רגשי חוזר הכי הרבה מפריע לך — ומה צעד קטן אחד יכול לעזור בו השבוע?"
+    },
+    "en": {
+      "opening": "This area checks your thoughts, emotions, and inner confidence.",
+      "whyImportant": "Your mind affects every decision, relationship, and action. When there is stress, anxiety, or negative self-talk, it is hard to think clearly and act in the right direction.",
+      "includes": ["Self-talk", "Self-confidence", "Motivation", "Anxiety", "Mood", "Mental focus", "Limiting beliefs", "Emotional regulation"],
+      "score1": "You feel overwhelmed, stressed, or stuck in your head. Negative self-talk, anxiety, or low motivation make it hard to think clearly and act.",
+      "score10": "You feel clear, steady, and calm on most days. Your mind and emotions work with you — there is confidence, motivation, and the ability to handle challenges without burning out.",
+      "selfCheck": "What recurring thought or emotional pattern bothers you most — and what one small step could help with it this week?"
+    }
+  },
+  "spirit": {
+    "he": {
+      "opening": "התחום הזה בודק את החיבור שלך לערכים, משמעות ולמשהו גדול מעבר לעצמך.",
+      "whyImportant": "כשאין משמעות, קל להרגיש אבוד או ריק גם כשהכל נראה \"בסדר\" מבחוץ. חיבור לערכים נותן כיוון, עומק ומוטיבציה לטווח ארוך.",
+      "includes": ["ערכים", "חזון אישי", "אמונה", "הודיה", "תרומה לאחרים", "תחושת שליחות", "שקט פנימי", "חיבור למשהו גדול מעצמך"],
+      "score1": "אתה מרגיש חסר כיוון, ריק או מנותק ממשמעות. קשה לענות על השאלה למה אתה עושה את מה שאתה עושה, והחיים מרגישים יותר מכניים מאשר מחוברים.",
+      "score10": "אתה מרגיש מחובר לערכים, לחזון ולמשמעות. יש לך תחושת שליחות, הודיה ושקט פנימי, והחיים מרגישים מחוברים למשהו גדול וחשוב עבורך.",
+      "selfCheck": "מה נותן לך הכי הרבה משמעות בחיים — ואיך אפשר לתת לזה מקום קטן כבר השבוע?"
+    },
+    "en": {
+      "opening": "This area checks your connection to values, meaning, and something bigger than yourself.",
+      "whyImportant": "Without meaning, it is easy to feel lost or empty even when life looks \"fine\" from the outside. Connection to values gives direction, depth, and long-term motivation.",
+      "includes": ["Values", "Personal vision", "Faith", "Gratitude", "Contribution to others", "Sense of calling", "Inner calm", "Connection to something greater"],
+      "score1": "You feel directionless, empty, or disconnected from meaning. It is hard to answer why you do what you do, and life feels more mechanical than connected.",
+      "score10": "You feel connected to your values, vision, and meaning. You have a sense of calling, gratitude, and inner calm, and life feels linked to something bigger and important to you.",
+      "selfCheck": "What gives you the most meaning in life — and how could you make room for it in a small way this week?"
+    }
+  }
+}

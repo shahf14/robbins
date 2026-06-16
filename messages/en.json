@@ -1,0 +1,3701 @@
+{
+  "app": {
+    "name": "Robbins App",
+    "nameShort": "Robbins",
+    "fullName": "Robbins App"
+  },
+  "meta": {
+    "title": "Robbins App - Your daily space",
+    "description": "A calmer daily space for check-ins, morning ritual, and practical next steps in English and Hebrew."
+  },
+  "aiActionHelp": {
+    "question": "What does the AI do with my information?",
+    "dailySteps": "The AI uses your goal, blockers, and available time to build a small step.",
+    "goalStructure": "The AI uses your answers, domain, and available time to shape a goal and milestones.",
+    "insight": "The AI analyzes steps, reflections, and blockers to suggest a tailored insight.",
+    "weeklyReview": "The AI reviews your week — what worked, what blocked you, and what to adjust.",
+    "onboardingInsight": "The AI uses your answers to draft an insight before building your goal.",
+    "onboardingGoal": "The AI builds a 90-day goal based on what you shared.",
+    "onboardingFirstStep": "The AI turns your goal into a small first step you can act on.",
+    "formulationQuestions": "The AI uses your goal and context to suggest focused follow-up questions.",
+    "lifeContextRegenerate": "The AI refreshes today's steps for your new context — without erasing progress you marked.",
+    "skipRecovery": "The AI adapts a smaller alternative step based on what blocked the previous one."
+  },
+  "nav": {
+    "primary": "Primary navigation",
+    "dashboard": "Today",
+    "today": "Today",
+    "checkin": "Daily Check-In",
+    "lifeCoach": "Life Coach",
+    "history": "History",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "help": "Help",
+    "settings": "Settings",
+    "admin": "Admin",
+    "calmSpace": "Calm Space",
+    "morningRitual": "Morning Ritual",
+    "startHereShort": "Start Here",
+    "todayShort": "Today",
+    "checkinShort": "Check-In",
+    "lifeCoachShort": "Goals",
+    "progressShort": "Progress",
+    "profileShort": "Profile",
+    "moreMenuLabel": "More",
+    "virtualCoachShort": "Coach",
+    "clarification": "Clarification & goal",
+    "clarificationShort": "Clarify",
+    "calmSpaceShort": "Morning",
+    "eveningResetShort": "Evening",
+    "routinesShort": "Routines",
+    "morningRoutine": "Morning routine",
+    "eveningRoutine": "Evening routine",
+    "routinesMenuLabel": "Routines menu",
+    "sectionPersonalCoach": "Personal coach",
+    "sectionHelp": "Help",
+    "sectionLegal": "Privacy & terms",
+    "settingsShort": "Settings",
+    "adminShort": "Admin",
+    "streakLabel": "Streak",
+    "checkInsLabel": "Check-Ins",
+    "sectionMain": "Navigation",
+    "sectionTools": "Tools"
+  },
+  "language": {
+    "label": "Language",
+    "english": "English",
+    "hebrew": "Hebrew"
+  },
+  "theme": {
+    "toggle": "Toggle dark mode",
+    "toggleShort": "Theme",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "settings": {
+    "eyebrow": "Personal space",
+    "title": "Settings",
+    "subtitle": "Keep this space yours. Everything here is stored only on this device for now.",
+    "displayName": "Display name",
+    "displayNamePlaceholder": "How should the app greet you?",
+    "save": "Save changes",
+    "saved": "Saved on this device.",
+    "localOnly": "Stored locally only.",
+    "themeTitle": "Appearance",
+    "themeHelp": "Choose light or dark mode. Your preference is saved on this device.",
+    "languageTitle": "Language",
+    "languageHelp": "Choose the language you want the app to use right now.",
+    "secondaryTitle": "Support and privacy",
+    "coachingTitle": "Coaching preferences",
+    "coachingImpactTitle": "Why this matters",
+    "coachingImpactBody": "This affects when and how your coach suggests tasks.",
+    "wakeTime": "Wake-up time",
+    "wakeTimeHelp": "The AI will suggest steps starting no earlier than this time.",
+    "sleepTime": "Bedtime",
+    "sleepTimeHelp": "Helps avoid scheduling tasks too late in the evening.",
+    "actionWindow": "Preferred action window",
+    "actionWindowHelp": "When it is easiest for you to do daily steps.",
+    "availableTime": "Daily available time (minutes)",
+    "availableTimeHelp": "Realistic minutes per day for micro-steps.",
+    "intensityPreference": "Progress intensity",
+    "intensityPreferenceHelp": "Gentle, balanced, or intense.",
+    "familyStatus": "Family situation",
+    "physicalConsiderations": "Physical considerations",
+    "physicalConsiderationsHelp": "Not diagnosis — only to tailor suggestions.",
+    "coachingStyle": "Coaching style",
+    "coachingStyleHelp": "Choose how your coach communicates with you.",
+    "sectionProfile": "Personal profile",
+    "lifeContext": "Life context (for follow-up questions)",
+    "lifeContextHelp": "Used to suggest clarification questions — not for diagnosis.",
+    "gender": "Gender",
+    "genderHelp": "Locks in clarification step 1 after you save.",
+    "age": "Age",
+    "ageHelp": "Locks in clarification step 1 after you save.",
+    "agePreferNot": "Prefer not to say age",
+    "agePlaceholder": "16–120",
+    "reminderTitle": "Daily reminder",
+    "reminderHelp": "Get a reminder at a fixed time to check in. This setting is saved on this device.",
+    "privacyControlsTitle": "Privacy controls",
+    "behavioralAnalytics": "Use additional behavioral insights",
+    "behavioralAnalyticsHelp": "Allow optional passive signals such as writing duration, edits, viewed task details, and locally inferred text patterns. Turn this off to keep core coaching without the extra analytics.",
+    "coachingStyleOption": {
+      "supportive": "Warm & supportive",
+      "direct": "Direct & focused",
+      "motivational": "Energetic & inspiring"
+    },
+    "coachingStyleDesc": {
+      "supportive": "Warm and encouraging",
+      "direct": "Brief and to the point",
+      "motivational": "High energy, action-first"
+    }
+  },
+  "dashboard": {
+    "title": "Today, at your pace.",
+    "eyebrow": "Daily workspace",
+    "greetingMorning": "Good morning, {name}.",
+    "greetingAfternoon": "Welcome back, {name}.",
+    "greetingEvening": "This is your space, {name}.",
+    "personalFallbackName": "you",
+    "subtitle": "Start with the next useful step. You do not need a speech. You need a clear place to begin.",
+    "currentTask": "Current task",
+    "ritualReadyTitle": "Begin with a steady ritual.",
+    "ritualReadyBody": "Take a few focused minutes to settle your system, choose your direction, and enter the day with intention.",
+    "checkinReadyTitle": "Pause for an honest check-in.",
+    "checkinReadyBody": "Your ritual is done. Now give yourself a clean read on your state so the next move feels simpler.",
+    "latestReflection": "Latest reflection",
+    "latestReflectionEmpty": "You have not logged a check-in yet. When you do, the last honest note you wrote will live here.",
+    "todayFocus": "Today's focus",
+    "todayFocusFallback": "Choose one small clear move you can keep today.",
+    "todayFocusPlaceholder": "What's the one thing that would make today a win?",
+    "focusSaved": "Saved",
+    "stateSectionEyebrow": "Your state today",
+    "stateSectionTitle": "A quiet read of how you're doing",
+    "stateSectionBody": "These markers update from your latest check-in so you can notice the pattern without overthinking it.",
+    "calmSpaceTitle": "Calm space",
+    "calmSpaceBody": "Breathing, visualization, and a gentler reset are always one step away.",
+    "lifeCoachTitle": "Life Coach Goals",
+    "lifeCoachBody": "Build long-term goals across all life domains and let AI translate them into realistic daily baby steps.",
+    "settingsTitle": "Personal settings",
+    "settingsBody": "Adjust your name and language so the app feels more like yours.",
+    "energy": "Energy",
+    "focus": "Focus",
+    "momentum": "Momentum",
+    "prompt": "What is the truth you are avoiding right now?"
+  },
+  "simpleTasks": {
+    "sectionTitle": "Simple daily tasks",
+    "sectionEyebrow": "Daily habits",
+    "sectionBody": "Define a simple task and tick it off each time you do it. A day only counts once you've completed every time — missed days simply don't advance.",
+    "empty": "No daily tasks yet. Add one to get started.",
+    "addTask": "Add daily task",
+    "addTaskExplainer": "Opens a quick form to add a one-off task to today's list — without going through goal building.",
+    "newTaskTitle": "New daily task",
+    "stepName": "What's the task?",
+    "stepNamePlaceholder": "Write a short, clear task…",
+    "stepTimesPerDay": "How many times a day?",
+    "stepTimesPerDayHelp": "How many times you'll do it each day.",
+    "stepTargetDays": "For how many days?",
+    "stepTargetDaysHelp": "The number of days you'll fully complete it.",
+    "perDayUnit": "times/day",
+    "daysUnit": "days",
+    "back": "Back",
+    "next": "Next",
+    "create": "Create task",
+    "cancel": "Cancel",
+    "successMetric": "{times}× a day for {days} days",
+    "progressLabel": "Day {done} of {total}",
+    "todayProgress": "{done}/{total} today",
+    "doneToday": "Done for today",
+    "completedBadge": "Completed",
+    "completedNote": "You finished all {total} days. Great work!",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this task?",
+    "domainOptional": "Domain (optional)",
+    "domainNone": "No domain"
+  },
+  "lifeWheel": {
+    "bands": {
+      "crisis": "In crisis",
+      "struggling": "Struggling",
+      "stable": "Stable",
+      "progressing": "Progressing",
+      "thriving": "Thriving"
+    },
+    "domains": {
+      "health": {
+        "crisis": "Feeling unwell most of the time.",
+        "struggling": "Low energy and unstable habits.",
+        "stable": "Fair overall, with meaningful room to improve.",
+        "progressing": "Healthy and functioning well on most days.",
+        "thriving": "Feeling excellent physically and mentally, consistently."
+      },
+      "time": {
+        "crisis": "Days control you — no grip on your time.",
+        "struggling": "Constant urgency, hard to prioritize.",
+        "stable": "Getting by, but time slips between tasks.",
+        "progressing": "Managing time well on most days.",
+        "thriving": "Full balance between work, goals, and rest."
+      },
+      "wealth": {
+        "crisis": "Significant financial pressure.",
+        "struggling": "Struggling to build stability.",
+        "stable": "Managing, but without full confidence.",
+        "progressing": "Good financial stability.",
+        "thriving": "Full control and financial security."
+      },
+      "career": {
+        "crisis": "Stuck and unhappy with your direction.",
+        "struggling": "Working, but not advancing as you'd like.",
+        "stable": "Stable, but far from your potential.",
+        "progressing": "Advancing and fairly satisfied with your path.",
+        "thriving": "Living the career you truly want."
+      },
+      "relationships": {
+        "crisis": "Feeling lonely or disconnected.",
+        "struggling": "You have connections, but they don't satisfy you.",
+        "stable": "Good relationships with room to grow.",
+        "progressing": "Strong, supportive relationships.",
+        "thriving": "Deep, fulfilling connections."
+      },
+      "mind": {
+        "crisis": "Overwhelmed and struggling to cope.",
+        "struggling": "High stress and lack of clarity.",
+        "stable": "Fair, but not steady.",
+        "progressing": "Focused and in control of most challenges.",
+        "thriving": "Clear, calm, and mentally resilient."
+      },
+      "spirit": {
+        "crisis": "Lacking direction or meaning.",
+        "struggling": "Feeling lost more often than not.",
+        "stable": "A general direction, but not fully clear.",
+        "progressing": "Connected to your values and purpose.",
+        "thriving": "Living a deeply meaningful life."
+      },
+      "house_family": {
+        "crisis": "Home or family in significant distress.",
+        "struggling": "Hard to maintain stability and balance at home.",
+        "stable": "Manageable, but with tension and gaps.",
+        "progressing": "A supportive, well-functioning home.",
+        "thriving": "Security, warmth, and stability at home and in family."
+      }
+    }
+  },
+  "lifeCoach": {
+    "homeEyebrow": "AI Life Coach",
+    "homeTitle": "Long-term direction, daily execution.",
+    "homeBody": "Assess the 8 life domains, set meaningful goals, let AI turn them into realistic baby steps, and keep adapting the plan over time.",
+    "setupSectionTitle": "Initial setup",
+    "setupSectionBody": "Life domains, goals, and milestones — set once and update when needed.",
+    "dailySectionTitle": "What to do today",
+    "dailySectionBody": "Daily steps, weekly review, and insights from your execution.",
+    "authTitle": "Private coaching space",
+    "authHeading": "Sign in to unlock your life executive coach",
+    "authBody": "This feature stores your goals, daily actions, reflections, and weekly reviews per user.",
+    "emailPlaceholder": "you@example.com",
+    "sendMagicLink": "Send magic link",
+    "sendingMagicLink": "Sending link...",
+    "magicLinkSent": "Check your email for the sign-in link.",
+    "signOut": "Sign out",
+    "loading": "Loading your life coach workspace...",
+    "loadError": "Could not load your life coach data. Check the connection and try again.",
+    "notSet": "Not set",
+    "cardActiveChip": "Active",
+    "cardSetupPrompt": "Tap to set up your goals for this area",
+    "cardStartCta": "Tap to start",
+    "cardSetupTime": "~3 min to set up",
+    "pendingStatusInfo": "This step is waiting for you — mark 'Completed', 'Partial', or 'Skipped' at the end of the day.",
+    "pendingStatusHint": "Waiting for your action — pick a status below when you're done.",
+    "snoozeToTomorrow": "Snooze to tomorrow",
+    "deleteStep": "Delete step",
+    "deleteStepConfirm": "Permanently delete this step?",
+    "noGoalsForSteps": "You need to define at least one goal before daily steps can be generated.",
+    "noGoalsForStepsCta": "Pick an area",
+    "stepsGenerated": "Today's steps are ready! Scroll down to see them.",
+    "domainsProgressTitle": "Areas setup progress",
+    "domainsProgressLabel": "{configured} of {total} areas set up",
+    "domainsSetupProgressEyebrow": "Setup progress",
+    "domainsSetupProgressHeadline": "Set up {configured} of {total} life domains",
+    "domainsSetupProgressFraction": "{configured}/{total}",
+    "domainsSetupProgressHintStart": "Starting with one domain is enough.",
+    "domainsSetupProgressHintOne": "One domain is enough — you can generate daily steps and begin.",
+    "domainsSetupProgressHintPartial": "You don't need to set up every domain. Add more when it matters.",
+    "domainsSetupProgressHintComplete": "All domains are set up — update them when life changes.",
+    "onboardingEyebrow": "Welcome",
+    "onboardingTitle": "Let's get started — three simple steps",
+    "onboardingBody": "Your life coach turns a big vision into small, doable daily steps. Here's how it works:",
+    "onboardingStep1Title": "Pick an area",
+    "onboardingStep1Body": "Start with one area that matters to you — health, career, or any of the 8 areas.",
+    "onboardingStep2Title": "Build a goal",
+    "onboardingStep2Body": "Answer a few short questions and the AI builds you a 90-day plan.",
+    "onboardingStep3Title": "Act daily",
+    "onboardingStep3Body": "Get small daily steps, mark what you finished, and build momentum.",
+    "onboardingCta": "Pick your first area",
+    "goals": "Goals",
+    "activeGoals": "Goals",
+    "todayStatus": "Today's step status",
+    "progress": "Progress",
+    "weeklyReview": "Weekly review",
+    "weeklyReviewEmpty": "Your first weekly review appears after about a week of activity. Keep marking daily steps — once enough history builds up, you'll get pattern analysis and tailored recommendations here.",
+    "weeklyReviewLocked": "Locked",
+    "weeklyReviewLockedWhyTitle": "Why the review is empty",
+    "weeklyReviewLockedExplainer": "You need at least {minSteps} logged steps or {minDays} active days before the review can be meaningful.",
+    "weeklyReviewLockedProgress": "So far: {steps}/{minSteps} steps · {days}/{minDays} days",
+    "weeklyReviewReadyLabel": "Ready to generate",
+    "weeklyReviewGoodTime": "Great time to review!",
+    "weeklyReviewBestOnWeekend": "Best done on weekends",
+    "weeklyReviewPreviewLabel": "This is how your review will look",
+    "weeklyReviewWhenWhyTitle": "When and why to create a review",
+    "weeklyReviewWhenWhyExplainer": "After several active days, the review spots recurring patterns and suggests adjustments.",
+    "completedSteps": "Completed steps",
+    "mainBlocker": "Main blocker",
+    "domainDetail": "Domain detail",
+    "domainTabs": {
+      "ariaLabel": "Domain navigation",
+      "today": "Today",
+      "goal": "Goal",
+      "progress": "Progress",
+      "insights": "Insights",
+      "todaySummary": "{completed}/{total} steps today · {streak}-day streak",
+      "streakOnly": "{streak}-day streak",
+      "noGoalHint": "No active goal in this area yet — let's set one.",
+      "goToGoal": "Set a goal",
+      "showAllSteps": "Show all steps",
+      "insightsIntro": "Weekly review and patterns from your activity — when you want to pause and look back.",
+      "addAnotherGoal": "+ Add another goal",
+      "newGoalHint": "Set a new goal for this domain."
+    },
+    "pipelineAssess": "Fill assessment",
+    "pipelineBuild": "Build goal",
+    "backToOverview": "Back to overview",
+    "assessment": "Assessment",
+    "assessmentTitle": "Diagnose the current reality before designing the next year.",
+    "domainScoreLabel": "Domain score",
+    "domainScoreExplainer": "This isn't a grade on you — it's a compass for prioritization.",
+    "goalHierarchyAria": "Difference between goal, milestone, and daily step",
+    "goalHierarchyGoal": "Goal",
+    "goalHierarchyGoalRole": "direction",
+    "goalHierarchyMilestone": "Milestone",
+    "goalHierarchyMilestoneRole": "progress",
+    "goalHierarchyDailyStep": "Daily step",
+    "goalHierarchyDailyStepRole": "action today",
+    "currentScore": "Current score",
+    "currentState": "Current state",
+    "currentStatePlaceholder": "What is true in this area right now?",
+    "currentStateStarter1": "Right now I feel…",
+    "currentStateStarter2": "My biggest challenge is…",
+    "currentStateStarter3": "I'm stuck on…",
+    "desiredState": "Desired state",
+    "desiredStatePlaceholder": "What would success in this domain look like 12 months from now?",
+    "desiredStateStarter1": "In 12 months I want…",
+    "desiredStateStarter2": "Success will look like…",
+    "desiredStateStarter3": "I'll know I succeeded when…",
+    "mainBlockers": "Main blockers",
+    "customBlocker": "Add another blocker",
+    "availableTime": "Available time per day",
+    "thirtyPlusMinutes": "More than 30 minutes",
+    "intensityPreference": "Intensity preference",
+    "saveAssessment": "Save assessment",
+    "assessmentSavedToast": "Assessment saved",
+    "assessmentSummaryEyebrow": "Saved assessment",
+    "assessmentSummaryTitle": "Your direction",
+    "assessmentGoalEyebrow": "Active goal",
+    "assessmentGoalTitle": "Your goal",
+    "assessmentGoalHorizonHint": "The 90-day outcome is your direction — the commitment on the left is showing up daily for the period you choose.",
+    "assessmentSummaryEmpty": "No desired state yet — tap Edit to complete.",
+    "assessmentSummaryBlockers": "Blockers: {blockers}",
+    "assessmentSummaryMeta": "· {minutes} min/day · {intensity}",
+    "assessmentEdit": "Edit assessment",
+    "goalCreation": "Goal creation",
+    "goalCreationTitle": "Create a goal manually or let AI structure it.",
+    "rawGoal": "Raw goal",
+    "rawGoalPlaceholder": "I want to get healthier and have more energy.",
+    "deadline": "Deadline",
+    "motivation": "Motivation",
+    "motivationPlaceholder": "Why does this matter now?",
+    "constraints": "Constraints",
+    "constraintsPlaceholder": "What real-life constraints should the plan respect?",
+    "successMetricQuestion": "What does success look like?",
+    "successMetricQuestionPlaceholder": "How will you know you reached your goal? (e.g. run 5km, save $500/month)",
+    "generating": "Generating…",
+    "createWithAi": "Create with AI",
+    "saveManualGoal": "Save manually",
+    "defaultSuccessMetric": "Make consistent weekly progress.",
+    "aiPreview": "AI preview",
+    "aiPreviewTitle": "Review and edit the AI-generated plan before saving.",
+    "executionPreview": {
+      "eyebrow": "Execution preview",
+      "vision": "Vision",
+      "firstMilestone": "First milestone",
+      "firstSteps": "First baby steps",
+      "emptyVision": "Your clear direction will appear here.",
+      "emptyMilestone": "Add or edit the first milestone.",
+      "emptySteps": "The first daily steps will appear here."
+    },
+    "realismAdjustedTitle": "We adjusted the first week to be realistically doable.",
+    "goalTitle": "Goal title",
+    "goalDescription": "Goal description",
+    "successMetric": "Success metric",
+    "milestones": "Milestones",
+    "editGoal": "Edit goal",
+    "deleteGoal": "Delete",
+    "deleteGoalConfirm": "Delete this goal? This action cannot be undone.",
+    "completeGoal": "Mark goal complete",
+    "completeGoalConfirm": "Mark this goal as complete?",
+    "goalCompleted": "Goal completed",
+    "reopenGoal": "Reopen goal",
+    "completeMilestone": "Mark reached",
+    "reopenMilestone": "Undo",
+    "goalEditValidation": "Goal title is required.",
+    "goalEditError": "Failed to save changes. Please try again.",
+    "addMilestone": "Add milestone",
+    "deleteMilestone": "Delete milestone",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "dailyBabySteps": "Today's steps",
+    "saveGoal": "Save goal",
+    "todayPlan": "Today's steps",
+    "noDailySteps": "No baby steps for today yet.",
+    "noDailyStepsEyebrow": "How to start",
+    "noDailyStepsTitle": "No actions for today yet",
+    "noDailyStepsGuide": "To get started, create one goal — then we'll generate daily actions.",
+    "noDailyStepsStepGoal": "Create a goal in an area that matters to you",
+    "noDailyStepsStepGenerate": "We'll generate small daily actions for you",
+    "noDailyStepsCta": "Create today's steps",
+    "dailyReflection": "Daily reflection",
+    "dailyReflectionTitle": "Capture what happened so tomorrow's steps can adapt.",
+    "moodScore": "Mood score",
+    "moodTier1": "Very low",
+    "moodTier2": "Low",
+    "moodTier3": "Neutral",
+    "moodTier4": "Good",
+    "moodTier5": "Great",
+    "energyScore": "Energy score",
+    "energyTier1": "Drained",
+    "energyTier2": "Tired",
+    "energyTier3": "OK",
+    "energyTier4": "Energized",
+    "energyTier5": "Full of energy",
+    "blockerReason": "If it did not happen, why?",
+    "reflection": "Reflection",
+    "reflectionPlaceholder": "What helped or got in the way today?",
+    "saveReflection": "Save reflection",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "minutes": "minutes",
+    "markCompleted": "Completed",
+    "markPartial": "Partial",
+    "markSkipped": "Skipped",
+    "stepStatusCoachHint": "Even partial counts as important information for the coach.",
+    "stepSkipCoachHint": "Skipping teaches the coach to better adapt the next step.",
+    "generateTodaySteps": "Generate today's steps",
+    "regenerateTodaySteps": "Regenerate steps",
+    "energyAdapted": "Adapted to your energy level",
+    "generateWeeklyReview": "Generate weekly review",
+    "aiInsights": "AI insights",
+    "patternsAndAdjustments": "Patterns and adjustments",
+    "aiInsightsVsReviewTitle": "How is this different from the weekly review?",
+    "aiInsightsWeeklyReviewLabel": "Weekly review",
+    "aiInsightsWeeklyReviewRole": "the week",
+    "aiInsightsInsightsLabel": "Insights",
+    "aiInsightsInsightsRole": "ongoing patterns and recommendations",
+    "insightsEmpty": "Insights will appear after you build some task and reflection history.",
+    "insightsEmptyDomain": "No insights yet for this area. Tap below and the AI will generate an initial analysis from your existing data.",
+    "generateInitialInsight": "Generate first insight",
+    "generatingInsight": "Analyzing…",
+    "crossDomainTitle": "Cross-area observation",
+    "crossDomainBlocker": "The blocker \"{blocker}\"appears in {count} different areas.",
+    "crossDomainSuggestion": "A root-cause fix in one area will lift the others — consider building a goal that addresses this blocker directly.",
+    "mastery": {
+      "title": "Domain mastery",
+      "level": "Level {level}",
+      "levels": {
+        "1": "Awakening",
+        "2": "Building",
+        "3": "Committed",
+        "4": "Mastery"
+      }
+    },
+    "microRewards": {
+      "completed": "+{minutes} momentum minutes logged",
+      "comeback": "Comeback logged — the streak of showing up matters."
+    },
+    "stepStatus": {
+      "none": "No step yet",
+      "pending": "Waiting",
+      "completed": "Completed",
+      "mixed": "Mixed progress"
+    },
+    "dailyStepStatus": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "skipped": "Skipped",
+      "partial": "Partially completed"
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "intensity": {
+      "gentle": "Gentle",
+      "balanced": "Balanced",
+      "intense": "Intense"
+    },
+    "insightType": {
+      "pattern": "Pattern",
+      "recommendation": "Recommendation",
+      "weekly_review": "Weekly review"
+    },
+    "blockers": {
+      "low_energy": "Low energy",
+      "kids": "Kids",
+      "no_time": "No time",
+      "money_pressure": "Money pressure",
+      "lack_of_clarity": "Lack of clarity",
+      "self_doubt": "Self doubt",
+      "environment": "Environment",
+      "consistency": "Consistency",
+      "forgot": "Forgot",
+      "unclear_task": "Unclear task",
+      "emotional_resistance": "Emotional resistance",
+      "family_chaos": "Family chaos",
+      "other": "Other"
+    },
+    "domains": {
+      "health": {
+        "short": "Body & Health",
+        "label": "Body & Health",
+        "description": "Energy, sleep, nutrition, fitness, and how your body feels day to day.",
+        "wheelIntro": "Your energy, sleep, nutrition, fitness, and physical feel day to day. Rate how well your body supports the life you want to build.",
+        "setupValue": "Set one health goal — movement, sleep or nutrition — and get a daily plan."
+      },
+      "time": {
+        "short": "Time & Discipline",
+        "label": "Time & Discipline",
+        "description": "Managing your day so there is room for family, career, and personal growth without burning out.",
+        "wheelIntro": "Your ability to manage your day so there is room for family, career, and personal growth without burning out. Rate how well you keep priorities, consistency, focus, and discipline even when motivation is low.",
+        "setupValue": "Take control of your day with a time-management goal and small steps."
+      },
+      "wealth": {
+        "short": "Money & Abundance",
+        "label": "Money & Abundance",
+        "description": "Income, savings, debt, investments, and financial security.",
+        "wheelIntro": "Income, savings, debt, investments, and financial security. Rate how stable, managed, and supportive your finances feel.",
+        "setupValue": "Build financial stability with a money goal and one daily step."
+      },
+      "career": {
+        "short": "Career & Purpose",
+        "label": "Career & Purpose",
+        "description": "Work, professional growth, meaning, and direction.",
+        "wheelIntro": "Your work, professional progress, sense of meaning, and direction. Rate how much your career is moving toward where you truly want to be.",
+        "setupValue": "Advance your career with a clear goal and a visible daily move."
+      },
+      "relationships": {
+        "short": "Relationships",
+        "label": "Relationships",
+        "description": "Building and maintaining good relationships with the people who matter most in your life.",
+        "wheelIntro": "Your ability to build and maintain good relationships with the people who matter most in your life. Rate how much your connections have good communication, trust, support, proactive gestures, and the ability to resolve tension.",
+        "setupValue": "Strengthen a key relationship with a goal and small steps of closeness."
+      },
+      "mind": {
+        "short": "Mind & Emotions",
+        "label": "Mind & Emotions",
+        "description": "Self-talk, confidence, motivation, anxiety, mood, and limiting beliefs.",
+        "wheelIntro": "Self-talk, confidence, motivation, anxiety, mood, and limiting beliefs. Rate how much your head and emotions work with you, not against you.",
+        "setupValue": "Sharpen focus and mental resilience with a daily mind goal."
+      },
+      "spirit": {
+        "short": "Meaning & Spirit",
+        "label": "Meaning & Spirit",
+        "description": "Values, vision, faith, gratitude, contribution, and sense of calling.",
+        "wheelIntro": "Values, vision, faith, gratitude, contribution, and sense of calling. Rate how connected your life feels to something bigger and meaningful for you.",
+        "setupValue": "Reconnect to meaning and inner calm with a spirit goal."
+      },
+      "house_family": {
+        "short": "Home & Family",
+        "label": "Home & Family",
+        "description": "Children, home, family atmosphere, order, and daily responsibility.",
+        "wheelIntro": "Children, home, family atmosphere, order, and daily responsibility. Rate how stable, calm, and supportive your home feels.",
+        "setupValue": "Bring order and routine to your home with a house & family goal."
+      }
+    },
+    "blockerCategory": "What held you back?",
+    "blockerCategoryExternal": "External",
+    "blockerCategoryInternal": "Internal",
+    "blockerCategoryUnclear": "Not sure",
+    "blockerCategoryExternalHint": "Time, people, circumstances",
+    "blockerCategoryInternalHint": "Motivation, fear, fatigue",
+    "blockerCategoryUnclearHint": "It happened, don't know why",
+    "actualMinutesPrompt": "How long did it actually take?",
+    "actualMinutesLess": "Less than {n} min",
+    "actualMinutesAbout": "About {n} min",
+    "actualMinutesMore": "More than {n} min",
+    "actualMinutesExact": "Exact amount...",
+    "actualMinutesSkip": "Skip",
+    "actualMinutesDefault": "Logged {n} min — change if needed",
+    "actualMinutesLooksGood": "Looks good",
+    "valueFeedback": {
+      "question": "Did this really help you?",
+      "feltProgress": "Yes — I felt progress",
+      "tooSmall": "Yes, but too small",
+      "tooGeneric": "No — it was too generic",
+      "missedProblem": "No — it didn't touch my problem",
+      "skip": "Skip",
+      "thanks": "Thanks — we'll improve the next steps"
+    },
+    "startHere": "Start here",
+    "recommendedFirst": "Recommended first",
+    "recommendedFirstHint": "Fit {fit}% · energy {energy}% · time {time}%",
+    "whyItMatters": "Why it matters",
+    "stepReasoningPrefix": "I chose this because…",
+    "stepWhyReceivedTitle": "Why did I get this?",
+    "stepWhyReceivedFallback": "Based on your goal, time, and energy.",
+    "didLessButDid": "Did less, but did it",
+    "didLessButDidDone": "Partial progress logged",
+    "dailySummary": "Today you completed {count, plural, one {# step} other {# steps}} in {minutes} minutes",
+    "skippedMicroCta": "Want to turn this into a 2-minute step for tomorrow?",
+    "skippedMicroCtaBtn": "Yes — add a 2-min step for tomorrow",
+    "skipRecovery": {
+      "bannerTitle": "Want to get back on track today?",
+      "bannerBody": "Same step, lighter 3-minute version — no new task.",
+      "cta": "Skipped — want a lighter version of the same step?",
+      "btn": "Make it a 3-minute version",
+      "done": "Step is back on track — 3-minute version ready"
+    },
+    "skipCoach": {
+      "whatStopped": "What stopped you?",
+      "tomorrowTitle": "What should we do tomorrow?",
+      "tomorrowHint": "Pick one — we'll adjust your steps automatically.",
+      "saving": "Saving…",
+      "saved": "Tomorrow will follow your choice",
+      "actions": {
+        "shrink_tomorrow": {
+          "title": "Shrink for tomorrow",
+          "hint": "One shorter step"
+        },
+        "change_time": {
+          "title": "Change time",
+          "hint": "Try a different window"
+        },
+        "plan_b": {
+          "title": "Plan B",
+          "hint": "First move only"
+        }
+      }
+    },
+    "microStepTomorrowTitle": "2 min: {title}",
+    "microStepTomorrowDesc": "A lighter version of yesterday's skipped step.",
+    "microStepTomorrowCreated": "Tomorrow's micro-step is ready",
+    "regenerateSafeHintTitle": "Regenerate steps",
+    "regenerateSafeHint": "Regenerating won't delete progress you've already marked.",
+    "regenerateSafeHintDetail": "Only steps still pending may change.",
+    "easierStepBtn": "Give me an easier version",
+    "easierStepTitle": "2 min: {title}",
+    "easierStepDesc": "A lighter 2-minute version of this step.",
+    "easierStepDone": "Step simplified — you've got this",
+    "eveningMomentumHint": "You don't need to finish everything — even one step keeps momentum.",
+    "stepFilters": {
+      "label": "Filter steps",
+      "all": "All",
+      "pending": "Pending",
+      "completed": "Completed",
+      "skipped": "Skipped",
+      "empty": "No steps match this filter."
+    },
+    "rescheduledBadge": "Postponed {count}×",
+    "rescheduledHint": "This step has been postponed several times — consider simplifying it",
+    "helpEngagementRead": "Read"
+  },
+  "aiGenerating": {
+    "stage1": "Analyzing your goals...",
+    "stage2": "Building a weekly plan...",
+    "stage3": "Tuning your daily routine...",
+    "stage4": "Finalizing your plan...",
+    "dailySteps": {
+      "stage1": "Reading your goals...",
+      "stage2": "Building today's steps...",
+      "stage3": "Matching your energy and schedule...",
+      "stage4": "Finishing your plan..."
+    }
+  },
+  "continueProcess": {
+    "cta": "Continue",
+    "onboarding": {
+      "title": "You have an open onboarding",
+      "body": "Pick up where you left off and finish setup."
+    },
+    "health_goal": {
+      "title": "Health goal in progress",
+      "body": "Your health goal wizard has a saved draft."
+    },
+    "domain_goal": {
+      "title": "Goal wizard in progress",
+      "body": "Continue building your goal for this area."
+    },
+    "clarification": {
+      "title": "Clarification session open",
+      "body": "Resume your clarification and goal work."
+    }
+  },
+  "feedback": {
+    "saved": "Saved",
+    "failed": "Something went wrong — please try again",
+    "completed": "Completed",
+    "draftAutoSaved": "Draft saved automatically",
+    "confirmCancel": "Cancel",
+    "confirmOk": "Confirm",
+    "confirmDelete": "Delete"
+  },
+  "healthWizard": {
+    "eyebrow": "Health Goal Builder",
+    "title": "Build a new health goal step by step",
+    "stepProgress": "Step {step} of {total}",
+    "back": "Back",
+    "next": "Next",
+    "createGoal": "Create goal with AI",
+    "confirmCreate": "Confirm and save goal",
+    "createError": "Could not build your plan. Please try again.",
+    "saveValidation": "Please fill in the goal title and success metric.",
+    "defaultStepDescription": "A small, clear step from your plan.",
+    "previewEyebrow": "Preview",
+    "previewTitle": "Your goal and plan",
+    "planSourceAi": "AI plan",
+    "planSourceFallback": "Baseline plan",
+    "planPhasesTitle": "First weeks of your plan",
+    "planPhaseRange": "Days {start}–{end}",
+    "weightDirection": "Weight direction",
+    "weightDirection_gain": "Gain",
+    "weightDirection_loss": "Loss",
+    "weightDirection_maintain": "Maintain",
+    "step3Hint": "Day 30 and 60 are required. You can add target weight (kg) for nutrition too.",
+    "milestoneKgPlaceholder": "Target weight (kg)",
+    "milestoneKgOptional": "Target weight (kg, optional)",
+    "anchorCustom": "Describe your habit",
+    "anchorCustomPlaceholder": "e.g. After the kids go to sleep",
+    "currentPhaseTitle": "Current plan phase",
+    "currentPhaseWeek": "Week {week} · Day {day}",
+    "availableTime": "Available daily time",
+    "in90days": "within 90 days",
+    "goalTemplate": "Improve {category} from {baseline} to {target}",
+    "step1Title": "What exactly do you want to improve?",
+    "step2Title": "What does success look like? Set your numbers.",
+    "step3Title": "Set milestones for 30, 60 and 90 days",
+    "step4Title": "Dig deeper: why does this matter?",
+    "step5Title": "Which existing habit can anchor the new step?",
+    "step5Body": "Research shows anchoring to an existing habit increases success by 65%. Pick something you already do every day.",
+    "day30": "Day 30",
+    "day60": "Day 60",
+    "day90": "Day 90",
+    "day30Placeholder": "What does success look like after 1 month?",
+    "day60Placeholder": "What does success look like after 2 months?",
+    "day90Placeholder": "What does success look like after 3 months?",
+    "whyImportant": "Why is this important to you?",
+    "whyImportantPlaceholder": "What's behind this desire?",
+    "whyNow": "Why now?",
+    "whyNowPlaceholder": "What happened that makes you want to change right now?",
+    "whatLost": "What will you lose if you don't?",
+    "whatLostPlaceholder": "What happens if you keep going as you have been?",
+    "anchorHabit": "Anchor habit",
+    "preferredTime": "Preferred time",
+    "pickerHour": "Hour",
+    "pickerMinute": "Minutes",
+    "picker_am": "AM",
+    "picker_pm": "PM",
+    "aiExplainTitle": "What will the AI build for you?",
+    "aiExplain": "The AI will create a personal plan based on everything you entered — including milestones, weekly phases, and a daily step routine tailored to you.",
+    "validationStep1": "Pick a category to continue.",
+    "validationStep2": "Enter both a starting point and a target to continue.",
+    "validationStep3": "Fill in at least the day-30 and day-60 milestones.",
+    "validationStep4": "Answer the first question to continue.",
+    "validationStep5": "Choose an anchor habit to finish.",
+    "metricFrom": "Today",
+    "metricTo": "Target",
+    "metricGap": "Gap to close",
+    "whyMicroProgress": "Question {current} of {total}",
+    "resumeTitle": "Continue where you left off?",
+    "resumeBody": "We saved your progress in the goal builder.",
+    "resumeContinue": "Continue",
+    "resumeDiscard": "Start over",
+    "celebrateTitle": "Well done! Goal created",
+    "celebrateBody": "The first step is always the biggest — and you just took it. Now let's turn it into a routine.",
+    "celebrateViewToday": "View my today's steps",
+    "celebrateAnotherDomain": "Set a goal for another area",
+    "celebrateDone": "Done",
+    "habitFormula": "Your habit formula:",
+    "habitFormulaTemplate": "After I {anchor}, I'll do my health step.",
+    "low": "Low",
+    "high": "High",
+    "categories": {
+      "fitness": "Fitness",
+      "sleep": "Sleep",
+      "nutrition": "Nutrition",
+      "weight": "Weight",
+      "energy": "Energy",
+      "specific_illness": "Specific illness"
+    },
+    "metrics": {
+      "fitness": {
+        "baseline": "How many times per week do you work out now?",
+        "target": "How many times per week are you aiming for?",
+        "baselinePlaceholder": "e.g. 1",
+        "targetPlaceholder": "e.g. 4",
+        "hint": "Don't aim too high at first. Adding 1-2 workouts per week is realistic."
+      },
+      "sleep": {
+        "baseline": "Average sleep hours now?",
+        "target": "Target sleep hours?",
+        "baselinePlaceholder": "e.g. 5.5",
+        "targetPlaceholder": "e.g. 7.5",
+        "hint": "Improving by 30-60 minutes can dramatically change your energy."
+      },
+      "nutrition": {
+        "baseline": "How many healthy meals per day now?",
+        "target": "How many healthy meals per day are you aiming for?",
+        "baselinePlaceholder": "e.g. 1",
+        "targetPlaceholder": "e.g. 2",
+        "hint": "Start by replacing one meal. Easier than changing everything at once."
+      },
+      "weight": {
+        "baseline": "Current weight (kg)",
+        "target": "Target weight (kg)",
+        "baselinePlaceholder": "e.g. 79",
+        "targetPlaceholder": "e.g. 85",
+        "hint": "Choose your weight direction below.",
+        "hintGain": "Gaining about 0.5 kg per week is a realistic sustainable pace.",
+        "hintLoss": "Losing 0.5-1 kg per week is considered healthy and sustainable."
+      },
+      "energy": {
+        "baseline": "Average energy score now",
+        "target": "Target energy score",
+        "baselinePlaceholder": "",
+        "targetPlaceholder": "",
+        "hint": "Energy is a result of sleep, nutrition, and movement. Small improvement in one helps all."
+      },
+      "specific_illness": {
+        "baseline": "Current severity level",
+        "target": "Target severity level",
+        "baselinePlaceholder": "",
+        "targetPlaceholder": "",
+        "hint": "Tracking gradual improvement matters more than aggressive targets."
+      }
+    },
+    "anchors": {
+      "morning_coffee": "Morning coffee",
+      "commute": "Commute",
+      "before_shower": "Before shower",
+      "before_sleep": "Before sleep",
+      "lunch_break": "Lunch break",
+      "after_kids_school": "After kids go to school",
+      "before_evening_meal": "Before evening meal",
+      "after_work": "After work ends",
+      "custom": "My own habit"
+    }
+  },
+  "healthPulse": {
+    "eyebrow": "Daily Pulse",
+    "title": "Did you complete today's task?",
+    "yes": "Yes",
+    "partial": "Partial",
+    "no": "No",
+    "allDone": "All tasks completed!",
+    "allDoneBody": "Great day. Momentum continues.",
+    "whatStopped": "What stopped you?",
+    "noDescription": "No extra details for this task.",
+    "confirmSkip": "Confirm and save",
+    "daysStreak": "day streak",
+    "consistencyRate": "Consistency",
+    "longestStreak": "Best streak",
+    "totalCompleted": "Total completed",
+    "graceDayUsed": "Grace day",
+    "graceDayShort": "Saved",
+    "streakMilestone3": "3 days in a row — you're on a roll!",
+    "streakMilestone7": "A full week! Incredible streak — keep it up!",
+    "streakMilestone14": "Two weeks straight! This habit is becoming part of you.",
+    "streakMilestone21": "21 days! Research shows the habit is now locked in.",
+    "streakMilestone30": "30 days in a row! An extraordinary achievement!",
+    "streakMilestoneGeneric": "{count} days in a row — your momentum is strong!",
+    "whyThisStep": "Why this step?"
+  },
+  "healthDashboard": {
+    "eyebrow": "Health Status",
+    "eyebrowForDomain": "{domain} Status",
+    "title": "Progress Dashboard",
+    "healthScore": "Health Score",
+    "consistencyRate": "Consistency Rate",
+    "vsLastMonth": "vs Last Month",
+    "thisMonth": "this month",
+    "lastMonth": "last month",
+    "stepsCompleted": "steps completed",
+    "activityMap": "Activity Map (90 days)",
+    "less": "Less",
+    "more": "More",
+    "noActivity": "No activity",
+    "lowActivity": "Low activity",
+    "mediumActivity": "Medium activity",
+    "highActivity": "High activity",
+    "fullActivity": "Full completion",
+    "scoreLevelLow": "Low — good time to start",
+    "scoreLevelMedium": "Medium — room to grow",
+    "scoreLevelGood": "Good — keep it up",
+    "scoreLevelExcellent": "Excellent — maintain the pace",
+    "scoreTipLow": "Set one small goal — even a tiny change will move the needle.",
+    "scoreTipMedium": "Daily consistency is the fastest way to raise this score.",
+    "scoreTipGood": "You're on the right track — maintenance is as valuable as improvement.",
+    "scoreTipExcellent": "Outstanding — your current habits are working.",
+    "healthScoreInfo": "Your self-assessed rating (1–10) of this area, taken from the assessment you filled in. Update the assessment to change it.",
+    "goalProgressInfo": "Progress percent measures how many of your goal's steps you've completed — this differs from the health score, which is an overall self-assessment of the area.",
+    "consistencyRateInfo": "The share of planned daily steps you completed over the last 30 days. The more consistently you follow through, the higher it climbs.",
+    "vsLastMonthInfo": "The difference in completed steps this month compared to last month.",
+    "timelineTitle": "90-Day Timeline",
+    "timelineDayLabel": "Day {day}",
+    "daysPassed": "{count} days in",
+    "daysRemaining": "{count} days left",
+    "timelineNotStarted": "Your plan starts today",
+    "questMapTitle": "90-Day Quest Map",
+    "questMapBody": "Each checkpoint marks another small stretch of the long game.",
+    "questMapDay": "Checkpoint: day {day}"
+  },
+  "weeklyReviewEmotional": {
+    "title": "What this says about you",
+    "identityProof": "What you proved to yourself",
+    "comebackEvidence": "Coming back on track",
+    "nextIdentityAction": "A small step that reinforces your new identity"
+  },
+  "weeklyReviewRecurringPattern": {
+    "title": "The recurring pattern"
+  },
+  "weeklyReviewProgressEvidence": {
+    "title": "Proof you are progressing"
+  },
+  "enhancedReview": {
+    "eyebrow": "Weekly Review",
+    "title": "Moment of Truth",
+    "generateBtn": "Generate Review",
+    "tasksPlanned": "Planned tasks",
+    "tasksCompleted": "Completed",
+    "tasksSkipped": "Skipped",
+    "gapPercent": "Execution gap",
+    "goalAlignedSteps": "Goal-linked",
+    "barrierTouchedSteps": "Barrier hits",
+    "reflectTitle": "3 Reflection Questions",
+    "q1": "What worked best this week?",
+    "q1Placeholder": "Pick from the steps you completed",
+    "q2": "What was the hardest step?",
+    "q2Placeholder": "And what would you change?",
+    "q3": "What explains the change in your energy?",
+    "q3Placeholder": "Think about sleep, nutrition, stress...",
+    "energyNote": "Your consistency rate is {rate}%. The smaller and more anchored the tasks, the higher it gets.",
+    "planApplied": "This week's plan was adjusted from your review patterns."
+  },
+  "blockerDeepDive": {
+    "optimalTime": "When works best for you?",
+    "miniHabitHint": "Even 2 minutes count. The key is maintaining the streak.",
+    "elaboratePlaceholder": "Tell me more...",
+    "save": "Save and adjust steps",
+    "lowEnergy": {
+      "question": "When during the day do you have the least energy?",
+      "morning": "Early morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening",
+      "afterLunch": "After lunch"
+    },
+    "noTime": {
+      "question": "How many minutes do you have? Even 2 count."
+    },
+    "selfDoubt": {
+      "question": "What's the strongest belief holding you back? (We'll work on it)"
+    },
+    "familyChaos": {
+      "question": "When during the day do you have the quietest window?",
+      "earlyMorning": "Before everyone wakes up",
+      "napTime": "Nap / rest time",
+      "afterBedtime": "After the kids are asleep",
+      "lunchBreak": "Lunch break at work"
+    },
+    "consistency": {
+      "question": "What usually breaks your streak?"
+    },
+    "lackOfClarity": {
+      "question": "What's the first thing that needs to be clear before you start?"
+    },
+    "generic": {
+      "question": "Tell me more about what's blocking your progress."
+    }
+  },
+  "formulation": {
+    "pageTitle": "Clarification & goal",
+    "eyebrow": "Clarification",
+    "progress": "Step {current} of {total}",
+    "progressState": {
+      "saving": "Saving...",
+      "savingHint": "Moving to the next step",
+      "generatingQuestions": "Preparing 15 tailored questions...",
+      "generatingGoals": "Analyzing your data and suggesting 5 goals...",
+      "generatingQuestionsHint": "Based on everything you've filled in so far — may take a few seconds",
+      "draftFormulation": "Drafting a shared summary...",
+      "draftFormulationHint": "Reviewing your answers and reflecting them in your words",
+      "errorGeneric": "Something went wrong. Please try again."
+    },
+    "nav": {
+      "ariaLabel": "Step navigation",
+      "backOne": "Go back one step",
+      "restart": "Back to start"
+    },
+    "back": "Back",
+    "next": "Continue",
+    "skip": "Skip",
+    "save": "Save and continue",
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "aiWorking": "Reflecting in your words...",
+    "liveSummary": {
+      "title": "What you've filled so far",
+      "subtitle": "Updates live as you answer",
+      "empty": "Your answers will appear here in step order — start filling and watch the summary update live.",
+      "notFilled": "Not filled yet",
+      "skipped": "Skipped",
+      "sectionSkipped": "You skipped this step",
+      "andMore": "+{count} more",
+      "profile": "Profile & context",
+      "lifeContext": "Life context",
+      "gender": "Gender",
+      "age": "Age",
+      "note": "Note",
+      "safety": "Safety",
+      "riskQ1": "Life not worth living",
+      "riskQ2": "Self-harm thoughts",
+      "riskCrisis": "Crisis",
+      "ratings": "Ratings",
+      "ratingsProgress": "{answered} of {total} questions",
+      "ratingValue": "Score {score} of 5",
+      "followUps": "Follow-up questions",
+      "exploration": "Deeper questions",
+      "explorationProgress": "{answered} of {total}",
+      "formulation": "Formulation",
+      "central": "Central concern",
+      "goal": "Goal",
+      "microGoal": "Weekly micro-goal",
+      "goalValue": "Value",
+      "goalBarrier": "Expected barrier",
+      "phases": {
+        "consent": "Profile & context",
+        "risk": "Safety screen",
+        "open": "Statement ratings",
+        "dimensions": "Follow-up questions",
+        "exploration": "Deep exploration",
+        "formulation": "Collaborative formulation",
+        "goal": "Weekly goal"
+      }
+    },
+    "consent": {
+      "title": "Before we start",
+      "intro": "To tailor the questions and goals — tell us a bit about your context right now.",
+      "accept": "Continue",
+      "lifeContext": "What best describes your life context right now?",
+      "lifeContextNote": "This only suggests a follow-up question — not a guess about your problem.",
+      "lifeContextMulti": "You can select more than one (e.g. new parent + work overload).",
+      "contexts": {
+        "student": "Student",
+        "new_parent": "New parent",
+        "manager": "Manager / work overload",
+        "caregiver": "Caregiver",
+        "between_jobs": "Between jobs / transition",
+        "other": "Other",
+        "prefer_not": "Prefer not to say"
+      },
+      "otherPlaceholder": "Briefly...",
+      "profileSection": "Profile for tailored questions",
+      "profileSectionHelp": "Gender, age, and life context determine which questions appear in step 3. Fields set in Settings are shown read-only here.",
+      "gender": "Gender",
+      "genderOptions": {
+        "female": "Woman",
+        "male": "Man"
+      },
+      "age": "Age",
+      "agePlaceholder": "e.g. 28",
+      "agePreferNot": "Prefer not to say age",
+      "lockedFromSettings": "Set in Settings — change it there"
+    },
+    "crisis": {
+      "title": "Stopping here",
+      "body": "What you described is outside what this app can handle. We will not continue with questions.",
+      "guidance": "Consider reaching out to someone you trust — a therapist, doctor, or someone close to you.",
+      "exit": "Back to home"
+    },
+    "risk": {
+      "title": "Brief safety check",
+      "q1": "In the past two weeks — have you felt life was not worth living?",
+      "q2": "Have you thought you might hurt yourself?",
+      "yes": "Yes",
+      "no": "No",
+      "preferNot": "Prefer not to answer",
+      "followUp": "Did you mean yourself, in your current situation?",
+      "followUpYes": "Yes, myself",
+      "followUpNo": "No, not myself"
+    },
+    "passiveRatings": {
+      "intro": "Rate how much each statement describes you this week — no writing needed. We'll use this to suggest 1–3 short follow-up questions.",
+      "questionCount": "{count} questions tailored to your context",
+      "empty": "No questions match your selected context. Go back to step 1 and choose life context.",
+      "pageProgress": "Page {current} of {total}",
+      "scaleMin": "Disagree",
+      "scaleMax": "Strongly agree",
+      "items": {
+        "sleep_quality": "My sleep this week has not been restorative",
+        "day_energy": "I have enough energy during the day",
+        "focus": "I can focus on what matters",
+        "low_mood": "I feel down or low in mood",
+        "worry_load": "Worries take up a lot of space in my mind",
+        "work_pressure": "There is significant pressure at work or studies",
+        "relationship_strain": "There is tension or friction in close relationships",
+        "family_load": "Family load feels heavy this week",
+        "self_criticism": "I am hard on myself",
+        "avoidance": "I avoid things that matter to me",
+        "body_tension": "I feel tension or discomfort in my body",
+        "appetite_shift": "My appetite or eating has shifted",
+        "loneliness": "I feel lonely or disconnected",
+        "motivation": "I have motivation to do things",
+        "sense_of_control": "I feel in control of what happens around me",
+        "student_academic_pressure": "Academic pressure or exams take a lot out of me this week",
+        "student_exam_anxiety": "Stress before exams or deadlines is getting in my way",
+        "student_social_comparison": "I compare myself to others in studies or online",
+        "manager_team_overload": "Team load or my responsibility feels unsustainable",
+        "manager_boundary_bleed": "Work spills into time that should be personal",
+        "new_parent_sleep_fragmentation": "My sleep is fragmented because of the baby or young child",
+        "new_parent_partner_disconnect": "There is distance or tension with my partner since the birth",
+        "new_parent_guilt_rest": "I feel guilty when I am not available for my child",
+        "caregiver_emotional_drain": "Caring for someone close is emotionally draining this week",
+        "caregiver_guilt_when_resting": "I feel guilty when I take a moment for myself",
+        "transition_instability": "This transition (work / relationship / situation) feels unstable",
+        "between_jobs_financial_stress": "Financial pressure or job uncertainty is stressing me",
+        "between_jobs_identity_gap": "It is hard to know who I am without my old role or job",
+        "male_provider_pressure_between_jobs": "I feel pressure to provide or be the breadwinner",
+        "combo_student_and_manager_burnout": "I am burned out juggling studies and work",
+        "other_context_open_ended_stress": "Something in my situation right now is stressful — hard to name"
+      }
+    },
+    "followUps": {
+      "intro": "A few short questions based on your ratings — pick one answer each (or skip all).",
+      "none": "No extra follow-up questions — you can continue.",
+      "skipAll": "Skip follow-up questions",
+      "clarificationPlaceholder": "Want to add a word or two? (optional)",
+      "chips": {
+        "not_at_all": "Not at all",
+        "a_little": "A little",
+        "moderate": "Moderate",
+        "a_lot": "A lot",
+        "not_sure": "Not sure"
+      },
+      "sleep": "How much is sleep affecting you this week?",
+      "energy": "How noticeable is low energy?",
+      "focus": "How noticeable are focus difficulties?",
+      "mood": "How noticeable is low mood?",
+      "worry": "How much space do worries take?",
+      "work": "How noticeable is work/study pressure?",
+      "relationship": "How noticeable is relationship tension?",
+      "family": "How noticeable is family load?",
+      "selfTalk": "How noticeable is self-criticism?",
+      "avoidance": "How noticeable is avoidance?",
+      "body": "How noticeable is body tension?",
+      "appetite": "How noticeable are appetite changes?",
+      "loneliness": "How noticeable is loneliness?",
+      "motivation": "How noticeable is low motivation?",
+      "control": "How noticeable is lack of control?",
+      "contextParent": "How are sleep and load as a parent affecting you this week?",
+      "contextStudent": "What feels most pressing in studies or identity now?",
+      "contextWork": "Where are work boundaries hardest this week?",
+      "contextCare": "What's most draining in caregiving this week?",
+      "contextTransition": "What feels least stable in this transition?"
+    },
+    "dimensions": {
+      "title": "A bit more detail",
+      "frequency": "How many times per week?",
+      "intensity": "How much does it bother you (0–10)?",
+      "context": "When is it most noticeable?",
+      "contexts": {
+        "morning": "Morning",
+        "after_work": "After work",
+        "evening": "Evening",
+        "alone": "Alone",
+        "with_people": "With people",
+        "weekend": "Weekend"
+      },
+      "mindBody": "Body–mind (what changed recently?)",
+      "mindBodyHint": "Recent changes only — you can skip",
+      "sleep": "Sleep",
+      "appetite": "Appetite",
+      "tension": "Body tension",
+      "energy": "Energy",
+      "skipMindBody": "Prefer not to answer",
+      "systems": "Where does it hit hardest?",
+      "systemsOptions": {
+        "work": "Work",
+        "relationship": "Relationship",
+        "family": "Family",
+        "money": "Money",
+        "health": "Health",
+        "identity": "Self / identity"
+      },
+      "systemsNotes": "Short note (optional)"
+    },
+    "prior": {
+      "suggestedBecause": "Suggested question because you chose: {context}",
+      "student": "What feels most pressing in studies or identity now?",
+      "newParent": "How are sleep and load affecting you this week?",
+      "manager": "Where are work boundaries hardest this week?",
+      "caregiver": "What's most draining in caregiving this week?",
+      "betweenJobs": "What feels least stable in this transition?"
+    },
+    "checkinPrefill": {
+      "title": "We have this morning's check-in",
+      "body": "Energy {energy}, focus {focus}. Use these values?",
+      "use": "Use these values",
+      "update": "I'll update manually"
+    },
+    "exploration": {
+      "intro": "15 new statements (not questions) — a fresh angle on what you already shared. Rate how much each describes you this week: 1 disagree · 5 strongly agree.",
+      "questionCount": "{count} tailored questions",
+      "pageProgress": "Page {current} of {total}",
+      "generating": "Preparing personalized questions...",
+      "generatingHint": "Based on your profile, ratings, and follow-ups — not a diagnosis.",
+      "loadFailed": "We couldn't load the questions.",
+      "fallbackNotice": "Showing default questions — you can generate personalized ones:",
+      "retry": "Try again",
+      "progress": "Question {current} of {total}",
+      "answerLabel": "Your answer",
+      "answerPlaceholder": "In your own words, without over-explaining..."
+    },
+    "synthesis": {
+      "title": "Summary from your data",
+      "topThemes": "What stands out in your ratings",
+      "burningNow": "Flaring now (after step 4 chips)",
+      "suppressedByChips": "Not flaring this week — filtered by chips",
+      "chipNotNow": "Chip: {chip}",
+      "score": "Score {score}",
+      "goalFocus": "Suggested focus for this week's goal",
+      "notPrimary": "Less recommended as the primary goal right now"
+    },
+    "formulationEdit": {
+      "title": "What I hear is happening",
+      "subtitle": "Edit — this summary goes forward",
+      "central": "Central difficulty (your words)",
+      "stressors": "What amplifies (comma-separated)",
+      "maintaining": "What may be maintaining (comma-separated)",
+      "strengths": "What already helps",
+      "uncertainties": "What we're not sure about yet",
+      "uncertaintyFallback": "It's still unclear what maintains the difficulty most.",
+      "diagnosticWarning": "Note: your wording includes terms that sound like a medical diagnosis. This tool is not for diagnosing — consider using language of difficulty or experience instead.",
+      "submitAnyway": "Got it, submit anyway",
+      "approve": "This sounds right"
+    },
+    "microGoal": {
+      "title": "One small step for this week",
+      "burningThisWeek": "What burns most this week",
+      "pickOneOfFive": "Pick one of five goals — you can edit below",
+      "loadingOptions": "Analyzing your data and suggesting 5 goals...",
+      "optionsError": "Could not generate goals — try again",
+      "llmRequired": "Goals are created only by AI from your wizard data. Tap \"Refresh 5 goals\".",
+      "refreshOptions": "Refresh 5 goals",
+      "llmGenerated": "Five goals were generated from your wizard data",
+      "focusHint": "Based on your data, the goal should connect to: {focus}",
+      "value": "Why does this matter to you?",
+      "valuePlaceholder": "Family, calm, self-respect...",
+      "goal": "Small behavioral goal (observable this week)",
+      "goalPlaceholder": "e.g. bed before 11:30 pm on 3 nights...",
+      "barrier": "Expected barrier",
+      "barrierPlaceholder": "What might get in the way?",
+      "planB": "Plan B — what will you do if it doesn't work?",
+      "doNotTouch": "What not to push (for the coach)",
+      "doNotTouchPlaceholder": "e.g. don't dig into trauma...",
+      "suggestAi": "Suggest wording",
+      "whyThisExercise": "Why this exercise: {reason}"
+    },
+    "complete": {
+      "title": "Clarification complete",
+      "body": "You have a summary and one micro-goal. The coach continues from here.",
+      "toCoach": "Back to life coach",
+      "toHome": "Home",
+      "insightLabel": "Your core insight",
+      "strengthsLabel": "Your strengths",
+      "microGoalLabel": "Your micro-goal this week",
+      "generatingSteps": "Preparing your first daily steps…",
+      "stepsReady": "Your steps for today are ready",
+      "stepsError": "Could not generate steps — you can do this from Life Coach",
+      "firstWinLabel": "Your first win — start here",
+      "firstWinMinutes": "{minutes} min",
+      "toCoachDomain": "Go to {domain} →"
+    },
+    "export": {
+      "hint": "Export for another chat (ChatGPT, Claude, etc.) — includes everything you've entered so far",
+      "copyMarkdown": "Copy Markdown",
+      "downloadMd": "Download .md",
+      "downloadJson": "Download JSON",
+      "copied": "Copied to clipboard",
+      "copyFailed": "Could not copy — try downloading instead",
+      "downloadedMd": "Markdown file downloaded",
+      "downloadedJson": "JSON file downloaded"
+    },
+    "gate": {
+      "title": "Before your first goal",
+      "body": "A short clarification (~5 min) helps set a safe, grounded goal — not a diagnosis.",
+      "cta": "Start clarification",
+      "resume": "Resume draft",
+      "loading": "Loading…"
+    },
+    "handoff": {
+      "title": "What the coach knows",
+      "concern": "What's bothering you",
+      "maintaining": "What may be maintaining",
+      "strengths": "What helps",
+      "value": "Value",
+      "microGoal": "This week's goal",
+      "doNotTouch": "Do not touch"
+    },
+    "challenge": {
+      "title": "Your challenge this week",
+      "dailyMinimum": "Daily minimum",
+      "fallbackPlan": "Plan B",
+      "successDefinition": "What counts as success",
+      "types": {
+        "time_micro": "5 minutes a day",
+        "avoidance_start": "Start only",
+        "flexible_parent": "Flexible — no streak",
+        "recovery_gentle": "Gentle recovery",
+        "clarity_mapping": "Clarity before action",
+        "micro_goal_adapted": "Goal-adapted"
+      }
+    }
+  },
+  "checkin": {
+    "eyebrow": "Daily pulse",
+    "start": "Quick calibration",
+    "description": "Energy and focus only — so today's steps match how you feel. Daily intention lives in your morning ritual.",
+    "stepsConnection": "Your energy and mood will shape the steps your coach suggests today.",
+    "guidesCoachTitle": "Check-in guides your coach and your next task",
+    "postSubmitWhatChangedTitle": "What changed now?",
+    "postSubmitAdaptNextStep": "We'll use this to adapt your next step.",
+    "postSubmitMetricsUpdated": "Your energy, focus, and momentum markers are updated.",
+    "immediateValue": {
+      "title": "Immediate value",
+      "steady": "Good. We will keep the next action clear and practical.",
+      "nextStep": "Today should start with one {minutes}-minute move, not a perfect day.",
+      "adaptDayCta": "Adapt my day"
+    },
+    "focus": "Focus and presence",
+    "focusLow": "Distracted / mentally crowded",
+    "focusHigh": "Focused and fully present",
+    "focusValue": "Focus is {value} out of 10",
+    "energy": "Energy",
+    "energyLow": "Drained / tired",
+    "energyHigh": "Charged and alive",
+    "energyValue": "Energy is {value} out of 10",
+    "focusStatus1": "Scattered / overwhelmed",
+    "focusStatus2": "Very distracted",
+    "focusStatus3": "Restless",
+    "focusStatus4": "Partially distracted",
+    "focusStatus5": "Neutral",
+    "focusStatus6": "Partially present",
+    "focusStatus7": "Present",
+    "focusStatus8": "Focused",
+    "focusStatus9": "Very focused",
+    "focusStatus10": "Fully focused & present",
+    "energyStatus1": "Completely drained",
+    "energyStatus2": "Very tired",
+    "energyStatus3": "Tired",
+    "energyStatus4": "A bit tired",
+    "energyStatus5": "OK",
+    "energyStatus6": "Fresh",
+    "energyStatus7": "Charged",
+    "energyStatus8": "Energetic",
+    "energyStatus9": "Full of energy",
+    "energyStatus10": "Fully charged & energetic",
+    "priorityActionStarter1": "I will finish…",
+    "priorityActionStarter2": "I will start working on…",
+    "priorityActionStarter3": "I will reach out to…",
+    "priorityAction": "What is the most important action you will take today to win?",
+    "priorityActionLabel": "Name the one move that would make this day feel aligned and real.",
+    "priorityActionPlaceholder": "Your one move for today…",
+    "tagsTitle": "What state are you in right now?",
+    "tagsHint": "Pick one or two state tags so the engine can tune the right intervention for this moment.",
+    "tagsGroupPositive": "Positive states",
+    "tagsGroupChallenges": "Challenges",
+    "tagsCounter": "{selected}/{total} selected",
+    "submit": "Save pulse",
+    "optimizing": "Saving pulse...",
+    "update": "Update pulse",
+    "cancelEdit": "Cancel edit",
+    "pulse": {
+      "success": "Pulse saved — your steps will match how you feel.",
+      "alreadyDone": "Already calibrated today",
+      "update": "Update pulse",
+      "ritualHint": "Want to set intention? Do it in your morning ritual →",
+      "energyFocusLine": "Energy {energy} · Focus {focus}"
+    },
+    "previewEyebrow": "What happens next",
+    "previewTitle": "Your check-in becomes an immediate intervention",
+    "previewBody": "The engine matches your current state to a precise affirmation, a reset tool, and one direct action so the check-in ends in motion.",
+    "previewBadge": "Personalization engine",
+    "previewEmptyEyebrow": "Ready when you are",
+    "previewEmptyTitle": "Your optimized state will land here",
+    "previewEmptyBody": "As soon as you submit, this space will switch from data collection to a targeted affirmation and next move.",
+    "latestOptimization": "Latest optimization",
+    "supportTitle": "Why this recommendation",
+    "tag": {
+      "driven": {
+        "label": "Driven",
+        "description": "You feel a strong internal push to move and attack what matters."
+      },
+      "laserFocused": {
+        "label": "Laser focused",
+        "description": "The target is clear and the noise is low. You are ready for deep work."
+      },
+      "inspired": {
+        "label": "Inspired",
+        "description": "You feel creative, connected to the bigger vision, and open to bold action."
+      },
+      "disciplined": {
+        "label": "Disciplined",
+        "description": "You are moving from standards and commitment, not from waiting for the mood."
+      },
+      "stressed": {
+        "label": "Stressed",
+        "description": "Your body feels pressure and too many demands are landing at once."
+      },
+      "stuck": {
+        "label": "Stuck",
+        "description": "You know what matters, but there is friction between knowing and starting."
+      },
+      "distracted": {
+        "label": "Distracted",
+        "description": "Your attention is fragmenting and it is hard to stay on one important thing."
+      },
+      "anxious": {
+        "label": "Anxious",
+        "description": "Fear of the outcome is creating hesitation, noise, or internal tightening."
+      },
+      "exhausted": {
+        "label": "Exhausted",
+        "description": "Your body feels heavy, under-rested, or low on physical fuel."
+      },
+      "burntOut": {
+        "label": "Burnt out",
+        "description": "Your mind feels emotionally overdrawn and there is very little reserve left."
+      },
+      "apathetic": {
+        "label": "Apathetic",
+        "description": "Nothing feels especially alive right now and it is hard to care."
+      },
+      "calm": {
+        "label": "Calm",
+        "description": "Your breathing is steady and there is enough internal space to choose cleanly."
+      },
+      "aligned": {
+        "label": "Aligned",
+        "description": "You feel connected to yourself and the day feels coherent instead of forced."
+      },
+      "grateful": {
+        "label": "Grateful",
+        "description": "You are seeing what is already working and your system feels more open."
+      }
+    },
+    "result": {
+      "lowEnergyLowFocus": {
+        "badge": "Reignite",
+        "title": "Your system does not need pressure. It needs ignition.",
+        "summary": "Low energy and split focus mean the next win is momentum, not complexity. Use one clear spark to get back into motion before the day drifts away from {action}.",
+        "action": "Use a short activation block, then take the very first visible step toward {action}.",
+        "support": "You do not need to feel ready. You need one clean movement that wakes the system up."
+      },
+      "stressReset": {
+        "badge": "Reset",
+        "title": "Your first move is to lower internal noise.",
+        "summary": "When stress and mental load are high, clarity comes after regulation. Slow the system down, then return to {action} with a cleaner nervous system.",
+        "action": "Take the 60-second reset, then come back and do the smallest true step inside {action}.",
+        "support": "This recommendation protects your bandwidth first so action can come from clarity instead of panic."
+      },
+      "peakState": {
+        "badge": "Peak state",
+        "title": "You are in a window of power. Direct it.",
+        "summary": "High focus and high energy create a rare opening for depth. Protect it and turn it into visible progress on {action} before smaller tasks steal the edge.",
+        "action": "Lock {action} as your depth move and start the first deep block now.",
+        "support": "Nothing extra is needed here. The job is simply to protect your best state and convert it into output."
+      },
+      "groundedClarity": {
+        "badge": "Grounded",
+        "title": "You are steady enough to work from clarity.",
+        "summary": "This is a strong state to build from. Keep the calm, avoid scattering it, and move {action} forward with deliberate depth.",
+        "action": "Use this stable state to create one focused block around {action}.",
+        "support": "Grounded energy is leverage. The more protected it is, the more clean output it creates."
+      },
+      "rebuildMomentum": {
+        "badge": "Recharge",
+        "title": "The move now is to rebuild usable energy.",
+        "summary": "Your system is asking for fuel, not force. Regain some spark, then return to {action} with a little more life behind it.",
+        "action": "Take the guided audio reset, then reopen {action} with the smallest possible visible move.",
+        "support": "This recommendation gives your system enough lift so discipline has something to work with."
+      },
+      "steadyAction": {
+        "badge": "Dialed in",
+        "title": "You are close. Now make the day concrete.",
+        "summary": "The state is workable. The biggest win is to remove ambiguity and turn {action} into clean execution right away.",
+        "action": "Choose one exact next step for {action}, then begin before you overthink it.",
+        "support": "This is the moment to simplify, commit, and let consistency do its work."
+      }
+    },
+    "module": {
+      "guidedAudio": {
+        "title": "Guided audio",
+        "body": "Play a short voice-guided reinforcement so the message lands in your body, not just in your thoughts.",
+        "start": "Play voice session",
+        "stop": "Stop voice session",
+        "unsupported": "Voice session is unavailable here"
+      },
+      "breatheReset": {
+        "title": "Breathe & reset",
+        "body": "Use one guided minute to lower the noise and return to the day from a steadier state.",
+        "support": "Breathe slowly and let your shoulders drop.",
+        "start": "Start 60-second reset",
+        "pause": "Pause reset",
+        "reset": "Reset"
+      },
+      "depthWork": {
+        "title": "Depth work",
+        "body": "Protect this state and convert it into one real block of meaningful output.",
+        "start": "I am starting this now"
+      }
+    },
+    "yesterdayAction": "Yesterday you wrote:",
+    "didYouDoIt": "Did you do it?",
+    "statedYes": "Yes, I did ✓",
+    "statedPartial": "Partially",
+    "statedNo": "Didn't get to it"
+  },
+  "emotion": {
+    "driven": "Driven",
+    "flat": "Flat",
+    "anxious": "Anxious",
+    "avoidant": "Avoidant",
+    "disappointed": "Disappointed",
+    "excited": "Excited",
+    "overwhelmed": "Overwhelmed",
+    "confused": "Confused",
+    "angry": "Angry",
+    "grateful": "Grateful"
+  },
+  "metrics": {
+    "updated": "Updated from latest check-in",
+    "waiting": "Waiting for first check-in",
+    "energyDescription": "Energy is your self-reported capacity right now, scaled from 1 to 10.",
+    "focusDescription": "Focus reflects how present and mentally available you feel right now, on a scale of 1 to 10.",
+    "momentumDescription": "Momentum blends focus, energy, and state tags into a practical readiness score."
+  },
+  "intervention": {
+    "breath": "Take 90 seconds. Stand up, breathe deeply, and change your physical state first.",
+    "truth": "Name the truth plainly. Power comes back when the story gets specific."
+  },
+  "validation": {
+    "required": "This field is required.",
+    "truthRequired": "Share what is really happening so the coaching can be precise.",
+    "actionRequired": "Name the one action that matters so the optimizer can anchor the recommendation.",
+    "range": "Choose a value between {min} and {max}."
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "email": "Email",
+    "password": "Password"
+  },
+  "analytics": {
+    "weeklyProgress": "Weekly progress",
+    "eyebrow": "Recent pattern",
+    "stateTrend": "State trend",
+    "trendHelp": "A weekly view of your recent momentum, with the newest day on the right.",
+    "lastEntries": "{count} recent entries",
+    "noData": "No data yet",
+    "emptyTitle": "Your trend will appear after your first check-in.",
+    "emptyBody": "As soon as you calibrate one honest state read, this space will help you notice how your rhythm changes over time.",
+    "insightsTitle": "What the data is showing",
+    "insights": {
+      "focusCompletion": "On days when your focus was high, you completed {percent}% more of your recommended actions.",
+      "momentumUp": "Your average momentum is up by {points} points compared with the previous week.",
+      "momentumDown": "Your average momentum is down by {points} points compared with the previous week. This is a signal to simplify and recover.",
+      "groundedMomentum": "Grounded states showed up {count} times recently. That is usually a strong window for clean execution.",
+      "stressSignal": "Stress-based tags showed up {count} times recently. More reset moments early in the day may protect your momentum."
+    }
+  },
+  "coach": {
+    "eyebrow": "Coaching space",
+    "page": {
+      "title": "Virtual personal coach",
+      "subtitle": "One honest question, a sharp reflection, and one move — no long chat.",
+      "emotionLabel": "How do you feel right now?",
+      "escapeLabel": "Escape / avoidance",
+      "escapeHint": "1 = focused, 10 = want to escape the task",
+      "energyLabel": "Energy",
+      "energyHint": "1 = depleted, 10 = full fuel",
+      "truthLabel": "What truth do you want to work with?",
+      "truthPlaceholder": "e.g. I postponed the call because I feared rejection…",
+      "truthRequired": "Write at least one sentence — the coach works from this.",
+      "submit": "Get coach reflection",
+      "prefilledHint": "Prefilled from your latest check-in. Edit before sending.",
+      "checkinLink": "Morning ritual",
+      "morningRitualLink": "Morning ritual",
+      "sourceAi": "AI response",
+      "sourceLocal": "Local response (no OpenAI)"
+    },
+    "quickActions": {
+      "title": "Quick coach actions",
+      "buildStep": {
+        "label": "Build me a daily step",
+        "prompt": "Build me one concrete daily step from my current goals. Keep it short, practical, and doable today."
+      },
+      "shortVersion": {
+        "label": "Give me a short version",
+        "prompt": "I have low energy today. Give me the shortest useful version of what I should do next, ideally 2-5 minutes."
+      },
+      "stuck": {
+        "label": "I'm stuck",
+        "prompt": "I feel stuck and avoidant. Help me name the blocker and choose one tiny action that gets me moving."
+      },
+      "whyItMatters": {
+        "label": "Remind me why it matters",
+        "prompt": "Remind me why my current goal matters and turn that into one grounded next action."
+      },
+      "breakGoal": {
+        "label": "Break the goal down",
+        "prompt": "Take my goal and break it into a clear next baby step, a small milestone, and what I should ignore today."
+      }
+    },
+    "emotions": {
+      "driven": "Driven",
+      "flat": "Flat",
+      "anxious": "Anxious",
+      "avoidant": "Avoidant",
+      "disappointed": "Disappointed",
+      "excited": "Excited",
+      "overwhelmed": "Overwhelmed",
+      "confused": "Confused",
+      "angry": "Angry",
+      "grateful": "Grateful"
+    },
+    "title": "Coach response",
+    "expandLabel": "Show coach response",
+    "collapseLabel": "Hide coach response",
+    "latest": "Latest reflection",
+    "loading": "Gathering your reflection...",
+    "error": "Could not get coaching right now. Try again in a moment.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "share": "Share",
+    "export": "Export JSON",
+    "responsePreview": "A clear read on what is happening, and one grounded next move.",
+    "momentDismiss": "Take this with you",
+    "languageBadgeHelp": "This shows the response language selected for coaching.",
+    "mixedContent": "Your reflection will appear here after your next check-in.",
+    "responses": {
+      "metrics": "State read: escape is {escape}/10 and energy is {energy}/10. That is data, not identity.",
+      "driven": {
+        "insight": "Good. You have drive. Now aim it at the real target: “{truth}”. Power without precision becomes noise.",
+        "action": "Do one concrete thing in the next 10 minutes that proves you are in command."
+      },
+      "flat": {
+        "insight": "Flat is not broken. It is usually a body asking for motion and a mind asking for a smaller first win: “{truth}”.",
+        "action": "Stand up, breathe deeper than feels necessary, and complete the smallest visible action."
+      },
+      "anxious": {
+        "insight": "Anxiety is energy without a decision. The decision starts here: “{truth}”. Make it specific and it loses volume.",
+        "action": "Write the next move in one sentence, then do only that. No future-tripping for 10 minutes."
+      },
+      "avoidant": {
+        "insight": "Avoidance is not laziness. It is fear negotiating with your standards. The door back in is “{truth}”.",
+        "action": "Face the thing for 90 seconds. Open the tab, make the call, write the first line. Start before confidence arrives."
+      },
+      "disappointed": {
+        "insight": "Disappointment means you still care. Use it cleanly: “{truth}”. Do not turn a result into an identity.",
+        "action": "Extract one lesson, choose one repair, and move before the story gets heavier."
+      },
+      "excited": {
+        "insight": "Excitement is fuel. Give it rails: “{truth}”. Energy becomes power when it gets a target.",
+        "action": "Pick the one move that creates visible progress today and put it on the calendar now."
+      },
+      "overwhelmed": {
+        "insight": "Overwhelm is usually too many open loops shouting at once. Start with this one: “{truth}”.",
+        "action": "Write three next actions, circle the smallest, and do that before you solve the whole life."
+      },
+      "confused": {
+        "insight": "Confusion often means you need a cleaner question. The current signal is “{truth}”.",
+        "action": "Ask: what is the next true thing I can verify? Then take that step only."
+      },
+      "angry": {
+        "insight": "Anger is boundary energy. Aim it at standards, not damage: “{truth}”.",
+        "action": "Name the boundary, choose the clean request, and deliver it without theatrics."
+      },
+      "grateful": {
+        "insight": "Gratitude is not passive. It is a strong state to build from: “{truth}”.",
+        "action": "Use the state. Send the message, make the move, or finish the task while your system is open."
+      }
+    }
+  },
+  "history": {
+    "eyebrow": "Your timeline",
+    "title": "Recent check-ins",
+    "empty": "Your recent check-ins will gather here once you begin.",
+    "delete": "Delete",
+    "edit": "Edit",
+    "exportJson": "Export JSON",
+    "exportCsv": "Export CSV"
+  },
+  "help": {
+    "pageTitle": "Help & How it works",
+    "eyebrow": "Support",
+    "intro": "The app turns a fast emotional check-in into a practical next move — and helps you build a personalised life coaching plan.",
+    "step1": "You score energy and avoidance so the app can estimate focus and momentum.",
+    "step2": "You name one honest truth. That gives the coach something specific to work with.",
+    "step3": "The coach response gives one insight, one intervention, and one challenge.",
+    "step4": "Trends, history, exports, and follow-ups help you build a feedback loop over time.",
+    "faqTitle": "Frequently asked questions",
+    "faq": [
+      {
+        "q": "Where is my data stored?",
+        "a": "All data is stored locally on this device. Nothing is sent to a server. You can export or clear it at any time from the Admin page."
+      },
+      {
+        "q": "What is the Life Coach section?",
+        "a": "The AI Life Coach helps you set goals across 8 life domains (health, career, relationships, etc.) and generates daily micro-steps tailored to your energy and schedule."
+      },
+      {
+        "q": "What is the Morning Ritual?",
+        "a": "A short guided sequence (5–15 min) covering breathing, gratitude, affirmations, and daily mission — inspired by Tony Robbins' priming method."
+      },
+      {
+        "q": "Why does the coach speak to me differently sometimes?",
+        "a": "Your coaching style setting controls this. Choose between Supportive, Direct, and Motivational in Settings → Coaching Preferences."
+      },
+      {
+        "q": "Can I use the app in Hebrew and English?",
+        "a": "Yes. Switch the language at any time from the header or Settings page. All generated content will follow the selected language."
+      },
+      {
+        "q": "How do I reset or delete my data?",
+        "a": "At the bottom of the Help page, use Reset data — it clears everything saved about you on this device and returns you to first-time onboarding. You can also manage individual records under Admin → Database."
+      }
+    ],
+    "contactTitle": "Still need help?",
+    "contactBody": "This is a personal productivity app. If something isn't working as expected, try refreshing the page or clearing your browser cache.",
+    "resetData": {
+      "eyebrow": "Reset",
+      "title": "Reset all your data",
+      "body": "This permanently deletes everything saved about you — profile, goals, steps, check-ins, rituals, and more — and returns you to the start as if it were your first visit. This cannot be undone.",
+      "button": "Reset data",
+      "resetting": "Resetting…",
+      "confirmTitle": "Reset all data?",
+      "confirmMessage": "All your data on this device will be deleted — profile, goals, history, and preferences. You will be sent back to first-time onboarding. This cannot be undone.",
+      "confirmButton": "Yes, reset everything",
+      "error": "Could not reset your data. Please try again."
+    }
+  },
+  "onboarding": {
+    "stepCounter": "Step {step} of {total}",
+    "step1Title": "Let's build your first plan",
+    "step1Body": "A few short questions so we can tailor coaching for you.",
+    "step1TimeHint": "Less than a minute.",
+    "lifeContextQuestion": "What's going on in your life right now?",
+    "lifeContextNotePlaceholder": "A short note — if you'd like",
+    "scheduleQuestion": "When do you usually wake up and go to sleep?",
+    "genderHelpShort": "Optional — affects Hebrew phrasing",
+    "physicalHelpShort": "So we don't suggest something that doesn't fit",
+    "sleepLabel": "Typical bedtime",
+    "actionWindowLabel": "When is easiest for you to take action?",
+    "actionWindow": {
+      "morning": "Morning",
+      "midday": "Midday",
+      "evening": "Evening",
+      "flexible": "Flexible"
+    },
+    "physicalLabel": "Physical considerations",
+    "physical": {
+      "low_intensity": "Prefer gentle, not intense",
+      "physical_limitation": "A physical limitation to respect",
+      "pregnancy_postpartum": "Pregnancy / postpartum"
+    },
+    "moreOptions": "More options (optional)",
+    "lessOptions": "Fewer options",
+    "nameLabel": "What should we call you?",
+    "namePlaceholder": "Your name",
+    "nameRequired": "Please enter your name to continue",
+    "languageLabel": "Which language feels right?",
+    "wakeLabel": "Wake up",
+    "familyLabel": "Family situation",
+    "optional": "optional",
+    "step2Eyebrow": "Focus area",
+    "step2Title": "Let's see where you stand today.",
+    "step2InnerProgress": "Rated {rated} of {total} areas",
+    "step2GutHint": "Gut feel is enough. You can rate only a few areas and then choose.",
+    "step2SkipRatings": "Skip ratings and choose an area",
+    "step2ShowRatings": "Back to ratings",
+    "step2MapEyebrow": "Live life map",
+    "step2MapTitle": "This is your full picture.",
+    "step2MapBody": "Each point is a life area. The wider the shape, the steadier that area feels. Look for where one small step could unlock the most movement.",
+    "step2MapInsightTitle": "{domain} looks like the right place to start.",
+    "step2MapInsightBody": "The gap between {low} and {strong} shows where life feels loaded and where you already have strength. The map is not judging you — it helps choose one clear step for tomorrow.",
+    "step2MapStats": {
+      "average": "Average",
+      "gap": "High-low gap",
+      "strongest": "Strong area"
+    },
+    "step2MapLowTitle": "3 areas needing the most attention",
+    "step2MapLegendTitle": "Color key",
+    "step2MapLegend": {
+      "urgent": "Needs attention",
+      "unstable": "Unstable",
+      "steady": "Steady",
+      "strong": "Strong"
+    },
+    "step2MapSource": "Based on your self-rating right now. The scale stays 1-10 so differences are not inflated.",
+    "step2MapConclusion": "Recommended starting point: {domain}. This is your lowest area, and improving it can influence the rest.",
+    "step2GapInsight": "Main gap: {gap} points between {low} and {high}.",
+    "step2BarTitle": "How your life areas rank right now",
+    "step2ScaleHint": "Low = start here",
+    "step2Scale": {
+      "low": "Needs work",
+      "high": "Strong and balanced"
+    },
+    "step2RadarTitle": "Overview",
+    "step2RadarHint": "label shown below",
+    "step2RadarActive": "Area shown now",
+    "step2CurrentDomain": "Rate here — the map updates below",
+    "domainDeepDive": {
+      "button": "What does this mean?",
+      "eyebrow": "Understanding this area",
+      "whyImportant": "Why does this matter?",
+      "includes": "What does this area include?",
+      "score1": "What does 1/10 look like?",
+      "score10": "What does 10/10 look like?",
+      "selfCheck": "A question to check yourself",
+      "close": "Close"
+    },
+    "step2LeverageBadge": "Leverage",
+    "step2LeverageTitle": "Possible leverage point",
+    "step2LeverageBody": "Improving {domain} by just 1 point could change how the rest of the day feels. You do not have to choose it, but it is worth noticing.",
+    "step2WhyOneTitle": "Why only one area?",
+    "step2WhyOneBody": "So tomorrow stays simple, not crowded. One area gives you a clear step, focus, and momentum to return to.",
+    "step2DecisionEyebrow": "Choose tomorrow's step",
+    "step2SelectTitle": "Now pick one area to focus on.",
+    "step2SelectHint": "Your lowest score is in {domain}. That's often where the biggest leverage is.",
+    "domainPreview": {
+      "eyebrow": "Live preview",
+      "body": "If we choose {domain}, tomorrow gets a roughly {mins}-minute step that connects focus, mindset, and real progress."
+    },
+    "step2SelectedConfirm": "Great choice. Let's go deep on {domain}.",
+    "step2ChooseToContinue": "Choose an area to continue.",
+    "step2DynamicCta": "Build my first step in {domain}",
+    "availableTimeLabel": "How much time do you actually have each day?",
+    "availableTimeOption": "{mins} min",
+    "intensityLabel": "What pace feels right for you?",
+    "intensity": {
+      "gentle": "Gentle",
+      "balanced": "Balanced",
+      "intense": "Intense"
+    },
+    "addInYourWords": "Want to add in your own words? (optional)",
+    "qFreeTextPlaceholder": "Add details if you'd like…",
+    "q1LabelLowScore": "You rated {domain} {score}/10. Which of these feels most true?",
+    "q1LabelNotLowest": "What made you choose {domain} even though other areas scored lower?",
+    "q2WhenLabel": "When in the last day did this area feel most loaded?",
+    "scoreContext": "Your score here: {score}/10",
+    "scoreConfirmPrompt": "This looks like your most challenging area. Does that feel right?",
+    "scoreConfirm": {
+      "yes": "Yes, exactly",
+      "partly": "Partly",
+      "no": "Not really"
+    },
+    "situationPick": "Which situation fits best?",
+    "whenPick": "When does it happen?",
+    "tagPick": "What feels most true? (pick any)",
+    "oneSentenceEnough": "Enough — you can continue",
+    "oneSentenceHint": "A bit more, or pick above",
+    "voiceStart": "Say it out loud — I'll tidy it up",
+    "voiceStop": "Stop recording",
+    "helpMeExpress": "Hard to express — help me continue",
+    "firstTaskTomorrow": "I'll do it tomorrow morning",
+    "celebrateBodyDeferred": "You set a goal in {domain} and scheduled your first action for tomorrow. That's how change starts, {name}.",
+    "celebrateScheduled": "Scheduled for tomorrow",
+    "resumeBanner": "Continuing where you left off",
+    "resumeStartOver": "Start over",
+    "aiError": "Could not generate a response. Try again.",
+    "genericError": "Something went wrong. Try again.",
+    "analyzing": "Analysing…",
+    "step3Eyebrow": "Let's go deeper",
+    "step3Quick": {
+      "scoreLabel": "The rating you gave in the previous step",
+      "optionalNote": "Want to add in your own words? (optional)",
+      "phraseHelpToggle": "Hard to phrase — give me ready sentences",
+      "phraseHelpHint": "That's okay. Pick a ready sentence and edit it.",
+      "reflectionEyebrow": "What I'm hearing",
+      "buildInsight": "Build my insight"
+    },
+    "step3Aha": "It looks like {domain} is your current leverage point. From here we build tomorrow's small step, not another task list.",
+    "q1Label": "Why {domain} specifically?",
+    "q3Label": "What happens if nothing changes in a year?",
+    "q4Label": "What happens if you actually succeed?",
+    "nextQuestion": "Next",
+    "skipQuestion": "Skip",
+    "insightLabel": "What I hear from you",
+    "generating": "Generating insight…",
+    "seeInsight": "See your insight",
+    "continueToGoal": "Continue to your goal",
+    "step4Eyebrow": "Your 90-day goal",
+    "step4Title": "Here is what I propose.",
+    "step4Body": "Based on everything you've told me. Edit it if it doesn't feel right.",
+    "goalProposedLabel": "Proposed goal",
+    "goalEditHint": "Tap to edit. Make it yours.",
+    "goalMetricLabel": "How we'll know you succeeded",
+    "savingGoal": "Saving…",
+    "confirmGoal": "This is my goal",
+    "step5Eyebrow": "Let's start right now",
+    "step5Title": "Good. One small action, {name}.",
+    "step5Body": "Do this one thing before you enter the app. It takes less than 5 minutes.",
+    "tomorrowReasonMini": {
+      "eyebrow": "Why come back tomorrow",
+      "body": "Because after this action, the app no longer starts from zero. Tomorrow it continues from the same direction and gives you the next step."
+    },
+    "firstTaskLabel": "Your first task",
+    "firstTaskSaveError": "Could not save your first task. Please try again.",
+    "firstTaskMissingError": "First-task details are missing. Go back a step or start over.",
+    "goalCreateError": "Could not create your goal. Please try again.",
+    "firstTaskDone": "✓  Done — I did it",
+    "saving": "Saving…",
+    "celebrateTitle": "You're already winning.",
+    "celebrateBody": "You set a goal in {domain} and completed your first action. That's how change starts, {name}.",
+    "celebrateFirstStep": "First action completed",
+    "celebrateDone": "Completed",
+    "completionSummary": {
+      "accomplishmentsTitle": "What we set up",
+      "goalSet": "You set a goal in {domain}",
+      "firstStepCreated": "We created a first step — waiting for you at home",
+      "firstStepCompleted": "You completed your first step",
+      "intro": "You set a goal and we created a first step — from here, use the app like this:",
+      "title": "Your daily loop"
+    },
+    "returnTomorrow": {
+      "eyebrow": "Why come back tomorrow",
+      "title": "Tomorrow we build the second link.",
+      "completedBody": "Because you already proved the first step is possible. Tomorrow the app will turn that into the next small move.",
+      "deferredBody": "Because the first action is waiting for you. Tomorrow starts with one clear move, not another setup flow."
+    },
+    "tomorrowHomePreview": {
+      "eyebrow": "Your morning tomorrow",
+      "title": "Home will already be waiting with a clear direction.",
+      "focusLabel": "Main action",
+      "fallbackStep": "One small first step in {domain}",
+      "metrics": {
+        "focus": {"value": "1", "label": "Step"},
+        "streak": {"value": "0→1", "label": "Streak"},
+        "progress": {"value": "+", "label": "Momentum"}
+      }
+    },
+    "identityClose": "You are not coming back to an app. You are coming back to the person you said you want to be tomorrow.",
+    "enterApp": "Enter the app",
+    "back": "Back",
+    "next": "Continue",
+    "eyebrow": "First check-in",
+    "title": "Three minutes. One honest read. One optimized next move.",
+    "step1": "Rate your mental and physical state without performing.",
+    "step2": "Choose one or two state tags so the engine can read the pattern.",
+    "step3": "Use the personalized affirmation and intervention to move, not to ruminate.",
+    "start": "Start",
+    "family": {
+      "single": "Single",
+      "in_relationship": "In a relationship",
+      "married": "Married",
+      "married_with_kids": "Married with kids",
+      "other": "Other"
+    }
+  },
+  "challenge": {
+    "title": "Today's challenge",
+    "markDone": "Mark done",
+    "done": "Done",
+    "actions": {
+      "driven": "Ship one visible thing in the next 30 minutes.",
+      "flat": "Stand up, reset your body, and finish one tiny task.",
+      "anxious": "Write the next move in one sentence and do only that.",
+      "avoidant": "Face the avoided task for 90 seconds without negotiating.",
+      "disappointed": "Extract one lesson and make one repair move.",
+      "excited": "Put the energy on the calendar as one concrete block.",
+      "overwhelmed": "Choose the smallest open loop and close it.",
+      "confused": "Ask one cleaner question and verify one fact.",
+      "angry": "Turn the heat into one clean boundary or request.",
+      "grateful": "Use the open state to thank someone or complete one meaningful action."
+    }
+  },
+  "conversation": {
+    "title": "Ask a follow-up",
+    "placeholder": "What do you want the coach to challenge or clarify?",
+    "submit": "Ask coach",
+    "loading": "Thinking..."
+  },
+  "reminder": {
+    "title": "Daily reminder",
+    "time": "Reminder time",
+    "enable": "Enable reminder",
+    "enabled": "Reminder enabled on this device.",
+    "denied": "Notifications are blocked in this browser.",
+    "unsupported": "This browser does not support notifications.",
+    "note": "We'll send you a gentle reminder at the time you choose, as long as the app is open on this device.",
+    "notificationTitle": "Daily Check-In",
+    "notificationBody": "Take three minutes. Read the state. Choose the next move."
+  },
+  "privacy": {
+    "title": "Privacy note",
+    "body": "This prototype stores check-ins locally in your browser. A production version must add encrypted storage, privacy policy, terms, and clear consent before saving sensitive emotional data to a server.",
+    "pageTitle": "Privacy Policy",
+    "intro": "This prototype handles emotionally sensitive information with a local-first posture.",
+    "local": "Check-ins, drafts, reminder preferences, and coaching history are stored locally on this device through browser storage and the app's local database.",
+    "analyticsControl": "Optional behavioral insights can be disabled in Settings. Core coaching continues without passive writing, editing, task-view, and locally inferred text-pattern analytics.",
+    "server": "The current coach API returns a local fallback response. If cloud AI is connected later, consent, retention rules, and deletion controls must be added before launch.",
+    "security": "Production must use HTTPS, encrypted storage, access controls, audit logging, and clear data deletion flows.",
+    "contact": "This page is product guidance, not legal advice. Final launch needs reviewed legal text."
+  },
+  "terms": {
+    "pageTitle": "Terms of Use",
+    "intro": "This app is a coaching prototype, not medical, mental-health, legal, or financial advice.",
+    "use": "Use the coaching responses as reflection prompts and action planning support.",
+    "limits": "Do not rely on the app for distress or crisis situations. In those cases, seek human support outside the app.",
+    "data": "Do not enter information you are not comfortable storing locally in this browser during prototype testing."
+  },
+  "errors": {
+    "notFoundTitle": "This page is not here",
+    "notFoundBody": "The path may be wrong, or this part of the app has not been built yet.",
+    "backHome": "Back home",
+    "runtimeEyebrow": "Something broke",
+    "runtimeTitle": "The app hit a runtime error",
+    "runtimeBody": "Try again. If it repeats, restart the dev server so Next clears stale chunks.",
+    "tryAgain": "Try again"
+  },
+  "morningRitual": {
+    "nav": "Morning Ritual",
+    "pageTitle": "Morning Ritual",
+    "start": {
+      "eyebrow": "Morning ritual",
+      "title": "How do you want to arrive today?",
+      "subtitle": "Take a few guided minutes before the day starts pulling at you.",
+      "roleExplanation": "Opens the day with emotional state, identity, and one mission.",
+      "startButton": "Begin morning ritual",
+      "quickButton": "Quick reset (3 min)",
+      "startMode": "Start",
+      "advancedOptions": "Advanced options",
+      "streak": "Day streak",
+      "completed": "Rituals completed",
+      "lastMission": "Last daily mission",
+      "previewTitle": "What the standard ritual includes",
+      "previewBody": "Each step takes 2–5 minutes. You can skip any step if it doesn't fit.",
+      "previewBreathing": "Focused breathing",
+      "previewGratitude": "Gratitude",
+      "previewAffirmation": "Affirmation",
+      "previewMission": "Daily mission"
+    },
+    "yesterday": {
+      "restartGentlyTitle": "Yesterday was hard — today we restart gently",
+      "restartGentlyBody": "No performance push. One small step to get back on track.",
+      "stats": "Yesterday: {completed} done, {skips} skipped, out of {total} steps",
+      "blocker": "What got in the way: {blocker}",
+      "modeHintRestartGently": "After a day with skips — quick and calm mode fits best. No high-performance pressure.",
+      "modeHintHighPerformance": "You had momentum yesterday — standard or deep mode can build on it.",
+      "missionGentleHint": "Pick one small task you can finish in 10 minutes — not catching up on everything you missed."
+    },
+    "goalFocus": {
+      "eyebrow": "Daily focus from your goal",
+      "oneActionBeforeNoise": {
+        "title": "One action before the noise starts",
+        "body": "This morning — one small step before email and distractions. Tied to: {microGoal}"
+      },
+      "shortSoftStart": {
+        "title": "Short, soft start",
+        "body": "No performance pressure. One tiny task you can finish — {microGoal}"
+      },
+      "stabilityNotHype": {
+        "title": "Stability, not hype",
+        "body": "One small step that builds control — nothing to prove today. {microGoal}"
+      }
+    },
+    "mode": {
+      "title": "Choose the rhythm that fits this morning",
+      "bestForLabel": "Best for",
+      "stepCount": "{count} steps",
+      "suggested": "Recommended",
+      "quick": "Quick",
+      "quickDesc": "A short reset for busy mornings.",
+      "quickIncludes": "Short breathing, one gratitude, identity declaration, one mission",
+      "quickBestFor": "Busy mornings, tough days, or when you only need a quick reset",
+      "standard": "Full",
+      "standardDesc": "A balanced guided start.",
+      "standardIncludes": "Breathing, 3 gratitudes, affirmation, short visualization, daily mission",
+      "standardBestFor": "Daily routine — when you have a few minutes for a balanced start",
+      "deep": "Deep",
+      "deepDesc": "A longer reset with more space.",
+      "deepIncludes": "Long breathing, detailed gratitude, audio/YouTube, full visualization, identity, missions, commitment",
+      "deepBestFor": "Important days, weekends, or when you want deep space before work",
+      "minutes": "min"
+    },
+    "breathing": {
+      "title": "Breathing",
+      "subtitle": "Get out of passive mode and activate your body.",
+      "inhale": "Inhale",
+      "hold": "Hold",
+      "exhale": "Exhale",
+      "start": "Start",
+      "skip": "Skip",
+      "done": "Done",
+      "ready": "Ready",
+      "default": "Default",
+      "energy": "Energy",
+      "calm": "Calm",
+      "round": "Round {current} of {total}",
+      "guidance": {
+        "prepare": "Stand up if you can. Plant your feet. Change the body first.",
+        "inhale1": "Fill your chest. Take up space.",
+        "inhale2": "Breathe in strength. You are waking up.",
+        "inhale3": "Pull in power. This is your morning.",
+        "hold1": "Hold. Feel the energy build.",
+        "hold2": "Stay right here. You are in control.",
+        "hold3": "This pause is power.",
+        "exhale1": "Let go of everything you don't need.",
+        "exhale2": "Release. The old state leaves now.",
+        "exhale3": "Exhale the noise. Keep the signal.",
+        "complete": "Your body is awake. Now your mind."
+      }
+    },
+    "gratitude": {
+      "eyebrow": "Gratitude",
+      "title": "Gratitude",
+      "subtitle": "Close your eyes, imagine you are right there in the front seat, and feel it in your body.",
+      "question": "What can you feel grateful for right now?",
+      "hint": "Sensory triggers",
+      "entryLabel": "Moment {index}",
+      "activePrompt": "Stay with this one until it feels real in your body.",
+      "inactivePrompt": "The next moments can wait a little.",
+      "promptSupport": "Use one trigger at a time. Let it bring back a real place, a real breath, or a real sensation before you keep writing.",
+      "timerLabel": "Minute {current} of {total}",
+      "timerSeconds": "{seconds}s with this moment",
+      "voiceButton": "Record gratitude note",
+      "voiceListening": "Listening. Say it as if you are there again.",
+      "voiceHelp": "You can speak this out loud instead of typing if that helps you stay with the feeling.",
+      "voiceUnsupported": "Voice capture is not available in this browser.",
+      "voiceError": "The voice capture stopped. Try again when you're ready.",
+      "ctaContinue": "Feel it in your body and continue",
+      "ctaFinish": "I feel it. Keep going",
+      "ctaBackEntry": "Back to the previous moment",
+      "integrationMessage": "Your nervous system is being wired for success today.",
+      "integrationEyebrow": "Neural wiring",
+      "prep": {
+        "eyebrow": "Body first",
+        "title": "Wake the body before you write.",
+        "subtitle": "Use rhythmic fire breaths for a short burst of energy so gratitude lands in your body, not only in your thoughts.",
+        "timer": "{seconds}s of fire breathing",
+        "pulseIn": "Breath in",
+        "pulseOut": "Breath out",
+        "fireBreath": "Fire breath",
+        "skip": "I'm ready to write"
+      }
+    },
+    "affirmation": {
+      "title": "Your message for today",
+      "subtitle": "Let this land in your body so it becomes a state, not just a sentence.",
+      "modeText": "Text",
+      "modeVideo": "Guided audio",
+      "readAloud": "Stand tall, take a deep breath, and say this out loud 3 times with all your energy.",
+      "focusMode": "Focus mode",
+      "focusClose": "Return to the ritual",
+      "mediaSupport": "Stay with one voice and one message. Let the audio guide your state without leaving the ritual.",
+      "filterLabel": "Choose what you need right now",
+      "activeFilter": "Showing a message tuned to {tag}. Tap the tag again or clear the filter to widen the mix.",
+      "clearFilter": "Clear filter",
+      "anotherFiltered": "Give me another for this need",
+      "noFilteredAffirmations": "No affirmations for {tag} yet. Try another filter or add one.",
+      "noVideoYet": "No guided audio sessions yet. Add your first one!",
+      "addVideo": "Add guided audio",
+      "another": "Give me another",
+      "manage": "Manage affirmations",
+      "addNew": "Add new affirmation",
+      "type": "Type",
+      "text": "Text",
+      "youtube": "YouTube",
+      "titleField": "Title",
+      "content": "Content",
+      "youtubeUrl": "YouTube URL",
+      "tags": "Tags",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "noAffirmations": "No affirmations yet. Add your first one!"
+    },
+    "visualization": {
+      "title": "Visualization",
+      "subtitle": "See yourself finishing this day with pride. What happened?",
+      "question": "Today will be a success if...",
+      "placeholder": "Today will be a success if I finish the check-in screens and don't escape to scrolling during work.",
+      "guidedButton": "Guided visualization",
+      "personalizedHint": "Tailored to your value and weekly goal from clarification",
+      "guided": {
+        "step1": "See yourself at the end of the day.",
+        "step2": "You are calm.",
+        "step3": "You did the important thing.",
+        "step4": "You didn't run.",
+        "step5": "You held your standard.",
+        "step6": "How does that feel?"
+      }
+    },
+    "identity": {
+      "title": "Identity Declaration",
+      "subtitle": "Connect this day to identity, not just tasks.",
+      "question": "What kind of person do you choose to be today?",
+      "declaration": "Today I act as a person who...",
+      "placeholder": "...doesn't negotiate with distractions.",
+      "addNew": "Add new identity",
+      "defaultIdentities": {
+        "finisher": "I am a person who finishes things.",
+        "calm_pressure": "I am a person who stays calm under pressure.",
+        "acts_anyway": "I am a person who acts even when I don't feel like it.",
+        "depth_over_escape": "I am a person who chooses depth over escape."
+      }
+    },
+    "mission": {
+      "title": "Daily Mission",
+      "subtitle": "Leave this ritual with one clear action.",
+      "question": "What is the one thing that if you do today — this day moves forward?",
+      "placeholder": "My main mission today is...",
+      "placeholderGentleRestart": "One small step I can do today — without beating myself up…",
+      "placeholderHighPerformance": "The one move that carries yesterday's momentum forward…",
+      "placeholderOneActionBeforeNoise": "Before email — one small step (10 min) tied to my weekly goal…",
+      "placeholderShortSoftStart": "One tiny task I can finish in 10 minutes — no pressure…",
+      "placeholderStabilityNotHype": "One small step for stability today — progress, not proving myself…",
+      "timeBlock": "Time block (optional)",
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening",
+      "now": "Now",
+      "finish": "Complete Ritual",
+      "calibrationTitle": "Calibrate for today",
+      "calibrationHint": "Energy and focus — so your coach adapts today's steps to how you feel."
+    },
+    "complete": {
+      "title": "You're grounded for the day.",
+      "gratitude": "Grateful for",
+      "identity": "Today's identity",
+      "mission": "Daily mission",
+      "affirmation": "Today's affirmation",
+      "goToDashboard": "Go to Dashboard",
+      "moodAfterLabel": "How did you feel after?"
+    },
+    "common": {
+      "next": "Next",
+      "back": "Back",
+      "skip": "Skip",
+      "done": "Done",
+      "step": "Step {current} of {total}"
+    },
+    "dashboard": {
+      "ritualButton": "Start Morning Ritual",
+      "todayMission": "Today's Mission",
+      "streak": "{count} day streak",
+      "identityOfDay": "Today's identity"
+    },
+    "moodBefore": "How are you feeling right now?",
+    "moodAfter": "How did you feel after the ritual?",
+    "moodLevel1": "Very tired",
+    "moodLevel3": "Not great",
+    "moodLevel5": "OK",
+    "moodLevel7": "Good",
+    "moodLevel9": "Amazing"
+  },
+  "eveningReset": {
+    "nav": "Evening Reset",
+    "pageTitle": "Evening Reset",
+    "start": {
+      "eyebrow": "Evening reset",
+      "title": "Close the day. Open tomorrow.",
+      "subtitle": "A few minutes to clear your head and set yourself up for tomorrow.",
+      "roleExplanation": "Closes the day, spots what worked, and prepares tomorrow.",
+      "notJournal": "Not a journal — a focused close that feeds tomorrow's steps and patterns.",
+      "timeToClose": "5 minutes to close the day",
+      "outcomePromise": "You'll finish with tomorrow's win",
+      "startButton": "Begin evening reset",
+      "startMode": "Start",
+      "advancedOptions": "Advanced options",
+      "streak": "Day streak",
+      "completed": "Resets completed",
+      "previewTitle": "What the standard reset includes",
+      "previewWin": "Biggest win review",
+      "previewCompletion": "Reflection on what helped or blocked",
+      "previewGratitude": "Gratitude",
+      "previewTomorrow": "Tomorrow's one win"
+    },
+    "mode": {
+      "title": "How deep do you want to go tonight?",
+      "outcomeLabel": "You'll leave with",
+      "stepCount": "{count} steps",
+      "suggested": "Recommended",
+      "quick": "Quick",
+      "quickDesc": "Win + tomorrow's focus.",
+      "quickOutcome": "One clear win for tomorrow",
+      "standard": "Standard",
+      "standardDesc": "Reflection, gratitude, and tomorrow's win.",
+      "standardOutcome": "Tomorrow's win and a calm close",
+      "deep": "Deep",
+      "deepDesc": "Full reset — reflection, insight, environment prep, and visualization.",
+      "deepOutcome": "Tomorrow's win, insight, and environment prep",
+      "minutes": "min"
+    },
+    "painFocus": {
+      "eyebrow": "Tailored to your clarification pain point",
+      "workOverload": {
+        "bannerTitle": "An evening of boundaries — not more hours",
+        "bannerBody": "Central struggle: {concern}. Let's notice where the boundary broke today.",
+        "blockerQuestion": "Where did the boundary break today?",
+        "blockerPlaceholder": "Emails after hours, scrolling instead of a break, trouble closing a task...",
+        "aiInsight": "Work load seems heavy. Tomorrow — one small boundary before you start (e.g. no email before breakfast)."
+      },
+      "avoidance": {
+        "bannerTitle": "An evening of one small step — not postponing",
+        "bannerBody": "Central struggle: {concern}. Close the day with what you postponed and what's possible tomorrow.",
+        "tomorrowsQuestion": "What did I postpone today, and what's the smallest step for tomorrow?",
+        "tomorrowsPlaceholder": "I postponed... tomorrow I can just...",
+        "aiInsight": "Avoidance is part of the struggle — not failure. Tomorrow, start with the smallest version of what you postponed (5–10 minutes)."
+      },
+      "selfCriticism": {
+        "bannerTitle": "An evening of enough — not perfect",
+        "bannerBody": "Central struggle: {concern}. Look for what was enough today, even if small.",
+        "winQuestion": "What did you do today that was enough — even if small?",
+        "winPlaceholder": "Today was enough when I...",
+        "aiInsight": "Self-criticism hides what did happen. Tomorrow — put the small first step before the inner critic."
+      },
+      "uncertainty": {
+        "bannerTitle": "An evening of clarity — one question",
+        "bannerBody": "Central struggle: {concern}. Pick one question worth clarifying tomorrow.",
+        "tomorrowsQuestion": "What one question is worth clarifying tomorrow?",
+        "tomorrowsPlaceholder": "Tomorrow I want to clarify...",
+        "aiInsight": "When everything feels unclear — one question beats a full solution. Tomorrow, 10 minutes on just that question."
+      }
+    },
+    "winReview": {
+      "eyebrow": "Win Review",
+      "question": "What was your biggest win today?",
+      "subtitle": "The brain remembers failures. Train it to notice success.",
+      "placeholder": "Today I...",
+      "examplesLabel": "Examples",
+      "example1": "Worked out",
+      "example2": "Played with the kids",
+      "example3": "Didn't scroll on my phone",
+      "subtitleNeutralDay": "Average day? Even a tiny improvement counts. You can also skip."
+    },
+    "completionReview": {
+      "eyebrow": "Completion Review",
+      "title": "What happened with your tasks today?",
+      "successQuestion": "What helped you succeed today?",
+      "successPlaceholder": "The environment was quiet, I started early...",
+      "blockerQuestion": "What stopped you?",
+      "blockerPlaceholder": "I got distracted, energy was low..."
+    },
+    "emotionalDump": {
+      "eyebrow": "Mental Offload",
+      "question": "What's still spinning in your head?",
+      "subtitle": "Write it down to clear your working memory. It doesn't need to make sense.",
+      "placeholder": "The conversation I didn't finish, the thing I keep putting off...",
+      "hint": "Everything out. No editing. No judgment."
+    },
+    "gratitude": {
+      "eyebrow": "Gratitude",
+      "question": "What are you grateful for from today?",
+      "entryLabel": "Moment {index}",
+      "activePlaceholder": "Let it land in your body before you type...",
+      "placeholder": "Something from today...",
+      "category_person": "Person",
+      "category_moment": "Moment",
+      "category_achievement": "Achievement",
+      "category_opportunity": "Opportunity"
+    },
+    "aiInsight": {
+      "eyebrow": "AI Insight",
+      "title": "Here's what I noticed today",
+      "subtitle": "Based on your reflection pattern — not judgment, just signal.",
+      "patternShortTasks": "You tend to complete short tasks. Tomorrow, break the main task into a 25-minute block and start with that.",
+      "patternMixed": "You had a real win today and a real blocker. Both count. Tomorrow, protect the first 30 minutes before anything pulls your attention.",
+      "patternEmotional": "There's a lot on your mind. Writing it down is the first step. Tomorrow, start with the thing you're most avoiding — get it done in the first hour.",
+      "patternPositive": "Strong day. Tomorrow, do the same thing in the first hour that made today work.",
+      "patternDefault": "You showed up today. That matters. Tomorrow's win is already set — now sleep."
+    },
+    "tomorrowsWin": {
+      "eyebrow": "Tomorrow's Win",
+      "question": "If tomorrow counts as a successful day, what has to happen?",
+      "subtitle": "One answer only. Be specific.",
+      "placeholder": "Tomorrow will be a success if I...",
+      "finish": "Complete Reset"
+    },
+    "environmentDesign": {
+      "eyebrow": "Environment Design",
+      "question": "What can you prepare right now?",
+      "subtitle": "Small friction removals tonight = bigger success tomorrow.",
+      "prepSuggestion1": "Workout clothes",
+      "prepSuggestion2": "Work bag",
+      "prepSuggestion3": "Water bottle",
+      "prepSuggestion4": "Task list",
+      "prepSuggestion5": "Diaper bag ready",
+      "prepSuggestion6": "Clothes laid out for morning",
+      "prepSuggestion7": "Application documents ready",
+      "inputPlaceholder": "Something else...",
+      "sleepTargetLabel": "Target sleep time (optional)",
+      "sleepTargetPlaceholder": "e.g. {sleepTime}",
+      "screenOffHint": "Suggestion: {hint}"
+    },
+    "visualization": {
+      "eyebrow": "Future Self",
+      "title": "30 seconds. Eyes closed if you can.",
+      "vizLine1": "Imagine yourself tomorrow evening.",
+      "vizLine2": "The day is behind you.",
+      "vizLine3": "You did the important thing.",
+      "vizLine4": "You didn't run from it.",
+      "vizLine5": "What are you glad you did?",
+      "yourWin": "Your win",
+      "personalizedHint": "Tailored to your value and weekly goal from clarification",
+      "finish": "Complete Reset"
+    },
+    "complete": {
+      "eyebrow": "Evening Complete",
+      "title": "You're set for tomorrow.",
+      "readinessLabel": "Tomorrow Readiness Score",
+      "biggestWin": "Today's win",
+      "tomorrowsWin": "Tomorrow's win",
+      "tomorrowTakeaway": "One sentence for tomorrow",
+      "gratitude": "Grateful for",
+      "prepared": "Prepared tonight",
+      "streakMessage": "{count} day streak",
+      "goToDashboard": "Go to Dashboard"
+    },
+    "common": {
+      "next": "Next",
+      "back": "Back",
+      "skip": "Skip",
+      "done": "Done",
+      "add": "Add",
+      "remove": "Remove",
+      "step": "Step {current} of {total}"
+    },
+    "moodCheck": {
+      "eyebrow": "Mood check",
+      "question": "How was your day?",
+      "subtitle": "One tap — and we tailor the reset for you",
+      "mood1": "Rough",
+      "mood2": "Not great",
+      "mood3": "Okay",
+      "mood4": "Good",
+      "mood5": "Great",
+      "hardDayNote": "That's okay — we'll start somewhere comfortable. No win questions."
+    }
+  },
+  "admin": {
+    "pageTitle": "Admin",
+    "title": "Administration",
+    "subtitle": "Manage all data, content, and app settings in one place.",
+    "securityNotice": "This page is for internal use only. Changes here affect all app data.",
+    "tabs": {
+      "content": "Content",
+      "data": "Data",
+      "logs": "Logs",
+      "settings": "Settings"
+    },
+    "content": {
+      "affirmationsTitle": "Affirmation Manager",
+      "affirmationsDescription": "Add, edit, and remove affirmations used in the morning ritual.",
+      "identitiesTitle": "Identity Manager",
+      "identitiesDescription": "View and manage saved identity declarations.",
+      "addIdentity": "Add identity",
+      "deleteIdentity": "Delete",
+      "noIdentities": "No custom identities saved yet.",
+      "identityPlaceholder": "I am a person who...",
+      "gratitudeTitle": "Gratitude Triggers",
+      "gratitudeDescription": "View the default gratitude triggers. Editing will be available in a future update."
+    },
+    "data": {
+      "title": "Data Management",
+      "storageTitle": "LocalStorage Browser",
+      "storageDescription": "View all data stored on this device.",
+      "storageKey": "Key",
+      "storageSize": "Size",
+      "storageEntries": "{count} entries",
+      "checkinTitle": "Check-in History",
+      "checkinDescription": "View and delete check-in entries.",
+      "exportAll": "Export all data (JSON)",
+      "importData": "Import data (JSON)",
+      "importSuccess": "Data imported successfully.",
+      "importError": "Failed to import data. Check the file format.",
+      "clearStore": "Clear",
+      "clearConfirm": "Are you sure? This will permanently delete all data in {key}.",
+      "noCheckins": "No check-in entries found.",
+      "deleteCheckin": "Delete",
+      "exportCsv": "Export check-ins (CSV)"
+    },
+    "logs": {
+      "title": "Error Logs",
+      "description": "View recent client-side errors logged by the app.",
+      "date": "Date",
+      "type": "Type",
+      "message": "Message",
+      "noLogs": "No logs found for this date.",
+      "refresh": "Refresh",
+      "count": "{count} entries"
+    },
+    "settings": {
+      "title": "App Settings",
+      "description": "Display name and language preferences."
+    }
+  },
+  "expandText": {
+    "expand": "Expand with AI",
+    "expanding": "Expanding...",
+    "error": "Could not expand. Try again.",
+    "contextWhyImportant": "Why this goal is important to the user on a personal and emotional level",
+    "contextWhyNow": "Why this is the right moment in the user's life to pursue this goal",
+    "contextWhatLost": "What the user will lose or miss out on if they do not act on this goal",
+    "contextGoal": "A personal goal the user wants to achieve in the next 90 days"
+  },
+  "goalWizard": {
+    "aiBuildPreviewTitle": "What will the AI build for you?",
+    "aiBuildPreviewSummary": "We'll build a goal, 30/60/90-day milestones, and your first daily steps.",
+    "aiBuildPreviewGoal": "A focused goal with a success metric",
+    "aiBuildPreviewMilestones": "Milestones for 30, 60, and 90 days",
+    "aiBuildPreviewSteps": "First daily steps to get started",
+    "milestonesWhyLabel": "Why milestones",
+    "milestonesWhyExplainer": "Milestones help the AI build a sequence — not suggest random steps."
+  },
+  "domainWizard": {
+    "eyebrow": "Goal Builder",
+    "title": "Build a new goal step by step",
+    "stepProgress": "Step {step} of {total}",
+    "back": "Back",
+    "next": "Next",
+    "step1Title": "Which area do you want to focus on?",
+    "otherCategory": "Other",
+    "otherPlaceholder": "Write your own focus area…",
+    "step2Title": "What is your goal?",
+    "step2Hint": "Be specific. A clear goal is easier to act on.",
+    "inspireMe": "Inspire me with AI",
+    "inspireMilestones": "Inspire milestones with AI",
+    "inspiring": "Inspiring...",
+    "inspireError": "Could not generate inspiration. Write your goal directly.",
+    "goalPlaceholder": "Lose 5 kg without an extreme diet",
+    "goalExamplesLabel": "Examples:",
+    "goalExample1": "Lose 5 kg without an extreme diet",
+    "goalExample2": "Regain control over family evenings",
+    "step3Title": "Where do you want to be in 30, 60, and 90 days?",
+    "day30": "Day 30",
+    "day60": "Day 60",
+    "day90": "Day 90",
+    "optional": "optional",
+    "day30Placeholder": "What does success look like after 1 month?",
+    "day60Placeholder": "What does success look like after 2 months?",
+    "day90Placeholder": "What does success look like after 3 months?",
+    "createWithAi": "Create plan with AI",
+    "generating": "Generating...",
+    "createError": "Could not build your plan. Please try again.",
+    "categories": {
+      "time": {
+        "morning_routine": "Morning Routine",
+        "deep_work": "Deep Work",
+        "priorities": "Priorities",
+        "delegation": "Delegation",
+        "digital_detox": "Digital Detox",
+        "weekly_planning": "Weekly Planning",
+        "procrastination": "Procrastination",
+        "work_life_balance": "Work-Life Balance"
+      },
+      "wealth": {
+        "savings": "Savings",
+        "income_growth": "Income Growth",
+        "debt_reduction": "Debt Reduction",
+        "investment": "Investment",
+        "spending_habits": "Spending Habits",
+        "emergency_fund": "Emergency Fund",
+        "financial_education": "Financial Education"
+      },
+      "career": {
+        "skill_development": "Skill Development",
+        "visibility": "Visibility",
+        "promotion": "Promotion",
+        "side_project": "Side Project",
+        "networking": "Networking",
+        "leadership": "Leadership",
+        "work_quality": "Work Quality"
+      },
+      "relationships": {
+        "partnership": "Partnership",
+        "family_time": "Family Time",
+        "friendships": "Friendships",
+        "communication": "Communication",
+        "conflict_resolution": "Conflict Resolution",
+        "social_life": "Social Life",
+        "boundaries": "Boundaries"
+      },
+      "mind": {
+        "focus": "Focus",
+        "emotional_regulation": "Emotional Regulation",
+        "self_talk": "Self-Talk",
+        "stress_management": "Stress Management",
+        "learning": "Learning",
+        "creativity": "Creativity",
+        "mindfulness": "Mindfulness"
+      },
+      "spirit": {
+        "purpose": "Purpose",
+        "values": "Values",
+        "gratitude": "Gratitude",
+        "spiritual_practice": "Spiritual Practice",
+        "inner_peace": "Inner Peace",
+        "meaning": "Meaning",
+        "community": "Community"
+      },
+      "house_family": {
+        "home_order": "Home Order",
+        "family_routines": "Family Routines",
+        "chores": "Chores",
+        "home_improvement": "Home Improvement",
+        "family_goals": "Family Goals",
+        "environment": "Environment"
+      }
+    }
+  },
+  "gamification": {
+    "streakDays": "{count}d streak",
+    "comebackChain": "Comeback chain ×{count}",
+    "energyMatch": {
+      "smartRecovery": "Smart Recovery — great match for today’s energy",
+      "powerMove": "Power move — you matched high energy with a bold step"
+    },
+    "questTypes": {
+      "focus": "Focus Quest",
+      "courage": "Courage Quest",
+      "recovery": "Recovery Quest",
+      "connection": "Connection Quest"
+    },
+    "finalBoss": {
+      "eyebrow": "Final boss",
+      "title": "{minutes} minutes to close the day"
+    },
+    "reflectionLoot": {
+      "eyebrow": "Loot unlocked",
+      "dismiss": "Nice",
+      "pattern": {
+        "title": "Pattern found",
+        "body": "What blocked you today often shows where the plan needs to bend — not where you failed."
+      },
+      "tomorrowAdvantage": {
+        "title": "Tomorrow’s advantage",
+        "body": "You already moved today. Tomorrow’s first step can be smaller and earlier."
+      },
+      "energyClue": {
+        "title": "Energy clue",
+        "body": "Low energy days call for shorter steps — that’s strategy, not weakness."
+      }
+    },
+    "dailyRollUp": {
+      "eyebrow": "Day closed",
+      "summary": "{count, plural, one {# step} other {# steps}} · {minutes} min",
+      "topDomain": "{domain} moved most ({count})",
+      "titleUnlocked": "Title earned: {title}",
+      "comebackChain": "Comeback chain ×{count} — you returned after a hard day"
+    },
+    "identityTitles": {
+      "builder": "The Builder",
+      "finisher": "The Finisher",
+      "comebackArtist": "The Comeback Artist",
+      "strategist": "The Strategist"
+    },
+    "streakHealth": {
+      "fresh": "Fresh streak",
+      "stable": "Stable streak",
+      "atRisk": "Streak at risk",
+      "protected": "Streak protected"
+    },
+    "domainRivalry": {
+      "leads": "{domain} leads this week",
+      "catchUp": "{domain} needs {gap} step to catch up"
+    },
+    "mysteryUnlock": {
+      "newInsight": "{remaining} more steps to unlock a new insight",
+      "weeklyPattern": "{remaining} more steps to reveal a weekly pattern",
+      "domainTip": "{remaining} more steps to unlock a domain tip"
+    },
+    "progress": {
+      "title": "My Progress",
+      "subtitle": "Everything you've earned, in one place",
+      "viewLink": "View my progress",
+      "empty": "Nothing earned yet — complete a few steps to start collecting.",
+      "sectionTitles": "Titles earned",
+      "sectionUnlocks": "Insights unlocked",
+      "sectionLoot": "Reflection loot collected",
+      "unlockKind": {
+        "mystery_unlock": {
+          "newInsight": "New insight",
+          "weeklyPattern": "Weekly pattern",
+          "domainTip": "Domain tip"
+        }
+      },
+      "countSuffix": "× {count}"
+    }
+  },
+  "behaviorScience": {
+    "implementation": {
+      "sentence": "After I {after}, I will do {action} for {minutes} minutes.",
+      "afterTime": "at {time}",
+      "afterWake": "waking up at {time}",
+      "morningRoutine": "my morning routine",
+      "lunchBreak": "lunch",
+      "eveningWindDown": "winding down in the evening"
+    },
+    "planB": {
+      "line": "If I'm low on energy, time, or quiet — I'll do the 2-minute version.",
+      "lineWithAction": "Plan B ({minutes} min): {action}"
+    },
+    "selfContract": {
+      "title": "Show-up commitment",
+      "sentence": "I commit to {days} days of showing up — not perfection.",
+      "reminder": "Remember: {days} days of showing up for \"{goal}\" — not perfection.",
+      "defaultGoal": "this goal",
+      "daysLabel": "Commitment length (days)",
+      "horizonHint": "This is a short daily show-up sprint — not the same as your 90-day outcome above.",
+      "startLabel": "Start date",
+      "endLabel": "End date",
+      "dayProgress": "Day {current} of {total}",
+      "saveCommitment": "Save commitment",
+      "commitmentEnded": "This commitment period ended — ready to commit again to the same goal?",
+      "renewCommitment": "Commit to {days} more days",
+      "renewedToast": "Commitment renewed — daily steps updated"
+    },
+    "commitmentToday": {
+      "eyebrow": "Today's commitment",
+      "dayProgress": "Day {current} of {total} — daily show-up",
+      "dateRange": "{start} — {end}",
+      "servesGoal": "Today's step serves: {goal}",
+      "noPendingStep": "No pending step for today yet — generate steps.",
+      "stepBadge": "Commitment · day {current}/{total}"
+    },
+    "recoveryProtocol": {
+      "title": "Recovery protocol",
+      "smallestVersion": "What's the smallest version for tomorrow?",
+      "smallestVersionPlaceholder": "e.g. 2 minutes of the first move",
+      "barrierToRemove": "Which barrier can we remove?",
+      "barrierPlaceholder": "e.g. phone on silent before starting",
+      "warningSign": "What will be the early warning sign?",
+      "warningPlaceholder": "e.g. scrolling instead of starting"
+    },
+    "neverMissTwice": {
+      "rule": "Missing once is allowed. Missing twice isn't.",
+      "recoveryHint": "Today: one recovery step only. Show up small.",
+      "recoveryQuest": "Recovery quest",
+      "minutes": "min"
+    },
+    "frictionAudit": {
+      "diagnosis": {
+        "too_big": "This step may be too big or heavy for right now.",
+        "wrong_time": "This step may not be at the right time for your day.",
+        "unclear": "This step may not be clear enough to start."
+      },
+      "shrinkBtn": "Make it smaller for me"
+    },
+    "behaviorScore": {
+      "label": "Show-ups this week",
+      "hint": "Days you showed up — partial counts too."
+    },
+    "weeklyCheckin": {
+      "title": "Accountability check-in",
+      "committed": "What did I commit to?",
+      "happened": "What actually happened?",
+      "changeNext": "What will I change next week?",
+      "committedPlaceholder": "e.g. 3 show-ups in health",
+      "committedProximityPlaceholder": "e.g. moved closer in small steps / still far / started and stopped",
+      "happenedPlaceholder": "e.g. showed up twice, skipped Wednesday",
+      "changeNextPlaceholder": "e.g. smaller steps on busy days",
+      "continue": "Continue to review"
+    },
+    "commitmentLadder": {
+      "title": "Commitment ladder",
+      "day1": "Day 1: one action",
+      "week1": "Week 1: 3 show-ups",
+      "month1": "Month 1: flexible streak",
+      "progress": "{done} / {target} show-ups"
+    },
+    "identity": {
+      "completed": "You're someone who shows up — even when it's not perfect.",
+      "partial": "You did less and still showed up. That's building self-trust.",
+      "comeback": "You came back same day. That's identity in action.",
+      "recovery": "Recovery is part of the path — not the opposite of progress.",
+      "lowEnergyWin": "You showed up on low energy. That's who you're becoming."
+    },
+    "antiShame": {
+      "skip": "Good data. Now we calibrate — not punish.",
+      "partial": "Partial counts. We're tuning the plan, not you."
+    },
+    "earlyWarning": {
+      "title": "At risk",
+      "body": "Two quiet days or low energy with lots pending. Today: one 2-minute step.",
+      "cta": "Start 2-minute step"
+    },
+    "closure": {
+      "title": "End of day",
+      "closed": "Closed today",
+      "open": "Still open",
+      "firstTomorrow": "First step tomorrow: {step}"
+    },
+    "lifeContextMode": {
+      "title": "Not a normal day?",
+      "body": "We'll adapt your coaching — fewer steps, more recovery, and gentler goals."
+    },
+    "social": {
+      "shareWeekly": "Share weekly update",
+      "copied": "Weekly update copied",
+      "shared": "Shared"
+    }
+  },
+  "featureDiscovery": {
+    "new": "New"
+  },
+  "featureHints": {
+    "dismiss": "Got it",
+    "checkin": "A quick pulse on energy and focus — takes about a minute.",
+    "morning_ritual": "Opens the day with emotional state, identity, and one mission — before the day runs you.",
+    "evening_reset": "Closes the day, spots what worked, and prepares tomorrow — not a journal, a close that feeds your steps.",
+    "weekly_review": "Once a week, see patterns in your steps and adjust the plan.",
+    "formulation": "Structured clarification to turn a fuzzy goal into something concrete."
+  },
+  "featureUnlock": {
+    "checkin": "Daily Check-In",
+    "life_coach": "Life Coach",
+    "morning_ritual": "Morning Ritual",
+    "multi_domain": "All Life Domains",
+    "formulation": "Deep Clarification",
+    "unlocksInOneDay": "Unlocks tomorrow",
+    "unlocksInDays": "Unlocks in {days} days",
+    "hint": "Keep going — this unlocks as you build your habit."
+  },
+  "home": {
+    "momentumScore": "Momentum",
+    "streakDays": "{count}d streak",
+    "compact": {
+      "weekLine": "{done}/{total} steps this week",
+      "weekProgress": "Week: {done}/{target}",
+      "allDoneToday": "Done for today",
+      "viewGoal": "Active goal",
+      "viewDomains": "Domains"
+    },
+    "more": {
+      "toggle": "Details & progress",
+      "hint": "Weekly challenge, domains, insights, badges — when you want to look back"
+    },
+    "dailyQuestEyebrow": "Daily Quest",
+    "dailyQuestTitle": "Clear today's quest",
+    "dailyQuestProgress": "Quest {current}/{total}",
+    "dailyStepsEyebrow": "Today's steps",
+    "dailyStepsTitle": "Your next step",
+    "coachMessageEyebrow": "Your coach today",
+    "dailyStepsProgress": "Step {current}/{total}",
+    "dayMode": {
+      "light": "Light day",
+      "execution": "Execution day",
+      "recovery": "Recovery day"
+    },
+    "weeklyMinutesInvested": "{minutes} min invested this week",
+    "nextAction": {
+      "markStep": "Now: mark a step done",
+      "generateSteps": "Now: create today's steps",
+      "setGoal": "Now: set your first goal",
+      "backDashboard": "Now: back to dashboard"
+    },
+    "weeklyChallengeEyebrow": "Weekly Challenge",
+    "weeklyChallengeTitle": "Beat {target} steps this week",
+    "weeklyChallengeComplete": "Weekly challenge complete",
+    "weeklyChallengeBody": "{done}/{target} steps completed. Keep the run alive.",
+    "weeklyChallengeEmpty": "Generate today's plan to start this week's challenge.",
+    "weeklyChallengeProgress": "Goal",
+    "microRewardStep": "+10 momentum — step completed",
+    "celebrationEyebrow": "Win moment",
+    "celebrations": {
+      "firstStep": {
+        "title": "You moved today.",
+        "body": "One real action is enough to keep the identity alive."
+      },
+      "allDone": {
+        "title": "Clean sweep.",
+        "body": "Every planned step is closed. Let that land before you rush forward."
+      },
+      "weeklyChallenge": {
+        "title": "Weekly challenge cleared.",
+        "body": "You hit the week target. The system is starting to trust your consistency."
+      },
+      "multiGoal": {
+        "title": "Multiple arenas active.",
+        "body": "You are building momentum across more than one life area."
+      }
+    },
+    "personalBestsTitle": "Personal bests",
+    "personalBests": {
+      "bestMomentum": "Best momentum",
+      "bestWeek": "This week",
+      "bestRitual": "Ritual streak",
+      "strongestDomain": "Strongest area",
+      "points": "points",
+      "steps": "steps",
+      "days": "days",
+      "score": "{score}/10 score",
+      "activeGoals": "active goals"
+    },
+    "momentumLevels": {
+      "starter": "Starter",
+      "building": "Building",
+      "lockedIn": "Locked in",
+      "unstoppable": "Unstoppable"
+    },
+    "badgesTitle": "Badges",
+    "badgesSubtitle": "{done}/{total} unlocked",
+    "nextBadge": "Next",
+    "lockedBadge": "Locked",
+    "badges": {
+      "firstStep": {
+        "title": "First Step",
+        "body": "Complete one daily action."
+      },
+      "weekBuilder": {
+        "title": "Week Builder",
+        "body": "Finish 4 steps this week."
+      },
+      "ritualSpark": {
+        "title": "Ritual Spark",
+        "body": "Keep a 3-day ritual streak."
+      },
+      "goalSetter": {
+        "title": "Goal Setter",
+        "body": "Create one active goal."
+      },
+      "multiDomain": {
+        "title": "Multi-Domain",
+        "body": "Activate two life areas."
+      },
+      "comeback": {
+        "title": "Comeback",
+        "body": "Recover after a hard day."
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "How it works",
+      "title": "How does it work?",
+      "collapsedLabel": "How does it work? · morning ritual → steps → wrap-up",
+      "collapse": "Collapse",
+      "steps": {
+        "checkin": {
+          "title": "Check-in",
+          "body": "A quick pulse — your energy and mood shape today's steps."
+        },
+        "steps": {
+          "title": "Tailored steps",
+          "body": "AI turns that into small daily actions."
+        },
+        "learn": {
+          "title": "Summarize & learn",
+          "body": "Evening reset — close the day, spot what worked, prepare tomorrow."
+        }
+      }
+    },
+    "nowAction": {
+      "eyebrow": "Your recommended step right now",
+      "whyLabel": "Why this fits you today",
+      "reasons": {
+        "morningRitual": "You haven't started your morning routine yet — this is the highest-impact move right now.",
+        "dailyStep": "You have a pending step — this is the highest-leverage move right now.",
+        "dailyFocus": "Your morning mission and daily focus are clear — turn them into one doable step now.",
+        "dailyFocusLinked": "Your morning mission is already linked to a daily step — open that move now.",
+        "dailyStepEvening": "Close one step before your evening reset.",
+        "eveningReset": "Steps are done — a short evening reset clears the day and sets up tomorrow.",
+        "eveningPending": "Before sleep: evening reset creates a clean handoff to tomorrow.",
+        "generateSteps": "No plan for today yet — generate tailored steps before you start.",
+        "setGoal": "Without an active goal there is no clear next move — start with one small direction.",
+        "allDoneEvening": "Everything is closed for today. Evening reset captures what you learned.",
+        "allDoneDay": "Steps are done — keep momentum or close with evening reset."
+      },
+      "cta": {
+        "morningRitual": "Start morning ritual",
+        "dailyStep": "Mark complete",
+        "dailyFocus": "Turn into today’s step",
+        "eveningReset": "Start evening reset",
+        "generateSteps": "Generate today's steps",
+        "setGoal": "Set a goal",
+        "viewSteps": "View goals",
+        "adaptDay": "Adapt for today"
+      },
+      "cards": {
+        "morningRitual": {
+          "title": "Short morning ritual",
+          "status": "You haven't started your day with intention yet.",
+          "meta": "10 minutes · breath, focus, and direction for the day"
+        },
+        "eveningReset": {
+          "title": "Short evening reset",
+          "meta": "5 minutes · close the day, learn, and prepare tomorrow"
+        },
+        "generateSteps": {
+          "title": "Your plan for today",
+          "meta": "Small steps tailored to how you feel today"
+        },
+        "setGoal": {
+          "title": "One direction to start from",
+          "meta": "A small goal you can act on today"
+        }
+      },
+      "dailyFocusEyebrow": "Connected to the focus you set today",
+      "softProgress": "This week you showed up {done}/{total} times — that counts."
+    },
+    "softProgress": {
+      "eyebrow": "What improved this week",
+      "title": "Progress is not only streaks.",
+      "consistencyLabel": "Consistency",
+      "consistencyValue": "You returned to your steps {count} times.",
+      "energyLabel": "Hard days",
+      "energyValue": "You still completed {count} step(s) on low-energy days.",
+      "energyFallback": "No low-energy win logged yet — the 2-minute option is there when needed.",
+      "depthLabel": "Depth",
+      "depthValue": "You touched {count} life areas.",
+      "minutesValue": "{minutes} minutes invested in yourself."
+    },
+    "domainAttention": {
+      "eyebrow": "Life area attention",
+      "title": "Where your week is going",
+      "titleWithDomain": "This week leaned toward {domain}",
+      "stepsDone": "{count} completed step(s)",
+      "noSteps": "No steps completed yet",
+      "neglectedHint": "{domain} has an active goal but no completed step this week. A tiny action there would rebalance the week.",
+      "cta": "Pick a small step"
+    },
+    "recommendedPath": {
+      "title": "Your next step for today",
+      "nowPrefer": "Right now, {tool} works best",
+      "tools": {
+        "checkin": "check-in",
+        "dailyStep": "daily step",
+        "evening": "evening reset"
+      },
+      "reasons": {
+        "lowEnergyCheckin": "Low energy — a quick check-in adapts your next step."
+      }
+    },
+    "primaryActionLabel": "Most important action right now",
+    "primaryActionStart": "Start now",
+    "primaryActionAllDone": "All done today!",
+    "primaryActionAllDoneBody": "Every step completed. Come back tomorrow.",
+    "primaryActionEmpty": "No steps planned for today",
+    "primaryActionEmptyHint": "Generate your personalised plan for today in one tap.",
+    "primaryActionGenerateCta": "Generate today's plan",
+    "primaryActionNoGoals": "Ready to set your first goal?",
+    "primaryActionNoGoalsHint": "Define a goal and the AI will turn it into daily baby steps.",
+    "primaryActionGoalCta": "Set first goal →",
+    "viewAllSteps": "View all steps",
+    "goalProgressLabel": "Active goal",
+    "goalDoneSteps": "{done}/{total} steps done",
+    "goalDaysLeft": "{days} days left",
+    "kpiStreak": "Streak",
+    "kpiDoneWeek": "This week",
+    "kpiCompletionRate": "Completion",
+    "kpiGoalAligned": "Goal-linked",
+    "kpiBarrierTouched": "Barrier hits",
+    "kpiEnergyTrend": "Energy",
+    "toolsWhenTitle": "More tools",
+    "toolsMorning": "Morning ritual",
+    "toolsMorningWhen": "Before you start",
+    "toolsEvening": "Evening reset",
+    "toolsEveningWhen": "For closing & learning",
+    "toolsCheckin": "Check-In",
+    "toolsCheckinWhen": "When you need direction",
+    "toolsCoach": "Life Coach",
+    "toolsCoachWhen": "For goal planning",
+    "toolsDone": "Done ✓",
+    "toolsPending": "Pending",
+    "toolsGoalCount": "{count} goals"
+  },
+  "schedule": {
+    "stepSuggestedTime": "Suggested at {time}",
+    "stepSuggestedFromWake": "First step suggested from {wakeTime}",
+    "dashboard": {
+      "greeting": {
+        "preWake": "Almost morning, {name}.",
+        "morning": "Good morning, {name}.",
+        "afternoon": "Welcome back, {name}.",
+        "evening": "Good evening, {name}.",
+        "night": "Good night, {name}."
+      },
+      "subtitle": {
+        "beforeWake": "Your first step is suggested from {wakeTime} — until then, prepare calmly.",
+        "preWake": "Your day has not started on your schedule yet — a good moment to prepare.",
+        "morning": "Your morning — start with one clear step before the day runs away.",
+        "afternoon": "Midday — there is still room for a small step that moves you forward.",
+        "evening": "Before sleep — a light closing step or prep for tomorrow.",
+        "night": "Past your bedtime — rest or wind down only, no pressure."
+      }
+    },
+    "toolsBar": {
+      "tomorrowAt": "Tomorrow at {wakeTime} — your steps will be waiting.",
+      "nightRest": "Rest time now. No pressure to perform.",
+      "eveningOptional": "Want a short evening reset? →",
+      "eveningBadge": "Suggested now"
+    },
+    "evening": {
+      "suggestLateSleep": "Long day — a quick evening reset (3 min) is recommended."
+    },
+    "actionWindow": {
+      "recommended": "Recommended",
+      "shortDay": "Short day between wake and sleep — we'll suggest smaller steps.",
+      "applySuggested": "Apply suggested window: {window}"
+    },
+    "stepsPlannedFrom": "{count} steps planned from {wakeTime}",
+    "reminders": {
+      "title": "Reminders on your schedule",
+      "help": "Times are derived from your wake and sleep settings — no manual pick needed.",
+      "morningLabel": "Morning reminder — daily steps",
+      "eveningLabel": "Evening reminder — wind-down before sleep",
+      "morningTime": "At {time} (wake + 15 min)",
+      "eveningTime": "At {time} (sleep − 45 min)",
+      "enable": "Enable reminders",
+      "enabled": "Reminders enabled on this device.",
+      "denied": "Notifications are blocked in this browser.",
+      "unsupported": "This browser does not support notifications.",
+      "note": "Sent only while the app is open on this device.",
+      "morningNotificationTitle": "Your steps are ready",
+      "morningNotificationBody": "Take 5 minutes for your first step today.",
+      "eveningNotificationTitle": "Evening reset",
+      "eveningNotificationBody": "A few minutes before sleep — time to close the day calmly."
+    }
+  },
+  "lifeContext": {
+    "chipLabel": "Tailored for: {context}",
+    "chipTooltip": "Content and suggestions adapt to the life context you chose in settings",
+    "recommended": "Recommended for you",
+    "dashboard": {
+      "combined": "{context} — {schedule}",
+      "subtitle": {
+        "student": "Between studies and life — room for one clear step today.",
+        "new_parent": "Short day? A small step still counts.",
+        "manager": "Between meetings — what is the smallest step possible today?",
+        "caregiver": "Even when the load is high — a small step for yourself still matters.",
+        "between_jobs": "In transition — stability in small steps beats pressure.",
+        "other": "Start with the next step that fits you now — no speech needed.",
+        "multi": "With several contexts at once ({contexts}) — one small step still matters.",
+        "combo": {
+          "studentNewParent": "Between studies and new parenthood — one small step is enough today.",
+          "newParentCaregiver": "Between parenting and caregiving — a small step for yourself still counts.",
+          "managerCaregiver": "Between management and caregiving — what is the smallest step today?",
+          "studentManager": "Between studies and management — one clear step beats pressure."
+        }
+      }
+    },
+    "checkin": {
+      "placeholder": {
+        "student": "Your one move today — a task, study block, or short break…",
+        "new_parent": "Your one move today — small, doable, even with fragmented sleep…",
+        "manager": "Your one move today — between meetings, what matters most now?",
+        "caregiver": "Your one move today — something small for yourself, even when the load is high…",
+        "between_jobs": "Your one move today — a small step toward stability in transition…",
+        "other": "Your one move for today…",
+        "multi": "Your one move today — small, clear, doable…",
+        "combo": {
+          "studentNewParent": "Your one move today — small enough for both studies and parenting…",
+          "newParentCaregiver": "Your one move today — something small for yourself between care roles…",
+          "managerCaregiver": "Your one move today — what is most urgent between work and caregiving?",
+          "studentManager": "Your one move today — one clear step between studies and work…"
+        }
+      },
+      "starter": {
+        "student": {
+          "1": "I will finish the task on…",
+          "2": "I will study 25 minutes on…",
+          "3": "I will prepare for…"
+        },
+        "new_parent": {
+          "1": "I will take 10 minutes for myself on…",
+          "2": "I will sort out something small on…",
+          "3": "I will ask for help with…"
+        },
+        "manager": {
+          "1": "I will close the topic on…",
+          "2": "I will prep the meeting on…",
+          "3": "I will set a boundary on…"
+        },
+        "caregiver": {
+          "1": "I will care for myself on…",
+          "2": "I will sort out something small on…",
+          "3": "I will ask for support on…"
+        },
+        "between_jobs": {
+          "1": "I will send an application to…",
+          "2": "I will practice for…",
+          "3": "I will move forward on…"
+        },
+        "other": {
+          "1": "I will finish…",
+          "2": "I will start working on…",
+          "3": "I will reach out to…"
+        },
+        "combo": {
+          "studentNewParent": {
+            "1": "I will finish something small in studies…",
+            "2": "I will take 10 minutes for myself…",
+            "3": "I will sort something at home…"
+          },
+          "newParentCaregiver": {
+            "1": "I will take a moment for myself on…",
+            "2": "I will ask for help with…",
+            "3": "I will sort out something small…"
+          },
+          "managerCaregiver": {
+            "1": "I will close one topic on…",
+            "2": "I will care for myself on…",
+            "3": "I will cancel something non-urgent on…"
+          },
+          "studentManager": {
+            "1": "I will finish a task on…",
+            "2": "I will prep for a meeting on…",
+            "3": "I will study 20 minutes on…"
+          }
+        }
+      }
+    },
+    "onboarding": {
+      "step2": {
+        "student": "Your lowest score is in {domain}. As a student, study pressure often flares there.",
+        "new_parent": "Your lowest score is in {domain}. As a new parent, sleep and energy often feel urgent.",
+        "newParentHealth": "As a new parent, sleep and energy often flare — worth checking health (your lowest: {domain}).",
+        "studentMind": "As a student, academic pressure often hits the mind — mind domain flagged (lowest: {domain}).",
+        "betweenJobsCareer": "In a job transition, career often feels most urgent (lowest: {domain}).",
+        "managerTime": "As a manager, time and boundaries often flare — check the time domain (lowest: {domain}).",
+        "caregiverRelations": "As a caregiver, relationships and emotional load often flare (lowest: {domain}).",
+        "manager": "Your lowest score is in {domain}. As a manager, overload and time often feel urgent.",
+        "caregiver": "Your lowest score is in {domain}. As a caregiver, load and responsibility often flare there.",
+        "between_jobs": "Your lowest score is in {domain}. In transition, stability and identity often feel urgent.",
+        "other": "Your lowest score is in {domain}. That is often where the biggest lever lives.",
+        "multi": "With several contexts at once, {domain} often feels most urgent — worth starting there.",
+        "combo": {
+          "studentNewParent": "Between studies and new parenthood, {domain} often flares — worth starting there.",
+          "newParentCaregiver": "Between parenting and caregiving, {domain} often feels most urgent.",
+          "managerCaregiver": "Between management and caregiving, {domain} often needs attention first.",
+          "studentManager": "Between studies and management, {domain} often feels most pressured."
+        }
+      }
+    },
+    "reflection": {
+      "hint": {
+        "student": "Maybe it was a heavy study day? That is okay — not every day looks the same.",
+        "new_parent": "It is perfectly fine if you could not finish — some days simply do not allow it.",
+        "manager": "Meeting-heavy day? A smaller step tomorrow beats pressure today.",
+        "caregiver": "Maybe you simply could not leave home? That is completely understandable.",
+        "between_jobs": "In a transition like this, missed steps are part of the picture — not failure.",
+        "other": "Hard days happen. What matters is not giving up on yourself entirely.",
+        "multi": "With several contexts at once, hard days are expected — not failure.",
+        "combo": {
+          "studentNewParent": "Between studies and parenting — not every day allows progress. That is okay.",
+          "newParentCaregiver": "Between parenting and caregiving — sometimes there is simply no room. That is understandable.",
+          "managerCaregiver": "Between management and caregiving — a packed day is not a sign of failure.",
+          "studentManager": "Between studies and work — not every day is equal. Continue tomorrow."
+        }
+      }
+    },
+    "assessment": {
+      "starter": {
+        "current": {
+          "student": "I struggle to focus because of study pressure",
+          "newParent": "I am tired all the time and cannot rest",
+          "manager": "Days fly by and I have no time for myself",
+          "caregiver": "I have no personal space because of caregiving load",
+          "betweenJobs": "I feel uncertainty and financial pressure"
+        },
+        "desired": {
+          "student": "I want more clarity and less pressure around studies",
+          "newParent": "I want a bit more energy and moments for myself",
+          "manager": "I want clearer boundaries and less burnout",
+          "caregiver": "I want to care for myself while caring for others",
+          "betweenJobs": "I want stability and a clearer direction forward"
+        },
+        "combo": {
+          "studentNewParent": {
+            "current": "I struggle to balance studies with new parenthood",
+            "desired": "I want a bit more balance between studies, work, and family"
+          },
+          "newParentCaregiver": {
+            "current": "I have no space between parenting and caring for others",
+            "desired": "I want to care for myself even when the load is doubled"
+          },
+          "managerCaregiver": {
+            "current": "My days are too packed between work and caregiving",
+            "desired": "I want boundaries and less burnout across both roles"
+          },
+          "studentManager": {
+            "current": "I struggle to balance studies with management and work",
+            "desired": "I want more clarity and less pressure in both worlds"
+          }
+        }
+      }
+    },
+    "evening": {
+      "winReview": {
+        "question": {
+          "student": "What did you succeed at in studies or a project today — even if small?",
+          "new_parent": "What small win happened today — even on a short day?",
+          "manager": "What did you close today without continuing to work?",
+          "caregiver": "When did you care for yourself today, even briefly?",
+          "between_jobs": "What did you do today that felt like a step forward, not just survival?",
+          "other": "What was your biggest win today?",
+          "multi": "What small win happened today — across your roles?",
+          "combo": {
+            "studentNewParent": "What small win happened today between studies and parenting?",
+            "newParentCaregiver": "When did you care for yourself today between care roles?",
+            "managerCaregiver": "What did you close today without dragging more load into the evening?",
+            "studentManager": "What did you close today between studies and work?"
+          }
+        },
+        "placeholder": {
+          "student": "Today I succeeded in studies when…",
+          "new_parent": "Today I succeeded as a new parent when…",
+          "manager": "Today I closed at work…",
+          "caregiver": "Today I cared for myself when…",
+          "between_jobs": "Today I moved forward in transition when…",
+          "other": "Today I…",
+          "multi": "Today I succeeded when…",
+          "combo": {
+            "studentNewParent": "Today I succeeded when…",
+            "newParentCaregiver": "Today I cared for myself when…",
+            "managerCaregiver": "Today I closed when…",
+            "studentManager": "Today I succeeded when…"
+          }
+        },
+        "examples": {
+          "student": {
+            "1": "Made progress on an assignment",
+            "2": "Studied without procrastinating",
+            "3": "Submitted something on time"
+          },
+          "new_parent": {
+            "1": "Took a moment for myself",
+            "2": "Got ready for the evening",
+            "3": "Asked for help"
+          },
+          "manager": {
+            "1": "Closed an important topic",
+            "2": "Left on time",
+            "3": "Did not work after hours"
+          },
+          "caregiver": {
+            "1": "Drank water on time",
+            "2": "Took a breath before a task",
+            "3": "Asked for support"
+          },
+          "between_jobs": {
+            "1": "Sent an application",
+            "2": "Learned something new",
+            "3": "Organized a forward step"
+          },
+          "other": {
+            "1": "Did a workout",
+            "2": "Played with the kids",
+            "3": "Did not scroll on my phone"
+          }
+        }
+      },
+      "tomorrowsWin": {
+        "question": {
+          "student": "If tomorrow is a good study day, what must happen?",
+          "new_parent": "If tomorrow is a good day as a new parent, what is the one thing that matters?",
+          "manager": "If tomorrow is a good work day, what will you close before evening?",
+          "caregiver": "If tomorrow is a good day, when will you care for yourself?",
+          "between_jobs": "If tomorrow is a step forward in transition, what will it be?",
+          "other": "If tomorrow counts as successful, what must happen?",
+          "multi": "If tomorrow is a good day, what is the one thing that matters?",
+          "combo": {
+            "studentNewParent": "If tomorrow is a good day, what is the one thing between studies and parenting?",
+            "newParentCaregiver": "If tomorrow is a good day, when will you care for yourself?",
+            "managerCaregiver": "If tomorrow is a good day, what will you close before evening?",
+            "studentManager": "If tomorrow is a good day, what is the one thing between studies and work?"
+          }
+        },
+        "placeholder": {
+          "student": "Tomorrow will be a success if I finish…",
+          "new_parent": "Tomorrow will be a success if I take a moment to…",
+          "manager": "Tomorrow will be a success if I close…",
+          "caregiver": "Tomorrow will be a success if I care for myself by…",
+          "between_jobs": "Tomorrow will be a success if I move forward on…",
+          "other": "Tomorrow will be a success if I…",
+          "multi": "Tomorrow will be a success if…",
+          "combo": {
+            "studentNewParent": "Tomorrow will be a success if…",
+            "newParentCaregiver": "Tomorrow will be a success if…",
+            "managerCaregiver": "Tomorrow will be a success if…",
+            "studentManager": "Tomorrow will be a success if…"
+          }
+        }
+      }
+    },
+    "survival": {
+      "trigger": {
+        "student": "Tough study day?",
+        "new_parent": "Hard day with sleep?",
+        "manager": "Overloaded day?",
+        "caregiver": "Heavy care day?",
+        "between_jobs": "Hard day in transition?",
+        "other": "Tough day?",
+        "multi": "Tough day?",
+        "combo": {
+          "studentNewParent": "Hard day between studies and parenting?",
+          "newParentCaregiver": "Hard day between parenting and caregiving?",
+          "managerCaregiver": "Packed day between work and caregiving?",
+          "studentManager": "Pressured day between studies and work?"
+        }
+      },
+      "title": {
+        "student": "Survival Mode — study day",
+        "new_parent": "Survival Mode — no guilt",
+        "manager": "Survival Mode — packed day",
+        "caregiver": "Survival Mode — heavy day",
+        "between_jobs": "Survival Mode — in transition",
+        "other": "Survival Mode",
+        "multi": "Survival Mode",
+        "combo": {
+          "studentNewParent": "Survival Mode — studies and parenting",
+          "newParentCaregiver": "Survival Mode — parenting and care",
+          "managerCaregiver": "Survival Mode — work and care",
+          "studentManager": "Survival Mode — studies and work"
+        }
+      },
+      "subtitle": {
+        "student": "Exam day or overload? Pick what fits — a 2-minute step or log that it is hard.",
+        "new_parent": "Hard day with sleep? Pick what fits — no guilt.",
+        "manager": "Meeting-heavy day? You do not need everything — pick what fits.",
+        "caregiver": "Care load high? A small step or logging hard — both are fine.",
+        "between_jobs": "In transition, hard days are expected — pick what fits today.",
+        "other": "You do not need to do everything — pick what fits today.",
+        "multi": "With several contexts, hard days are expected — pick what fits.",
+        "combo": {
+          "studentNewParent": "Between studies and parenting — pick what fits, no guilt.",
+          "newParentCaregiver": "Between parenting and caregiving — small step or log hard.",
+          "managerCaregiver": "Between work and caregiving — not everything today.",
+          "studentManager": "Between studies and work — pick what fits today."
+        }
+      }
+    },
+    "ritual": {
+      "morning": {
+        "missionPlaceholder": {
+          "student": "My most important study task today is…",
+          "new_parent": "The one thing that matters today, even if small, is…",
+          "manager": "The one thing I will close between meetings today is…",
+          "caregiver": "The small thing I will care for myself with today is…",
+          "between_jobs": "My most important forward step today is…",
+          "other": "My most important task today is…",
+          "multi": "The one most important thing for me today is…",
+          "combo": {
+            "studentNewParent": "The one most important thing today between studies and parenting…",
+            "newParentCaregiver": "The small thing I will care for myself with today…",
+            "managerCaregiver": "The one thing I will close today…",
+            "studentManager": "The one thing I will close today between studies and work…"
+          }
+        },
+        "gratitudePlaceholders": {
+          "student": {
+            "1": "A moment of clarity in my studies…",
+            "2": "Something I learned that felt worth it…",
+            "3": "A small progress I noticed…"
+          },
+          "new_parent": {
+            "1": "Something small the baby did that made me smile…",
+            "2": "A quiet moment before the evening split…",
+            "3": "A little help I received…"
+          },
+          "manager": {
+            "1": "A small work win I did not postpone…",
+            "2": "A moment I felt in control…",
+            "3": "Something I closed on time…"
+          },
+          "caregiver": {
+            "1": "A moment I cared for myself, even briefly…",
+            "2": "Something that helped me breathe…",
+            "3": "Support I received…"
+          },
+          "between_jobs": {
+            "1": "A small step that moved me forward…",
+            "2": "Something I learned today…",
+            "3": "A moment of stability…"
+          },
+          "other": {
+            "1": "Something small that felt good…",
+            "2": "A moment of calm…",
+            "3": "Something that worked today…"
+          }
+        },
+        "suggest": {
+          "student": "Before studies — quick mode (3 min) often fits best.",
+          "new_parent": "With fragmented sleep — quick mode is recommended.",
+          "manager": "Between meetings — quick mode can be enough.",
+          "caregiver": "With care load — quick and calm mode recommended.",
+          "between_jobs": "In transition — standard or quick, whatever fits today.",
+          "multi": "With several contexts — quick mode often fits best.",
+          "combo": {
+            "studentNewParent": "Between studies and parenting — quick mode (3 min) is recommended.",
+            "newParentCaregiver": "Between parenting and caregiving — quick and calm mode recommended.",
+            "managerCaregiver": "Between management and caregiving — quick mode can be enough.",
+            "studentManager": "Between studies and management — quick mode before a packed day."
+          }
+        }
+      },
+      "evening": {
+        "suggest": {
+          "student": "After a study day — a short evening reset can clear your head.",
+          "new_parent": "Before fragmented sleep — a short reset (3 min) is recommended.",
+          "manager": "After a packed day — a short reset to close the day.",
+          "caregiver": "Before sleep — a short reset to release responsibility.",
+          "between_jobs": "In transition — a short evening reset builds stability.",
+          "multi": "With several contexts — a short reset (3 min) to close the day.",
+          "combo": {
+            "studentNewParent": "After a day of studies and parenting — a short reset is recommended.",
+            "newParentCaregiver": "Between parenting and caregiving — a short reset to release.",
+            "managerCaregiver": "After a packed day — a short reset to close the day.",
+            "studentManager": "After studies and work — a short reset to clear your head."
+          }
+        }
+      }
+    },
+    "noteLabel": "Short note about your context (optional)",
+    "notePlaceholder": "e.g. working from home, caring for an aging parent, final year of studies…",
+    "weeklyReview": {
+      "empty": {
+        "student": "Between exams and projects — even one step in a week like this counts. Review appears when there is enough data.",
+        "new_parent": "Short week? Even one step still counts. Review appears when there is enough data.",
+        "manager": "Packed week? The review helps see what actually moved — not just what was planned.",
+        "caregiver": "Heavy care week? The review shows what worked despite the load.",
+        "between_jobs": "In transition — stability beats pace. Review appears when there is enough data.",
+        "other": "Weekly review appears when there is enough data — start with small steps.",
+        "multi": "With several contexts — the review helps see what actually moved.",
+        "combo": {
+          "studentNewParent": "Between studies and parenting — even one step per week counts.",
+          "newParentCaregiver": "Between parenting and caregiving — review shows what worked despite the load.",
+          "managerCaregiver": "Between work and caregiving — review helps see what actually moved.",
+          "studentManager": "Between studies and work — review shows what succeeded this week."
+        }
+      },
+      "framing": {
+        "student": "What actually moved this week — between studies and life?",
+        "new_parent": "What worked this week — even on a short day?",
+        "manager": "What actually moved — between meetings?",
+        "caregiver": "What worked this week — despite the load?",
+        "between_jobs": "What moved forward this week — in transition?",
+        "other": "Your weekly review",
+        "multi": "What actually moved — across your roles?",
+        "combo": {
+          "studentNewParent": "What worked — between studies and parenting?",
+          "newParentCaregiver": "What worked — between parenting and caregiving?",
+          "managerCaregiver": "What moved — between work and caregiving?",
+          "studentManager": "What worked — between studies and work?"
+        }
+      }
+    },
+    "goalStarter": {
+      "student": {
+        "career": {
+          "1": "Finish the semester without burning out",
+          "2": "Move one project forward each week",
+          "3": "Build a steady study routine"
+        },
+        "mind": {
+          "1": "Less pressure around exams",
+          "2": "More clarity before deadlines",
+          "3": "Sleep better on study nights"
+        },
+        "time": {
+          "1": "Plan the week ahead",
+          "2": "Less procrastination on important tasks",
+          "3": "Protect time for myself"
+        }
+      },
+      "new_parent": {
+        "health": {
+          "1": "Sleep one more hour this week",
+          "2": "Return to more stable energy",
+          "3": "Address fatigue without guilt"
+        },
+        "time": {
+          "1": "Find 10 minutes for myself daily",
+          "2": "Organize evenings with less chaos",
+          "3": "Ask for help when needed"
+        },
+        "relationships": {
+          "1": "Quality time with my partner",
+          "2": "Better communication at home",
+          "3": "Less tension around chores"
+        }
+      },
+      "manager": {
+        "time": {
+          "1": "Leave the office on time twice this week",
+          "2": "Clear boundaries between work and home",
+          "3": "Less work after hours"
+        },
+        "career": {
+          "1": "Close one important project",
+          "2": "Be present in meetings without drifting",
+          "3": "Improve work quality, not just quantity"
+        },
+        "mind": {
+          "1": "Less burnout",
+          "2": "More calm between meetings",
+          "3": "Manage overload without crashing"
+        }
+      },
+      "caregiver": {
+        "mind": {
+          "1": "Care for myself while caring for others",
+          "2": "Less emotional overload",
+          "3": "Moments of real rest"
+        },
+        "relationships": {
+          "1": "Clear boundaries with who I care for",
+          "2": "Ask family for support",
+          "3": "Less tension around responsibility"
+        }
+      },
+      "between_jobs": {
+        "career": {
+          "1": "Find a clearer direction forward",
+          "2": "Send 3 applications this week",
+          "3": "Build a new skill for transition"
+        },
+        "wealth": {
+          "1": "Financial stability in transition",
+          "2": "Control spending during the transition",
+          "3": "A 3-month financial plan"
+        },
+        "mind": {
+          "1": "Less anxiety about the future",
+          "2": "More confidence in transition",
+          "3": "A daily routine that holds me"
+        }
+      }
+    },
+    "settings": {
+      "impactHelp": "Affects: questions, goals, daily steps, check-ins, and rituals.",
+      "savedWithImpact": "Adaptation updated — upcoming suggestions will reflect this.",
+      "regenerateSteps": "Refresh today's steps",
+      "regeneratingSteps": "Refreshing steps…",
+      "stepsRegenerated": "Today's steps were updated.",
+      "stepsRegenerateError": "Could not refresh — try again."
+    }
+  },
+  "survivalMode": {
+    "trigger": "Tough day?",
+    "adaptTrigger": "Adapt for today",
+    "positiveEmergencyLabel": "Positive emergency mode",
+    "positiveExplainer": "When you're out of energy, the app shrinks down — it doesn't punish you.",
+    "title": "Survival Mode",
+    "subtitle": "You don't need to do everything — pick what fits today",
+    "optionEasy": "2-minute step",
+    "optionEasyDesc": "The easiest possible step — just to keep the streak alive",
+    "optionSkip": "Log that it's hard",
+    "optionSkipDesc": "Mark today as hard and move on — no questions asked",
+    "optionPause": "Day off from the app",
+    "optionPauseDesc": "Streak goes on freeze until tomorrow — pick up tomorrow",
+    "confirm": "Choose",
+    "cancel": "Cancel",
+    "doneTitle": "That's perfectly fine.",
+    "doneSkip": "Logged as a hard day. Your streak is frozen until tomorrow.",
+    "donePause": "Day off approved. Streak frozen — continuing tomorrow.",
+    "doneEasy": "Easy step saved. 2 minutes is enough for today.",
+    "close": "Close"
+  },
+  "survivalModeSoft": {
+    "trigger": "Load is high — not today",
+    "title": "Gentle mode — before burnout",
+    "subtitle": "We're shrinking the plan because overload was detected. Pick only what fits.",
+    "positiveExplainer": "No need to prove anything today — we're protecting you, not punishing you.",
+    "optionEasyDesc": "One or two minutes only — enough to not abandon yourself",
+    "optionSkipDesc": "Hard day — mark it and continue tomorrow, without guilt"
+  }
+}

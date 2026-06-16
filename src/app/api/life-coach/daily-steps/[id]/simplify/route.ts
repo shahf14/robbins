@@ -1,0 +1,59 @@
+import {openaiLifeCoachService} from '@/lib/ai-life-coach/openai-life-coach-service';
+import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
+import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
+import {getDailyBabyStepById} from '@/lib/life-coach/repository';
+import {skipRecoverySuggestInputSchema} from '@/lib/life-coach/schemas';
+import {buildSkipRecoveryStep} from '@/lib/life-coach/simplify-step';
+import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import type {AppLocale} from '@/i18n/config';
+
+export async function POST(
+  request: Request,
+  {params}: {params: Promise<{id: string}>}
+) {
+  const current = await requireLifeCoachAccess(request);
+
+  if (!current.ok) {
+    return current.response;
+  }
+
+  let body: unknown;
+
+  try {
+    body = await request.json();
+  } catch {
+    body = {};
+  }
+
+  const parsed = skipRecoverySuggestInputSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return jsonError('Invalid skip recovery payload.', 400, parsed.error.flatten());
+  }
+
+  const {id} = await params;
+  const step = getDailyBabyStepById(id, current.user.id);
+
+  if (!step) {
+    return jsonError('Daily step not found.', 404);
+  }
+
+  const locale = (parsed.data.locale ?? 'he') as AppLocale;
+  const limited = enforceAiRateLimit({
+    action: 'life-coach:skip-recovery',
+    userId: current.user.id,
+    limit: 20,
+  });
+  if (limited) return limited;
+
+  try {
+    const content = await openaiLifeCoachService.suggestSkipRecovery({
+      locale,
+      step,
+      blocker_reason: parsed.data.blocker_reason,
+    });
+    return jsonOk({content});
+  } catch {
+    return jsonOk({content: buildSkipRecoveryStep(step, locale)});
+  }
+}

@@ -1,0 +1,921 @@
+{
+  "triggers": {
+    "smile": {
+      "life_context_include": ["new_parent", "caregiver", "student"],
+      "en": {
+        "label": "Someone's smile or laugh",
+        "prompt": "Think of a look, a laugh, or one kind sentence someone close to you gave you recently. What did your body feel in that moment?",
+        "starter": "I feel grateful for a smile or laugh I can still feel in my body, especially the moment when..."
+      },
+      "he": {
+        "label": "חיוך או צחוק של מישהו",
+        "prompt": "תחשוב על מבט, צחוק או מילה טובה שמישהו קרוב נתן לך לאחרונה. מה הגוף שלך הרגיש באותו רגע?",
+        "starter": "אני מרגיש אסיר תודה על חיוך או צחוק שאני עדיין מרגיש בגוף, במיוחד ברגע שבו..."
+      }
+    },
+    "breath": {
+      "life_context_include": ["new_parent", "caregiver", "manager"],
+      "en": {
+        "label": "My breath right now",
+        "prompt": "Notice the air moving in and out right now. What changes in your chest, shoulders, or face when you stay with that breath?",
+        "starter": "I feel grateful for my breath in this moment, especially for the sensation of..."
+      },
+      "he": {
+        "label": "הנשימה שלי ברגע זה",
+        "prompt": "שים לב לאוויר שנכנס ויוצא עכשיו. מה משתנה בחזה, בכתפיים או בפנים שלך כשאתה נשאר עם הנשימה הזאת?",
+        "starter": "אני מרגיש אסיר תודה על הנשימה שלי ברגע זה, במיוחד על התחושה של..."
+      }
+    },
+    "corner": {
+      "life_context_include": ["new_parent", "caregiver"],
+      "en": {
+        "label": "A favorite corner at home",
+        "prompt": "Picture one corner in your home that softens you a little. What do you see there, and what feeling comes with it?",
+        "starter": "I feel grateful for a corner in my home that makes me feel safe, especially when..."
+      },
+      "he": {
+        "label": "פינה אהובה בבית",
+        "prompt": "חזור לפינה אחת בבית שמרככת אותך קצת. מה אתה רואה שם, ואיזו תחושה מגיעה יחד איתה?",
+        "starter": "אני מרגיש אסיר תודה על פינה בבית שגורמת לי להרגיש בטוח, במיוחד כש..."
+      }
+    },
+    "workWin": {
+      "life_context_include": ["manager", "student", "between_jobs"],
+      "en": {
+        "label": "A small win at work",
+        "prompt": "Return to one small work win from recently. What exactly happened, and where did you feel that bit of confidence?",
+        "starter": "I feel grateful for a small win in my work, especially the moment when I noticed..."
+      },
+      "he": {
+        "label": "ניצחון קטן בעבודה",
+        "prompt": "חזור לניצחון אחד קטן מהעבודה. מה בדיוק קרה שם, ואיפה בגוף הרגשת את הביטחון הקטן הזה?",
+        "starter": "אני מרגיש אסיר תודה על ניצחון קטן בעבודה, במיוחד ברגע שבו שמתי לב ש..."
+      }
+    },
+    "coffee": {
+      "en": {
+        "label": "That first sip of coffee",
+        "prompt": "Go back to the first sip, the warmth, the smell, or the pause around it. What made that tiny moment feel alive?",
+        "starter": "I feel grateful for a small simple moment, especially the first sip and the feeling of..."
+      },
+      "he": {
+        "label": "הלגימה הראשונה מהקפה",
+        "prompt": "חזור ללגימה הראשונה, לחום, לריח או לעצירה שהייתה סביבה. מה הפך את הרגע הקטן הזה לחי?",
+        "starter": "אני מרגיש אסיר תודה על רגע קטן ופשוט, במיוחד על הלגימה הראשונה ועל התחושה של..."
+      }
+    },
+    "hotShower": {
+      "en": {
+        "label": "Hot water on your skin",
+        "prompt": "Think about the feeling of hot water hitting your shoulders and back. How does that physical warmth release tension inside you?",
+        "starter": "I feel grateful for the physical relief of hot water, especially the way it felt when..."
+      },
+      "he": {
+        "label": "מים חמים על הגוף",
+        "prompt": "חשוב על התחושה של מים חמים שפוגעים בכתפיים ובגב. איך החום הפיזי הזה משחרר את המתח שבתוכך?",
+        "starter": "אני מרגיש אסיר תודה על ההקלה הפיזית של מים חמים, במיוחד על הדרך שבה הרגשתי כש..."
+      }
+    },
+    "coldWater": {
+      "en": {
+        "label": "Cold water waking you up",
+        "prompt": "Remember a moment cold water hit your face or body, shocking your system into focus. What does that spark of alertness feel like?",
+        "starter": "I feel grateful for the instant alertness from cold water, especially when it..."
+      },
+      "he": {
+        "label": "מים קרים מעוררים",
+        "prompt": "היזכר ברגע שבו מים קרים פגעו בפנים או בגוף שלך, והעירו את המערכת לפוקוס. איך מרגיש הניצוץ הזה של הערנות?",
+        "starter": "אני מרגיש אסיר תודה על הערנות המיידית של מים קרים, במיוחד כש..."
+      }
+    },
+    "musicBeat": {
+      "en": {
+        "label": "A song that changes your mood",
+        "prompt": "Think of a beat or a song that makes you want to move or smile. What happens to your energy when the rhythm starts?",
+        "starter": "I feel grateful for the energy of music, especially the way a certain song makes me feel when..."
+      },
+      "he": {
+        "label": "שיר שמשנה את מצב הרוח",
+        "prompt": "חשוב על קצב או שיר שגורם לך לרצות לזוז או לחייך. מה קורה לאנרגיה שלך כשהקצב מתחיל?",
+        "starter": "אני מרגיש אסיר תודה על האנרגיה של המוזיקה, במיוחד על הדרך שבה שיר מסוים גורם לי להרגיש כש..."
+      }
+    },
+    "sunWarmth": {
+      "en": {
+        "label": "Sunlight on your face",
+        "prompt": "Picture walking outside and feeling the sun hit your face. Feel that temperature change on your skin right now. What does it warm up inside?",
+        "starter": "I feel grateful for the warmth of the sun, especially the exact second I felt..."
+      },
+      "he": {
+        "label": "קרני שמש על הפנים",
+        "prompt": "דמיין שאתה יוצא החוצה ומרגיש את השמש פוגעת בפנים שלך. הרגש את שינוי הטמפרטורה על העור עכשיו. מה זה מחמם בפנים?",
+        "starter": "אני מרגיש אסיר תודה על חום השמש, במיוחד בשנייה המדויקת שבה הרגשתי..."
+      }
+    },
+    "freshAir": {
+      "en": {
+        "label": "A deep breath of fresh air",
+        "prompt": "Step into a moment you walked outside and took a deep breath of crisp air. How did that fullness expand your chest?",
+        "starter": "I feel grateful for that clean, fresh air, especially the feeling of opening up my..."
+      },
+      "he": {
+        "label": "נשימה של אוויר צח",
+        "prompt": "חזור לרגע שבו יצאת החוצה ולקחת נשימה עמוקה של אוויר קריר וצח. איך המלאות הזו הרחיבה לך את החזה?",
+        "starter": "אני מרגיש אסיר תודה על אוויר נקי וצח, במיוחד על התחושה של פתיחת ה..."
+      }
+    },
+    "petLove": {
+      "en": {
+        "label": "A moment with a pet",
+        "prompt": "Think of the unconditional excitement of a pet seeing you, or their quiet presence near you. What does that pure connection feel like?",
+        "starter": "I feel grateful for the pure presence of an animal, especially the moment when..."
+      },
+      "he": {
+        "label": "רגע עם חיית מחמד",
+        "prompt": "חשוב על ההתרגשות ללא תנאי של חיית מחמד כשאתה חוזר, או על הנוכחות השקטה שלה לידך. איך מרגיש החיבור הטהור הזה?",
+        "starter": "אני מרגיש אסיר תודה על הנוכחות הטהורה של בעל חיים, במיוחד ברגע שבו..."
+      }
+    },
+    "cleanSheets": {
+      "en": {
+        "label": "Sliding into clean sheets",
+        "prompt": "Remember the texture, smell, and coolness of sliding into a freshly made bed at night. How does your body let go when you hit the mattress?",
+        "starter": "I feel grateful for the comfort of a clean bed, especially the physical release of..."
+      },
+      "he": {
+        "label": "להיכנס למצעים נקיים",
+        "prompt": "היזכר במרקם, בריח ובקרירות של כניסה למיטה עם מצעים נקיים בלילה. איך הגוף משחרר הכל כשהוא פוגע במזרן?",
+        "starter": "אני מרגיש אסיר תודה על הנוחות של מיטה נקייה, במיוחד על השחרור הפיזי של..."
+      }
+    },
+    "kindStranger": {
+      "en": {
+        "label": "A gesture from a stranger",
+        "prompt": "Recall a stranger holding a door, letting you go first in traffic, or giving an unexpected nod. How did that small human moment ground you?",
+        "starter": "I feel grateful for the kindness of a stranger, especially when they..."
+      },
+      "he": {
+        "label": "ג'סטה מאדם זר",
+        "prompt": "היזכר באדם זר שהחזיק לך את הדלת, נתן לך להשתלב בתנועה או סתם הנהן בחיוך. איך הרגע האנושי הקטן הזה חיבר אותך?",
+        "starter": "אני מרגיש אסיר תודה על טוב לב של אדם זר, במיוחד כשהוא..."
+      }
+    },
+    "bodyStrength": {
+      "en": {
+        "label": "My legs carrying me",
+        "prompt": "Focus on your legs and feet. They carry your weight and move you through the world every single day without you asking. What does that strength feel like?",
+        "starter": "I feel grateful for the strength in my legs, especially their ability to..."
+      },
+      "he": {
+        "label": "הרגליים שנושאות אותי",
+        "prompt": "התמקד ברגליים ובכפות הרגליים שלך. הן נושאות את המשקל שלך ומניעות אותך בעולם בכל יום מבלי שתבקש. איך מרגיש הכוח הזה?",
+        "starter": "אני מרגיש אסיר תודה על הכוח ברגליים שלי, במיוחד על היכולת שלהן ל..."
+      }
+    },
+    "beatingHeart": {
+      "en": {
+        "label": "My heart beating right now",
+        "prompt": "Put your hand on your chest. Feel that pulse. It has been beating for you billions of times without a single break. What does that loyalty feel like?",
+        "starter": "I feel grateful for my heartbeat, especially for the quiet reassurance of..."
+      },
+      "he": {
+        "label": "הלב שלי פועם עכשיו",
+        "prompt": "שים יד על החזה. הרגש את הדופק. הוא פועם בשבילך מיליארדי פעמים בלי הפסקה אחת. איך מרגישה הנאמנות הזו של הגוף?",
+        "starter": "אני מרגיש אסיר תודה על פעימות הלב שלי, במיוחד על הביטחון השקט של..."
+      }
+    },
+    "safeShelter": {
+      "en": {
+        "label": "The sound of rain outside",
+        "prompt": "Think of being inside while it’s raining or stormy outside. Feel the safety of walls, a roof, and warmth keeping you protected.",
+        "starter": "I feel grateful for shelter and protection, especially the feeling of being safe when..."
+      },
+      "he": {
+        "label": "קול הגשם כשאתה בפנים",
+        "prompt": "חשוב על המצב שבו אתה נמצא בפנים כשיש גשם או סערה בחוץ. הרגש את הביטחון של הקירות, הגג והחום ששומרים עליך מוגן.",
+        "starter": "אני מרגיש אסיר תודה על קורת גג והגנה, במיוחד על תחושת הביטחון כש..."
+      }
+    },
+    "goodMeal": {
+      "en": {
+        "label": "The taste of good food",
+        "prompt": "Remember a recent meal where the first bite tasted incredible. Focus on the flavor, the texture, and the satisfaction of fueling your body.",
+        "starter": "I feel grateful for the simple pleasure of good food, especially the taste of..."
+      },
+      "he": {
+        "label": "טעם של אוכל טוב",
+        "prompt": "היזכר בארוחה לאחרונה שבה הביס הראשון היה פשוט מדהים. התמקד בטעם, במרקם ובסיפוק של הזנת הגוף שלך.",
+        "starter": "אני מרגיש אסיר תודה על התענוג הפשוט של אוכל טוב, במיוחד על הטעם של..."
+      }
+    },
+    "oldFriend": {
+      "en": {
+        "label": "A memory with an old friend",
+        "prompt": "Bring up a memory of a deep laugh or an uninhibited moment with a friend. Feel that ease and connection in your chest right now.",
+        "starter": "I feel grateful for a true connection, especially the memory of laughing about..."
+      },
+      "he": {
+        "label": "זיכרון עם חבר ותיק",
+        "prompt": "העלה בזיכרון רגע של צחוק עמוק או פראי עם חבר. הרגש את הקלות והחיבור הזה בחזה שלך ממש עכשיו.",
+        "starter": "אני מרגיש אסיר תודה על חיבור אמיתי, במיוחד על הזיכרון של הצחוק על..."
+      }
+    },
+    "overcoming": {
+      "en": {
+        "label": "A hard day you survived",
+        "prompt": "Think of a time you thought you couldn't handle a situation, but you did. You got through it. What part of your character did that prove you have?",
+        "starter": "I feel grateful for my own resilience, especially the way I handled..."
+      },
+      "he": {
+        "label": "יום קשה שעברת בהצלחה",
+        "prompt": "חשוב על פעם שחשבת שלא תוכל להתמודד עם סיטואציה מסוימת, אבל עשית זאת. עברת את זה. איזה חלק באופי שלך זה הוכיח שיש לך?",
+        "starter": "אני מרגיש אסיר תודה על החוסן של עצמי, במיוחד על הדרך שבה התמודדתי עם..."
+      }
+    },
+    "morningQuiet": {
+      "en": {
+        "label": "The quiet before the world wakes",
+        "prompt": "Notice the stillness of the early morning. Before the messages, the noise, and the demands start. What does that silence offer you?",
+        "starter": "I feel grateful for the morning silence, especially the space it gives me to..."
+      },
+      "he": {
+        "label": "השקט שלפני שהעולם מתעורר",
+        "prompt": "שים לב לדממה של הבוקר המוקדם. לפני שההודעות, הרעש והדרישות מתחילים. מה השקט הזה מעניק לך?",
+        "starter": "אני מרגיש אסיר תודה על השקט של הבוקר, במיוחד על המרחב שהוא נותן לי ל..."
+      }
+    },
+    "clothingComfort": {
+      "en": {
+        "label": "Your favorite comfortable shirt",
+        "prompt": "Think of putting on a hoodie or shirt that fits perfectly and feels soft. Feel that physical layer of comfort and ease on your shoulders.",
+        "starter": "I feel grateful for simple physical comforts, especially the feeling of wearing..."
+      },
+      "he": {
+        "label": "בגד אהוב ונוח",
+        "prompt": "חשוב על הרגע שבו אתה לובש קפוצ'ון או חולצה שיושבים עליך בול ומרגישים רכים. הרגש את שכבת הנוחות הפיזית הזו על הכתפיים שלך.",
+        "starter": "אני מרגיש אסיר תודה על נוחות פיזית פשוטה, במיוחד על התחושה ללבוש..."
+      }
+    },
+    "learnedLesson": {
+      "en": {
+        "label": "A mistake that made you smarter",
+        "prompt": "Think of a recent mistake or failure that hurt, but taught you a huge lesson. How did that pain actually build your wisdom?",
+        "starter": "I feel grateful for the lessons that shape me, especially the insight I gained from..."
+      },
+      "he": {
+        "label": "טעות שהפכה אותך לחכם יותר",
+        "prompt": "חשוב על טעות או כישלון מהזמן האחרון שהכאיבו, אבל לימדו אותך שיעור עצום. איך הכאב הזה בעם בנה את החוכמה שלך?",
+        "starter": "אני מרגיש אסיר תודה על שיעורים שמעצבים אותי, במיוחד על התובנה שקיבלתי מ..."
+      }
+    },
+    "cleanWater": {
+      "en": {
+        "label": "Unlimited clean water",
+        "prompt": "Think of turning on the tap and having clean, safe water instantly. Imagine the cool liquid running down your throat when you are thirsty.",
+        "starter": "I feel grateful for resources I take for granted, especially the simple cold glass of..."
+      },
+      "he": {
+        "label": "מים נקיים ללא הגבלה",
+        "prompt": "חשוב על הרגע שבו אתה פותח את הברז ויש לך מים נקיים ובטוחים באופן מיידי. דמיין את הנוזל הקריר יורד בגרון כשאתה צמא.",
+        "starter": "אני מרגיש אסיר תודה על משאבים שאני לוקח כמובן מאליו, במיוחד על כוס קרה של..."
+      }
+    },
+    "natureGreen": {
+      "en": {
+        "label": "A tree or plant nearby",
+        "prompt": "Look at or imagine a tree, a leaf, or grass. Focus on the green color, the life inside it, standing firm through storms. What does that life remind you of?",
+        "starter": "I feel grateful for the grounding force of nature, especially when I look at..."
+      },
+      "he": {
+        "label": "עץ או צמח בסביבה",
+        "prompt": "הסתכל או דמיין עץ, עלה או דשא. התמקד בצבע הירוק, בחיים שיש בתוכו, עומד איתן בסערות. מה החיות הזו מזכירה לך?",
+        "starter": "אני מרגיש אסיר תודה על הכוח המקרקע של הטבע, במיוחד כשאני מסתכל על..."
+      }
+    },
+    "warmHug": {
+      "en": {
+        "label": "The pressure of a hug",
+        "prompt": "Remember a tight, genuine hug from someone who cares about you. Focus on the physical pressure, the melting of armor, and the feeling of being held.",
+        "starter": "I feel grateful for the safety of a hug, especially the way my body let go when..."
+      },
+      "he": {
+        "label": "תחושת לחץ של חיבוק",
+        "prompt": "היזכר בחיבוק חזק ואמיתי ממישהו שאכפת לו ממך. התמקד בלחץ הפיזי, בהמסה של המגננות ובתחושה שמישהו מחזיק אותך.",
+        "starter": "אני מרגיש אסיר תודה על הביטחון שבחיבוק, במיוחד על הדרך שבה הגוף שלי שחרר מתח כש..."
+      }
+    },
+    "eyesight": {
+      "en": {
+        "label": "My eyes reading this",
+        "prompt": "Focus on your eyes right now. They process light and color, allowing you to read, see faces, and navigate the world. What a miracle that focus is.",
+        "starter": "I feel grateful for the gift of sight, especially the ability to see things like..."
+      },
+      "he": {
+        "label": "העיניים שלי שקוראות את זה",
+        "prompt": "התמקד בעיניים שלך ממש ברגע זה. הן מעבדות אור וצבע, מאפשרות לך לקרוא, לראות פנים ולנווט בעולם. איזה נס זה המיקוד הזה.",
+        "starter": "אני מרגיש אסיר תודה על מתנת הראייה, במיוחד על היכולת לראות דברים כמו..."
+      }
+    },
+    "internetAccess": {
+      "en": {
+        "label": "All human knowledge in my hand",
+        "prompt": "Think about the phone or computer you hold. It gives you instant access to any song, book, or person on earth. Feel the power of that tool.",
+        "starter": "I feel grateful for the technology that connects me, especially the ability to..."
+      },
+      "he": {
+        "label": "כל ידע האנושות ביד שלי",
+        "prompt": "חשוב על הטלפון או המחשב שאתה מחזיק. הוא נותן לך גישה מיידית לכל שיר, ספר או אדם על פני כדור הארץ. הרגש את העוצמה של הכלי הזה.",
+        "starter": "אני מרגיש אסיר תודה על הטכנולוגיה שמחברת אותי, במיוחד על היכולת ל..."
+      }
+    },
+    "teachers": {
+      "en": {
+        "label": "Someone who taught you something",
+        "prompt": "Think of a mentor, an author, or a teacher whose words clicked in your mind and changed how you look at life. What did they unlock for you?",
+        "starter": "I feel grateful for those who share their wisdom, especially the lesson about..."
+      },
+      "he": {
+        "label": "מישהו שלימד אותך משהו",
+        "prompt": "חשוב על מנטור, סופר או מורה שהמילים שלו הדהדו בראשך ושינו את האופן שבו אתה מסתכל על החיים. מה הם פתחו עבורך?",
+        "starter": "אני מרגיש אסיר תודה על אלו שחולקים את החוכמה שלהם, במיוחד על השיעור לגבי..."
+      }
+    },
+    "childhoodJoy": {
+      "en": {
+        "label": "A pure childhood memory",
+        "prompt": "Go back to a time as a kid when you forgot about time entirely because you were just playing or exploring. Feel that lightness in your chest.",
+        "starter": "I feel grateful for the memory of pure play, especially the moment when I was..."
+      },
+      "he": {
+        "label": "זיכרון ילדות טהור",
+        "prompt": "חזור לזמן שבו היית ילד ושכחת מהזמן לחלוטין כי פשוט שיחקת או חקרת. הרגש את הקלילות הזו בחזה שלך.",
+        "starter": "אני מרגיש אסיר תודה על הזיכרון של משחק טהור, במיוחד ברגע שבו הייתי..."
+      }
+    },
+    "hotBeverage": {
+      "en": {
+        "label": "Holding a warm mug",
+        "prompt": "Feel the heat transfer from a mug into your palms. That simple warmth radiating through your hands into your arms. What does that grounding feel like?",
+        "starter": "I feel grateful for small moments of warmth, especially holding a cup of..."
+      },
+      "he": {
+        "label": "להחזיק ספל חם",
+        "prompt": "הרגש את מעבר החום מספל חם אל כפות הידיים שלך. החום הפשוט הזה שמקרין דרך הידיים אל הזרועות. איך מרגיש הקרקוע הזה?",
+        "starter": "אני מרגיש אסיר תודה על רגעים קטנים של חום, במיוחד כשאני מחזיק כוס של..."
+      }
+    },
+    "unlockedDoor": {
+      "en": {
+        "label": "A door that opened easily",
+        "prompt": "Think of a recent opportunity, meeting, or conversation that felt effortless, like a door unlocking easily. What did that flow feel like?",
+        "starter": "I feel grateful for moments of unexpected flow, especially when..."
+      },
+      "he": {
+        "label": "דלת שנפתחה בקלות",
+        "prompt": "חשוב על הזדמנות, פגישה או שיחה מהזמן האחרון שהרגישו נטולי מאמץ, כמו דלת שנפתחת בקלות. איך הרגיש הזרימה (Flow) הזה?",
+        "starter": "אני מרגיש אסיר תודה על רגעים של זרימה בלתי צפויה, במיוחד כש..."
+      }
+    },
+    "bodyHealing": {
+      "en": {
+        "label": "A time your body healed",
+        "prompt": "Remember a cut, a cold, or an injury that healed completely. Your body knew exactly how to rebuild itself without your conscious help. Feel that intelligence.",
+        "starter": "I feel grateful for the natural intelligence of my body, especially how it healed from..."
+      },
+      "he": {
+        "label": "פעם שהגוף שלך ריפא את עצמו",
+        "prompt": "היזכר בחתך, צינון או פציעה שהחלימו לחלוטין. הגוף שלך ידע בדיוק איך לבנות את עצמו מחדש ללא עזרה מודעת ממך. הרגש את האינטליגנציה הזו.",
+        "starter": "אני מרגיש אסיר תודה על האינטליגנציה הטבעית של הגוף שלי, במיוחד איך שהוא החלים מ..."
+      }
+    },
+    "eveningSky": {
+      "en": {
+        "label": "The colors of the sky",
+        "prompt": "Think of a sunset or a sky color that made you stop walking just to look. What happens to your internal pace when you look at something that vast?",
+        "starter": "I feel grateful for the beauty around me, especially the colors of the sky when..."
+      },
+      "he": {
+        "label": "הצבעים של השמים",
+        "prompt": "חשוב על שקיעה או צבע בשמים שגרמו לך לעצור את ההליכה רק כדי להסתכל. מה קורה לקצב הפנימי שלך כשאתה מביט במשהו כל כך עצום?",
+        "starter": "אני מרגיש אסיר תודה על היופי שסביבי, במיוחד על צבעי השמים כש..."
+      }
+    },
+    "financialSafety": {
+      "en": {
+        "label": "Money that covered a need",
+        "prompt": "Think of a bill you paid easily, or food you bought without worrying. Feel the relief and appreciation for the currency that supported you.",
+        "starter": "I feel grateful for financial support, especially the ability to pay for..."
+      },
+      "he": {
+        "label": "כסף שכיסה צורך",
+        "prompt": "חשוב על חשבון ששילמת בקלות, או אוכל שקנית בלי לדאוג. הרגש את ההקלה וההערכה לכסף שתמך בך ואיפשר את זה.",
+        "starter": "אני מרגיש אסיר תודה על תמיכה כלכלית, במיוחד על היכולת לשלם על..."
+      }
+    },
+    "forgiveness": {
+      "en": {
+        "label": "A clean slate with someone",
+        "prompt": "Recall a moment a conflict ended, or someone let an issue go. Feel the physical lightness in your stomach when tension turns back into peace.",
+        "starter": "I feel grateful for peace and understanding, especially the moment when..."
+      },
+      "he": {
+        "label": "דף חלק עם מישהו",
+        "prompt": "היזכר ברגע שבו קונפליקט הסתיים, או שמישהו שחרר כעס כלפיך. הרגש את הקלילות הפיזית בבטן כשהמתח הופך חזרה לשקט.",
+        "starter": "אני מרגיש אסיר תודה על שקט והבנה, במיוחד ברגע שבו..."
+      }
+    },
+    "musicChill": {
+      "en": {
+        "label": "Goosebumps from a sound",
+        "prompt": "Remember a voice, a musical chord, or a sound that literally gave you goosebumps. Feel that vibration in your skin right now.",
+        "starter": "I feel grateful for the emotional power of sound, especially when I heard..."
+      },
+      "he": {
+        "label": "עור ברווז מצליל או קול",
+        "prompt": "היזכר בקול, באקורד מוזיקלי או בצליל שממש גרם לך לעור ברווז. הרגש את הרטט הזה בעור שלך ממש עכשיו.",
+        "starter": "אני מרגיש אסיר תודה על הכוח הרגשי של צלילים, במיוחד כששמעתי את..."
+      }
+    },
+    "goodAdvice": {
+      "en": {
+        "label": "The right words at the right time",
+        "prompt": "Think of a piece of advice someone gave you that cut through your confusion and made everything clear. Who gave it and what did it save you from?",
+        "starter": "I feel grateful for clear guidance, especially the words that reminded me to..."
+      },
+      "he": {
+        "label": "המילה הנכונה בזמן הנכון",
+        "prompt": "חשוב על עצה שמישהו נתן לך שחתכה את הבלבול ועשתה הכל ברור. מי נתן אותה וממה היא הצילה אותך?",
+        "starter": "אני מרגיש אסיר תודה על הכוונה ברורה, במיוחד על המילים שהזכירו לי ל..."
+      }
+    },
+    "warmBlanket": {
+      "en": {
+        "label": "The weight of a heavy blanket",
+        "prompt": "Feel the weight of a heavy blanket settling over your body, telling your nervous system it is safe to rest. How does your breathing slow down?",
+        "starter": "I feel grateful for physical comfort and safety, especially the weight of..."
+      },
+      "he": {
+        "label": "משקל של שמיכה כבדה",
+        "prompt": "הרגש את המשקל של שמיכה כבדה שמונחת על הגוף שלך, ומאותתת למערכת העצבים שבטוח לנוח. איך הנשימה שלך אטומה ומאיטה?",
+        "starter": "אני מרגיש אסיר תודה על נוחות פיזית וביטחון, במיוחד על המשקל של..."
+      }
+    },
+    "laughterPain": {
+      "en": {
+        "label": "Laughing until your stomach hurts",
+        "prompt": "Remember a time you laughed so hard your stomach muscles ached and you couldn't catch your breath. What was so hilariously free about that moment?",
+        "starter": "I feel grateful for pure, uncontained laughter, especially the memory of..."
+      },
+      "he": {
+        "label": "צוחק עד שכואבת הבטן",
+        "prompt": "היזכר בפעם שבה צחקת כל כך חזק עד ששרירי הבטן כאבו ולא הצלחת לנשום. מה היה כל כך משוחרר וחופשי ברגע ההוא?",
+        "starter": "אני מרגיש אסיר תודה על צחוק טהור ובלתי נשלט, במיוחד על הזיכרון של..."
+      }
+    },
+    "earlyProgress": {
+      "en": {
+        "label": "How far you’ve come in 5 years",
+        "prompt": "Look back at who you were five years ago. Think of the things you worried about then that you have handled now. Feel the pride in your growth.",
+        "starter": "I feel grateful for my own evolution, especially when I realize I no longer..."
+      },
+      "he": {
+        "label": "כמה רחוק הגעת ב-5 שנים",
+        "prompt": "הסתכל אחורה על מי שהיית לפני חמש שנים. חשוב על הדברים שהדאיגו אותך אז וכבר פתרת היום. הרגש את הגאווה בצמיחה שלך.",
+        "starter": "אני מרגיש אסיר תודה על האבולוציה של עצמי, במיוחד כשאני קולט שאני כבר לא..."
+      }
+    },
+    "cleanSpace": {
+      "en": {
+        "label": "A freshly organized desk or room",
+        "prompt": "Picture a surface or a room you just cleaned or organized. Look at that order, that clear space. What does that clarity open up in your mind?",
+        "starter": "I feel grateful for order and clarity around me, especially the sight of..."
+      },
+      "he": {
+        "label": "שולחן או חדר מסודר נקי",
+        "prompt": "דמיין משטח או חדר שזה עתה ניקית או סידרת. הסתכל על הסדר הזה, על המרחב הפנוי. מה הבהירות הזו פותחת לך בתוך המחשבה?",
+        "starter": "אני מרגיש אסיר תודה על סדר ובהירות סביבי, במיוחד על המראה של..."
+      }
+    },
+    "morningStretch": {
+      "en": {
+        "label": "A deep physical stretch",
+        "prompt": "Reach your arms up or twist your back right now. Feel the muscles lengthening, creating space between your joints. What does that release feel like?",
+        "starter": "I feel grateful for the ability to move and loosen my body, especially the stretch in..."
+      },
+      "he": {
+        "label": "מתיחה פיזית עמוקה",
+        "prompt": "שלח את הזרועות למעלה או פתל את הגב ממש עכשיו. הרגש את השרירים מתארכים, מייצרים מרווח בין המפרקים. איך מרגיש השחרור הזה?",
+        "starter": "אני מרגיש אסיר תודה על היכולת להניע ולשחרר את הגוף שלי, במיוחד על המתיחה ב..."
+      }
+    },
+    "sharedSilence": {
+      "en": {
+        "label": "Comfortable silence with someone",
+        "prompt": "Think of sitting with someone where you didn't have to talk to fill the space. You were just perfectly at ease being quiet together. Who was that?",
+        "starter": "I feel grateful for relationships where I can just be, especially the quiet moment with..."
+      },
+      "he": {
+        "label": "שטיקה נוחה עם מישהו",
+        "prompt": "חשוב על ישיבה עם מישהו שבה לא היית צריך לדבר כדי למלא את החלל. פשוט היה לכם נוח לחלוטין להיות בשקט ביחד. מי זה היה?",
+        "starter": "אני מרגיש אסיר תודה על מערכות יחסים שבהן אני יכול פשוט להיות, במיוחד ברגע השקט עם..."
+      }
+    },
+    "compliment": {
+      "en": {
+        "label": "An unexpected compliment",
+        "prompt": "Recall someone noticing something you did well or a trait you possess, and saying it out loud. How did it feel to be truly seen?",
+        "starter": "I feel grateful for being acknowledged, especially the words where someone noticed..."
+      },
+      "he": {
+        "label": "מחמאה בלתי צפויה",
+        "prompt": "היזכר במישהו ששם לב למשהו שעשית טוב או לתכונה שיש לך, ואמר זאת בקול. איך זה הרגיש כשבאמת ראו אותך?",
+        "starter": "אני מרגיש אסיר תודה על כך שמכירים בי, במיוחד על המילים שבהן מישהו שם לב ש..."
+      }
+    },
+    "tools": {
+      "en": {
+        "label": "A tool that makes life easy",
+        "prompt": "Think of a physical tool or appliance (like a sharp knife, a washing machine, or your car) that saves you hours of labor. Feel the appreciation for its function.",
+        "starter": "I feel grateful for the tools that assist my life, especially the way my..."
+      },
+      "he": {
+        "label": "כלי שהופך את החיים לקלים",
+        "prompt": "חשוב על כלי פיזי או מכשיר (כמו סכין חדה, מכונת כביסה או הרכב שלך) שחוסך לך שעות של עבודה קשה. הרגש את ההערכה לפונקציה שלו.",
+        "starter": "אני מרגיש אסיר תודה על הכלים שמסייעים לחיי, במיוחד על הדרך שבה ה..."
+      }
+    },
+    "safeDrive": {
+      "en": {
+        "label": "Arriving safely somewhere",
+        "prompt": "Think of turning off the engine after a long drive or walk. You arrived intact, protected through all that motion. Feel the quiet landing.",
+        "starter": "I feel grateful for safe passage and arrival, especially the relief when I reached..."
+      },
+      "he": {
+        "label": "הגעה בטוחה ליעד",
+        "prompt": "חשוב על כיבוי המנוע אחרי נסיעה ארוכה או הליכה. הגעת שלם, מוגן דרך כל התנועה הזו. הרגש את הנחיתה השקטה.",
+        "starter": "אני מרגיש אסיר תודה על דרך בטוחה והגעה, במיוחד על ההקלה כשהגעתי ל..."
+      }
+    },
+    "creativeIdea": {
+      "en": {
+        "label": "An ignition of a new idea",
+        "prompt": "Remember the exact second a creative solution or an exciting idea popped into your head. That spark of 'oh, I can build this!' What did that pulse feel like?",
+        "starter": "I feel grateful for the spark of creativity, especially the excitement of thinking about..."
+      },
+      "he": {
+        "label": "הצתה של רעיון חדש",
+        "prompt": "היזכר בשנייה המדויקת שבה פתרון יצירתי או רעיון מרגש קפצו לך לראש. הניצוץ הזה של 'אוי, אני יכול לבנות את זה!'. איך הרגיש הדופק הזה?",
+        "starter": "אני מרגיש אסיר ת动作ה על ניצוץ היצירתיות, במיוחד על ההתרגשות לחשוב על..."
+      }
+    },
+    "bookQuote": {
+      "en": {
+        "label": "A line from a book or quote",
+        "prompt": "Bring up a single sentence you read that felt like it was written exactly for you and your situation. How did it validate your internal world?",
+        "starter": "I feel grateful for words that articulate my soul, especially the line that says..."
+      },
+      "he": {
+        "label": "משפט מספר או ציטוט",
+        "prompt": "העלה בזיכרון משפט אחד שקראת והרגיש כאילו הוא נכתב בדיוק בשבילך ובשביל הסיטואציה שלך. איך הוא נתן תוקף לעולם הפנימי שלך?",
+        "starter": "אני מרגיש אסיר תודה על מילים שמנסחות את הנשמה שלי, במיוחד השורה שאומרת..."
+      }
+    },
+    "warmSoup": {
+      "en": {
+        "label": "The comfort of a warm meal",
+        "prompt": "Think of eating something warm when you were tired or cold. Feel the internal temperature shifting as that warmth spreads through your center.",
+        "starter": "I feel grateful for nourishment and comfort, especially the grounding feeling of..."
+      },
+      "he": {
+        "label": "נחמה של ארוחה חמה",
+        "prompt": "חשוב על רגע שאכלת משהו חם כשהיית עייף או כשהיה לך קר. הרגש את הטמפרטורה הפנימית משתנה כשהחום הזה מתפשט במרכז הגוף שלך.",
+        "starter": "אני מרגיש אסיר תודה על הזנה ונחמה, במיוחד על תחושת הקרקוע של..."
+      }
+    },
+    "natureSound": {
+      "en": {
+        "label": "Birds singing or wind rustling",
+        "prompt": "Listen closely to the background right now, or recall the sound of birds outside. Nature is moving and alive around you. What does that rhythm tell you?",
+        "starter": "I feel grateful for the soundtrack of nature, especially the sound of..."
+      },
+      "he": {
+        "label": "ציוץ ציפורים או רשרוש הרוח",
+        "prompt": "הקשב מקרוב לרקע עכשיו, או היזכר בצליל של ציפורים בחוץ. הטבע נע וחי סביבך. מה הקצב הזה אומר לך?",
+        "starter": "אני מרגיש אסיר תודה על הפסקול של הטבע, במיוחד על הצליל של..."
+      }
+    },
+    "uninterruptedTime": {
+      "en": {
+        "label": "An hour with zero notifications",
+        "prompt": "Think of a recent hour where your phone was away, and you plunged deeply into a task, a movie, or a thought. Feel the peace of deep focus.",
+        "starter": "I feel grateful for unbroken focus, especially the peace I felt when I was..."
+      },
+      "he": {
+        "label": "שעה שלמה בלי נוטיפיקציות",
+        "prompt": "חשוב על שעה לאחרונה שבה הטלפון שלך היה רחוק, וצלת עמוק לתוך משימה, סרט או מחשבה. הרגש את השקט של פוקוס עמוק.",
+        "starter": "אני מרגיש אסיר תודה על פוקוס רציף, במיוחד על השקט שהרגשתי כשהייתי..."
+      }
+    },
+    "cleanWaterWash": {
+      "en": {
+        "label": "Washing your face",
+        "prompt": "Think of splashing water on your face during a heavy day. Feel the physical resetting of your skin and eyes. What washes away in that second?",
+        "starter": "I feel grateful for the instant reset of water, especially the sensation of..."
+      },
+      "he": {
+        "label": "לשטוף את הפנים",
+        "prompt": "חשוב על רגע של שטיפת פנים במים במהלך יום עמוס או כבד. הרגש את האיפוס הפיזי של העור והעיניים. מה נשטף משם באותה שנייה?",
+        "starter": "אני מרגיש אסיר תודה על האיפוס המיידי של מים, במיוחד על התחושה של..."
+      }
+    },
+    "oldPhoto": {
+      "en": {
+        "label": "Stumbling on an old photo",
+        "prompt": "Picture looking at a photo from years ago and feeling an instant flash of affection for the people or the version of you in it. Breathe into that warmth.",
+        "starter": "I feel grateful for captured moments, especially the warmth of looking back at..."
+      },
+      "he": {
+        "label": "להיתקל בתמונה ישנה",
+        "prompt": "דמיין שאתה מסתכל על תמונה מלפני שנים ומרגיש הבזק מיידי של אהבה לאנשים או לגרסה שלך שנמצאת שם. נשום לתוך החום הזה.",
+        "starter": "אני מרגיש אסיר תודה על רגעים שנלכדו, במיוחד על החום של להביט אחורה על..."
+      }
+    },
+    "resolvedProblem": {
+      "en": {
+        "label": "A problem that finally clicked",
+        "prompt": "Think of a technical error, a broken object, or a confusing situation that you finally solved. Feel that 'Aha!' moment in your mind right now.",
+        "starter": "I feel grateful for my problem-solving mind, especially the satisfaction when I fixed..."
+      },
+      "he": {
+        "label": "בעיה שסוף סוף נפתרה",
+        "prompt": "חשוב על שגיאה טכנית, חפץ שבור או סיטואציה מבלבלת שסוף סוף פיצחת. הרגש את רגע ה-'אהה!' הזה בראש שלך ממש עכשיו.",
+        "starter": "אני מרגיש אסיר תודה על המוח הפותר-בעיות שלי, במיוחד על הסיפוק שבהסדרת..."
+      }
+    },
+    "morningSunbeam": {
+      "en": {
+        "label": "A sunbeam cutting through the window",
+        "prompt": "Picture a single line of morning light cutting through the blinds onto the floor or wall. Notice the dust dancing in it. What quiet beauty is there?",
+        "starter": "I feel grateful for silent visual art around me, especially the sight of..."
+      },
+      "he": {
+        "label": "קרן אור חותכת את החלון",
+        "prompt": "דמיין קו אחד של אור בוקר שחוצה את התריסים אל הרצפה או הקיר. שים לב לאבק שרוקד בתוכו. איזה יופי שקט יש שם?",
+        "starter": "אני מרגיש אסיר תודה על אמנות ויזואלית שקטה סביבי, במיוחד על המראה של..."
+      }
+    },
+    "bodyRest": {
+      "en": {
+        "label": "Releasing your jaw right now",
+        "prompt": "Notice your teeth and jaw. Separate them, drop your shoulders down, let your stomach soften. Feel how much tension you were holding that you can let go of now.",
+        "starter": "I feel grateful for the ability to release tension, especially the loosening of my..."
+      },
+      "he": {
+        "label": "לשחרר את הלסת עכשיו",
+        "prompt": "שים לב לשיניים וללסת שלך. הפרד ביניהן, שמט את הכתפיים למטה, תן לבטן להתרכך. הרגש כמה מתח החזקת שאתה יכול לשחרר עכשיו.",
+        "starter": "אני מרגיש אסיר תודה על היכולת לשחרר מתח, במיוחד על ההרפיה של..."
+      }
+    },
+    "goodNightSleep": {
+      "en": {
+        "label": "Waking up feeling put together",
+        "prompt": "Remember a morning you woke up and your body just felt aligned, rested, and ready. Feel that baseline of physical readiness.",
+        "starter": "I feel grateful for physical rejuvenation, especially the clean slate of waking up after..."
+      },
+      "he": {
+        "label": "להתעורר בתחושה אסופה",
+        "prompt": "היזכר בבוקר שבו התעוררת והגוף שלך פשוט הרגיש מיושר, נח ומוכן. הרגש את נקודת המוצא הזו של מוכנות פיזית.",
+        "starter": "אני מרגיש אסיר תודה על התחדשות פיזית, במיוחד על הדף החלק של התעוררות אחרי..."
+      }
+    },
+    "honestConversation": {
+      "en": {
+        "label": "A real, unfiltered talk",
+        "prompt": "Think of a conversation where you didn’t have to fake it. You spoke your truth, they listened, and it was safe. Feel that internal relaxation.",
+        "starter": "I feel grateful for raw honesty in my life, especially the conversation with..."
+      },
+      "he": {
+        "label": "שיחה כנה ללא פילטרים",
+        "prompt": "חשוב על שיחה שבה לא היית צריך לזייף. דיברת את האמת שלך, הם הקשיבו, וזה היה בטוח. הרגש את ההרפיה הפנימית הזו.",
+        "starter": "אני מרגיש אסיר תודה על כנות גולמית בחיי, במיוחד על השיחה עם..."
+      }
+    },
+    "musicMemory": {
+      "en": {
+        "label": "An old song from high school",
+        "prompt": "Think of a track that immediately brings back a specific era of your youth. The smells, the friends, the absolute certainty of that time.",
+        "starter": "I feel grateful for the time machine of music, especially the memory of playing..."
+      },
+      "he": {
+        "label": "שיר ישן מתקופת הנעורים",
+        "prompt": "חשוב על רצועה שמחזירה אותך מיד לתקופה ספציפית בנעורים שלך. הריחות, החברים, הוודאות המוחלטת של אותו הזמן.",
+        "starter": "אני מרגיש אסיר תודה על מכונת הזמן של המוזיקה, במיוחד על הזיכרון של שמיעת..."
+      }
+    },
+    "warmSocks": {
+      "en": {
+        "label": "Warm, thick socks on cold feet",
+        "prompt": "Recall the feeling of cold toes sliding into a thick, dry, soft pair of socks. Feel that comfort radiating up your ankles.",
+        "starter": "I feel grateful for immediate physical comfort, especially the feeling of..."
+      },
+      "he": {
+        "label": "גרביים חמות על רגליים קרות",
+        "prompt": "היזכר בתחושה של אצבעות רגליים קרות שמחליקות לתוך זוג גרביים עבות, יבשות ורכות. הרגש את הנוחות הזו מקרינה למעלה לכיוון הקרסוליים.",
+        "starter": "אני מרגיש אסיר תודה על נוחות פיזית מיידית, במיוחד על התחושה של..."
+      }
+    },
+    "completedTask": {
+      "en": {
+        "label": "Crossing a heavy item off your list",
+        "prompt": "Remember the exact micro-second you hit 'send' or finished a task that was hanging over your head for days. Feel that mental weight evaporating.",
+        "starter": "I feel grateful for my capacity to execute, especially the relief of finishing..."
+      },
+      "he": {
+        "label": "למחוק משימה כבדה מהרשימה",
+        "prompt": "היזכר במיקרו-שנייה המדויקת שבה לחצת 'שלח' או סיימת משימה שישבה לך על הראש במשך ימים. הרגש את המשקל המנטלי הזה מתאדה.",
+        "starter": "אני מרגיש אסיר תודה על היכולת שלי לבצע, במיוחד על ההקלה בסיום..."
+      }
+    },
+    "unexpectedGift": {
+      "en": {
+        "label": "A small unexpected gift",
+        "prompt": "Think of someone bringing you a coffee, a snack, or a token without you asking. How did it feel to know you were on their mind?",
+        "starter": "I feel grateful for being thought of, especially when I received..."
+      },
+      "he": {
+        "label": "מתנה קטנה ולא צפויה",
+        "prompt": "חשוב על מישהו שהביא לך קפה, חטיף או מחווה קטנה מבלי שביקשת. איך זה הרגיש לדעת שהיית במחשבות שלו?",
+        "starter": "אני מרגיש אסיר תודה על כך שחושבים עליי, במיוחד כשקיבלתי..."
+      }
+    },
+    "cityLights": {
+      "en": {
+        "label": "The view of city lights at night",
+        "prompt": "Picture looking out over city lights from a distance. Thousands of lives, stories, and sparks moving together. Feel your connection to the big picture.",
+        "starter": "I feel grateful for the massive scale of human life, especially the view of..."
+      },
+      "he": {
+        "label": "אורות העיר בלילה",
+        "prompt": "דמיין מבט על אורות העיר מרחוק. אלפי חיים, סיפורים וניצוצות שנעים יחד. הרגש את החיבור שלך לתמונה הגדולה.",
+        "starter": "אני מרגיש אסיר תודה על ההיקף העצום של החיים האנושיים, במיוחד על המראה של..."
+      }
+    },
+    "cleanWaterDrink": {
+      "en": {
+        "label": "Quenching an intense thirst",
+        "prompt": "Recall a time you were completely parched, and you drank cold water. Feel that liquid tracking down your throat, instantly balancing your cells.",
+        "starter": "I feel grateful for the absolute satisfaction of water, especially the moment I drank..."
+      },
+      "he": {
+        "label": "לרוות צמא עמוק",
+        "prompt": "היזכר בפעם שבה היית צמא לחלוטין, ושתית מים קרים. הרגש את הנוזל הזה עובר בגרון, ומאזן באופן מיידי את התאים שלך.",
+        "starter": "אני מרגיש אסיר תודה על הסיפוק המוחלט של מים, במיוחד ברגע שבו שתיתי..."
+      }
+    },
+    "handsCapability": {
+      "en": {
+        "label": "My hands creating things",
+        "prompt": "Look at your hands. They build, type, hold, heal, and feed you. Focus on the articulation of your fingers. What are you glad they can do?",
+        "starter": "I feel grateful for the capability of my hands, especially their power to..."
+      },
+      "he": {
+        "label": "הידיים שלי שיוצרות דברים",
+        "prompt": "הסתכל על הידיים שלך. הן בונות, מקלידות, מחזיקות, מרפאות ומזינות אותך. התמקד בתנועה המדויקת של האצבעות. על מה אתה שמח שהן מסוגלות לעשות?",
+        "starter": "אני מרגיש אסיר תודה על היכולת של הידיים שלי, במיוחד על הכוח שלהן ל..."
+      }
+    },
+    "quietWalk": {
+      "en": {
+        "label": "A walk where your mind cleared",
+        "prompt": "Think of a walk where your feet just moved, and somewhere along the path, the heavy loops in your brain stopped. Feel that physical rhythm.",
+        "starter": "I feel grateful for the clarity of movement, especially the walk through..."
+      },
+      "he": {
+        "label": "הליכה שבה המחשבה התבהרה",
+        "prompt": "חשוב על הליכה שבה הרגליים שלך פשוט נעו, ובמקום כלשהו לאורך המסלול, הלולאות הכבדות במוח שלך נעצרו. הרגש את הקצב הפיזי הזה.",
+        "starter": "אני מרגיש אסיר תודה על הבהירות שבתנועה, במיוחד על ההליכה ב..."
+      }
+    },
+    "babyMoment": {
+      "life_context_include": ["new_parent"],
+      "en": {
+        "label": "A tiny moment with the baby",
+        "prompt": "Think of one small thing the baby did that made you smile — a sound, a look, a grip. What warmth did that bring?",
+        "starter": "I feel grateful for a small moment with my baby, especially when..."
+      },
+      "he": {
+        "label": "רגע קטן עם התינוק/ת",
+        "prompt": "חשוב על משהו קטן שהתינוק/ת עשה שחייך לך — קול, מבט, אחיזה. איזו חמימות זה הביא?",
+        "starter": "אני מרגיש אסיר תודה על רגע קטן עם התינוק/ת, במיוחד כש..."
+      }
+    },
+    "studyClarity": {
+      "life_context_include": ["student"],
+      "en": {
+        "label": "A moment of study clarity",
+        "prompt": "Return to a moment something finally clicked — a paragraph, a problem, a lecture. What did clarity feel like in your body?",
+        "starter": "I feel grateful for a moment of clarity in my studies, especially when..."
+      },
+      "he": {
+        "label": "רגע של בהירות בלימודים",
+        "prompt": "חזור לרגע שבו משהו סוף סוף התחבר — פסקה, תרגיל, הרצאה. איך הבהירות הרגישה בגוף?",
+        "starter": "אני מרגיש אסיר תודה על רגע בהירות בלימודים, במיוחד כש..."
+      }
+    },
+    "workClosedLoop": {
+      "life_context_include": ["manager"],
+      "en": {
+        "label": "A small win I closed today",
+        "prompt": "Think of one thing you finished or closed without dragging it into the evening. What did it feel like to let it go?",
+        "starter": "I feel grateful for closing one loop at work, especially when..."
+      },
+      "he": {
+        "label": "ניצחון קטן שסגרתי היום",
+        "prompt": "חשוב על דבר אחד שסיימת או סגרת בלי לגרור אותו לערב. איך הרגיש לשחרר את זה?",
+        "starter": "אני מרגיש אסיר תודה על שסגרתי לולאה אחת בעבודה, במיוחד כש..."
+      }
+    },
+    "selfCareMoment": {
+      "life_context_include": ["caregiver"],
+      "en": {
+        "label": "A moment I cared for myself",
+        "prompt": "Even a tiny one counts — water, a breath, five minutes alone. When did you give yourself something small today or yesterday?",
+        "starter": "I feel grateful for a moment I cared for myself, especially when..."
+      },
+      "he": {
+        "label": "רגע שדאגתי לעצמי",
+        "prompt": "גם הקטן נספר — מים, נשימה, חמש דקות לבד. מתי נתת לעצמך משהו קטן היום או אתמול?",
+        "starter": "אני מרגיש אסיר תודה על רגע שדאגתי לעצמי, במיוחד כש..."
+      }
+    },
+    "forwardStep": {
+      "life_context_include": ["between_jobs"],
+      "en": {
+        "label": "A step that moved me forward",
+        "prompt": "Not survival mode — a real step: an application, a conversation, learning, organizing. What felt like progress?",
+        "starter": "I feel grateful for a step forward in this transition, especially when..."
+      },
+      "he": {
+        "label": "צעד שקידם אותי קדימה",
+        "prompt": "לא מצב הישרדות — צעד אמיתי: מועמדות, שיחה, למידה, סידור. מה הרגיש כמו התקדמות?",
+        "starter": "אני מרגיש אסיר תודה על צעד קדימה במעבר הזה, במיוחד כש..."
+      }
+    },
+    "forgivingYourself": {
+      "en": {
+        "label": "Letting yourself off the hook",
+        "prompt": "Think of a mistake you made that you finally decided to stop punishing yourself for. Feel the heavy armor falling off your chest right now.",
+        "starter": "I feel grateful for the grace of self-forgiveness, especially letting go of the guilt about..."
+      },
+      "he": {
+        "label": "לסלוח לעצמך על משהו",
+        "prompt": "חשוב על טעות שעשית ושסוף סוף החלטת להפסיק להעניש את עצמך עליה. הרגש את השריון הכבד נושר מהחזה שלך ממש עכשיו.",
+        "starter": "אני מרגיש אסיר תודה על החסד של סליחה עצמית, במיוחד על שחרור האשמה לגבי..."
+      }
+    }
+  },
+  "entryPlaceholders": {
+    "en": [
+      "I can feel gratitude for...",
+      "A moment I can step back into is...",
+      "Something small and simple (like a breeze, a smile, or my coffee) that I can still feel is..."
+    ],
+    "he": [
+      "אני יכול להרגיש תודה על...",
+      "רגע שאני יכול לחזור אליו עכשיו הוא...",
+      "משהו קטן ופשוט (כמו משב רוח, חיוך, או כוס הקפה שלי) שאני עדיין מרגיש הוא..."
+    ]
+  },
+  "guidedPrompts": {
+    "en": [
+      "What is one thing you can see right now that you are glad exists?",
+      "Who made you feel safe this week, even for a moment?",
+      "What is one sound you heard recently that made you pause?",
+      "What part of your body worked hard for you today?",
+      "What is one meal or drink you truly enjoyed recently?"
+    ],
+    "he": [
+      "מה דבר אחד שאתה רואה עכשיו שאתה שמח שהוא קיים?",
+      "מי גרם לך להרגיש בטוח השבוע, אפילו לרגע?",
+      "מה צליל אחד ששמעת לאחרונה שגרם לך לעצור?",
+      "איזה חלק בגוף שלך עבד קשה בשבילך היום?",
+      "מה ארוחה או משקה אחד שבאמת נהנית ממנו לאחרונה?"
+    ]
+  },
+  "autoFillStarters": {
+    "en": [
+      "I feel grateful for the warmth of...",
+      "I feel grateful for the sound of...",
+      "I feel grateful for the way...",
+      "I feel grateful that I still have...",
+      "I feel grateful for the quiet moment when..."
+    ],
+    "he": [
+      "אני מרגיש אסיר תודה על החום של...",
+      "אני מרגיש אסיר תודה על הצליל של...",
+      "אני מרגיש אסיר תודה על הדרך שבה...",
+      "אני מרגיש אסיר תודה שעדיין יש לי...",
+      "אני מרגיש אסיר תודה על הרגע השקט שבו..."
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
+import {z} from 'zod';
+import {
+  createDailyBabyStep,
+  listDailyBabyStepsForDate,
+  listDailyBabyStepsForRange,
+} from '@/lib/life-coach/repository';
+import {ensureAllActiveCommitmentSteps} from '@/lib/life-coach/ensure-active-commitment-steps';
+import {
+  dailyStepDifficultySchema,
+  dailyStepStatusSchema,
+  lifeDomainSchema,
+} from '@/lib/life-coach/schemas';
+import {isIsoDate, jsonError, jsonOk, startOfToday} from '@/lib/life-coach/server';
+
+const dailyStepCreateSchema = z.object({
+  goal_id: z.string().uuid().nullable().optional(),
+  domain: lifeDomainSchema,
+  title: z.string().trim().min(1).max(180),
+  description: z.string().trim().max(1000).optional().default(''),
+  estimated_minutes: z.coerce.number().int().min(1).max(60),
+  difficulty: dailyStepDifficultySchema,
+  scheduled_date: z.string().date(),
+  status: dailyStepStatusSchema.optional().default('pending'),
+  generated_by_ai: z.boolean().optional().default(false),
+});
+
+export async function GET(request: Request) {
+  const current = await requireLifeCoachAccess(request);
+
+  if (!current.ok) {
+    return current.response;
+  }
+
+  const url = new URL(request.url);
+  const start = url.searchParams.get('start');
+  const end = url.searchParams.get('end');
+
+  if (start || end) {
+    if (!start || !end || !isIsoDate(start) || !isIsoDate(end)) {
+      return jsonError('Invalid date range. Expected start and end as YYYY-MM-DD.', 400);
+    }
+    if (start > end) {
+      return jsonError('Invalid date range. start must be before or equal to end.', 400);
+    }
+
+    try {
+      const steps = await listDailyBabyStepsForRange(start, end, current.user.id);
+      return jsonOk({start, end, steps});
+    } catch (error) {
+      return jsonError('Could not load daily steps.', 500, String(error));
+    }
+  }
+
+  const date = url.searchParams.get('date') || startOfToday();
+  if (!isIsoDate(date)) {
+    return jsonError('Invalid date. Expected YYYY-MM-DD.', 400);
+  }
+
+  try {
+    await ensureAllActiveCommitmentSteps(current.user.id);
+    const steps = await listDailyBabyStepsForDate(date, current.user.id);
+    return jsonOk({date, steps});
+  } catch (error) {
+    return jsonError('Could not load daily steps.', 500, String(error));
+  }
+}
+
+export async function POST(request: Request) {
+  const current = await requireLifeCoachAccess(request, {allowDuringOnboarding: true});
+
+  if (!current.ok) {
+    return current.response;
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonError('Invalid JSON body.', 400);
+  }
+
+  const parsed = dailyStepCreateSchema.safeParse(body);
+  if (!parsed.success) {
+    return jsonError('Invalid daily step payload.', 400, parsed.error.flatten());
+  }
+
+  try {
+    const step = await createDailyBabyStep(current.user.id, {
+      ...parsed.data,
+      goal_id: parsed.data.goal_id ?? null,
+    });
+    return jsonOk({step}, 201);
+  } catch (error) {
+    return jsonError('Could not create daily step.', 500, String(error));
+  }
+}

@@ -1,0 +1,3701 @@
+{
+  "app": {
+    "name": "אפליקציית רובינס",
+    "nameShort": "רובינס",
+    "fullName": "אפליקציית רובינס"
+  },
+  "meta": {
+    "title": "אפליקציית רובינס - המרחב היומי שלך",
+    "description": "מרחב יומי שקט יותר לצ׳ק-אין, טקס בוקר וצעד הבא מעשי בעברית ובאנגלית."
+  },
+  "aiActionHelp": {
+    "question": "מה ה-AI עושה עם המידע שלי?",
+    "dailySteps": "ה-AI משתמש במטרה, חסמים וזמן פנוי כדי לבנות צעד קטן.",
+    "goalStructure": "ה-AI משתמש בתשובות שלך, בתחום ובזמן הפנוי כדי לנסח מטרה ואבני דרך.",
+    "insight": "ה-AI מנתח צעדים, רפלקציות וחסמים כדי להציע תובנה מותאמת.",
+    "weeklyReview": "ה-AI סוקר את השבוע — מה עבד, מה עצר, ומה כדאי לשנות.",
+    "onboardingInsight": "ה-AI משתמש בתשובות שלך כדי לנסח תובנה לפני בניית המטרה.",
+    "onboardingGoal": "ה-AI בונה מטרה ל-90 יום על בסיס מה שסיפרת.",
+    "onboardingFirstStep": "ה-AI מתרגם את המטרה לצעד קטן ראשון שאפשר לבצע.",
+    "formulationQuestions": "ה-AI משתמש במטרה ובהקשר שלך כדי להציע שאלות המשך ממוקדות.",
+    "lifeContextRegenerate": "ה-AI מעדכן את צעדי היום לפי ההקשר החדש — בלי למחוק התקדמות שסימנת.",
+    "skipRecovery": "ה-AI מתאים צעד חלופי קטן יותר לפי מה שעצר אותך בצעד הקודם."
+  },
+  "nav": {
+    "primary": "ניווט ראשי",
+    "dashboard": "היום",
+    "today": "היום",
+    "checkin": "צ׳ק-אין יומי",
+    "lifeCoach": "מאמן חיים",
+    "history": "היסטוריה",
+    "privacy": "פרטיות",
+    "terms": "תנאים",
+    "help": "עזרה",
+    "settings": "הגדרות",
+    "admin": "ניהול",
+    "calmSpace": "מרחב הירגעות",
+    "morningRitual": "טקס בוקר",
+    "startHereShort": "התחל כאן",
+    "todayShort": "היום",
+    "checkinShort": "צ׳ק-אין",
+    "lifeCoachShort": "מטרות",
+    "progressShort": "התקדמות",
+    "profileShort": "פרופיל",
+    "moreMenuLabel": "עוד",
+    "virtualCoachShort": "מאמן",
+    "clarification": "הבהרה ויעד",
+    "clarificationShort": "הבהרה",
+    "calmSpaceShort": "בוקר",
+    "eveningResetShort": "ערב",
+    "routinesShort": "שגרות",
+    "morningRoutine": "שגרת בוקר",
+    "eveningRoutine": "שגרת ערב",
+    "routinesMenuLabel": "תפריט שגרות",
+    "sectionPersonalCoach": "מאמן אישי",
+    "sectionHelp": "עזרה",
+    "sectionLegal": "פרטיות ותנאים",
+    "settingsShort": "הגדרות",
+    "adminShort": "ניהול",
+    "streakLabel": "רצף",
+    "checkInsLabel": "צ׳ק-אינים",
+    "sectionMain": "ניווט",
+    "sectionTools": "כלים"
+  },
+  "language": {
+    "label": "שפה",
+    "english": "English",
+    "hebrew": "עברית"
+  },
+  "theme": {
+    "toggle": "החלף מצב כהה",
+    "toggleShort": "מצב",
+    "light": "בהיר",
+    "dark": "כהה"
+  },
+  "settings": {
+    "eyebrow": "המרחב האישי שלך",
+    "title": "הגדרות",
+    "subtitle": "זה המקום לשמור את האפליקציה אישית ופשוטה. כרגע הכול נשמר רק על המכשיר הזה.",
+    "displayName": "שם תצוגה",
+    "displayNamePlaceholder": "איך תרצה שהאפליקציה תפנה אליך?",
+    "save": "שמור שינויים",
+    "saved": "נשמר על המכשיר הזה.",
+    "localOnly": "נשמר מקומית בלבד.",
+    "themeTitle": "מצב תצוגה",
+    "themeHelp": "בחר מצב בהיר או כהה. ההעדפה נשמרת על המכשיר הזה.",
+    "languageTitle": "שפה",
+    "languageHelp": "בחר את השפה שבה תרצה להשתמש באפליקציה כרגע.",
+    "secondaryTitle": "תמיכה ופרטיות",
+    "coachingTitle": "העדפות אימון",
+    "coachingImpactTitle": "למה זה חשוב?",
+    "coachingImpactBody": "זה משפיע על מתי ואיך המאמן מציע משימות.",
+    "wakeTime": "שעת קימה",
+    "wakeTimeHelp": "ה-AI יציע צעדים שמתחילים לא לפני השעה שבחרת.",
+    "sleepTime": "שעת שינה",
+    "sleepTimeHelp": "עוזר לא לתזמן משימות מאוחר מדי בערב.",
+    "actionWindow": "חלון זמן מועדף לפעולה",
+    "actionWindowHelp": "מתי הכי נוח לך לבצע צעדים יומיים.",
+    "availableTime": "זמן פנוי יומי (דקות)",
+    "availableTimeHelp": "כמה דקות ריאליות יש לך ביום לצעדים.",
+    "intensityPreference": "עוצמת התקדמות",
+    "intensityPreferenceHelp": "רגוע, מאוזן או אינטנסיבי.",
+    "familyStatus": "מצב משפחתי",
+    "physicalConsiderations": "התחשבות פיזית",
+    "physicalConsiderationsHelp": "לא אבחון — רק להתאמת הצעות.",
+    "coachingStyle": "סגנון אימון",
+    "coachingStyleHelp": "בחר כיצד המאמן יפנה אליך.",
+    "sectionProfile": "פרופיל אישי",
+    "lifeContext": "הקשר חיים (לשאלות המשך)",
+    "lifeContextHelp": "משמש להצעת שאלות בהבהרה — לא לאבחון.",
+    "gender": "מין",
+    "genderHelp": "ננעל בשלב 1 של ההבהרה אחרי שמירה.",
+    "age": "גיל",
+    "ageHelp": "ננעל בשלב 1 של ההבהרה אחרי שמירה.",
+    "agePreferNot": "מעדיף/ה לא לציין גיל",
+    "agePlaceholder": "16–120",
+    "reminderTitle": "תזכורת יומית",
+    "reminderHelp": "קבל תזכורת בשעה קבועה לעשות צ׳ק-אין. הגדרה זו נשמרת על המכשיר הזה.",
+    "privacyControlsTitle": "בקרות פרטיות",
+    "behavioralAnalytics": "השתמש בתובנות התנהגותיות נוספות",
+    "behavioralAnalyticsHelp": "אפשר אותות פסיביים אופציונליים כמו משך כתיבה, עריכות, צפייה בפרטי משימה ודפוסים שמוסקים מקומית מהטקסט. ניתן לכבות ולהמשיך להשתמש באימון הבסיסי ללא האנליטיקה הנוספת.",
+    "coachingStyleOption": {
+      "supportive": "תומך ועוטף",
+      "direct": "ישיר ותכליתי",
+      "motivational": "מניע ואנרגטי"
+    },
+    "coachingStyleDesc": {
+      "supportive": "חמים ומעודד",
+      "direct": "קצר לעניין",
+      "motivational": "אנרגטי ומניע"
+    }
+  },
+  "dashboard": {
+    "title": "היום, בקצב שלך.",
+    "eyebrow": "המרחב היומי שלך",
+    "greetingMorning": "בוקר טוב, {name}.",
+    "greetingAfternoon": "טוב שחזרת, {name}.",
+    "greetingEvening": "זה המרחב שלך, {name}.",
+    "personalFallbackName": "אתה",
+    "subtitle": "התחל מהצעד הבא שנכון לך עכשיו. לא צריך נאום. צריך מקום ברור להתחיל ממנו.",
+    "currentTask": "המשימה של הרגע",
+    "ritualReadyTitle": "כדאי להתחיל בטקס קצר.",
+    "ritualReadyBody": "כמה דקות שקטות יכולות לייצב את המערכת, לחדד כיוון, ולעזור לך להיכנס ליום בצורה מכוונת יותר.",
+    "checkinReadyTitle": "זה רגע טוב לצ׳ק-אין כן.",
+    "checkinReadyBody": "הטקס כבר מאחוריך. עכשיו אפשר לקרוא את המצב כמו שהוא, ולפגוש את הצעד הבא בלי רעש מיותר.",
+    "latestReflection": "הרפלקציה האחרונה שלך",
+    "latestReflectionEmpty": "עוד לא נרשם כאן צ׳ק-אין. ברגע שתשלח אחד, המשפט האחרון והאמיתי שלך יופיע כאן.",
+    "todayFocus": "פוקוס להיום",
+    "todayFocusFallback": "בחר דבר אחד קטן וברור שאתה יכול להחזיק היום.",
+    "todayFocusPlaceholder": "מה הדבר האחד שאם תעשה אותו היום — היום יהיה שווה?",
+    "focusSaved": "נשמר",
+    "stateSectionEyebrow": "המצב שלך היום",
+    "stateSectionTitle": "קריאה שקטה של איך אתה עכשיו",
+    "stateSectionBody": "המדדים האלה מתעדכנים מהצ׳ק-אין האחרון שלך, כדי לעזור לך לראות דפוס בלי להעמיס על עצמך.",
+    "calmSpaceTitle": "מרחב הירגעות",
+    "calmSpaceBody": "נשימה, ויזואליזציה ואיפוס שקט מחכים לך בכל רגע.",
+    "lifeCoachTitle": "מטרות עם מאמן חיים",
+    "lifeCoachBody": "בנה מטרות ארוכות טווח בכל תחומי החיים, ותן ל-AI לפרק אותן לצעדי תינוק יומיים וריאליים.",
+    "settingsTitle": "הגדרות אישיות",
+    "settingsBody": "התאם שם ושפה כדי שהאפליקציה תרגיש יותר שלך.",
+    "energy": "אנרגיה",
+    "focus": "פוקוס",
+    "momentum": "מומנטום",
+    "prompt": "מה האמת שאתה נמנע ממנה עכשיו?"
+  },
+  "simpleTasks": {
+    "sectionTitle": "משימות יומיות פשוטות",
+    "sectionEyebrow": "הרגלים יומיים",
+    "sectionBody": "הגדר משימה פשוטה, סמן V בכל פעם שביצעת. יום נספק רק כשהשלמת את כל הפעמים — ימים שהוחמצו פשוט לא מתקדמים.",
+    "empty": "אין משימות יומיות עדיין. הוסף אחת כדי להתחיל.",
+    "addTask": "הוסף משימה יומית",
+    "addTaskExplainer": "פותח טופס מהיר להוספת משימה חד-פעמית לרשימת היום שלך — בלי לעבור דרך בניית מטרה.",
+    "newTaskTitle": "משימה יומית חדשה",
+    "stepName": "מה המשימה?",
+    "stepNamePlaceholder": "כתוב משימה קצרה וברורה…",
+    "stepTimesPerDay": "כמה פעמים ביום?",
+    "stepTimesPerDayHelp": "כמה פעמים תבצע את המשימה בכל יום.",
+    "stepTargetDays": "לכמה ימים?",
+    "stepTargetDaysHelp": "מספר הימים שבהם תשלים את המשימה במלואה.",
+    "perDayUnit": "פעמים ביום",
+    "daysUnit": "ימים",
+    "back": "חזרה",
+    "next": "הבא",
+    "create": "צור משימה",
+    "cancel": "ביטול",
+    "successMetric": "{times} פעמים ביום למשך {days} ימים",
+    "progressLabel": "יום {done} מתוך {total}",
+    "todayProgress": "{done}/{total} היום",
+    "doneToday": "הושלם להיום",
+    "completedBadge": "הושלם",
+    "completedNote": "סיימת את כל {total} הימים. כל הכבוד!",
+    "delete": "מחק",
+    "deleteConfirm": "למחוק את המשימה הזו?",
+    "domainOptional": "תחום (לא חובה)",
+    "domainNone": "ללא תחום"
+  },
+  "lifeWheel": {
+    "bands": {
+      "crisis": "במשבר",
+      "struggling": "מתקשה",
+      "stable": "יציב",
+      "progressing": "מתקדם",
+      "thriving": "משגשג"
+    },
+    "domains": {
+      "health": {
+        "crisis": "מרגיש/ה לא בריא/ה רוב הזמן.",
+        "struggling": "אנרגיה נמוכה והרגלים לא יציבים.",
+        "stable": "מצב סביר, אך יש מקום משמעותי לשיפור.",
+        "progressing": "בריא/ה ומתפקד/ת היטב ברוב הימים.",
+        "thriving": "מרגיש/ה מצוין פיזית ומנטלית באופן עקבי."
+      },
+      "time": {
+        "crisis": "הימים אורגים אותך — אין שליטה על הזמן.",
+        "struggling": "תחושת דחף מתמדת, קשה לתעדף.",
+        "stable": "מסתדר/ת, אך הזמן בורח בין משימות.",
+        "progressing": "מנהל/ת את הזמן היטב ברוב הימים.",
+        "thriving": "איזון מלא בין עבודה, מטרות ומנוחה."
+      },
+      "wealth": {
+        "crisis": "לחץ כלכלי משמעותי.",
+        "struggling": "מתקשה/ה לייצר יציבות.",
+        "stable": "מסתדר/ת, אך ללא ביטחון מלא.",
+        "progressing": "יציבות כלכלית טובה.",
+        "thriving": "שליטה מלאה וביטחון כלכלי."
+      },
+      "career": {
+        "crisis": "תקוע/ה ולא מרוצה/ה מהכיוון.",
+        "struggling": "עובד/ת, אך לא מתקדם/ת כפי שהיית/ה רוצה/ה.",
+        "stable": "יציב/ה, אך רחוק/ה מהפוטנציאל שלך.",
+        "progressing": "מתקדם/ת ומרוצה/ה יחסית מהמסלול.",
+        "thriving": "חי/ה את הקריירה שאת/ה באמת רוצה/ה."
+      },
+      "relationships": {
+        "crisis": "מרגיש/ה בודד/ה או מנותק/ת.",
+        "struggling": "יש קשרים, אך הם אינם מספקים.",
+        "stable": "קשרים טובים עם מקום לשיפור.",
+        "progressing": "מערכות יחסים חזקות ותומכות.",
+        "thriving": "קשרים עמוקים ומספקים מאוד."
+      },
+      "mind": {
+        "crisis": "מוצף/ת ומתקשה/ה להתמודד.",
+        "struggling": "לחץ גבוה וחוסר בהירות.",
+        "stable": "מצב סביר, אך לא יציב.",
+        "progressing": "ממוקד/ת ובשליטה על רוב האתגרים.",
+        "thriving": "צלול/ה, רגוע/ה ובעל/ת חוסן מנטלי גבוה."
+      },
+      "spirit": {
+        "crisis": "חסר/ה כיוון או משמעות.",
+        "struggling": "מרגיש/ה אבוד/ה לעיתים קרובות.",
+        "stable": "יש כיוון כללי, אך לא ברור לגמרי.",
+        "progressing": "מחובר/ת לערכים ולמטרות שלך.",
+        "thriving": "חי/ה חיים בעלי משמעות עמוקה."
+      },
+      "house_family": {
+        "crisis": "בית או משפחה במצוקה משמעותית.",
+        "struggling": "קשה לשמור על יציבות ואיזון בבית.",
+        "stable": "סביר, אך עם מתחים ופערים.",
+        "progressing": "בית תומך ומתפקד היטב.",
+        "thriving": "ביטחון, חום ויציבות בבית ובמשפחה."
+      }
+    }
+  },
+  "lifeCoach": {
+    "homeEyebrow": "מאמן חיים AI",
+    "homeTitle": "כיוון ארוך טווח, ביצוע יומי.",
+    "homeBody": "הערך את 8 תחומי החיים, הגדר מטרות משמעותיות, ותן ל-AI להפוך אותן לצעדי תינוק ריאליים שמתעדכנים עם החיים עצמם.",
+    "setupSectionTitle": "הגדרה ראשונית",
+    "setupSectionBody": "תחומי חיים, מטרות ואבני דרך — מגדירים פעם ומתעדכנים כשצריך.",
+    "dailySectionTitle": "מה עושים היום",
+    "dailySectionBody": "צעדים יומיים, סקירה שבועית ותובנות מהביצוע שלך.",
+    "authTitle": "מרחב אימון פרטי",
+    "authHeading": "התחבר כדי לפתוח את מאמן החיים האישי שלך",
+    "authBody": "הפיצ'ר הזה שומר מטרות, צעדים יומיים, רפלקציות וסקירות שבועיות לכל משתמש בנפרד.",
+    "emailPlaceholder": "you@example.com",
+    "sendMagicLink": "שלח קישור כניסה",
+    "sendingMagicLink": "שולח קישור...",
+    "magicLinkSent": "בדוק את המייל שלך לקישור הכניסה.",
+    "signOut": "התנתק",
+    "loading": "טוען את סביבת מאמן החיים שלך...",
+    "loadError": "לא הצלחנו לטעון את נתוני מאמן החיים. בדוק את החיבור ונסה שוב.",
+    "notSet": "עוד לא הוגדר",
+    "cardActiveChip": "פעיל",
+    "cardSetupPrompt": "לחץ כדי להגדיר את היעדים שלך בתחום זה",
+    "cardStartCta": "לחץ להתחיל",
+    "cardSetupTime": "~3 דקות להגדרה",
+    "pendingStatusInfo": "הצעד ממתין לך — סמן 'הושלם', 'בוצע חלקית' או 'דולג' בסיום היום.",
+    "pendingStatusHint": "ממתין לפעולה שלך — בחר סטטוס למטה כשתסיים.",
+    "snoozeToTomorrow": "דחה למחר",
+    "deleteStep": "מחק צעד",
+    "deleteStepConfirm": "למחוק את הצעד הזה לצמיתות?",
+    "noGoalsForSteps": "עליך להגדיר לפחות מטרה אחת לפני שאפשר לייצר צעדים יומיים.",
+    "noGoalsForStepsCta": "בחר תחום",
+    "stepsGenerated": "צעדי היום נוצרו! גלול מטה כדי לראות אותם.",
+    "domainsProgressTitle": "התקדמות הגדרת תחומים",
+    "domainsProgressLabel": "{configured} מתוך {total} תחומים הוגדרו",
+    "domainsSetupProgressEyebrow": "התקדמות הגדרה",
+    "domainsSetupProgressHeadline": "הגדרת {configured} מתוך {total} תחומי חיים",
+    "domainsSetupProgressFraction": "{configured}/{total}",
+    "domainsSetupProgressHintStart": "מספיק להתחיל עם תחום אחד.",
+    "domainsSetupProgressHintOne": "תחום אחד מספיק — אפשר לייצר צעדים יומיים ולהתחיל.",
+    "domainsSetupProgressHintPartial": "אין חובה להגדיר את כל התחומים. הוסף עוד כשזה רלוונטי.",
+    "domainsSetupProgressHintComplete": "כל התחומים מוגדרים — עדכן כשהחיים משתנים.",
+    "onboardingEyebrow": "ברוך הבא",
+    "onboardingTitle": "בוא נתחיל — שלושה צעדים פשוטים",
+    "onboardingBody": "המאמן האישי עוזר לך להפוך חזון גדול לצעדים יומיים קטנים ובני-ביצוע. הנה איך זה עובד:",
+    "onboardingStep1Title": "בחר תחום",
+    "onboardingStep1Body": "התחל מתחום אחד שחשוב לך — בריאות, קריירה או כל אחד מ-8 התחומים.",
+    "onboardingStep2Title": "בנה מטרה",
+    "onboardingStep2Body": "ענה על כמה שאלות קצרות וה-AI יבנה לך תוכנית ל-90 יום.",
+    "onboardingStep3Title": "בצע כל יום",
+    "onboardingStep3Body": "קבל צעדים יומיים קטנים, סמן מה השלמת, וצבור מומנטום.",
+    "onboardingCta": "בחר את התחום הראשון",
+    "goals": "מטרות",
+    "activeGoals": "מטרות",
+    "todayStatus": "מצב הצעד להיום",
+    "progress": "התקדמות",
+    "weeklyReview": "סקירה שבועית",
+    "weeklyReviewEmpty": "הסקירה השבועית הראשונה תופיע אחרי כשבוע של ביצוע צעדים. המשך לסמן צעדים יומיים — וכשתצטבר מספיק היסטוריה, תקבל כאן ניתוח דפוסים והמלצות מותאמות.",
+    "weeklyReviewLocked": "ננעל",
+    "weeklyReviewLockedWhyTitle": "למה הסקירה ריקה",
+    "weeklyReviewLockedExplainer": "צריך לפחות {minSteps} צעדים או {minDays} ימים עם פעילות כדי שהסקירה תהיה משמעותית.",
+    "weeklyReviewLockedProgress": "עד כה: {steps}/{minSteps} צעדים · {days}/{minDays} ימים",
+    "weeklyReviewReadyLabel": "מוכן ליצירה",
+    "weeklyReviewGoodTime": "זמן מצוין לסקירה!",
+    "weeklyReviewBestOnWeekend": "מומלץ לסוף השבוע",
+    "weeklyReviewPreviewLabel": "כך תיראה הסקירה שלך",
+    "weeklyReviewWhenWhyTitle": "מתי ולמה ליצור סקירה",
+    "weeklyReviewWhenWhyExplainer": "אחרי כמה ימי פעילות, הסקירה מזהה דפוסים שחוזרים ומציעה התאמות.",
+    "completedSteps": "צעדים שהושלמו",
+    "mainBlocker": "החסם המרכזי",
+    "domainDetail": "פירוט תחום",
+    "domainTabs": {
+      "ariaLabel": "ניווט בתחום",
+      "today": "היום",
+      "goal": "מטרה",
+      "progress": "התקדמות",
+      "insights": "תובנות",
+      "todaySummary": "{completed}/{total} צעדים היום · רצף {streak} ימים",
+      "streakOnly": "רצף {streak} ימים",
+      "noGoalHint": "עדיין אין מטרה פעילה בתחום הזה — בוא נגדיר אחת.",
+      "goToGoal": "הגדר מטרה",
+      "showAllSteps": "הצג את כל הצעדים",
+      "insightsIntro": "סקירה שבועית ותבניות מהפעילות שלך — כשתרצה לעצור ולהסתכל אחורה.",
+      "addAnotherGoal": "+ הוסף יעד נוסף",
+      "newGoalHint": "הגדר יעד חדש לתחום הזה."
+    },
+    "pipelineAssess": "מלא אבחון",
+    "pipelineBuild": "בנה מטרה",
+    "backToOverview": "חזרה לתמונה המלאה",
+    "assessment": "אבחון תחום",
+    "assessmentTitle": "קודם תראה את המציאות כמו שהיא, ואז תבנה את השנה הבאה.",
+    "domainScoreLabel": "ציון תחום",
+    "domainScoreExplainer": "זה לא ציון עליך — זה מצפן לתעדוף.",
+    "goalHierarchyAria": "הבדל בין יעד, אבן דרך וצעד יומי",
+    "goalHierarchyGoal": "יעד",
+    "goalHierarchyGoalRole": "כיוון",
+    "goalHierarchyMilestone": "אבן דרך",
+    "goalHierarchyMilestoneRole": "התקדמות",
+    "goalHierarchyDailyStep": "צעד יומי",
+    "goalHierarchyDailyStepRole": "פעולה היום",
+    "currentScore": "ציון נוכחי",
+    "currentState": "המצב הנוכחי",
+    "currentStatePlaceholder": "מה נכון בתחום הזה כרגע?",
+    "currentStateStarter1": "כרגע אני מרגיש/ה ש…",
+    "currentStateStarter2": "האתגר הגדול שלי הוא…",
+    "currentStateStarter3": "אני תקוע/ה ב…",
+    "desiredState": "המצב הרצוי",
+    "desiredStatePlaceholder": "איך תיראה הצלחה בתחום הזה בעוד 12 חודשים?",
+    "desiredStateStarter1": "אחרי 12 חודשים אני רוצה…",
+    "desiredStateStarter2": "ההצלחה תיראה כ…",
+    "desiredStateStarter3": "אדע שהצלחתי כאשר…",
+    "mainBlockers": "חסמים מרכזיים",
+    "customBlocker": "הוסף חסם נוסף",
+    "availableTime": "זמן פנוי יומי",
+    "thirtyPlusMinutes": "מעל 30 דקות",
+    "intensityPreference": "העדפת אינטנסיביות",
+    "saveAssessment": "שמור אבחון",
+    "assessmentSavedToast": "האבחון נשמר",
+    "assessmentSummaryEyebrow": "אבחון שמור",
+    "assessmentSummaryTitle": "הכיוון שלך",
+    "assessmentGoalEyebrow": "יעד פעיל",
+    "assessmentGoalTitle": "היעד שלך",
+    "assessmentGoalHorizonHint": "יעד 90 הימים הוא הכיוון — ההתחייבות לצד שמאל היא להופיע כל יום בתקופה שנבחרה.",
+    "assessmentSummaryEmpty": "עדיין לא הוגדר מצב רצוי — לחץ ערוך כדי להשלים.",
+    "assessmentSummaryBlockers": "חסמים: {blockers}",
+    "assessmentSummaryMeta": "· {minutes} דק׳ ביום · {intensity}",
+    "assessmentEdit": "ערוך אבחון",
+    "goalCreation": "יצירת מטרה",
+    "goalCreationTitle": "צור מטרה ידנית או תן ל-AI לבנות אותה.",
+    "rawGoal": "מטרה גולמית",
+    "rawGoalPlaceholder": "אני רוצה להיות בריא יותר ולהרגיש יותר אנרגיה.",
+    "deadline": "דדליין",
+    "motivation": "למה זה חשוב",
+    "motivationPlaceholder": "למה המטרה הזאת חשובה לך עכשיו?",
+    "constraints": "מגבלות",
+    "constraintsPlaceholder": "אילו אילוצים אמיתיים התוכנית צריכה לכבד?",
+    "successMetricQuestion": "מהו מדד ההצלחה?",
+    "successMetricQuestionPlaceholder": "כיצד תדע שהגעת למטרה? (לדוגמה: לרוץ 5 ק\"מ, לחסוך 500 ₪ בחודש)",
+    "generating": "יוצר…",
+    "createWithAi": "צור עם AI",
+    "saveManualGoal": "שמור ידנית",
+    "defaultSuccessMetric": "לייצר התקדמות שבועית עקבית.",
+    "aiPreview": "תצוגת AI",
+    "aiPreviewTitle": "בדוק וערוך את התוכנית שנוצרה לפני שמירה.",
+    "executionPreview": {
+      "eyebrow": "תצוגת ביצוע",
+      "vision": "חזון",
+      "firstMilestone": "אבן דרך ראשונה",
+      "firstSteps": "צעדי תינוק ראשונים",
+      "emptyVision": "הכיוון הברור שלך יופיע כאן.",
+      "emptyMilestone": "הוסף או ערוך את אבן הדרך הראשונה.",
+      "emptySteps": "הצעדים היומיים הראשונים יופיעו כאן."
+    },
+    "realismAdjustedTitle": "התאמנו את השבוע הראשון כדי שיהיה בר ביצוע.",
+    "goalTitle": "כותרת המטרה",
+    "goalDescription": "תיאור המטרה",
+    "successMetric": "מדד הצלחה",
+    "milestones": "אבני דרך",
+    "editGoal": "ערוך מטרה",
+    "deleteGoal": "מחק",
+    "deleteGoalConfirm": "למחוק את המטרה הזו? לא ניתן לבטל פעולה זו.",
+    "completeGoal": "סמן מטרה כהושלמה",
+    "completeGoalConfirm": "לסמן את המטרה הזו כהושלמה?",
+    "goalCompleted": "המטרה הושלמה",
+    "reopenGoal": "פתח מחדש",
+    "completeMilestone": "סמן שהושגה",
+    "reopenMilestone": "בטל",
+    "goalEditValidation": "כותרת המטרה היא שדה חובה.",
+    "goalEditError": "שמירת השינויים נכשלה. נסה שוב.",
+    "addMilestone": "הוסף אבן דרך",
+    "deleteMilestone": "מחק אבן דרך",
+    "moveUp": "הזז למעלה",
+    "moveDown": "הזז למטה",
+    "dailyBabySteps": "צעדי היום",
+    "saveGoal": "שמור מטרה",
+    "todayPlan": "צעדי היום",
+    "noDailySteps": "עוד אין צעדי תינוק להיום.",
+    "noDailyStepsEyebrow": "איך מתחילים",
+    "noDailyStepsTitle": "עדיין אין פעולות להיום",
+    "noDailyStepsGuide": "כדי להתחיל, צור יעד אחד ואז נייצר פעולות יומיות.",
+    "noDailyStepsStepGoal": "צור יעד בתחום שחשוב לך",
+    "noDailyStepsStepGenerate": "נייצר עבורך פעולות יומיות קטנות",
+    "noDailyStepsCta": "צור את צעדי היום",
+    "dailyReflection": "רפלקציה יומית",
+    "dailyReflectionTitle": "תפוס מה קרה היום כדי שמחר הצעדים יתעדכנו בהתאם.",
+    "moodScore": "ציון מצב רוח",
+    "moodTier1": "מדוכא",
+    "moodTier2": "לא טוב",
+    "moodTier3": "ניטרלי",
+    "moodTier4": "טוב",
+    "moodTier5": "נהדר",
+    "energyScore": "ציון אנרגיה",
+    "energyTier1": "מרוקן",
+    "energyTier2": "עייף",
+    "energyTier3": "בסדר",
+    "energyTier4": "טעון",
+    "energyTier5": "מלא אנרגיה",
+    "blockerReason": "אם זה לא קרה, למה?",
+    "reflection": "רפלקציה",
+    "reflectionPlaceholder": "מה עזר או הפריע היום?",
+    "saveReflection": "שמור רפלקציה",
+    "saving": "שומר...",
+    "cancel": "ביטול",
+    "minutes": "דקות",
+    "markCompleted": "הושלם",
+    "markPartial": "בוצע חלקית",
+    "markSkipped": "דולג",
+    "stepStatusCoachHint": "גם חלקי נחשב מידע חשוב למאמן.",
+    "stepSkipCoachHint": "דילוג מלמד את המאמן להתאים טוב יותר את הצעד הבא.",
+    "generateTodaySteps": "צור את צעדי היום",
+    "regenerateTodaySteps": "צור צעדים מחדש",
+    "energyAdapted": "מותאם לרמת האנרגיה שלך",
+    "generateWeeklyReview": "צור סקירה שבועית",
+    "aiInsights": "תובנות AI",
+    "patternsAndAdjustments": "דפוסים והתאמות",
+    "aiInsightsVsReviewTitle": "מה ההבדל מהסקירה השבועית?",
+    "aiInsightsWeeklyReviewLabel": "סקירה שבועית",
+    "aiInsightsWeeklyReviewRole": "שבוע",
+    "aiInsightsInsightsLabel": "Insights",
+    "aiInsightsInsightsRole": "דפוסים והמלצות מתמשכות",
+    "insightsEmpty": "התובנות יופיעו אחרי שתצטבר היסטוריית משימות ורפלקציות.",
+    "insightsEmptyDomain": "עוד אין תובנות לתחום זה. לחץ כדי שה-AI יצור עבורך ניתוח ראשוני על בסיס הנתונים הקיימים.",
+    "generateInitialInsight": "צור תובנה ראשונה",
+    "generatingInsight": "מנתח…",
+    "crossDomainTitle": "תצפית חוצת תחומים",
+    "crossDomainBlocker": "החסם \"{blocker}\"מופיע ב-{count} תחומים שונים.",
+    "crossDomainSuggestion": "פתרון שורש בתחום אחד ישפר גם את האחרים — כדאי לבנות מטרה שמטפלת בחסם זה.",
+    "mastery": {
+      "title": "שליטה בתחום",
+      "level": "רמה {level}",
+      "levels": {
+        "1": "התעוררות",
+        "2": "בנייה",
+        "3": "מחויבות",
+        "4": "שליטה"
+      }
+    },
+    "microRewards": {
+      "completed": "+{minutes} דקות מומנטום נרשמו",
+      "comeback": "קאמבק נרשם — עצם החזרה חשובה."
+    },
+    "stepStatus": {
+      "none": "עוד אין צעד",
+      "pending": "ממתין",
+      "completed": "הושלם",
+      "mixed": "התקדמות מעורבת"
+    },
+    "dailyStepStatus": {
+      "pending": "ממתין",
+      "completed": "הושלם",
+      "skipped": "דולג",
+      "partial": "בוצע חלקית"
+    },
+    "difficulty": {
+      "easy": "קל",
+      "medium": "בינוני",
+      "hard": "מאתגר"
+    },
+    "intensity": {
+      "gentle": "עדין",
+      "balanced": "מאוזן",
+      "intense": "אינטנסיבי"
+    },
+    "insightType": {
+      "pattern": "דפוס",
+      "recommendation": "המלצה",
+      "weekly_review": "סקירה שבועית"
+    },
+    "blockers": {
+      "low_energy": "חוסר אנרגיה",
+      "kids": "ילדים",
+      "no_time": "אין זמן",
+      "money_pressure": "לחץ כלכלי",
+      "lack_of_clarity": "חוסר בהירות",
+      "self_doubt": "ספק עצמי",
+      "environment": "סביבה",
+      "consistency": "עקביות",
+      "forgot": "שכחתי",
+      "unclear_task": "המשימה לא הייתה ברורה",
+      "emotional_resistance": "התנגדות רגשית",
+      "family_chaos": "כאוס משפחתי",
+      "other": "אחר"
+    },
+    "domains": {
+      "health": {
+        "short": "בריאות וגוף",
+        "label": "בריאות וגוף",
+        "description": "אנרגיה, שינה, תזונה, כושר והתחושה הפיזית שלך ביום־יום.",
+        "wheelIntro": "האנרגיה, השינה, התזונה, הכושר והתחושה הפיזית שלך ביום־יום. דרג עד כמה הגוף שלך תומך בחיים שאתה רוצה לבנות.",
+        "setupValue": "הגדר מטרת בריאות אחת — תנועה, שינה או תזונה — וקבל תוכנית יומית."
+      },
+      "time": {
+        "short": "זמן ומשמעת",
+        "label": "זמן ומשמעת",
+        "description": "ניהול היום כך שיש מקום למשפחה, קריירה והתפתחות אישית בלי להישחק.",
+        "wheelIntro": "היכולת שלך לנהל את היום כך שיהיה מקום למשפחה, קריירה והתפתחות אישית בלי להישחק. דרג עד כמה אתה מצליח לשמור על סדרי עדיפויות, עקביות, פוקוס ומשמעת גם כשאין לך מוטיבציה.",
+        "setupValue": "השתלט על היום שלך עם מטרת ניהול זמן וצעדים קטנים."
+      },
+      "wealth": {
+        "short": "כסף ושפע",
+        "label": "כסף ושפע",
+        "description": "הכנסות, חיסכון, חובות, השקעות וביטחון כלכלי.",
+        "wheelIntro": "הכנסות, חיסכון, חובות, השקעות ותחושת ביטחון כלכלי. דרג כמה המצב הכלכלי שלך יציב, מנוהל ומשרת אותך.",
+        "setupValue": "בנה יציבות כלכלית עם מטרת כסף וצעד יומי אחד."
+      },
+      "career": {
+        "short": "קריירה וייעוד",
+        "label": "קריירה וייעוד",
+        "description": "עבודה, התקדמות מקצועית, משמעות וכיוון.",
+        "wheelIntro": "העבודה, ההתקדמות המקצועית, תחושת המשמעות והכיוון שלך. דרג עד כמה הקריירה שלך מתקדמת למקום שאתה באמת רוצה.",
+        "setupValue": "קדם את הקריירה שלך עם מטרה ברורה ומהלך יומי נראה לעין."
+      },
+      "relationships": {
+        "short": "מערכות יחסים",
+        "label": "מערכות יחסים",
+        "description": "לבנות ולשמר קשרים טובים עם האנשים החשובים בחיים שלך.",
+        "wheelIntro": "היכולת שלך לבנות ולשמר קשרים טובים עם האנשים החשובים בחיים שלך. דרג עד כמה יש בקשרים שלך תקשורת טובה, אמון, תמיכה, מחוות יזומות ויכולת לפתור מתחים.",
+        "setupValue": "חזק קשר חשוב עם מטרה וצעדים קטנים של קרבה."
+      },
+      "mind": {
+        "short": "מיינד ורגשות",
+        "label": "מיינד ורגשות",
+        "description": "דיבור עצמי, ביטחון, מוטיבציה, חרדה, מצב רוח ואמונות מגבילות.",
+        "wheelIntro": "דיבור עצמי, ביטחון, מוטיבציה, חרדה, מצב רוח ואמונות מגבילות. דרג עד כמה הראש והרגשות שלך עובדים איתך ולא נגדך.",
+        "setupValue": "חדד פוקוס וחוסן מנטלי עם מטרת מיינד יומית."
+      },
+      "spirit": {
+        "short": "משמעות ורוח",
+        "label": "משמעות ורוח",
+        "description": "ערכים, חזון, אמונה, הודיה, תרומה ותחושת שליחות.",
+        "wheelIntro": "ערכים, חזון, אמונה, הודיה, תרומה ותחושת שליחות. דרג כמה החיים שלך מחוברים למשהו גדול ומשמעותי עבורך.",
+        "setupValue": "התחבר למשמעות ולשקט פנימי עם מטרת רוח."
+      },
+      "house_family": {
+        "short": "בית ומשפחה",
+        "label": "בית ומשפחה",
+        "description": "ילדים, בית, אווירה משפחתית, סדר ואחריות יומיומית.",
+        "wheelIntro": "הילדים, הבית, האווירה המשפחתית, סדר ואחריות יומיומית. דרג כמה הבית שלך מרגיש יציב, רגוע ותומך.",
+        "setupValue": "הכנס סדר ושגרה לבית עם מטרת בית ומשפחה."
+      }
+    },
+    "blockerCategory": "מה עיכב אותך?",
+    "blockerCategoryExternal": "חיצוני",
+    "blockerCategoryInternal": "פנימי",
+    "blockerCategoryUnclear": "לא ברור לי",
+    "blockerCategoryExternalHint": "זמן, אנשים, נסיבות",
+    "blockerCategoryInternalHint": "מוטיבציה, פחד, עייפות",
+    "blockerCategoryUnclearHint": "קרה, לא יודע למה",
+    "actualMinutesPrompt": "כמה זמן לקח בפועל?",
+    "actualMinutesLess": "פחות מ-{n} דק׳",
+    "actualMinutesAbout": "כ-{n} דק׳",
+    "actualMinutesMore": "יותר מ-{n} דק׳",
+    "actualMinutesExact": "כמות מדויקת...",
+    "actualMinutesSkip": "דלג",
+    "actualMinutesDefault": "נרשמו {n} דק׳ — שנה אם צריך",
+    "actualMinutesLooksGood": "נראה טוב",
+    "valueFeedback": {
+      "question": "זה באמת עזר לך?",
+      "feltProgress": "כן, הרגשתי התקדמות",
+      "tooSmall": "כן, אבל קטן מדי",
+      "tooGeneric": "לא, זה היה כללי מדי",
+      "missedProblem": "לא, זה לא נגע בבעיה שלי",
+      "skip": "דלג",
+      "thanks": "תודה — נשפר את הצעדים הבאים"
+    },
+    "startHere": "התחל כאן",
+    "recommendedFirst": "מומלץ קודם",
+    "recommendedFirstHint": "התאמה {fit}% · אנרגיה {energy}% · זמן {time}%",
+    "whyItMatters": "למה זה משנה",
+    "stepReasoningPrefix": "בחרתי את זה כי…",
+    "stepWhyReceivedTitle": "למה קיבלתי את זה?",
+    "stepWhyReceivedFallback": "מבוסס על המטרה, הזמן והאנרגיה שלך.",
+    "didLessButDid": "עשיתי פחות, אבל עשיתי",
+    "didLessButDidDone": "התקדמות חלקית נרשמה",
+    "dailySummary": "היום השלמת {count, plural, one {צעד אחד} other {# צעדים}} ב־{minutes} דקות",
+    "skippedMicroCta": "רוצה להפוך את זה לצעד של 2 דקות למחר?",
+    "skippedMicroCtaBtn": "כן — הוסף צעד קצר למחר",
+    "skipRecovery": {
+      "bannerTitle": "רוצה לחזור למסלול היום?",
+      "bannerBody": "אותו צעד, בגרסה קלה של 3 דקות — בלי משימה חדשה.",
+      "cta": "דילגת — רוצה גרסה קלה יותר של אותו צעד?",
+      "btn": "הפוך לגרסת 3 דקות",
+      "done": "הצעד חזר למסלול — גרסה של 3 דקות מוכנה"
+    },
+    "skipCoach": {
+      "whatStopped": "מה עצר אותך?",
+      "tomorrowTitle": "מה נעשה מחר?",
+      "tomorrowHint": "בחר אחת — נתאים את הצעדים אוטומטית.",
+      "saving": "שומר…",
+      "saved": "מחר יותאם לפי הבחירה שלך",
+      "actions": {
+        "shrink_tomorrow": {
+          "title": "להקטין למחר",
+          "hint": "צעד אחד קצר יותר"
+        },
+        "change_time": {
+          "title": "לשנות שעה",
+          "hint": "ננסה חלון זמן אחר"
+        },
+        "plan_b": {
+          "title": "Plan B",
+          "hint": "רק הצעד הראשון"
+        }
+      }
+    },
+    "microStepTomorrowTitle": "2 דק׳: {title}",
+    "microStepTomorrowDesc": "גרסה קלה יותר של הצעד שדילגת עליו.",
+    "microStepTomorrowCreated": "צעד המיקרו למחר מוכן",
+    "regenerateSafeHintTitle": "יצירה מחדש",
+    "regenerateSafeHint": "יצירה מחדש לא מוחקת התקדמות שכבר סימנת.",
+    "regenerateSafeHintDetail": "רק צעדים שעדיין ממתינים עלולים להשתנות.",
+    "easierStepBtn": "תן לי גרסה קלה יותר",
+    "easierStepTitle": "2 דק׳: {title}",
+    "easierStepDesc": "גרסה קלה של 2 דקות לצעד הזה.",
+    "easierStepDone": "הצעד הוקל — אתה יכול",
+    "eveningMomentumHint": "אין צורך להשלים הכל — גם צעד אחד שומר על המומנטום.",
+    "stepFilters": {
+      "label": "סינון צעדים",
+      "all": "הכל",
+      "pending": "ממתינים",
+      "completed": "הושלמו",
+      "skipped": "נדחו",
+      "empty": "אין צעדים בסינון הזה."
+    },
+    "rescheduledBadge": "נדחה {count}×",
+    "rescheduledHint": "הצעד הזה נדחה מספר פעמים — שקול לפשט אותו",
+    "helpEngagementRead": "קרא"
+  },
+  "aiGenerating": {
+    "stage1": "מנתח את היעדים שלך...",
+    "stage2": "בונה תוכנית שבועית...",
+    "stage3": "מכוון לשגרה היומית שלך...",
+    "stage4": "מסיים את התוכנית שלך...",
+    "dailySteps": {
+      "stage1": "קורא את המטרות שלך...",
+      "stage2": "בונה את צעדי היום...",
+      "stage3": "מתאים לאנרגיה וללוח הזמנים...",
+      "stage4": "מסיים את התוכנית..."
+    }
+  },
+  "continueProcess": {
+    "cta": "המשך",
+    "onboarding": {
+      "title": "יש לך onboarding פתוח",
+      "body": "המשך מאיפה שעצרת וסיים את ההגדרה."
+    },
+    "health_goal": {
+      "title": "מטרת בריאות בתהליך",
+      "body": "בנאי מטרות הבריאות שמר טיוטה."
+    },
+    "domain_goal": {
+      "title": "בנאי מטרות בתהליך",
+      "body": "המשך לבנות את המטרה בתחום הזה."
+    },
+    "clarification": {
+      "title": "תהליך הבהרה פתוח",
+      "body": "המשך את ההבהרה ועבודת המטרה."
+    }
+  },
+  "feedback": {
+    "saved": "נשמר",
+    "failed": "משהו השתבש — נסה שוב",
+    "completed": "הושלם",
+    "draftAutoSaved": "נשמר אוטומטית",
+    "confirmCancel": "ביטול",
+    "confirmOk": "אישור",
+    "confirmDelete": "מחק"
+  },
+  "healthWizard": {
+    "eyebrow": "בנאי מטרות בריאות",
+    "title": "בנה מטרת בריאות חדשה בשלבים",
+    "stepProgress": "שלב {step} מתוך {total}",
+    "back": "חזור",
+    "next": "המשך",
+    "createGoal": "צור מטרה עם AI",
+    "confirmCreate": "אשר ושמור מטרה",
+    "createError": "לא הצלחנו ליצור את התוכנית. נסה שוב.",
+    "saveValidation": "נא למלא כותרת מטרה ומד הצלחה.",
+    "defaultStepDescription": "צעד קטן וברור מהתוכנית שלך.",
+    "previewEyebrow": "תצוגה מקדימה",
+    "previewTitle": "כך תיראה המטרה והתוכנית שלך",
+    "planSourceAi": "תוכנית AI",
+    "planSourceFallback": "תוכנית בסיסית",
+    "planPhasesTitle": "שבועות ראשונים בתוכנית",
+    "planPhaseRange": "ימים {start}–{end}",
+    "weightDirection": "כיוון משקל",
+    "weightDirection_gain": "עלייה",
+    "weightDirection_loss": "ירידה",
+    "weightDirection_maintain": "שמירה",
+    "step3Hint": "יום 30 ו-60 חובה. ניתן להוסיף משקל (ק\"ג) גם בתזונה.",
+    "milestoneKgPlaceholder": "משקל יעד (ק\"ג)",
+    "milestoneKgOptional": "משקל יעד (ק\"ג, אופציונלי)",
+    "anchorCustom": "תיאור ההרגל שלך",
+    "anchorCustomPlaceholder": "לדוגמה: אחרי שהילדים הולכים לישון",
+    "currentPhaseTitle": "שלב נוכחי בתוכנית",
+    "currentPhaseWeek": "שבוע {week} · יום {day}",
+    "availableTime": "זמן פנוי יומי",
+    "in90days": "תוך 90 יום",
+    "goalTemplate": "לשפר {category} מ-{baseline} ל-{target}",
+    "step1Title": "מה בדיוק רוצה לשפר?",
+    "step2Title": "מה ייראה כהצלחה? הגדר מספרים.",
+    "step3Title": "קבע אבני דרך ל-30, 60 ו-90 יום",
+    "step4Title": "חפור לעומק: למה זה חשוב?",
+    "step5Title": "לאיזה הרגל קיים נעגן את הצעד החדש?",
+    "step5Body": "מחקרים מראים שעגינה להרגל קיים מעלה את סיכויי ההצלחה ב-65%. בחר הרגל שכבר קורה כל יום.",
+    "day30": "יום 30",
+    "day60": "יום 60",
+    "day90": "יום 90",
+    "day30Placeholder": "מה ייראה כהצלחה אחרי חודש?",
+    "day60Placeholder": "מה ייראה כהצלחה אחרי חודשיים?",
+    "day90Placeholder": "מה ייראה כהצלחה אחרי שלושה חודשים?",
+    "whyImportant": "למה זה חשוב לך?",
+    "whyImportantPlaceholder": "מה עומד מאחורי הרצון הזה?",
+    "whyNow": "למה עכשיו?",
+    "whyNowPlaceholder": "מה קרה שגרם לך לרצות לשנות דווקא עכשיו?",
+    "whatLost": "מה תאבד אם לא?",
+    "whatLostPlaceholder": "מה יקרה אם תמשיך כמו עד עכשיו?",
+    "anchorHabit": "הרגל עוגן",
+    "preferredTime": "שעה מועדפת",
+    "pickerHour": "שעה",
+    "pickerMinute": "דקות",
+    "picker_am": "בוקר",
+    "picker_pm": "ערב",
+    "aiExplainTitle": "מה ה-AI יבנה עבורך?",
+    "aiExplain": "ה-AI ייצור תוכנית אישית על בסיס כל מה שמילאת — כולל אבני דרך, שלבים שבועיים ושגרת צעדים יומית מותאמת.",
+    "validationStep1": "בחר קטגוריה כדי להמשיך.",
+    "validationStep2": "הזן נקודת התחלה ויעד כדי להמשיך.",
+    "validationStep3": "מלא לפחות את אבני הדרך של יום 30 ו-60.",
+    "validationStep4": "ענה על השאלה הראשונה כדי להמשיך.",
+    "validationStep5": "בחר הרגל עוגן כדי לסיים.",
+    "metricFrom": "מהיום",
+    "metricTo": "היעד",
+    "metricGap": "פער לסגירה",
+    "whyMicroProgress": "שאלה {current} מתוך {total}",
+    "resumeTitle": "להמשיך מאיפה שעצרת?",
+    "resumeBody": "שמרנו את ההתקדמות שלך בבנאי המטרות.",
+    "resumeContinue": "המשך",
+    "resumeDiscard": "התחל מחדש",
+    "celebrateTitle": "כל הכבוד! המטרה נוצרה",
+    "celebrateBody": "הצעד הראשון הוא תמיד הגדול ביותר — וכבר עשית אותו. עכשיו נהפוך את זה לשגרה.",
+    "celebrateViewToday": "צפה בצעדי היום שלי",
+    "celebrateAnotherDomain": "הגדר מטרה לתחום נוסף",
+    "celebrateDone": "סיום",
+    "habitFormula": "נוסחת ההרגל שלך:",
+    "habitFormulaTemplate": "אחרי שאני {anchor}, אעשה את צעד הבריאות שלי.",
+    "low": "נמוך",
+    "high": "גבוה",
+    "categories": {
+      "fitness": "כושר גופני",
+      "sleep": "שינה",
+      "nutrition": "תזונה",
+      "weight": "משקל",
+      "energy": "אנרגיה",
+      "specific_illness": "מחלה ספציפית"
+    },
+    "metrics": {
+      "fitness": {
+        "baseline": "כמה פעמים בשבוע אתה מתאמן עכשיו?",
+        "target": "כמה פעמים בשבוע אתה שואף?",
+        "baselinePlaceholder": "לדוגמה: 1",
+        "targetPlaceholder": "לדוגמה: 4",
+        "hint": "אל תכוון יותר מדי גבוה מהתחלה. תוספת של 1-2 אימונים בשבוע היא ריאלית."
+      },
+      "sleep": {
+        "baseline": "כמה שעות שינה ממוצעות עכשיו?",
+        "target": "כמה שעות שינה אתה שואף?",
+        "baselinePlaceholder": "לדוגמה: 5.5",
+        "targetPlaceholder": "לדוגמה: 7.5",
+        "hint": "שיפור של 30-60 דקות בשינה יכול לשנות דרמטית את האנרגיה."
+      },
+      "nutrition": {
+        "baseline": "כמה ארוחות בריאות ביום עכשיו?",
+        "target": "כמה ארוחות בריאות ביום אתה שואף?",
+        "baselinePlaceholder": "לדוגמה: 1",
+        "targetPlaceholder": "לדוגמה: 2",
+        "hint": "התחל בהחלפת ארוחה אחת. קל יותר מלשנות הכל בבת אחת."
+      },
+      "weight": {
+        "baseline": "משקל נוכחי (ק\"ג)",
+        "target": "משקל יעד (ק\"ג)",
+        "baselinePlaceholder": "לדוגמה: 79",
+        "targetPlaceholder": "לדוגמה: 85",
+        "hint": "בחר כיוון משקל למטה.",
+        "hintGain": "עלייה של כ-0.5 ק\"ג בשבוע היא קצב ריאלי להתמדה.",
+        "hintLoss": "ירידה של 0.5-1 ק\"ג בשבוע נחשבת בריאה ובת-קיימא."
+      },
+      "energy": {
+        "baseline": "ציון אנרגיה ממוצע עכשיו",
+        "target": "ציון אנרגיה יעד",
+        "baselinePlaceholder": "",
+        "targetPlaceholder": "",
+        "hint": "האנרגיה היא תוצאה של שינה, תזונה ותנועה. שיפור קטן באחד מהם יעזור."
+      },
+      "specific_illness": {
+        "baseline": "רמת חומרה עכשיו",
+        "target": "רמת חומרה יעד",
+        "baselinePlaceholder": "",
+        "targetPlaceholder": "",
+        "hint": "מעקב אחרי שיפור הדרגתי חשוב יותר ממטרה אגרסיבית."
+      }
+    },
+    "anchors": {
+      "morning_coffee": "קפה בוקר",
+      "commute": "נסיעה לעבודה",
+      "before_shower": "לפני מקלחת",
+      "before_sleep": "לפני שינה",
+      "lunch_break": "הפסקת צהריים",
+      "after_kids_school": "אחרי שהילדים בבי\"ס",
+      "before_evening_meal": "לפני ארוחת ערב",
+      "after_work": "אחרי סיום יום העבודה",
+      "custom": "הרגל משלי"
+    }
+  },
+  "healthPulse": {
+    "eyebrow": "פולס יומי",
+    "title": "ביצעת את המשימה של היום?",
+    "yes": "כן",
+    "partial": "חלקית",
+    "no": "לא",
+    "allDone": "כל המשימות הושלמו!",
+    "allDoneBody": "יום מצוין. המומנטום ממשיך.",
+    "whatStopped": "מה עצר אותך?",
+    "noDescription": "אין פירוט נוסף למשימה הזו.",
+    "confirmSkip": "אישור ושמירה",
+    "daysStreak": "ימים רצופים",
+    "consistencyRate": "עקביות",
+    "longestStreak": "שיא רצף",
+    "totalCompleted": "סה\"כ הושלמו",
+    "graceDayUsed": "יום חסד",
+    "graceDayShort": "נשמר",
+    "streakMilestone3": "3 ימים רצופים — אתה בתנופה!",
+    "streakMilestone7": "שבוע שלם! רצף מדהים — המשך כך!",
+    "streakMilestone14": "שבועיים רצופים! ההרגל הפך לחלק ממך.",
+    "streakMilestone21": "21 יום! מחקרים מראים שההרגל כבר מוטבע.",
+    "streakMilestone30": "30 ימים רצופים! הישג יוצא מן הכלל!",
+    "streakMilestoneGeneric": "{count} ימים רצופים — המומנטום שלך חזק!",
+    "whyThisStep": "למה הצעד הזה?"
+  },
+  "healthDashboard": {
+    "eyebrow": "מצב בריאות",
+    "eyebrowForDomain": "מצב {domain}",
+    "title": "לוח מחוונים",
+    "healthScore": "ציון בריאות",
+    "consistencyRate": "אחוז עקביות",
+    "vsLastMonth": "מול החודש שעבר",
+    "thisMonth": "החודש",
+    "lastMonth": "חודש שעבר",
+    "stepsCompleted": "צעדים הושלמו",
+    "activityMap": "מפת פעילות (90 יום)",
+    "less": "פחות",
+    "more": "יותר",
+    "noActivity": "ללא פעילות",
+    "lowActivity": "פעילות נמוכה",
+    "mediumActivity": "פעילות בינונית",
+    "highActivity": "פעילות גבוהה",
+    "fullActivity": "ביצוע מלא",
+    "scoreLevelLow": "נמוך — כדאי להתחיל",
+    "scoreLevelMedium": "בינוני — יש מקום לצמיחה",
+    "scoreLevelGood": "טוב — המשך כך",
+    "scoreLevelExcellent": "מעולה — שמור על הקצב",
+    "scoreTipLow": "הגדר מטרה קטנה אחת — גם שינוי קטן ישפר את הציון.",
+    "scoreTipMedium": "עקביות יומית תעלה את הציון ביעילות.",
+    "scoreTipGood": "אתה על המסלול הנכון — תחזוקה שווה כמו שיפור.",
+    "scoreTipExcellent": "הישג יוצא דופן — העדפות האנרגיה שלך עובדות.",
+    "healthScoreInfo": "הערכה עצמית (1–10) של מצב התחום, מתוך האבחון שמילאת. עדכן את האבחון כדי לשנות.",
+    "goalProgressInfo": "אחוז ההתקדמות מודד כמה מצעדי המטרה השלמת — זה שונה מציון הבריאות, שהוא הערכה עצמית כללית של התחום.",
+    "consistencyRateInfo": "אחוז הצעדים היומיים שהשלמת מתוך אלו שתוכננו ב-30 הימים האחרונים. ככל שתבצע יותר בעקביות, האחוז יעלה.",
+    "vsLastMonthInfo": "ההפרש במספר הצעדים שהשלמת החודש לעומת החודש הקודם.",
+    "timelineTitle": "ציר 90 הימים",
+    "timelineDayLabel": "יום {day}",
+    "daysPassed": "{count} ימים עברו",
+    "daysRemaining": "נותרו {count} ימים",
+    "timelineNotStarted": "התוכנית מתחילה היום",
+    "questMapTitle": "מפת קווסט ל-90 יום",
+    "questMapBody": "כל checkpoint מסמן עוד קטע קטן במשחק הארוך.",
+    "questMapDay": "נקודת ציון: יום {day}"
+  },
+  "weeklyReviewEmotional": {
+    "title": "מה זה אומר עליך",
+    "identityProof": "מה הוכחת לעצמך",
+    "comebackEvidence": "חזרה למסלול",
+    "nextIdentityAction": "צעד קטן שמחזק את הזהות החדשה"
+  },
+  "weeklyReviewRecurringPattern": {
+    "title": "הדפוס שחוזר על עצמו"
+  },
+  "weeklyReviewProgressEvidence": {
+    "title": "הוכחה שאתה מתקדם"
+  },
+  "enhancedReview": {
+    "eyebrow": "סקירה שבועית",
+    "title": "רגע האמת",
+    "generateBtn": "צור סקירה",
+    "tasksPlanned": "משימות מתוכננות",
+    "tasksCompleted": "הושלמו",
+    "tasksSkipped": "דולגו",
+    "gapPercent": "פער ביצוע",
+    "goalAlignedSteps": "קשורים ליעד",
+    "barrierTouchedSteps": "נגעו בחסם",
+    "reflectTitle": "3 שאלות רפלקציה",
+    "q1": "מה עבד הכי טוב השבוע?",
+    "q1Placeholder": "בחר מתוך הצעדים שביצעת",
+    "q2": "מה היה הצעד הקשה ביותר?",
+    "q2Placeholder": "ומה תשנה בו?",
+    "q3": "מה הסביר את השינוי באנרגיה שלך?",
+    "q3Placeholder": "חשוב על שינה, תזונה, מתח...",
+    "energyNote": "אחוז העקביות שלך הוא {rate}%. ככל שהמשימות קטנות ומעוגנות בשגרה, האחוז עולה.",
+    "planApplied": "התאמות מהסקירה הוחלו על תוכנית השבוע."
+  },
+  "blockerDeepDive": {
+    "optimalTime": "מתי הכי טוב בשבילך?",
+    "miniHabitHint": "גם 2 דקות נחשבות. העיקר לשמור על הרצף.",
+    "elaboratePlaceholder": "ספר עוד...",
+    "save": "שמור ותאם את הצעדים",
+    "lowEnergy": {
+      "question": "מתי ביום יש לך הכי פחות אנרגיה?",
+      "morning": "בוקר מוקדם",
+      "afternoon": "אחה\"צ",
+      "evening": "ערב",
+      "afterLunch": "אחרי ארוחת צהריים"
+    },
+    "noTime": {
+      "question": "כמה דקות כן יש לך? גם 2 נחשבות."
+    },
+    "selfDoubt": {
+      "question": "מה האמונה הכי חזקה שמעכבת אותך? (נבנה עליה)"
+    },
+    "familyChaos": {
+      "question": "מתי ביום יש לך את החלון הכי שקט?",
+      "earlyMorning": "לפני שכולם קמים",
+      "napTime": "שעת צהריים/מנוחה",
+      "afterBedtime": "אחרי שהילדים ישנים",
+      "lunchBreak": "הפסקת צהריים בעבודה"
+    },
+    "consistency": {
+      "question": "מה שובר לך את הרצף בדרך כלל?"
+    },
+    "lackOfClarity": {
+      "question": "מה הדבר הראשון שצריך להיות ברור כדי שתתחיל?"
+    },
+    "generic": {
+      "question": "ספר עוד על מה שמפריע לך להתקדם."
+    }
+  },
+  "formulation": {
+    "pageTitle": "הבהרה ויעד",
+    "eyebrow": "הבהרה",
+    "progress": "שלב {current} מתוך {total}",
+    "progressState": {
+      "saving": "שומר...",
+      "savingHint": "מעביר לשלב הבא",
+      "generatingQuestions": "מכין 15 שאלות מותאמות...",
+      "generatingGoals": "מנתח את הנתונים ומציע 5 יעדים...",
+      "generatingQuestionsHint": "מבוסס על כל מה שמילאת עד עכשיו — עשוי לקחת כמה שניות",
+      "draftFormulation": "מנסח סיכום משותף...",
+      "draftFormulationHint": "בודק את התשובות שלך ומנסח בניסוח שיתאים לך",
+      "errorGeneric": "משהו השתבש. נסה/י שוב."
+    },
+    "nav": {
+      "ariaLabel": "ניווט בשלבים",
+      "backOne": "חזור אחורה",
+      "restart": "חזור להתחלה"
+    },
+    "back": "חזרה",
+    "next": "המשך",
+    "skip": "דלג",
+    "save": "שמור והמשך",
+    "loading": "טוען...",
+    "saving": "שומר...",
+    "aiWorking": "מנסח בשפה שלך...",
+    "liveSummary": {
+      "title": "מה מילאת עד עכשיו",
+      "subtitle": "מתעדכן בזמן אמת לפי הבחירות שלך",
+      "empty": "התשובות שלך יופיעו כאן לפי סדר השלבים — התחל/י למלא ותראה/י את הסיכום מתעדכן.",
+      "notFilled": "עדיין לא מולא",
+      "skipped": "דולג",
+      "sectionSkipped": "דילגת על שלב זה",
+      "andMore": "+{count} נוספים",
+      "profile": "פרופיל והקשר",
+      "lifeContext": "הקשר חיים",
+      "gender": "מין",
+      "age": "גיל",
+      "note": "הערה",
+      "safety": "בטיחות",
+      "riskQ1": "חיים לא שווים",
+      "riskQ2": "פגיעה בעצמי",
+      "riskCrisis": "משבר",
+      "ratings": "דירוגים",
+      "ratingsProgress": "{answered} מתוך {total} שאלות",
+      "ratingValue": "ציון {score} מתוך 5",
+      "followUps": "שאלות המשך",
+      "exploration": "שאלות מעמיקות",
+      "explorationProgress": "{answered} מתוך {total}",
+      "formulation": "ניסוח",
+      "central": "במרכז",
+      "goal": "יעד",
+      "microGoal": "יעד שבועי",
+      "goalValue": "ערך",
+      "goalBarrier": "מכשול צפוי",
+      "phases": {
+        "consent": "פרופיל והקשר",
+        "risk": "סינון בטיחות",
+        "open": "דירוג הצהרות",
+        "dimensions": "שאלות המשך",
+        "exploration": "חקירה מעמיקה",
+        "formulation": "ניסוח משותף",
+        "goal": "יעד שבועי"
+      }
+    },
+    "consent": {
+      "title": "לפני שמתחילים",
+      "intro": "כדי להתאים את השאלות והיעדים — ספר/י לנו קצת על ההקשר שלך עכשיו.",
+      "accept": "המשך",
+      "lifeContext": "מה מתאר הכי טוב את ההקשר שלך עכשיו?",
+      "lifeContextNote": "זה עוזר להציע שאלת המשך — לא לנחש מה הבעיה.",
+      "lifeContextMulti": "אפשר לבחור יותר ממצב אחד (למשל הורה + עומס בעבודה).",
+      "contexts": {
+        "student": "סטודנט/ית",
+        "new_parent": "הורה לתינוק/וקטן",
+        "manager": "מנהל/ת / עומס בעבודה",
+        "caregiver": "מטפל/ת במישהו קרוב",
+        "between_jobs": "בין עבודות / מעבר",
+        "other": "אחר",
+        "prefer_not": "מעדיף/ה לא לציין"
+      },
+      "otherPlaceholder": "במילים קצרות...",
+      "profileSection": "פרופיל להתאמת שאלות",
+      "profileSectionHelp": "מין, גיל והקשר חיים קובעים אילו שאלות יוצגו בשלב 3. שדות שהוגדרו בהגדרות מוצגים ללא שינוי.",
+      "gender": "מין",
+      "genderOptions": {
+        "female": "אישה",
+        "male": "גבר"
+      },
+      "age": "גיל",
+      "agePlaceholder": "למשל 28",
+      "agePreferNot": "מעדיף/ה לא לציין גיל",
+      "lockedFromSettings": "מוגדר בהגדרות — לשינוי עבור/י להגדרות"
+    },
+    "crisis": {
+      "title": "נעצר כאן",
+      "body": "מה שתיארת מחוץ לתחום של האפליקציה. לא נמשיך בשאלות.",
+      "guidance": "מומלץ לפנות לאדם שאת/ה סומך/ת עליו — מטפל/ת, רופא/ה, או מישהו קרוב.",
+      "exit": "חזרה לדף הבית"
+    },
+    "risk": {
+      "title": "שאלה קצרה לבטיחות",
+      "q1": "בשבועיים האחרונים — האם חשבת שחיים לא שווים?",
+      "q2": "האם חשבת שאת/ה עשוי/ה לפגוע בעצמך?",
+      "yes": "כן",
+      "no": "לא",
+      "preferNot": "מעדיף/ה לא לענות",
+      "followUp": "האם התכוונת לעצמך, במצב הנוכחי?",
+      "followUpYes": "כן, לעצמי",
+      "followUpNo": "לא, לא לעצמי"
+    },
+    "passiveRatings": {
+      "intro": "סמן/י עד כמה כל משפט מתאר אותך השבוע — בלי לכתוב. נשתמש בזה כדי להציע 1–3 שאלות המשך קצרות.",
+      "questionCount": "{count} שאלות מותאמות להקשר שלך",
+      "empty": "לא נמצאו שאלות להקשר שנבחר. חזור/י לשלב 1 ובחר/י הקשר חיים.",
+      "pageProgress": "עמוד {current} מתוך {total}",
+      "scaleMin": "לא מסכים",
+      "scaleMax": "מסכים בהחלט",
+      "items": {
+        "sleep_quality": "השינה שלי השבוע לא מספקת",
+        "day_energy": "יש לי מספיק אנרגיה במהלך היום",
+        "focus": "אני מצליח/ה להתרכז במה שחשוב",
+        "low_mood": "אני מרגיש/ה מדוכא/ת או בלי מצב רוח",
+        "worry_load": "דאגות תופסות הרבה מקום בראש",
+        "work_pressure": "יש לחץ משמעותי בעבודה או בלימודים",
+        "relationship_strain": "יש מתח או חיכוך ביחסים קרובים",
+        "family_load": "עומס משפחתי מרגיש כבד השבוע",
+        "self_criticism": "אני מבקר/ת את עצמי בחומרה",
+        "avoidance": "אני נמנע/ת מדברים שחשובים לי",
+        "body_tension": "אני מרגיש/ה מתח או אי נוחות בגוף",
+        "appetite_shift": "יש שינוי בתיאבון או באכילה",
+        "loneliness": "אני מרגיש/ה בודד/ה או מנותק/ת",
+        "motivation": "יש לי מוטיבציה לעשות דברים",
+        "sense_of_control": "אני מרגיש/ה שליטה על מה שקורה סביבי",
+        "student_academic_pressure": "לחץ לימודים או מבחנים תופס ממני הרבה השבוע",
+        "student_exam_anxiety": "מתח לפני מבחנים או הגשות מפריע לי",
+        "student_social_comparison": "אני משווה את עצמי לאחרים בלימודים או ברשתות",
+        "manager_team_overload": "עומס על הצוות או האחריות שלי מרגיש בלתי נסבל",
+        "manager_boundary_bleed": "עבודה חודרת לשעות שאמורות להיות אישיות",
+        "new_parent_sleep_fragmentation": "השינה שלי מקוטעת בגלל התינוק/ה או הילד/ה",
+        "new_parent_partner_disconnect": "יש מרחק או מתח עם בן/בת הזוג מאז הלידה",
+        "new_parent_guilt_rest": "אני מרגיש/ה אשמה כשאני לא זמין/ה לילד/ה",
+        "caregiver_emotional_drain": "הטיפול במישהו קרוב מתיש אותי רגשית השבוע",
+        "caregiver_guilt_when_resting": "אני מרגיש/ה אשמה כשאני לוקח/ת רגע לעצמי",
+        "transition_instability": "המעבר הזה (עבודה / זוגיות / מצב) מרגיש לא יציב",
+        "between_jobs_financial_stress": "לחץ כלכלי או חוסר ודאות תעסוקתית מלחיץ אותי",
+        "between_jobs_identity_gap": "קשה לי להרגיש מי אני בלי התפקיד/העבודה הקודמים",
+        "male_provider_pressure_between_jobs": "יש לחץ להיות ערוץ פרנסה או לספק",
+        "combo_student_and_manager_burnout": "אני שרוף/ה בין לימודים לעבודה",
+        "other_context_open_ended_stress": "יש משהו בהקשר שלי עכשיו שמלחיץ — קשה לשים לזה שם"
+      }
+    },
+    "followUps": {
+      "intro": "כמה שאלות קצרות לפי מה שסימנת — בחר/י תשובה אחת לכל שאלה (אפשר לדלג על הכל).",
+      "none": "אין שאלות המשך נוספות — אפשר להמשיך.",
+      "skipAll": "דלג על שאלות ההמשך",
+      "clarificationPlaceholder": "רוצה לפרט במילה-שתיים? (אופציונלי)",
+      "chips": {
+        "not_at_all": "בכלל לא",
+        "a_little": "קצת",
+        "moderate": "בינוני",
+        "a_lot": "הרבה",
+        "not_sure": "לא בטוח/ה"
+      },
+      "sleep": "כמה השינה מפריעה השבוע?",
+      "energy": "כמה חוסר האנרגיה מורגש?",
+      "focus": "כמה קשיי הריכוז מורגשים?",
+      "mood": "כמה מצב הרוח הנמוך מורגש?",
+      "worry": "כמה הדאגות תופסות מקום?",
+      "work": "כמה הלחץ בעבודה/לימודים מורגש?",
+      "relationship": "כמה המתח ביחסים מורגש?",
+      "family": "כמה העומס המשפחתי מורגש?",
+      "selfTalk": "כמה הביקורת העצמית מורגשת?",
+      "avoidance": "כמה ההימנעות מורגשת?",
+      "body": "כמה המתח בגוף מורגש?",
+      "appetite": "כמה שינוי התיאבון מורגש?",
+      "loneliness": "כמה הבדידות מורגשת?",
+      "motivation": "כמה חוסר המוטיבציה מורגש?",
+      "control": "כמה חוסר השליטה מורגש?",
+      "contextParent": "איך השינה והעומס כהורה משפיעים השבוע?",
+      "contextStudent": "מה הכי לוחץ בלימודים או בזהות עכשיו?",
+      "contextWork": "איפה גבולות העבודה הכי קשים השבוע?",
+      "contextCare": "מה הכי מתיש בטיפול השבוע?",
+      "contextTransition": "מה הכי לא יציב במעבר הזה?"
+    },
+    "dimensions": {
+      "title": "קצת פירוט",
+      "frequency": "כמה פעמים בשבוע זה קורה?",
+      "intensity": "כמה זה מפריע (0–10)?",
+      "context": "מתי זה הכי בולט?",
+      "contexts": {
+        "morning": "בוקר",
+        "after_work": "אחרי עבודה",
+        "evening": "ערב",
+        "alone": "לבד",
+        "with_people": "עם אנשים",
+        "weekend": "סוף שבוע"
+      },
+      "mindBody": "גוף–נפש (מה השתנה לאחרונה?)",
+      "mindBodyHint": "רק מה שהשתנה לאחרונה — אפשר לדלג",
+      "sleep": "שינה",
+      "appetite": "תיאבון",
+      "tension": "מתח בגוף",
+      "energy": "אנרגיה",
+      "skipMindBody": "מעדיף/ה לא לענות על זה",
+      "systems": "איפה זה דופק הכי חזק?",
+      "systemsOptions": {
+        "work": "עבודה",
+        "relationship": "זוגיות",
+        "family": "משפחה",
+        "money": "כסף",
+        "health": "בריאות",
+        "identity": "זהות / עצמי"
+      },
+      "systemsNotes": "הערה קצרה (אופציונלי)"
+    },
+    "prior": {
+      "suggestedBecause": "שאלה מוצעת כי בחרת: {context}",
+      "student": "מה הכי לוחץ בלימודים או בזהות עכשיו?",
+      "newParent": "איך השינה והעומס משפיעים עליך השבוע?",
+      "manager": "איפה גבולות העבודה הכי קשים השבוע?",
+      "caregiver": "מה הכי מתיש בטיפול השבוע?",
+      "betweenJobs": "מה הכי לא יציב במעבר הזה?"
+    },
+    "checkinPrefill": {
+      "title": "יש לנו מצב מהבוקר",
+      "body": "אנרגיה {energy}, פוקוס {focus}. רוצה לעדכן?",
+      "use": "השתמש בערכים האלה",
+      "update": "אעדכן ידנית"
+    },
+    "exploration": {
+      "intro": "15 משפטי הצהרה חדשים (לא שאלות) — זווית נוספת על מה שכבר מילאת. סמן/י עד כמה כל משפט מתאר אותך השבוע: 1 לא מסכים · 5 מסכים בהחלט.",
+      "questionCount": "{count} שאלות מותאמות",
+      "pageProgress": "עמוד {current} מתוך {total}",
+      "generating": "מכין שאלות מותאמות אישית...",
+      "generatingHint": "מבוסס על הפרופיל, הדירוגים ותשובות ההמשך — לא אבחון.",
+      "loadFailed": "לא הצלחנו לטעון את השאלות.",
+      "fallbackNotice": "מוצגות שאלות ברירת מחדל — אפשר ליצור מחדש שאלות מותאמות:",
+      "retry": "נסה/י שוב",
+      "progress": "שאלה {current} מתוך {total}",
+      "answerLabel": "התשובה שלך",
+      "answerPlaceholder": "במילים שלך, בלי לפרט יותר מדי..."
+    },
+    "synthesis": {
+      "title": "סיכום מהנתונים שלך",
+      "topThemes": "מה הכי עולה מהדירוגים",
+      "burningNow": "בוער עכשיו (אחרי צ'יפי שלב 4)",
+      "suppressedByChips": "לא בוער השבוע — סונן בצ'יפים",
+      "chipNotNow": "צ'יפ: {chip}",
+      "score": "ציון {score}",
+      "goalFocus": "כיוון מומלץ ליעד השבוע",
+      "notPrimary": "פחות מומלץ כיעד ראשי עכשיו"
+    },
+    "formulationEdit": {
+      "title": "כך אני שומע/ת את מה שקורה",
+      "subtitle": "ערוך/י — זה הסיכום שיועבר הלאה",
+      "central": "קושי מרכזי (במיליך)",
+      "stressors": "מה מגביר (מופרד בפסיקים)",
+      "maintaining": "מה מחזיק (מופרד בפסיקים)",
+      "strengths": "מה כבר עוזר",
+      "uncertainties": "מה לא בטוח לנו עדיין",
+      "uncertaintyFallback": "עדיין לא ברור מה הכי מחזיק את הקושי.",
+      "diagnosticWarning": "שים לב: הניסוח כולל מונחים שנשמעים כמו אבחנה רפואית. כלי זה לא מיועד לאבחון — מומלץ לנסח בשפה של קושי או חוויה.",
+      "submitAnyway": "הבנתי, שלח בכל זאת",
+      "approve": "זה נשמע נכון"
+    },
+    "microGoal": {
+      "title": "צעד קטן לשבוע הקרוב",
+      "burningThisWeek": "מה הכי בוער השבוע",
+      "pickOneOfFive": "בחר/י יעד אחד מחמש אפשרויות — אפשר לערוך אחר כך",
+      "loadingOptions": "מנתח את כל הנתונים ומציע 5 יעדים...",
+      "optionsError": "לא הצלחנו ליצור יעדים — נסה/י שוב",
+      "llmRequired": "היעדים נוצרים רק באמצעות AI לפי הנתונים שלך. לחץ/י \"רענן 5 יעדים\".",
+      "refreshOptions": "רענן 5 יעדים",
+      "llmGenerated": "חמשת היעדים נוצרו לפי הנתונים שמילאת באשף",
+      "focusHint": "לפי הנתונים, כדאי שהיעד יתחבר ל: {focus}",
+      "value": "למה זה חשוב לך?",
+      "valuePlaceholder": "משפחה, שקט, כבוד עצמי...",
+      "goal": "יעד התנהגותי קטן (ניתן לצפות השבוע)",
+      "goalPlaceholder": "לדוגמה: 3 לילות אשן לפני 23:30...",
+      "barrier": "מכשול צפוי",
+      "barrierPlaceholder": "מה עלול לחסום?",
+      "planB": "Plan B — מה תעשה/י אם לא יצא?",
+      "doNotTouch": "מה לא לגעת בו (למאמן)",
+      "doNotTouchPlaceholder": "לדוגמה: לא לחפור בטראומה...",
+      "suggestAi": "הצע ניסוח",
+      "whyThisExercise": "למה התרגיל הזה: {reason}"
+    },
+    "complete": {
+      "title": "סיימנו את ההבהרה",
+      "body": "יש לך סיכום ויעד מיקרו אחד. המאמן ימשיך משם.",
+      "toCoach": "חזרה למאמן החיים",
+      "toHome": "דף הבית",
+      "insightLabel": "התובנה המרכזית שלך",
+      "strengthsLabel": "החוזקות שלך",
+      "microGoalLabel": "המיקרו-מטרה שלך השבוע",
+      "generatingSteps": "מכין את הצעדים היומיים הראשונים שלך…",
+      "stepsReady": "הצעדים שלך להיום מוכנים",
+      "stepsError": "לא הצלחנו לייצר צעדים — תוכל לעשות זאת מה-Life Coach",
+      "firstWinLabel": "הניצחון הראשון שלך — עכשיו",
+      "firstWinMinutes": "{minutes} דק׳",
+      "toCoachDomain": "עבור אל {domain} ←"
+    },
+    "export": {
+      "hint": "ייצוא לצ'אט אחר (ChatGPT, Claude וכו') — כולל כל מה שמילאת עד עכשיו",
+      "copyMarkdown": "העתק Markdown",
+      "downloadMd": "הורד .md",
+      "downloadJson": "הורד JSON",
+      "copied": "הועתק ללוח",
+      "copyFailed": "לא הצלחנו להעתיק — נסה הורדה",
+      "downloadedMd": "קובץ Markdown הורד",
+      "downloadedJson": "קובץ JSON הורד"
+    },
+    "gate": {
+      "title": "לפני יעד ראשון",
+      "body": "הבהרה קצרה (כ-5 דקות) עוזרת לבנות יעד בטוח ומדויק — לא אבחון.",
+      "cta": "התחל הבהרה",
+      "resume": "המשך טיוטה",
+      "loading": "טוען…"
+    },
+    "handoff": {
+      "title": "מה המאמן יודע",
+      "concern": "מה מפריע",
+      "maintaining": "מה מחזיק",
+      "strengths": "מה עובד",
+      "value": "ערך",
+      "microGoal": "יעד השבוע",
+      "doNotTouch": "לא לגעת ב"
+    },
+    "challenge": {
+      "title": "האתגר שלך השבוע",
+      "dailyMinimum": "מינימום יומי",
+      "fallbackPlan": "Plan B",
+      "successDefinition": "מה נחשב הצלחה",
+      "types": {
+        "time_micro": "5 דקות ביום",
+        "avoidance_start": "רק להתחיל",
+        "flexible_parent": "גמיש — בלי streak",
+        "recovery_gentle": "recovery רך",
+        "clarity_mapping": "בהירות לפני פעולה",
+        "micro_goal_adapted": "מותאם ליעד"
+      }
+    }
+  },
+  "checkin": {
+    "eyebrow": "דופק יומי",
+    "start": "כיול מהיר",
+    "description": "אנרגיה ומיקוד בלבד — כדי להתאים את הצעדים להיום. הכוונה היומית מגיעה משגרת הבוקר.",
+    "stepsConnection": "האנרגיה והמצב שלך ישפיעו על הצעדים שהמאמן יציע היום.",
+    "guidesCoachTitle": "הצ׳ק-אין מכוון את המאמן ואת המשימה הבאה",
+    "postSubmitWhatChangedTitle": "מה השתנה עכשיו?",
+    "postSubmitAdaptNextStep": "נשתמש בזה כדי להתאים את הצעד הבא שלך.",
+    "postSubmitMetricsUpdated": "מדדי האנרגיה, הפוקוס והמומנטום שלך עודכנו.",
+    "immediateValue": {
+      "title": "ערך מיידי",
+      "steady": "טוב. נשמור על הפעולה הבאה ברורה ומעשית.",
+      "nextStep": "היום כדאי להתחיל מפעולה אחת של {minutes} דקות, לא מיום מושלם.",
+      "adaptDayCta": "התאם לי את היום"
+    },
+    "focus": "פוקוס ונוכחות",
+    "focusLow": "מוסח / עמוס במחשבות",
+    "focusHigh": "ממוקד ונוכח לחלוטין",
+    "focusValue": "פוקוס {value} מתוך 10",
+    "energy": "אנרגיה",
+    "energyLow": "מרוקן / עייף",
+    "energyHigh": "טעון באנרגיה / חיוני",
+    "energyValue": "אנרגיה {value} מתוך 10",
+    "focusStatus1": "מוסח / עמוס במחשבות",
+    "focusStatus2": "מוסח מאוד",
+    "focusStatus3": "טרוד",
+    "focusStatus4": "מוסח חלקית",
+    "focusStatus5": "ניטרלי",
+    "focusStatus6": "נוכח חלקית",
+    "focusStatus7": "נוכח",
+    "focusStatus8": "ממוקד",
+    "focusStatus9": "ממוקד מאוד",
+    "focusStatus10": "ממוקד ונוכח לחלוטין",
+    "energyStatus1": "מרוקן לחלוטין",
+    "energyStatus2": "מאוד עייף",
+    "energyStatus3": "עייף",
+    "energyStatus4": "מעט עייף",
+    "energyStatus5": "בסדר",
+    "energyStatus6": "רענן",
+    "energyStatus7": "טעון",
+    "energyStatus8": "אנרגטי",
+    "energyStatus9": "מלא אנרגיה",
+    "energyStatus10": "טעון ואנרגטי לחלוטין",
+    "priorityActionStarter1": "אסיים את…",
+    "priorityActionStarter2": "אתחיל להתקדם ב…",
+    "priorityActionStarter3": "אדבר עם…",
+    "priorityAction": "מהי הפעולה החשובה ביותר שתבצע היום כדי לנצח?",
+    "priorityActionLabel": "תן שם למהלך האחד שאם תבצע אותו, היום ירגיש מכוון ואמיתי.",
+    "priorityActionPlaceholder": "המהלך האחד של היום…",
+    "tagsTitle": "באיזה מצב תודעתי אתה עכשיו?",
+    "tagsHint": "בחר תגית אחת או שתיים כדי שמנוע ההתאמה ידייק את ההתערבות לרגע הזה.",
+    "tagsGroupPositive": "מצבים חיוביים",
+    "tagsGroupChallenges": "אתגרים",
+    "tagsCounter": "{selected}/{total} נבחרו",
+    "submit": "שמור דופק",
+    "optimizing": "שומר דופק...",
+    "update": "עדכן דופק",
+    "cancelEdit": "בטל עריכה",
+    "pulse": {
+      "success": "הדופק נשמר — הצעדים יותאמו למצב שלך.",
+      "alreadyDone": "כבר כיילת היום",
+      "update": "עדכן דופק",
+      "ritualHint": "רוצה להגדיר כוונה? עשה זאת בשגרת הבוקר ←",
+      "energyFocusLine": "אנרגיה {energy} · מיקוד {focus}"
+    },
+    "previewEyebrow": "מה קורה מיד אחרי",
+    "previewTitle": "הצ׳ק-אין הופך מייד להתערבות מותאמת",
+    "previewBody": "המנוע מתאים את המצב הנוכחי שלך להיגד מדויק, כלי איפוס רלוונטי, וצעד אחד ברור שיזיז אותך קדימה.",
+    "previewBadge": "מנוע התאמה אישית",
+    "previewEmptyEyebrow": "מוכן כשתהיה",
+    "previewEmptyTitle": "המצב המכויל שלך ינחת כאן",
+    "previewEmptyBody": "ברגע שתשלח צ׳ק-אין, האזור הזה יעבור מאיסוף נתונים לתוצאה מדויקת עם היגד וצעד הבא.",
+    "latestOptimization": "האופטימיזציה האחרונה",
+    "supportTitle": "למה זו ההמלצה",
+    "tag": {
+      "driven": {
+        "label": "מונע קדימה",
+        "description": "יש בך דחף פנימי חזק לפעול ולהסתער על מה שחשוב."
+      },
+      "laserFocused": {
+        "label": "ממוקד לייזר",
+        "description": "המטרה ברורה והרעש נמוך. זה חלון טוב לעבודת עומק."
+      },
+      "inspired": {
+        "label": "מלא השראה",
+        "description": "יש בך יצירתיות, חיבור לחזון ופתיחות לפעולה נועזת."
+      },
+      "disciplined": {
+        "label": "משמעתי",
+        "description": "אתה פועל מתוך סטנדרט ומחויבות, לא מתוך המתנה למצב רוח."
+      },
+      "stressed": {
+        "label": "בלחץ",
+        "description": "הגוף מרגיש עומס ויותר מדי דרישות נוחתות עליך בבת אחת."
+      },
+      "stuck": {
+        "label": "תקוע",
+        "description": "אתה יודע מה חשוב, אבל יש חיכוך בין הידיעה לבין תחילת הפעולה."
+      },
+      "distracted": {
+        "label": "מוסח",
+        "description": "הקשב מתפזר וקשה להחזיק משימה אחת חשובה לאורך זמן."
+      },
+      "anxious": {
+        "label": "חרד מהתוצאה",
+        "description": "פחד מהתוצאה יוצר היסוס, רעש או התכווצות פנימית."
+      },
+      "exhausted": {
+        "label": "עייף פיזית",
+        "description": "הגוף כבד, חסר דלק או זקוק למנוחה לפני עומס נוסף."
+      },
+      "burntOut": {
+        "label": "מרוקן מנטלית",
+        "description": "יש תשישות רגשית ומחשבתית, וכמעט לא נשאר רזרב פנימי."
+      },
+      "apathetic": {
+        "label": "אדיש",
+        "description": "שום דבר לא ממש נדלק כרגע וקשה לגייס עניין אמיתי."
+      },
+      "calm": {
+        "label": "נינוח",
+        "description": "הנשימה יציבה ויש מספיק שקט פנימי כדי לבחור נקי."
+      },
+      "aligned": {
+        "label": "באיזון",
+        "description": "אתה מחובר לעצמך והיום מרגיש קוהרנטי ולא מאולץ."
+      },
+      "grateful": {
+        "label": "בהכרת תודה",
+        "description": "אתה רואה מה כבר עובד, והמערכת שלך מרגישה פתוחה יותר."
+      }
+    },
+    "result": {
+      "lowEnergyLowFocus": {
+        "badge": "הצתה מחדש",
+        "title": "המערכת שלך לא צריכה לחץ. היא צריכה ניצוץ.",
+        "summary": "אנרגיה נמוכה ופוקוס מפוצל אומרים שהניצחון הבא הוא מומנטום, לא מורכבות. צריך spark אחד ברור שיחזיר אותך לתנועה לפני שהיום יתרחק מ-{action}.",
+        "action": "הפעל בלוק קצר של הצתה, ואז בצע את הצעד הגלוי הראשון לכיוון {action}.",
+        "support": "אתה לא צריך להרגיש מוכן. אתה צריך תנועה אחת נקייה שמעירה את המערכת."
+      },
+      "stressReset": {
+        "badge": "איפוס",
+        "title": "המהלך הראשון שלך הוא להוריד רעש פנימי.",
+        "summary": "כשיש עומס ולחץ גבוהים, בהירות מגיעה רק אחרי ויסות. תרגיע את המערכת ואז תחזור אל {action} מתוך מערכת עצבים נקייה יותר.",
+        "action": "קח את איפוס ה-60 שניות, ואז חזור אל {action} ובצע רק את הצעד האמיתי הקטן ביותר.",
+        "support": "ההמלצה הזו מגינה קודם על רוחב הפס שלך, כדי שהפעולה תגיע מבהירות ולא מפאניקה."
+      },
+      "peakState": {
+        "badge": "מצב שיא",
+        "title": "אתה בחלון של עוצמה. תן לו כיוון.",
+        "summary": "פוקוס גבוה ואנרגיה גבוהה יוצרים חלון נדיר לעומק. הגן עליו והפוך אותו להתקדמות נראית לעין ב-{action} לפני שמשימות קטנות יגנבו את הקצה.",
+        "action": "נעל את {action} כמשימת העומק שלך והתחל את בלוק העומק הראשון עכשיו.",
+        "support": "לא צריך כאן תוספת מוטיבציה. צריך רק להגן על המצב הטוב ביותר שלך ולהמיר אותו לתפוקה."
+      },
+      "groundedClarity": {
+        "badge": "קרקוע",
+        "title": "אתה מספיק יציב כדי לפעול מתוך בהירות.",
+        "summary": "זה מצב חזק לבנות ממנו. שמור על השקט, אל תפזר אותו, והעבר את {action} קדימה דרך עומק מכוון.",
+        "action": "השתמש ביציבות הזו כדי ליצור בלוק אחד ממוקד סביב {action}.",
+        "support": "אנרגיה מקורקעת היא מנוף. ככל ששומרים עליה, כך היא מייצרת תפוקה נקייה יותר."
+      },
+      "rebuildMomentum": {
+        "badge": "תדלוק",
+        "title": "המהלך עכשיו הוא לבנות מחדש אנרגיה שימושית.",
+        "summary": "המערכת שלך מבקשת דלק, לא כוח. החזר קצת spark ואז חזור אל {action} עם מעט יותר חיים מאחוריו.",
+        "action": "קח את האודיו הקצר, ואז פתח שוב את {action} עם המהלך הגלוי הקטן ביותר.",
+        "support": "ההמלצה הזו נותנת למערכת מספיק lift כדי שלמשמעת יהיה עם מה לעבוד."
+      },
+      "steadyAction": {
+        "badge": "מיושר",
+        "title": "אתה קרוב. עכשיו תהפוך את היום למעשי.",
+        "summary": "המצב שלך בר-עבודה. הניצחון הגדול כאן הוא להסיר עמימות ולהפוך את {action} לביצוע נקי כבר עכשיו.",
+        "action": "בחר צעד אחד מדויק בתוך {action}, ואז התחל לפני שהמוח יתחיל לחשוב יותר מדי.",
+        "support": "זה רגע לפשט, להתחייב, ולתת לעקביות לעשות את העבודה."
+      }
+    },
+    "module": {
+      "guidedAudio": {
+        "title": "סשן קולי",
+        "body": "הפעל חיזוק קולי קצר כדי שהמסר ינחת בגוף, לא רק במחשבה.",
+        "start": "נגן סשן קולי",
+        "stop": "עצור את הסשן",
+        "unsupported": "הסשן הקולי לא זמין כאן"
+      },
+      "breatheReset": {
+        "title": "נשום ואפס",
+        "body": "קח דקה מודרכת אחת כדי להוריד רעש ולחזור אל היום ממקום יציב יותר.",
+        "support": "נשום לאט ותן לכתפיים לרדת.",
+        "start": "התחל איפוס של 60 שניות",
+        "pause": "השהה את האיפוס",
+        "reset": "אפס"
+      },
+      "depthWork": {
+        "title": "עבודת עומק",
+        "body": "שמור על המצב הזה והפוך אותו לבלוק אחד אמיתי של תפוקה משמעותית.",
+        "start": "אני מתחיל את זה עכשיו"
+      }
+    },
+    "yesterdayAction": "אתמול כתבת שתעשה:",
+    "didYouDoIt": "האם עשית את זה?",
+    "statedYes": "כן, עשיתי ✓",
+    "statedPartial": "חלקית",
+    "statedNo": "לא הגעתי אליו"
+  },
+  "emotion": {
+    "driven": "מונע קדימה",
+    "flat": "כבוי",
+    "anxious": "חרד",
+    "avoidant": "נמנע",
+    "disappointed": "מאוכזב",
+    "excited": "נרגש",
+    "overwhelmed": "מוצף",
+    "confused": "מבולבל",
+    "angry": "כועס",
+    "grateful": "מוקיר תודה"
+  },
+  "metrics": {
+    "updated": "עודכן מהצ׳ק-אין האחרון",
+    "waiting": "ממתין לצ׳ק-אין ראשון",
+    "energyDescription": "אנרגיה היא הערכת היכולת שלך כרגע, בסולם 1 עד 10.",
+    "focusDescription": "פוקוס משקף עד כמה אתה נוכח וזמין מנטלית עכשיו, בסולם של 1 עד 10.",
+    "momentumDescription": "מומנטום משלב פוקוס, אנרגיה ותגיות מצב לציון מוכנות מעשי."
+  },
+  "intervention": {
+    "breath": "קח 90 שניות. קום, תנשום עמוק, ושנה קודם את המצב הפיזי שלך.",
+    "truth": "תן לאמת שם פשוט. הכוח חוזר כשהסיפור נהיה ספציפי."
+  },
+  "validation": {
+    "required": "השדה הזה חובה.",
+    "truthRequired": "כדאי לשתף מה באמת קורה כדי לקבל אימון מדויק.",
+    "actionRequired": "כדאי לתת שם לפעולה החשובה באמת, כדי שההתאמה תוכל להיתפס למשהו קונקרטי.",
+    "range": "בחר ערך בין {min} ל-{max}."
+  },
+  "auth": {
+    "signIn": "כניסה",
+    "email": "אימייל",
+    "password": "סיסמה"
+  },
+  "analytics": {
+    "weeklyProgress": "התקדמות שבועית",
+    "eyebrow": "דפוס אחרון",
+    "stateTrend": "מגמת מצב",
+    "trendHelp": "מבט שבועי על המומנטום האחרון שלך, כשהיום החדש ביותר נמצא בצד ימין.",
+    "lastEntries": "{count} רשומות אחרונות",
+    "noData": "אין נתונים עדיין",
+    "emptyTitle": "המגמה שלך תופיע אחרי הצ׳ק-אין הראשון.",
+    "emptyBody": "ברגע שתכייל קריאה כנה אחת של המצב שלך, האזור הזה יעזור לך לראות איך הקצב שלך משתנה לאורך זמן.",
+    "insightsTitle": "מה הדאטה מתחיל להראות",
+    "insights": {
+      "focusCompletion": "בימים שבהם הפוקוס שלך היה גבוה, השלמת {percent}% יותר מהפעולות שהומלצו לך.",
+      "momentumUp": "המומנטום הממוצע שלך עלה ב-{points} נקודות לעומת השבוע הקודם.",
+      "momentumDown": "המומנטום הממוצע שלך ירד ב-{points} נקודות לעומת השבוע הקודם. זה סימן לפשט ולהחזיר אנרגיה.",
+      "groundedMomentum": "מצבי קרקוע הופיעו אצלך {count} פעמים לאחרונה. אלה בדרך כלל חלונות חזקים לביצוע נקי.",
+      "stressSignal": "תגיות של עומס ולחץ הופיעו אצלך {count} פעמים לאחרונה. יותר רגעי איפוס מוקדם ביום עשויים להגן על המומנטום."
+    }
+  },
+  "coach": {
+    "eyebrow": "מרחב אימון",
+    "page": {
+      "title": "מאמן אישי וירטואלי",
+      "subtitle": "שאלה קצרה, שיקוף חד וצעד אחד — בלי צ׳אט ארוך.",
+      "emotionLabel": "איך אתה מרגיש עכשיו?",
+      "escapeLabel": "בריחה / הימנעות",
+      "escapeHint": "1 = ממוקד, 10 = רוצה לברוח מהמשימה",
+      "energyLabel": "אנרגיה",
+      "energyHint": "1 = מותש, 10 = דלק מלא",
+      "truthLabel": "מה האמת שאתה רוצה לעבוד איתה?",
+      "truthPlaceholder": "למשל: דחיתי את השיחה כי פחדתי מדחייה…",
+      "truthRequired": "כתוב משפט אחד לפחות — זה מה שהמאמן יעבוד איתו.",
+      "submit": "קבל שיקוף מהמאמן",
+      "prefilledHint": "מילאנו מהצ׳ק-אין האחרון שלך. אפשר לערוך לפני שליחה.",
+      "checkinLink": "טקס בוקר",
+      "morningRitualLink": "טקס בוקר",
+      "sourceAi": "תגובת AI",
+      "sourceLocal": "תגובה מקומית (ללא OpenAI)"
+    },
+    "quickActions": {
+      "title": "פעולות מהירות עם המאמן",
+      "buildStep": {
+        "label": "בנה לי צעד יומי",
+        "prompt": "בנה לי צעד יומי אחד מתוך המטרות הנוכחיות שלי. שיהיה קצר, מעשי ואפשרי היום."
+      },
+      "shortVersion": {
+        "label": "תן לי גרסה קצרה",
+        "prompt": "יש לי אנרגיה נמוכה היום. תן לי את הגרסה הכי קצרה ושימושית של הצעד הבא, עדיף 2-5 דקות."
+      },
+      "stuck": {
+        "label": "אני תקוע",
+        "prompt": "אני מרגיש תקוע ונמנע. עזור לי לקרוא לחסם בשם ולבחור פעולה קטנה אחת שתזיז אותי."
+      },
+      "whyItMatters": {
+        "label": "תזכיר לי למה זה חשוב",
+        "prompt": "תזכיר לי למה המטרה הנוכחית שלי חשובה, ותהפוך את זה לצעד הבא אחד ומעשי."
+      },
+      "breakGoal": {
+        "label": "פרק את המטרה",
+        "prompt": "קח את המטרה שלי ופרק אותה לצעד תינוק ברור, אבן דרך קטנה, ומה כדאי לי להתעלם ממנו היום."
+      }
+    },
+    "emotions": {
+      "driven": "מונע",
+      "flat": "שטוח",
+      "anxious": "חרד",
+      "avoidant": "נמנע",
+      "disappointed": "מאוכזב",
+      "excited": "נרגש",
+      "overwhelmed": "מוצף",
+      "confused": "מבולבל",
+      "angry": "כועס",
+      "grateful": "אסיר תודה"
+    },
+    "title": "תגובת המאמן",
+    "expandLabel": "הצג תגובת מאמן",
+    "collapseLabel": "הסתר תגובת מאמן",
+    "latest": "השיקוף האחרון",
+    "loading": "מכין שיקוף...",
+    "error": "לא הצלחתי לקבל אימון כרגע. נסה שוב בעוד רגע.",
+    "copy": "העתק",
+    "copied": "הועתק",
+    "share": "שתף",
+    "export": "ייצוא JSON",
+    "responsePreview": "קריאה בהירה של מה שקורה עכשיו, עם צעד אחד יציב להמשך.",
+    "momentDismiss": "לקחת איתי",
+    "languageBadgeHelp": "זה מציג את שפת תגובת האימון שנבחרה.",
+    "mixedContent": "השיקוף שלך יופיע כאן אחרי הצ׳ק-אין הבא.",
+    "responses": {
+      "metrics": "קריאת מצב: בריחה {escape}/10 ואנרגיה {energy}/10. זה מידע, לא זהות.",
+      "driven": {
+        "insight": "מצוין. יש לך דחף. עכשיו תכוון אותו למטרה האמיתית: “{truth}”. כוח בלי דיוק הופך לרעש.",
+        "action": "עשה פעולה אחת מוחשית בעשר הדקות הקרובות שמוכיחה שאתה מוביל את המצב."
+      },
+      "flat": {
+        "insight": "כבוי זה לא שבור. זה בדרך כלל גוף שמבקש תנועה ומוח שמבקש ניצחון קטן יותר: “{truth}”.",
+        "action": "קום, תנשום עמוק יותר ממה שנוח, ותסיים את הפעולה הכי קטנה שאפשר לראות."
+      },
+      "anxious": {
+        "insight": "חרדה היא אנרגיה בלי החלטה. ההחלטה מתחילה כאן: “{truth}”. כשהיא ספציפית, היא מאבדת ווליום.",
+        "action": "כתוב את הצעד הבא במשפט אחד, ואז תעשה רק אותו. עשר דקות בלי לברוח לעתיד."
+      },
+      "avoidant": {
+        "insight": "הימנעות היא לא עצלנות. זה פחד שמנהל משא ומתן עם הסטנדרטים שלך. הדלת חזרה היא “{truth}”.",
+        "action": "פגוש את הדבר ל-90 שניות. פתח את הטאב, בצע את השיחה, כתוב את השורה הראשונה. תתחיל לפני שהביטחון מגיע."
+      },
+      "disappointed": {
+        "insight": "אכזבה אומרת שעדיין אכפת לך. תשתמש בה נקי: “{truth}”. אל תהפוך תוצאה לזהות.",
+        "action": "שלוף לקח אחד, בחר תיקון אחד, ותזוז לפני שהסיפור נהיה כבד יותר."
+      },
+      "excited": {
+        "insight": "התרגשות היא דלק. תן לה מסילה: “{truth}”. אנרגיה הופכת לכוח כשהיא מקבלת יעד.",
+        "action": "בחר את הפעולה האחת שתיצור התקדמות נראית היום, ושים אותה ביומן עכשיו."
+      },
+      "overwhelmed": {
+        "insight": "הצפה היא בדרך כלל יותר מדי לופים פתוחים שצועקים יחד. תתחיל מזה: “{truth}”.",
+        "action": "כתוב שלוש פעולות אפשריות, סמן את הקטנה ביותר, ותעשה אותה לפני שאתה פותר את כל החיים."
+      },
+      "confused": {
+        "insight": "בלבול לרוב אומר שאתה צריך שאלה נקייה יותר. הסיגנל כרגע הוא “{truth}”.",
+        "action": "שאל: מה הדבר האמיתי הבא שאני יכול לבדוק? ואז עשה רק את הצעד הזה."
+      },
+      "angry": {
+        "insight": "כעס הוא אנרגיית גבול. כוון אותו לסטנדרטים, לא לנזק: “{truth}”.",
+        "action": "תן שם לגבול, בחר בקשה נקייה, ותעביר אותה בלי דרמה."
+      },
+      "grateful": {
+        "insight": "הכרת תודה היא לא פסיביות. זה מצב חזק לבנות ממנו: “{truth}”.",
+        "action": "תשתמש במצב הזה. שלח את ההודעה, עשה את הצעד, או סיים את המשימה כשהמערכת פתוחה."
+      }
+    }
+  },
+  "history": {
+    "eyebrow": "ציר הזמן שלך",
+    "title": "צ׳ק-אינים אחרונים",
+    "empty": "הצ׳ק-אינים האחרונים שלך יתחילו להצטבר כאן ברגע שתתחיל.",
+    "delete": "מחק",
+    "edit": "ערוך",
+    "exportJson": "ייצוא JSON",
+    "exportCsv": "ייצוא CSV"
+  },
+  "help": {
+    "pageTitle": "עזרה ואיך זה עובד",
+    "eyebrow": "תמיכה",
+    "intro": "האפליקציה הופכת צ׳ק-אין רגשי קצר לצעד הבא מעשי — ועוזרת לך לבנות תוכנית אימון חיים אישית.",
+    "step1": "אתה מדרג אנרגיה ובריחה כדי שהאפליקציה תחשב פוקוס ומומנטום.",
+    "step2": "אתה נותן שם לאמת אחת. זה נותן למאמן משהו ספציפי לעבוד איתו.",
+    "step3": "תגובת המאמן נותנת תובנה אחת, התערבות אחת ואתגר אחד.",
+    "step4": "מגמות, היסטוריה, ייצוא ושאלות המשך בונים לולאת משוב לאורך זמן.",
+    "faqTitle": "שאלות נפוצות",
+    "faq": [
+      {
+        "q": "היכן נשמרים הנתונים שלי?",
+        "a": "כל הנתונים נשמרים מקומית על המכשיר הזה בלבד. לא נשלח כלום לשרת. ניתן לייצא או למחוק בכל עת מדף הניהול."
+      },
+      {
+        "q": "מה זה מאמן החיים?",
+        "a": "מאמן החיים מבוסס AI ועוזר לך להגדיר מטרות ב-8 תחומי חיים (בריאות, קריירה, מערכות יחסים ועוד) ומייצר צעדים יומיים קטנים בהתאמה לאנרגיה ולוח הזמנים שלך."
+      },
+      {
+        "q": "מה זה טקס הבוקר?",
+        "a": "רצף מודרך קצר (5–15 דקות) הכולל נשימות, הכרת תודה, היגד עצמי ומשימה יומית — בהשראת שיטת ה-Priming של טוני רובינס."
+      },
+      {
+        "q": "מדוע המאמן מדבר אליי אחרת לפעמים?",
+        "a": "הגדרת סגנון האימון שלך שולטת בזה. בחר בין תומך, ישיר ומניע בהגדרות → העדפות אימון."
+      },
+      {
+        "q": "האם אפשר להשתמש בעברית ובאנגלית?",
+        "a": "כן. ניתן להחליף שפה בכל עת מהכותרת או מדף ההגדרות. כל התוכן שנוצר יהיה בשפה שנבחרה."
+      },
+      {
+        "q": "איך מאפסים או מוחקים נתונים?",
+        "a": "בתחתית דף העזרה יש כפתור «אפס מידע» — הוא מוחק את כל הנתונים השמורים עליך במכשיר ומחזיר אותך לכניסה הראשונה. ניתן גם לנהל רשומות בודדות בניהול → מסד הנתונים."
+      }
+    ],
+    "contactTitle": "עדיין צריך עזרה?",
+    "contactBody": "זוהי אפליקציית פרודוקטיביות אישית. אם משהו לא עובד כמצופה, נסה לרענן את הדף או לנקות את מטמון הדפדפן.",
+    "resetData": {
+      "eyebrow": "איפוס",
+      "title": "אפס את כל המידע שלך",
+      "body": "פעולה זו מוחקת לצמיתות את כל הנתונים השמורים עליך — פרופיל, מטרות, צעדים, צ׳ק-אינים, טקסים ועוד — ומחזירה אותך לתחילת התהליך כאילו נכנסת לראשונה. לא ניתן לשחזר.",
+      "button": "אפס מידע",
+      "resetting": "מאפס…",
+      "confirmTitle": "לאפס את כל המידע?",
+      "confirmMessage": "כל הנתונים שלך במכשיר הזה יימחקו — פרופיל, מטרות, היסטוריה והעדפות. תועבר/י לכניסה הראשונה. פעולה זו בלתי הפיכה.",
+      "confirmButton": "כן, אפס הכל",
+      "error": "לא הצלחנו לאפס את המידע. נסה שוב."
+    }
+  },
+  "onboarding": {
+    "stepCounter": "שלב {step} מתוך {total}",
+    "step1Title": "בוא נבנה את התוכנית הראשונה שלך",
+    "step1Body": "נענה על כמה שאלות קצרות כדי להתאים את האימון עבורך.",
+    "step1TimeHint": "פחות מדקה.",
+    "lifeContextQuestion": "מה קורה בחיים שלך כרגע?",
+    "lifeContextNotePlaceholder": "משפט קצר — אם תרצה/י",
+    "scheduleQuestion": "מתי בדרך כלל קם/ה ומתי הולך/ת לישון?",
+    "genderHelpShort": "אופציונלי — משפיע על ניסוח בעברית",
+    "physicalHelpShort": "רק כדי לא להציע משהו לא מתאים",
+    "sleepLabel": "שעת שינה (בערך)",
+    "actionWindowLabel": "מתי הכי נוח לך לפעול?",
+    "actionWindow": {
+      "morning": "בוקר",
+      "midday": "צהריים",
+      "evening": "ערב",
+      "flexible": "גמיש"
+    },
+    "physicalLabel": "התחשבות פיזית",
+    "physical": {
+      "low_intensity": "מעדיף/ה עדין, לא אינטנסיבי",
+      "physical_limitation": "יש מגבלה פיזית שחשוב לקחת בחשבון",
+      "pregnancy_postpartum": "הריון / אחרי לידה"
+    },
+    "moreOptions": "עוד אפשרויות (אופציונלי)",
+    "lessOptions": "פחות אפשרויות",
+    "nameLabel": "כיצד תרצה/י שנפנה אליך?",
+    "namePlaceholder": "השם שלך",
+    "nameRequired": "נא להזין שם כדי להמשיך",
+    "languageLabel": "באיזו שפה נוח לך?",
+    "wakeLabel": "קימה",
+    "familyLabel": "מצב משפחתי",
+    "optional": "אופציונלי",
+    "step2Eyebrow": "תחום מיקוד",
+    "step2Title": "בוא נראה איפה אתה עומד היום.",
+    "step2InnerProgress": "דרגת {rated} מתוך {total} תחומים",
+    "step2GutHint": "תחושת בטן מספיקה. אפשר לדרג רק כמה תחומים ואז לבחור.",
+    "step2SkipRatings": "דלג על דירוגים ובחר תחום",
+    "step2ShowRatings": "חזור לדירוגים",
+    "step2MapEyebrow": "מפת חיים בזמן אמת",
+    "step2MapTitle": "כך נראית התמונה הכוללת שלך.",
+    "step2MapBody": "כל נקודה היא תחום חיים. ככל שהצורה מתרחבת, התחום מרגיש יציב יותר. חפש את המקום שבו צעד קטן יכול לפתוח הכי הרבה תנועה.",
+    "step2MapInsightTitle": "{domain} נראה כמו המקום הנכון להתחיל ממנו.",
+    "step2MapInsightBody": "הפער בין {low} לבין {strong} מראה איפה יש עומס ואיפה כבר יש לך כוח. המפה לא שופטת אותך — היא עוזרת לבחור צעד אחד ברור למחר.",
+    "step2MapStats": {
+      "average": "ממוצע",
+      "gap": "פער גבוה-נמוך",
+      "strongest": "תחום חזק"
+    },
+    "step2MapLowTitle": "3 התחומים שדורשים הכי הרבה תשומת לב",
+    "step2MapLegendTitle": "מקרא צבעים",
+    "step2MapLegend": {
+      "urgent": "דורש תשומת לב",
+      "unstable": "לא יציב",
+      "steady": "יציב",
+      "strong": "חזק"
+    },
+    "step2MapSource": "מבוסס על הדירוג העצמי שלך עכשיו. הסקאלה נשארת 1-10 כדי לא לנפח הבדלים.",
+    "step2MapConclusion": "נקודת הפתיחה המומלצת: {domain}. זה התחום הנמוך ביותר, ושיפור בו יכול להשפיע על שאר התחומים.",
+    "step2GapInsight": "הפער המרכזי: {gap} נקודות בין {low} לבין {high}.",
+    "step2BarTitle": "כך תחומי החיים שלך מדורגים כרגע",
+    "step2ScaleHint": "נמוך = להתחיל כאן",
+    "step2Scale": {
+      "low": "דורש שיפור",
+      "high": "חזק ומאוזן"
+    },
+    "step2RadarTitle": "מבט על",
+    "step2RadarHint": "התווית מופיעה למטה",
+    "step2RadarActive": "התחום שמוצג עכשיו",
+    "step2CurrentDomain": "דרג כאן — המפה מתעדכנת למטה",
+    "domainDeepDive": {
+      "button": "מה זה אומר?",
+      "eyebrow": "הבנת התחום",
+      "whyImportant": "למה זה חשוב?",
+      "includes": "מה התחום הזה כולל?",
+      "score1": "איך נראה 1/10?",
+      "score10": "איך נראה 10/10?",
+      "selfCheck": "שאלה לבדיקה עצמית",
+      "close": "סגור"
+    },
+    "step2LeverageBadge": "מנוף",
+    "step2LeverageTitle": "המנוף האפשרי",
+    "step2LeverageBody": "שיפור של נקודה אחת ב{domain} יכול לשנות איך כל שאר היום מרגיש. לא חייבים לבחור בו, אבל שווה לשים לב.",
+    "step2WhyOneTitle": "למה רק תחום אחד?",
+    "step2WhyOneBody": "כדי שמחר יהיה פשוט ולא עמוס. תחום אחד מאפשר צעד ברור, פוקוס, ומומנטום שאפשר לחזור אליו.",
+    "step2DecisionEyebrow": "בחירת הצעד של מחר",
+    "step2SelectTitle": "עכשיו בחר תחום אחד להתמקד בו.",
+    "step2SelectHint": "הציון הנמוך ביותר שלך הוא ב{domain}. לרוב שם נמצא המנוף הגדול ביותר.",
+    "domainPreview": {
+      "eyebrow": "Preview חי",
+      "body": "אם נבחר {domain}, נבנה למחר צעד של בערך {mins} דקות שמחבר בין פוקוס, מיינדסט והתקדמות אמיתית."
+    },
+    "step2SelectedConfirm": "בחירה טובה. עכשיו נעמיק ב{domain}.",
+    "step2ChooseToContinue": "בחר תחום כדי להמשיך.",
+    "step2DynamicCta": "בנה לי צעד ראשון ב{domain}",
+    "availableTimeLabel": "כמה זמן באמת פנוי לך ביום?",
+    "availableTimeOption": "{mins} דק׳",
+    "intensityLabel": "באיזה קצב נוח לך להתקדם?",
+    "intensity": {
+      "gentle": "רגוע",
+      "balanced": "מאוזן",
+      "intense": "אינטנסיבי"
+    },
+    "addInYourWords": "רוצה להוסיף במילים שלך? (אופציונלי)",
+    "qFreeTextPlaceholder": "הוסף/י פרטים אם תרצה/י…",
+    "q1LabelLowScore": "דירגת {domain} ב-{score}. מה מהדברים האלה מרגיש הכי נכון?",
+    "q1LabelNotLowest": "מה גרם לך לבחור ב{domain} למרות שיש תחומים עם ציון נמוך יותר?",
+    "q2WhenLabel": "מתי ביום האחרון הרגשת שהתחום הזה עמוס?",
+    "scoreContext": "הציון שלך כאן: {score}/10",
+    "scoreConfirmPrompt": "נראה שזה התחום הכי מאתגר שלך. זה מרגיש נכון?",
+    "scoreConfirm": {
+      "yes": "כן, בדיוק",
+      "partly": "חלקית",
+      "no": "לא ממש"
+    },
+    "situationPick": "איזו סיטואציה הכי מדויקת?",
+    "whenPick": "מתי זה קורה?",
+    "tagPick": "מה מרגיש הכי נכון? (אפשר כמה)",
+    "oneSentenceEnough": "מספיק — אפשר להמשיך",
+    "oneSentenceHint": "עוד קצת או בחר/י למעלה",
+    "voiceStart": "תגיד בקול — אני אסדר",
+    "voiceStop": "עצור הקלטה",
+    "helpMeExpress": "קשה לי לבטא — תעזור לי להמשיך",
+    "goalMetricLabel": "איך נדע שהצלחנו",
+    "firstTaskTomorrow": "אעשה מחר בבוקר",
+    "celebrateBodyDeferred": "הגדרת מטרה ב{domain} ותכננת את הפעולה הראשונה למחר. כך מתחיל שינוי, {name}.",
+    "celebrateScheduled": "מתוזמן למחר",
+    "resumeBanner": "ממשיכים מאיפה שעצרת",
+    "resumeStartOver": "התחל מחדש",
+    "aiError": "לא הצלחנו לייצר תשובה. נסה שוב.",
+    "genericError": "משהו השתבש. נסה שוב.",
+    "analyzing": "מנתח…",
+    "step3Eyebrow": "בוא נעמיק",
+    "step3Quick": {
+      "scoreLabel": "הציון שנתת בשלב הקודם",
+      "optionalNote": "רוצה להוסיף במילים שלך? (אופציונלי)",
+      "phraseHelpToggle": "קשה לי לנסח — תן לי משפטים מוכנים",
+      "phraseHelpHint": "זה בסדר. אפשר לבחור משפט מוכן ולערוך אותו.",
+      "reflectionEyebrow": "מה שאני שומע",
+      "buildInsight": "בנה את התובנה שלי"
+    },
+    "step3Aha": "נראה שהמנוף שלך כרגע הוא {domain}. מכאן נבנה צעד קטן למחר, לא עוד רשימת משימות.",
+    "q1Label": "למה {domain} דווקא?",
+    "q3Label": "מה יקרה אם שום דבר לא ישתנה עוד שנה?",
+    "q4Label": "מה יקרה אם תצליח?",
+    "nextQuestion": "הבא",
+    "skipQuestion": "דלג",
+    "insightLabel": "מה שאני שומע ממך",
+    "generating": "מייצר תובנה…",
+    "seeInsight": "ראה את התובנה שלך",
+    "continueToGoal": "המשך אל המטרה",
+    "step4Eyebrow": "המטרה שלך ל-90 יום",
+    "step4Title": "הנה מה שאני מציע.",
+    "step4Body": "על סמך כל מה שסיפרת לי. ערוך אם זה לא מרגיש נכון.",
+    "goalProposedLabel": "מטרה מוצעת",
+    "goalEditHint": "לחץ לעריכה. תעשה אותה שלך.",
+    "savingGoal": "שומר…",
+    "confirmGoal": "זו המטרה שלי",
+    "step5Eyebrow": "מתחילים עכשיו",
+    "step5Title": "מצוין. פעולה קטנה אחת, {name}.",
+    "step5Body": "עשה את הדבר הזה לפני שנכנס לאפליקציה. זה לוקח פחות מ-5 דקות.",
+    "tomorrowReasonMini": {
+      "eyebrow": "למה לחזור מחר",
+      "body": "כי אחרי הפעולה הזאת האפליקציה כבר לא מתחילה מאפס. מחר היא תמשיך מאותו כיוון ותציע את הצעד הבא."
+    },
+    "firstTaskLabel": "המשימה הראשונה שלך",
+    "firstTaskSaveError": "לא הצלחנו לשמור את המשימה הראשונה. נסה שוב.",
+    "firstTaskMissingError": "חסרים פרטי המשימה הראשונה. חזור לשלב הקודם או התחל מחדש.",
+    "goalCreateError": "לא הצלחנו ליצור את המטרה. נסה שוב.",
+    "firstTaskDone": "✓  סיימתי — עשיתי את זה",
+    "saving": "שומר…",
+    "celebrateTitle": "כבר ניצחת.",
+    "celebrateBody": "הגדרת מטרה ב{domain} והשלמת את הפעולה הראשונה שלך. כך מתחיל שינוי, {name}.",
+    "celebrateFirstStep": "פעולה ראשונה הושלמה",
+    "celebrateDone": "הושלם",
+    "completionSummary": {
+      "accomplishmentsTitle": "מה עשינו עכשיו",
+      "goalSet": "הגדרת מטרה ב{domain}",
+      "firstStepCreated": "יצרנו צעד ראשון — מחכה לך בבית",
+      "firstStepCompleted": "השלמת את הצעד הראשון",
+      "intro": "הגדרת מטרה, יצרנו צעד ראשון — מכאן משתמשים באפליקציה כך:",
+      "title": "הלולאה היומית"
+    },
+    "returnTomorrow": {
+      "eyebrow": "למה לחזור מחר",
+      "title": "מחר בונים את החוליה השנייה.",
+      "completedBody": "כי כבר הוכחת שהצעד הראשון אפשרי. מחר האפליקציה תהפוך את זה לצעד הקטן הבא.",
+      "deferredBody": "כי הפעולה הראשונה כבר מחכה לך. מחר מתחיל מצעד ברור אחד, לא מעוד תהליך הגדרה."
+    },
+    "tomorrowHomePreview": {
+      "eyebrow": "כך ייראה הבוקר שלך מחר",
+      "title": "מסך הבית כבר יחכה עם כיוון ברור.",
+      "focusLabel": "הפעולה המרכזית",
+      "fallbackStep": "צעד קטן ראשון ב{domain}",
+      "metrics": {
+        "focus": {"value": "1", "label": "צעד"},
+        "streak": {"value": "0→1", "label": "רצף"},
+        "progress": {"value": "+", "label": "מומנטום"}
+      }
+    },
+    "identityClose": "אתה לא חוזר לאפליקציה. אתה חוזר לאדם שאמרת שאתה רוצה להיות מחר.",
+    "enterApp": "כנס לאפליקציה",
+    "back": "חזרה",
+    "next": "המשך",
+    "eyebrow": "צ׳ק-אין ראשון",
+    "title": "שלוש דקות. קריאה כנה אחת. צעד הבא אחד שמותאם אליך.",
+    "step1": "דרג את המצב המנטלי והפיזי שלך בלי להציג הצגה.",
+    "step2": "בחר תגית אחת או שתיים כדי שהמנוע יקרא את הדפוס המדויק.",
+    "step3": "השתמש בהיגד ובהתערבות המותאמים כדי לזוז, לא כדי להסתבך בעוד מחשבות.",
+    "start": "להתחיל",
+    "family": {
+      "single": "רווק/רווקה",
+      "in_relationship": "בזוגיות",
+      "married": "נשוי/נשואה",
+      "married_with_kids": "נשוי/נשואה עם ילדים",
+      "other": "אחר"
+    }
+  },
+  "challenge": {
+    "title": "אתגר היום",
+    "markDone": "סמן כבוצע",
+    "done": "בוצע",
+    "actions": {
+      "driven": "שלח דבר אחד נראה לעין ב-30 הדקות הקרובות.",
+      "flat": "קום, אפס את הגוף, וסיים משימה קטנה אחת.",
+      "anxious": "כתוב את הצעד הבא במשפט אחד ועשה רק אותו.",
+      "avoidant": "פגוש את המשימה שאתה נמנע ממנה ל-90 שניות בלי משא ומתן.",
+      "disappointed": "שלוף לקח אחד ועשה פעולת תיקון אחת.",
+      "excited": "שים את האנרגיה ביומן כבלוק פעולה אחד ברור.",
+      "overwhelmed": "בחר את הלופ הפתוח הכי קטן וסגור אותו.",
+      "confused": "שאל שאלה נקייה אחת ובדוק עובדה אחת.",
+      "angry": "הפוך את החום לגבול נקי או בקשה נקייה.",
+      "grateful": "השתמש במצב הפתוח כדי להודות למישהו או להשלים פעולה משמעותית אחת."
+    }
+  },
+  "conversation": {
+    "title": "שאלת המשך",
+    "placeholder": "מה אתה רוצה שהמאמן יחדד או יאתגר?",
+    "submit": "שאל את המאמן",
+    "loading": "חושב..."
+  },
+  "reminder": {
+    "title": "תזכורת יומית",
+    "time": "שעת תזכורת",
+    "enable": "הפעל תזכורת",
+    "enabled": "התזכורת הופעלה במכשיר הזה.",
+    "denied": "התראות חסומות בדפדפן הזה.",
+    "unsupported": "הדפדפן הזה לא תומך בהתראות.",
+    "note": "נשלח לך תזכורת עדינה בשעה שתבחר, כל עוד האפליקציה פתוחה במכשיר הזה.",
+    "notificationTitle": "צ׳ק-אין יומי",
+    "notificationBody": "קח שלוש דקות. קרא את המצב. בחר את הצעד הבא."
+  },
+  "privacy": {
+    "title": "הערת פרטיות",
+    "body": "בגרסת האב-טיפוס הזו הצ׳ק-אינים נשמרים מקומית בדפדפן שלך. בגרסת מוצר חייבים להוסיף אחסון מוצפן, מדיניות פרטיות, תנאי שימוש והסכמה ברורה לפני שמירת מידע רגשי רגיש בשרת.",
+    "pageTitle": "מדיניות פרטיות",
+    "intro": "אב-טיפוס זה מתייחס למידע רגשי רגיש בגישה מקומית תחילה.",
+    "local": "צ׳ק-אינים, טיוטות, העדפות תזכורת והיסטוריית אימון נשמרים מקומית במכשיר הזה באמצעות אחסון הדפדפן ומסד הנתונים המקומי של האפליקציה.",
+    "analyticsControl": "ניתן לכבות תובנות התנהגותיות אופציונליות בהגדרות. האימון הבסיסי ממשיך לפעול ללא ניתוח פסיבי של כתיבה, עריכות, צפייה בפרטי משימה ודפוסים שמוסקים מקומית מהטקסט.",
+    "server": "כרגע API המאמן מחזיר fallback מקומי. אם יחובר AI בענן בהמשך, חייבים להוסיף הסכמה, כללי שמירה ובקרות מחיקה לפני השקה.",
+    "security": "במוצר אמיתי חובה להשתמש ב-HTTPS, אחסון מוצפן, בקרות גישה, audit log ותהליך מחיקת נתונים ברור.",
+    "contact": "העמוד הזה הוא הנחיית מוצר, לא ייעוץ משפטי. לפני השקה צריך נוסח משפטי שנבדק."
+  },
+  "terms": {
+    "pageTitle": "תנאי שימוש",
+    "intro": "האפליקציה היא אב-טיפוס אימוני, לא ייעוץ רפואי, נפשי, משפטי או פיננסי.",
+    "use": "יש להשתמש בתגובות המאמן ככלי לרפלקציה ולתכנון פעולה.",
+    "limits": "אין להסתמך על האפליקציה במצבי מצוקה או משבר. במקרים כאלה יש לפנות לתמיכה אנושית מחוץ לאפליקציה.",
+    "data": "אין להזין מידע שאינך מרגיש בנוח לשמור מקומית בדפדפן הזה בזמן בדיקת האב-טיפוס."
+  },
+  "errors": {
+    "notFoundTitle": "העמוד הזה לא כאן",
+    "notFoundBody": "ייתכן שהכתובת שגויה, או שהחלק הזה באפליקציה עדיין לא נבנה.",
+    "backHome": "חזרה לבית",
+    "runtimeEyebrow": "משהו נשבר",
+    "runtimeTitle": "האפליקציה נתקלה בשגיאת ריצה",
+    "runtimeBody": "נסה שוב. אם זה חוזר, הפעל מחדש את שרת הפיתוח כדי לנקות chunks ישנים של Next.",
+    "tryAgain": "נסה שוב"
+  },
+  "morningRitual": {
+    "nav": "טקס בוקר",
+    "pageTitle": "טקס פתיחת יום",
+    "start": {
+      "eyebrow": "טקס בוקר",
+      "title": "איך אתה רוצה להגיע אל היום הזה?",
+      "subtitle": "קח כמה דקות מודרכות לפני שהיום מתחיל למשוך אותך לכל הכיוונים.",
+      "roleExplanation": "פותח את היום עם מצב רגשי, זהות ומשימה אחת.",
+      "startButton": "התחל טקס בוקר",
+      "quickButton": "איפוס מהיר (3 דק׳)",
+      "startMode": "התחל",
+      "advancedOptions": "אפשרויות מתקדמות",
+      "streak": "רצף ימים",
+      "completed": "טקסים שהושלמו",
+      "lastMission": "מטרה יומית אחרונה",
+      "previewTitle": "מה כולל הטקס הסטנדרטי",
+      "previewBody": "כל צעד נמשך 2–5 דקות. ניתן לדלג על כל צעד אם לא מתאים.",
+      "previewBreathing": "נשימות מכוונות",
+      "previewGratitude": "הכרת תודה",
+      "previewAffirmation": "היגד עצמי",
+      "previewMission": "מטרה יומית"
+    },
+    "yesterday": {
+      "restartGentlyTitle": "אתמול היה יום קשה — היום מתחילים מחדש בעדינות",
+      "restartGentlyBody": "אין כאן דחיפה לביצועים. רק צעד קטן אחד שמחזיר אותך למסלול.",
+      "stats": "אתמול: {completed} הושלמו, {skips} דולגו, מתוך {total} צעדים",
+      "blocker": "מה עצר: {blocker}",
+      "modeHintRestartGently": "אחרי יום עם דילוגים — מומלץ מצב מהיר ורגוע. בלי לחץ של ביצועים.",
+      "modeHintHighPerformance": "אתמול זרמת טוב — אפשר לפתוח בקצב רגיל או עמוק יותר.",
+      "missionGentleHint": "תבחר משימה קטנה שאפשר לסיים תוך 10 דקות — לא להשלים את כל מה שפספסת."
+    },
+    "goalFocus": {
+      "eyebrow": "פוקוס יומי לפי היעד שלך",
+      "oneActionBeforeNoise": {
+        "title": "פעולה אחת לפני שהרעש מתחיל",
+        "body": "הבוקר הזה — צעד אחד קטן לפני מיילים והסחות. קשור ל: {microGoal}"
+      },
+      "shortSoftStart": {
+        "title": "בוקר קצר ורך",
+        "body": "בלי לחץ ביצועים. משימה אחת קטנה שאפשר לסיים — {microGoal}"
+      },
+      "stabilityNotHype": {
+        "title": "יציבות, לא מוטיבציה מוגזמת",
+        "body": "צעד קטן שמחזק שליטה — לא להוכיח כלום היום. {microGoal}"
+      }
+    },
+    "mode": {
+      "title": "בחר את הקצב שמתאים לבוקר הזה",
+      "bestForLabel": "מתאים ל",
+      "stepCount": "{count} שלבים",
+      "suggested": "מומלץ",
+      "quick": "Quick",
+      "quickDesc": "איפוס קצר לבוקר עמוס.",
+      "quickIncludes": "נשימה קצרה, דבר אחד להודות עליו, הצהרת זהות, מטרה אחת",
+      "quickBestFor": "בוקר עמוס, יום קשה, או כשצריך רק איפוס מהיר",
+      "standard": "Full",
+      "standardDesc": "פתיחה מאוזנת ומודרכת ליום.",
+      "standardIncludes": "נשימות, 3 הכרות תודה, affirmation, ויזואליזציה קצרה, מטרה יומית",
+      "standardBestFor": "רוטינה יומית — כשיש כמה דקות לפתיחה מאוזנת",
+      "deep": "Deep",
+      "deepDesc": "איפוס ארוך עם יותר מרחב.",
+      "deepIncludes": "נשימות ארוכות, הכרת תודה מפורטת, קטע אודיו/יוטיוב, ויזואליזציה מלאה, זהות, מטרות, התחייבות",
+      "deepBestFor": "יום חשוב, סוף שבוע, או כשאתה רוצה זמן עמוק לפני העבודה",
+      "minutes": "דק׳"
+    },
+    "breathing": {
+      "title": "נשימות",
+      "subtitle": "צא ממצב פסיבי והפעל את הגוף.",
+      "inhale": "שאיפה",
+      "hold": "החזקה",
+      "exhale": "נשיפה",
+      "start": "התחל",
+      "skip": "דלג",
+      "done": "סיימתי",
+      "ready": "מוכן",
+      "default": "רגיל",
+      "energy": "אנרגיה",
+      "calm": "רגוע",
+      "round": "סיבוב {current} מתוך {total}",
+      "guidance": {
+        "prepare": "קום אם אתה יכול. תעמוד יציב. קודם כל — שנה את הגוף.",
+        "inhale1": "מלא את החזה. תפוס מקום.",
+        "inhale2": "שאף עוצמה. אתה מתעורר.",
+        "inhale3": "משוך פנימה כוח. זה הבוקר שלך.",
+        "hold1": "החזק. תרגיש את האנרגיה נבנית.",
+        "hold2": "הישאר כאן. אתה בשליטה.",
+        "hold3": "ההפסקה הזאת היא עוצמה.",
+        "exhale1": "שחרר את מה שלא צריך.",
+        "exhale2": "עזוב. המצב הישן יוצא עכשיו.",
+        "exhale3": "נשוף את הרעש. השאר רק מה שחשוב.",
+        "complete": "הגוף שלך ער. עכשיו תור המוח."
+      }
+    },
+    "gratitude": {
+      "eyebrow": "הכרת תודה",
+      "title": "הכרת תודה",
+      "subtitle": "עצום עיניים, דמיין שאתה שם בכיסא הקדמי, ותרגיש את זה בגוף.",
+      "question": "על מה אתה יכול להרגיש תודה ממש עכשיו?",
+      "hint": "טריגרים חושיים",
+      "entryLabel": "רגע {index}",
+      "activePrompt": "הישאר עם הרגע הזה עד שהוא נהיה אמיתי בגוף.",
+      "inactivePrompt": "לרגעים הבאים יש עוד זמן.",
+      "promptSupport": "השתמש בטריגר אחד בכל פעם. תן לו להחזיר אותך למקום אמיתי, לנשימה אמיתית או לתחושה ממשית לפני שאתה ממשיך לכתוב.",
+      "timerLabel": "דקה {current} מתוך {total}",
+      "timerSeconds": "{seconds} שניות עם הרגע הזה",
+      "voiceButton": "הקלטת תודת קול",
+      "voiceListening": "אני מקשיב. דבר כאילו אתה ממש שם שוב.",
+      "voiceHelp": "אם זה עוזר לך להישאר בחוויה, אתה יכול פשוט להגיד את זה בקול במקום להקליד.",
+      "voiceUnsupported": "הדפדפן הזה לא תומך בהקלטת קול למסך הזה.",
+      "voiceError": "ההקלטה נעצרה. אפשר לנסות שוב כשתהיה מוכן.",
+      "ctaContinue": "הטמע בגוף והמשך",
+      "ctaFinish": "אני מרגיש את זה, הלאה",
+      "ctaBackEntry": "חזרה לרגע הקודם",
+      "integrationMessage": "המערכת העצבית שלך חווטה מחדש להצלחה היום.",
+      "integrationEyebrow": "חיווט מנטלי",
+      "prep": {
+        "eyebrow": "קודם הגוף",
+        "title": "הפעל את הגוף לפני הכתיבה.",
+        "subtitle": "קח פרץ קצר של נשימות אש קצביות, כדי שהכרת התודה תנחת בגוף ולא רק במחשבה.",
+        "timer": "{seconds} שניות של נשימות אש",
+        "pulseIn": "פנימה",
+        "pulseOut": "החוצה",
+        "fireBreath": "נשימות אש",
+        "skip": "אני מוכן לכתוב"
+      }
+    },
+    "affirmation": {
+      "title": "המסר שלך להיום",
+      "subtitle": "תן לזה לנחות בגוף שלך, כדי שזה יהפוך למצב ולא רק למשפט.",
+      "modeText": "טקסט",
+      "modeVideo": "סשן קולי",
+      "readAloud": "עמוד יציב, קח נשימה עמוקה, ותגיד את זה בקול רם 3 פעמים עם כל האנרגיה שלך.",
+      "focusMode": "מצב פוקוס",
+      "focusClose": "חזרה לטקס",
+      "mediaSupport": "הישאר עם קול אחד ומסר אחד. תן לאודיו להוביל את המצב שלך בלי לצאת מהטקס.",
+      "filterLabel": "בחר את מה שאתה צריך עכשיו",
+      "activeFilter": "מוצג עכשיו מסר שמכוון ל-{tag}. לחץ שוב על התגית או נקה את הסינון כדי לפתוח את המבחר.",
+      "clearFilter": "נקה סינון",
+      "anotherFiltered": "תן לי עוד אחד לצורך הזה",
+      "noFilteredAffirmations": "אין עדיין אמירות עבור {tag}. נסה תגית אחרת או הוסף אחת חדשה.",
+      "noVideoYet": "אין עדיין סשנים קוליים. הוסף את הראשון!",
+      "addVideo": "הוסף סשן קולי",
+      "another": "תן לי משהו אחר",
+      "manage": "ניהול אמירות",
+      "addNew": "הוסף אמירה חדשה",
+      "type": "סוג",
+      "text": "טקסט",
+      "youtube": "יוטיוב",
+      "titleField": "כותרת",
+      "content": "תוכן",
+      "youtubeUrl": "כתובת יוטיוב",
+      "tags": "תגיות",
+      "save": "שמור",
+      "cancel": "ביטול",
+      "delete": "מחק",
+      "noAffirmations": "אין אמירות עדיין. הוסף את הראשונה!"
+    },
+    "visualization": {
+      "title": "ויזואליזציה",
+      "subtitle": "דמיין את עצמך מסיים את היום הזה בגאווה. מה קרה שם?",
+      "question": "היום ייחשב הצלחה אם...",
+      "placeholder": "היום ייחשב הצלחה אם אסיים את פיצ׳ר הצ׳ק-אין ולא אברח לגלילה בזמן העבודה.",
+      "guidedButton": "ויזואליזציה מודרכת",
+      "personalizedHint": "מותאם לערך וליעד השבוע שלך מההבהרה",
+      "guided": {
+        "step1": "תראה את עצמך בסוף היום.",
+        "step2": "אתה רגוע.",
+        "step3": "עשית את הדבר החשוב.",
+        "step4": "לא ברחת.",
+        "step5": "עמדת בסטנדרט שלך.",
+        "step6": "איך זה מרגיש?"
+      }
+    },
+    "identity": {
+      "title": "הצהרת זהות",
+      "subtitle": "חבר את היום לזהות, לא רק למשימה.",
+      "question": "איזה אדם אתה בוחר להיות היום?",
+      "declaration": "היום אני פועל כמו אדם ש...",
+      "placeholder": "...לא מנהל משא ומתן עם הסחות דעת.",
+      "addNew": "הוסף זהות חדשה",
+      "defaultIdentities": {
+        "finisher": "אני אדם שמסיים דברים.",
+        "calm_pressure": "אני אדם שנשאר רגוע תחת לחץ.",
+        "acts_anyway": "אני אדם שפועל גם כשלא בא לו.",
+        "depth_over_escape": "אני אדם שבוחר עומק במקום בריחה."
+      }
+    },
+    "mission": {
+      "title": "המשימה היומית",
+      "subtitle": "צא מהטקס עם פעולה אחת ברורה.",
+      "question": "מה הדבר האחד שאם תעשה היום — היום הזה יזוז קדימה?",
+      "placeholder": "המשימה המרכזית שלי היום היא...",
+      "placeholderGentleRestart": "צעד קטן אחד שאוכל לעשות היום — בלי לשפוך על עצמי…",
+      "placeholderHighPerformance": "הדבר האחד שיקח את המומנטום של אתמול עוד צעד קדימה…",
+      "placeholderOneActionBeforeNoise": "לפני המיילים — צעד אחד קטן (10 דקות) שקשור ליעד השבוע…",
+      "placeholderShortSoftStart": "משימה אחת קטנה שאפשר לסיים ב-10 דקות — בלי ללחוץ על עצמי…",
+      "placeholderStabilityNotHype": "צעד קטן אחד ליציבות היום — לא להוכיח, רק להתקדם…",
+      "timeBlock": "חלון זמן (אופציונלי)",
+      "morning": "בוקר",
+      "afternoon": "צהריים",
+      "evening": "ערב",
+      "now": "עכשיו",
+      "finish": "סיים טקס",
+      "calibrationTitle": "כיול ליום",
+      "calibrationHint": "אנרגיה ומיקוד — כדי שהמאמן יתאים את הצעדים למצב שלך."
+    },
+    "complete": {
+      "title": "אתה מקורקע יותר ליום הזה.",
+      "gratitude": "מודה על",
+      "identity": "הזהות של היום",
+      "mission": "המשימה היומית",
+      "affirmation": "האמירה של היום",
+      "goToDashboard": "חזור לדשבורד",
+      "moodAfterLabel": "איך הרגשת אחרי?"
+    },
+    "common": {
+      "next": "הבא",
+      "back": "חזרה",
+      "skip": "דלג",
+      "done": "סיום",
+      "step": "שלב {current} מתוך {total}"
+    },
+    "dashboard": {
+      "ritualButton": "התחל טקס בוקר",
+      "todayMission": "המשימה של היום",
+      "streak": "רצף של {count} ימים",
+      "identityOfDay": "הזהות של היום"
+    },
+    "moodBefore": "איך אתה מרגיש עכשיו?",
+    "moodAfter": "איך הרגשתי אחרי הטקס?",
+    "moodLevel1": "מאוד עייף",
+    "moodLevel3": "לא טוב",
+    "moodLevel5": "בסדר",
+    "moodLevel7": "טוב",
+    "moodLevel9": "מעולה"
+  },
+  "eveningReset": {
+    "nav": "איפוס ערב",
+    "pageTitle": "איפוס ערב",
+    "start": {
+      "eyebrow": "איפוס ערב",
+      "title": "סגור את היום. פתח את מחר.",
+      "subtitle": "כמה דקות לרוקן את הראש ולהכין את עצמך למחר.",
+      "roleExplanation": "סוגר את היום, מזהה מה עבד, ומכין את מחר.",
+      "notJournal": "לא יומן — סגירה ממוקדת שמזינה את הצעדים והדפוסים של מחר.",
+      "timeToClose": "5 דקות לסגירת היום",
+      "outcomePromise": "בסוף תצא עם ניצחון למחר",
+      "startButton": "התחל איפוס ערב",
+      "startMode": "התחל",
+      "advancedOptions": "אפשרויות מתקדמות",
+      "streak": "רצף ימים",
+      "completed": "איפוסים הושלמו",
+      "previewTitle": "מה כולל האיפוס הסטנדרטי",
+      "previewWin": "סקירת הניצחון הגדול",
+      "previewCompletion": "מה עזר ומה עצר",
+      "previewGratitude": "הכרת תודה",
+      "previewTomorrow": "הניצחון של מחר"
+    },
+    "mode": {
+      "title": "כמה עמוק אתה רוצה ללכת הלילה?",
+      "outcomeLabel": "בסוף",
+      "stepCount": "{count} שלבים",
+      "suggested": "מומלץ",
+      "quick": "מהיר",
+      "quickDesc": "ניצחון + פוקוס למחר.",
+      "quickOutcome": "תצא עם ניצחון אחד ברור למחר",
+      "standard": "סטנדרטי",
+      "standardDesc": "רפלקציה, הכרת תודה, וניצחון מחר.",
+      "standardOutcome": "תצא עם ניצחון למחר וסגירה רגועה",
+      "deep": "עמוק",
+      "deepDesc": "איפוס מלא — רפלקציה, תובנה, הכנת סביבה וויזואליזציה.",
+      "deepOutcome": "תצא עם ניצחון למחר, תובנה, והכנה לסביבה",
+      "minutes": "דק׳"
+    },
+    "painFocus": {
+      "eyebrow": "מותאם לקושי מההבהרה",
+      "workOverload": {
+        "bannerTitle": "ערב של גבולות — לא עוד שעות",
+        "bannerBody": "הקושי המרכזי: {concern}. נבדוק איפה הגבול נפרץ היום.",
+        "blockerQuestion": "איפה היום הגבול נפרץ?",
+        "blockerPlaceholder": "מיילים אחרי שעות, וידאו במקום הפסקה, קושי לסגור משימה...",
+        "aiInsight": "נראה שעומס העבודה מכביד. מחר — גבול אחד קטן לפני שמתחילים (למשל: לא מיילים לפני ארוחת בוקר)."
+      },
+      "avoidance": {
+        "bannerTitle": "ערב של צעד קטן — לא דחייה",
+        "bannerBody": "הקושי המרכזי: {concern}. נסגור את היום עם מה שדחית ומה אפשרי מחר.",
+        "tomorrowsQuestion": "מה דחיתי היום, ומה הצעד הכי קטן למחר?",
+        "tomorrowsPlaceholder": "דחיתי... מחר אפשר רק...",
+        "aiInsight": "דחייה היא חלק מהקושי — לא כישלון. מחר, התחל בגרסה הכי קטנה של מה שדחית (5–10 דקות)."
+      },
+      "selfCriticism": {
+        "bannerTitle": "ערב של מספיק — לא מושלם",
+        "bannerBody": "הקושי המרכזי: {concern}. נחפש מה היה מספיק היום, גם אם קטן.",
+        "winQuestion": "מה עשית היום שהיה מספיק — גם אם קטן?",
+        "winPlaceholder": "היום הספיק כש...",
+        "aiInsight": "ביקורת עצמית מטשטשת מה כן קרה. מחר — שים/י את הצעד הקטן הראשון לפני הביקורת."
+      },
+      "uncertainty": {
+        "bannerTitle": "ערב של בהירות — שאלה אחת",
+        "bannerBody": "הקושי המרכזי: {concern}. נבחר שאלה אחת שכדאי לברר מחר.",
+        "tomorrowsQuestion": "איזו שאלה אחת כדאי לברר מחר?",
+        "tomorrowsPlaceholder": "מחר אני רוצה לברר...",
+        "aiInsight": "כשהכל מרגיש לא ברור — שאלה אחת עדיפה על פתרון שלם. מחר, 10 דקות רק לשאלה הזו."
+      }
+    },
+    "winReview": {
+      "eyebrow": "סקירת ניצחונות",
+      "question": "מה היה הניצחון הכי גדול שלך היום?",
+      "subtitle": "המוח זוכר כישלונות. אנחנו מאמנים אותו לזהות הצלחות.",
+      "placeholder": "היום אני...",
+      "examplesLabel": "דוגמאות",
+      "example1": "עשיתי אימון",
+      "example2": "שיחקתי עם הילדים",
+      "example3": "לא גללתי בטלפון",
+      "subtitleNeutralDay": "יום סביר? גם דבר קטן שהשתבח נחשב. ואפשר לדלג."
+    },
+    "completionReview": {
+      "eyebrow": "סקירת השלמה",
+      "title": "מה קרה עם המשימות שלך היום?",
+      "successQuestion": "מה עזר לך להצליח היום?",
+      "successPlaceholder": "הסביבה הייתה שקטה, התחלתי מוקדם...",
+      "blockerQuestion": "מה עצר אותך?",
+      "blockerPlaceholder": "התפזרתי, האנרגיה הייתה נמוכה..."
+    },
+    "emotionalDump": {
+      "eyebrow": "פריקת מטען",
+      "question": "מה עדיין מסתובב לך בראש?",
+      "subtitle": "כתוב את זה כדי לרוקן את הזיכרון העובד. לא צריך להיות הגיוני.",
+      "placeholder": "השיחה שלא סיימתי, הדבר שאני דוחה...",
+      "hint": "הכל החוצה. בלי עריכה. בלי שיפוט."
+    },
+    "gratitude": {
+      "eyebrow": "הכרת תודה",
+      "question": "על מה אתה אסיר תודה מהיום?",
+      "entryLabel": "רגע {index}",
+      "activePlaceholder": "תן לזה לנחות בגוף לפני שאתה כותב...",
+      "placeholder": "משהו מהיום...",
+      "category_person": "אדם",
+      "category_moment": "רגע",
+      "category_achievement": "הישג",
+      "category_opportunity": "הזדמנות"
+    },
+    "aiInsight": {
+      "eyebrow": "תובנת AI",
+      "title": "מה שמתי לב אליו היום",
+      "subtitle": "על פי דפוס הרפלקציה שלך — לא שיפוט, רק אות.",
+      "patternShortTasks": "שמתי לב שאתה מצליח במשימות קצרות. מחר, פרק את המשימה הראשית לבלוק של 25 דקות והתחל איתה.",
+      "patternMixed": "היה לך ניצחון אמיתי היום וגם חסם אמיתי. שניהם נספרים. מחר, הגן על 30 הדקות הראשונות לפני שמשהו שואב את תשומת ליבך.",
+      "patternEmotional": "הרבה מסתובב בראש שלך. כתיבה זה הצעד הראשון. מחר, התחל עם הדבר שאתה הכי נמנע ממנו — סיים אותו בשעה הראשונה.",
+      "patternPositive": "יום חזק. מחר, עשה את אותו הדבר בשעה הראשונה שגרם להיום לעבוד.",
+      "patternDefault": "הגעת היום. זה חשוב. הניצחון של מחר כבר מוגדר — עכשיו ישן."
+    },
+    "tomorrowsWin": {
+      "eyebrow": "הניצחון של מחר",
+      "question": "אם מחר ייחשב כיום מוצלח, מה חייב לקרות?",
+      "subtitle": "תשובה אחת בלבד. היה ספציפי.",
+      "placeholder": "מחר יהיה הצלחה אם אני...",
+      "finish": "סיים איפוס"
+    },
+    "environmentDesign": {
+      "eyebrow": "עיצוב סביבה",
+      "question": "מה אתה יכול להכין כבר עכשיו?",
+      "subtitle": "הסרה קטנה של חיכוך הלילה = הצלחה גדולה יותר מחר.",
+      "prepSuggestion1": "בגדי אימון",
+      "prepSuggestion2": "תיק לעבודה",
+      "prepSuggestion3": "בקבוק מים",
+      "prepSuggestion4": "רשימת משימות",
+      "prepSuggestion5": "תיק לתינוק מוכן",
+      "prepSuggestion6": "בגדים לבוקר מוכנים",
+      "prepSuggestion7": "מסמכים למועמדות מוכנים",
+      "inputPlaceholder": "משהו אחר...",
+      "sleepTargetLabel": "שעת שינה מטרה (אופציונלי)",
+      "sleepTargetPlaceholder": "לדוגמה {sleepTime}",
+      "screenOffHint": "הצעה: {hint}"
+    },
+    "visualization": {
+      "eyebrow": "עצמי עתידי",
+      "title": "30 שניות. עיניים עצומות אם אפשר.",
+      "vizLine1": "תדמיין את עצמך מחר בערב.",
+      "vizLine2": "היום כבר מאחוריך.",
+      "vizLine3": "עשית את הדבר החשוב.",
+      "vizLine4": "לא ברחת ממנו.",
+      "vizLine5": "על מה אתה שמח שעשית?",
+      "yourWin": "הניצחון שלך",
+      "personalizedHint": "מותאם לערך וליעד השבוע שלך מההבהרה",
+      "finish": "סיים איפוס"
+    },
+    "complete": {
+      "eyebrow": "ערב הושלם",
+      "title": "אתה מוכן למחר.",
+      "readinessLabel": "ציון מוכנות למחר",
+      "biggestWin": "הניצחון של היום",
+      "tomorrowsWin": "הניצחון של מחר",
+      "tomorrowTakeaway": "משפט אחד למחר",
+      "gratitude": "אסיר תודה על",
+      "prepared": "הוכן הלילה",
+      "streakMessage": "רצף של {count} ימים",
+      "goToDashboard": "לדשבורד"
+    },
+    "common": {
+      "next": "הבא",
+      "back": "חזור",
+      "skip": "דלג",
+      "done": "סיום",
+      "add": "הוסף",
+      "remove": "הסר",
+      "step": "שלב {current} מתוך {total}"
+    },
+    "moodCheck": {
+      "eyebrow": "בדיקת מצב-רוח",
+      "question": "איך היה היום?",
+      "subtitle": "טפיזה אחת — ואנחנו מתאימים את ה-Reset בשבילך",
+      "mood1": "קשה",
+      "mood2": "לא טוב",
+      "mood3": "סביר",
+      "mood4": "טוב",
+      "mood5": "מצוין",
+      "hardDayNote": "בסדר גמור — נתחיל מהמקום הנוח. אין שאלות על ניצחונות."
+    }
+  },
+  "admin": {
+    "pageTitle": "ניהול",
+    "title": "ניהול",
+    "subtitle": "נהל את כל הנתונים, התכנים והגדרות האפליקציה במקום אחד.",
+    "securityNotice": "דף זה מיועד לשימוש פנימי בלבד. שינויים כאן משפיעים על כל הנתונים של האפליקציה.",
+    "tabs": {
+      "content": "תוכן",
+      "data": "נתונים",
+      "logs": "לוגים",
+      "settings": "הגדרות"
+    },
+    "content": {
+      "affirmationsTitle": "ניהול אמירות",
+      "affirmationsDescription": "הוסף, ערוך ומחק אמירות שמשמשות בטקס הבוקר.",
+      "identitiesTitle": "ניהול זהויות",
+      "identitiesDescription": "צפה ונהל הצהרות זהות שמורות.",
+      "addIdentity": "הוסף זהות",
+      "deleteIdentity": "מחק",
+      "noIdentities": "אין עדיין זהויות מותאמות אישית.",
+      "identityPlaceholder": "אני אדם ש...",
+      "gratitudeTitle": "טריגרים להכרת תודה",
+      "gratitudeDescription": "צפה בטריגרים ברירת המחדל. עריכה תהיה זמינה בעדכון עתידי."
+    },
+    "data": {
+      "title": "ניהול נתונים",
+      "storageTitle": "דפדפן אחסון מקומי",
+      "storageDescription": "צפה בכל הנתונים השמורים במכשיר הזה.",
+      "storageKey": "מפתח",
+      "storageSize": "גודל",
+      "storageEntries": "{count} רשומות",
+      "checkinTitle": "היסטוריית צ׳ק-אין",
+      "checkinDescription": "צפה ומחק רשומות צ׳ק-אין.",
+      "exportAll": "ייצא את כל הנתונים (JSON)",
+      "importData": "ייבא נתונים (JSON)",
+      "importSuccess": "הנתונים יובאו בהצלחה.",
+      "importError": "לא הצלחתי לייבא את הנתונים. בדוק את פורמט הקובץ.",
+      "clearStore": "נקה",
+      "clearConfirm": "בטוח? פעולה זו תמחק לצמיתות את כל הנתונים ב-{key}.",
+      "noCheckins": "לא נמצאו רשומות צ׳ק-אין.",
+      "deleteCheckin": "מחק",
+      "exportCsv": "ייצא צ׳ק-אין (CSV)"
+    },
+    "logs": {
+      "title": "לוגים של שגיאות",
+      "description": "צפה בשגיאות אחרונות מצד הלקוח שנרשמו על ידי האפליקציה.",
+      "date": "תאריך",
+      "type": "סוג",
+      "message": "הודעה",
+      "noLogs": "לא נמצאו לוגים לתאריך הזה.",
+      "refresh": "רענן",
+      "count": "{count} רשומות"
+    },
+    "settings": {
+      "title": "הגדרות אפליקציה",
+      "description": "שם תצוגה והעדפות שפה."
+    }
+  },
+  "expandText": {
+    "expand": "הרחב עם AI",
+    "expanding": "מרחיב...",
+    "error": "לא ניתן להרחיב. נסה שוב.",
+    "contextWhyImportant": "למה המטרה הזאת חשובה למשתמש ברמה האישית והרגשית",
+    "contextWhyNow": "למה עכשיו הוא הרגע הנכון בחיים לרדוף אחרי המטרה הזאת",
+    "contextWhatLost": "מה המשתמש יפסיד אם לא יפעל לקראת המטרה הזאת",
+    "contextGoal": "מטרה אישית שהמשתמש רוצה להשיג ב-90 הימים הקרובים"
+  },
+  "goalWizard": {
+    "aiBuildPreviewTitle": "מה ה-AI יבנה עבורך?",
+    "aiBuildPreviewSummary": "נבנה עבורך יעד, 30/60/90 ימים, וצעדים יומיים ראשונים.",
+    "aiBuildPreviewGoal": "יעד עם כיוון ומדד הצלחה",
+    "aiBuildPreviewMilestones": "אבני דרך ל-30, 60 ו-90 יום",
+    "aiBuildPreviewSteps": "צעדים יומיים ראשונים להתחלה",
+    "milestonesWhyLabel": "למה אבני דרך",
+    "milestonesWhyExplainer": "אבני דרך עוזרות ל־AI לא להציע צעדים אקראיים אלא לבנות רצף."
+  },
+  "domainWizard": {
+    "eyebrow": "בניית מטרה",
+    "title": "בנה מטרה חדשה צעד אחר צעד",
+    "stepProgress": "שלב {step} מתוך {total}",
+    "back": "חזור",
+    "next": "המשך",
+    "step1Title": "באיזה תחום אתה רוצה להתמקד?",
+    "otherCategory": "אחר",
+    "otherPlaceholder": "כתוב תחום משלך…",
+    "step2Title": "מה המטרה שלך?",
+    "step2Hint": "היה ספציפי. מטרה ברורה קלה יותר לביצוע.",
+    "inspireMe": "השראה מ-AI",
+    "inspireMilestones": "השראה ליעדים מ-AI",
+    "inspiring": "מייצר השראה...",
+    "inspireError": "לא ניתן היה לייצר השראה. כתוב את המטרה ישירות.",
+    "goalPlaceholder": "לרדת 5 ק״ג בלי דיאטה קיצונית",
+    "goalExamplesLabel": "לדוגמה:",
+    "goalExample1": "לרדת 5 ק״ג בלי דיאטה קיצונית",
+    "goalExample2": "להחזיר שליטה על ערב המשפחה",
+    "step3Title": "איפה אתה רוצה להיות בעוד 30, 60 ו-90 יום?",
+    "day30": "יום 30",
+    "day60": "יום 60",
+    "day90": "יום 90",
+    "optional": "אופציונלי",
+    "day30Placeholder": "איך נראית הצלחה אחרי חודש?",
+    "day60Placeholder": "איך נראית הצלחה אחרי חודשיים?",
+    "day90Placeholder": "איך נראית הצלחה אחרי 3 חודשים?",
+    "createWithAi": "צור תוכנית עם AI",
+    "generating": "מייצר...",
+    "createError": "לא ניתן היה לבנות את התוכנית. נסה שוב.",
+    "categories": {
+      "time": {
+        "morning_routine": "שגרת בוקר",
+        "deep_work": "עבודה עמוקה",
+        "priorities": "סדרי עדיפויות",
+        "delegation": "האצלה",
+        "digital_detox": "דטוקס דיגיטלי",
+        "weekly_planning": "תכנון שבועי",
+        "procrastination": "דחיינות",
+        "work_life_balance": "איזון עבודה-חיים"
+      },
+      "wealth": {
+        "savings": "חיסכון",
+        "income_growth": "הגדלת הכנסה",
+        "debt_reduction": "הפחתת חובות",
+        "investment": "השקעות",
+        "spending_habits": "הרגלי הוצאות",
+        "emergency_fund": "קרן חירום",
+        "financial_education": "חינוך פיננסי"
+      },
+      "career": {
+        "skill_development": "פיתוח מיומנויות",
+        "visibility": "נראות מקצועית",
+        "promotion": "קידום",
+        "side_project": "פרויקט צד",
+        "networking": "נטוורקינג",
+        "leadership": "מנהיגות",
+        "work_quality": "איכות עבודה"
+      },
+      "relationships": {
+        "partnership": "זוגיות",
+        "family_time": "זמן משפחתי",
+        "friendships": "חברויות",
+        "communication": "תקשורת",
+        "conflict_resolution": "פתרון קונפליקטים",
+        "social_life": "חיים חברתיים",
+        "boundaries": "גבולות"
+      },
+      "mind": {
+        "focus": "ריכוז",
+        "emotional_regulation": "ויסות רגשי",
+        "self_talk": "שיח פנימי",
+        "stress_management": "ניהול לחץ",
+        "learning": "למידה",
+        "creativity": "יצירתיות",
+        "mindfulness": "מיינדפולנס"
+      },
+      "spirit": {
+        "purpose": "מטרה ותכלית",
+        "values": "ערכים",
+        "gratitude": "הכרת תודה",
+        "spiritual_practice": "פרקטיקה רוחנית",
+        "inner_peace": "שלווה פנימית",
+        "meaning": "משמעות",
+        "community": "קהילה"
+      },
+      "house_family": {
+        "home_order": "סדר בבית",
+        "family_routines": "שגרות משפחתיות",
+        "chores": "משימות בית",
+        "home_improvement": "שיפור הבית",
+        "family_goals": "מטרות משפחתיות",
+        "environment": "סביבת מגורים"
+      }
+    }
+  },
+  "gamification": {
+    "streakDays": "רצף {count} ימים",
+    "comebackChain": "רצף חזרה ×{count}",
+    "energyMatch": {
+      "smartRecovery": "Smart Recovery — התאמה מצוינת לאנרגיה של היום",
+      "powerMove": "מהלך חזק — התאמת אנרגיה גבוהה לצעד נועז"
+    },
+    "questTypes": {
+      "focus": "משימת מיקוד",
+      "courage": "משימת אומץ",
+      "recovery": "משימת התאוששות",
+      "connection": "משימת חיבור"
+    },
+    "finalBoss": {
+      "eyebrow": "בוס סופי",
+      "title": "{minutes} דקות לסגור את היום"
+    },
+    "reflectionLoot": {
+      "eyebrow": "שלל נפתח",
+      "dismiss": "יפה",
+      "pattern": {
+        "title": "דפוס שזוהה",
+        "body": "מה שחסם אותך היום לרוב מראה איפה התוכנית צריכה להתכופף — לא איפה נכשלת."
+      },
+      "tomorrowAdvantage": {
+        "title": "יתרון למחר",
+        "body": "כבר זזת היום. הצעד הראשון של מחר יכול להיות קטן ומוקדם יותר."
+      },
+      "energyClue": {
+        "title": "רמז אנרגיה",
+        "body": "ימים עם אנרגיה נמוכה קוראים לצעדים קצרים — זו אסטרטגיה, לא חולשה."
+      }
+    },
+    "dailyRollUp": {
+      "eyebrow": "היום נסגר",
+      "summary": "{count, plural, one {צעד אחד} other {# צעדים}} · {minutes} דק׳",
+      "topDomain": "{domain} הכי התקדם ({count})",
+      "titleUnlocked": "תואר נפתח: {title}",
+      "comebackChain": "רצף חזרה ×{count} — חזרת אחרי יום קשה"
+    },
+    "identityTitles": {
+      "builder": "The Builder",
+      "finisher": "The Finisher",
+      "comebackArtist": "The Comeback Artist",
+      "strategist": "The Strategist"
+    },
+    "streakHealth": {
+      "fresh": "רצף טרי",
+      "stable": "רצף יציב",
+      "atRisk": "רצף בסיכון",
+      "protected": "רצף מוגן"
+    },
+    "domainRivalry": {
+      "leads": "{domain} מוביל השבוע",
+      "catchUp": "ל־{domain} חסר צעד {gap} כדי לעקוף"
+    },
+    "mysteryUnlock": {
+      "newInsight": "עוד {remaining} צעדים לפתיחת insight חדש",
+      "weeklyPattern": "עוד {remaining} צעדים לחשיפת דפוס שבועי",
+      "domainTip": "עוד {remaining} צעדים לטיפ תחומי"
+    },
+    "progress": {
+      "title": "ההתקדמות שלי",
+      "subtitle": "כל מה שצברת, במקום אחד",
+      "viewLink": "צפה בהתקדמות שלי",
+      "empty": "עדיין לא נצברו הישגים — השלם כמה צעדים כדי להתחיל לאסוף.",
+      "sectionTitles": "תארים שהושגו",
+      "sectionUnlocks": "תובנות שנפתחו",
+      "sectionLoot": "אוסף תובנות הרפלקציה",
+      "unlockKind": {
+        "mystery_unlock": {
+          "newInsight": "תובנה חדשה",
+          "weeklyPattern": "דפוס שבועי",
+          "domainTip": "טיפ תחומי"
+        }
+      },
+      "countSuffix": "× {count}"
+    }
+  },
+  "behaviorScience": {
+    "implementation": {
+      "sentence": "אחרי שאני {after}, אני אעשה {action} במשך {minutes} דקות.",
+      "afterTime": "בשעה {time}",
+      "afterWake": "מתעורר/ת בשעה {time}",
+      "morningRoutine": "שגרת הבוקר שלי",
+      "lunchBreak": "ארוחת הצהריים",
+      "eveningWindDown": "רוגע בערב"
+    },
+    "planB": {
+      "line": "אם אין לי כוח / זמן / שקט, אעשה גרסת 2 דקות.",
+      "lineWithAction": "Plan B ({minutes} דק׳): {action}"
+    },
+    "selfContract": {
+      "title": "התחייבות הופעה",
+      "sentence": "אני מתחייב/ת ל־{days} ימים של הופעה — לא לשלמות.",
+      "reminder": "זכור/י: {days} ימים של הופעה ב־\"{goal}\" — לא לשלמות.",
+      "defaultGoal": "המטרה הזו",
+      "daysLabel": "אורך התחייבות (ימים)",
+      "horizonHint": "זו התחייבות קצרה להופעה יומית — לא אותו דבר כמו יעד 90 הימים למעלה.",
+      "startLabel": "תאריך התחלה",
+      "endLabel": "תאריך סיום",
+      "dayProgress": "יום {current} מתוך {total}",
+      "saveCommitment": "שמור התחייבות",
+      "commitmentEnded": "תקופת ההתחייבות הסתיימה — מוכן/ה להתחייב שוב לאותו יעד?",
+      "renewCommitment": "התחייב ל־{days} יום נוספים",
+      "renewedToast": "התחייבות חודשה — צעדים יומיים עודכנו"
+    },
+    "commitmentToday": {
+      "eyebrow": "התחייבות היום",
+      "dayProgress": "יום {current} מתוך {total} — הופעה יומית",
+      "dateRange": "{start} — {end}",
+      "servesGoal": "הצעד של היום משרת את: {goal}",
+      "noPendingStep": "אין עדיין צעד ממתין להיום — לחץ ליצירת צעדים.",
+      "stepBadge": "התחייבות · יום {current}/{total}"
+    },
+    "recoveryProtocol": {
+      "title": "פרוטוקול התאוששות",
+      "smallestVersion": "מה הגרסה הקטנה ביותר למחר?",
+      "smallestVersionPlaceholder": "למשל 2 דקות של הצעד הראשון",
+      "barrierToRemove": "איזה חסם נסיר?",
+      "barrierPlaceholder": "למשל טלפון על שקט לפני שמתחילים",
+      "warningSign": "מה יהיה סימן האזהרה?",
+      "warningPlaceholder": "למשל גלילה במקום להתחיל"
+    },
+    "neverMissTwice": {
+      "rule": "מותר לפספס. לא מפספסים פעמיים.",
+      "recoveryHint": "היום: צעד התאוששות אחד בלבד. הופעה קטנה.",
+      "recoveryQuest": "משימת התאוששות",
+      "minutes": "דק׳"
+    },
+    "frictionAudit": {
+      "diagnosis": {
+        "too_big": "נראה שהצעד גדול מדי או כבד מדי כרגע.",
+        "wrong_time": "נראה שהצעד לא בזמן הנכון ביום שלך.",
+        "unclear": "נראה שהצעד לא מספיק ברור כדי להתחיל."
+      },
+      "shrinkBtn": "הקטן לי אותו"
+    },
+    "behaviorScore": {
+      "label": "הופעה השבוע",
+      "hint": "ימים שהופעת — גם partial נחשב."
+    },
+    "weeklyCheckin": {
+      "title": "צ'ק-אין אחריות",
+      "committed": "מה התחייבתי?",
+      "happened": "מה באמת קרה?",
+      "changeNext": "מה אשנה לשבוע הבא?",
+      "committedPlaceholder": "למשל 3 הופעות בתחום בריאות",
+      "committedProximityPlaceholder": "למשל: התקרבתי בצעדים קטנים / עדיין רחוק / התחלתי ועצרתי",
+      "happenedPlaceholder": "למשל הופעתי פעמיים, דילגתי ביום ד׳",
+      "changeNextPlaceholder": "למשל צעדים קטנים יותר בימים עמוסים",
+      "continue": "המשך לסיכום"
+    },
+    "commitmentLadder": {
+      "title": "מדרגת התחייבות",
+      "day1": "יום 1: פעולה אחת",
+      "week1": "שבוע 1: 3 הופעות",
+      "month1": "חודש 1: רצף גמיש",
+      "progress": "{done} / {target} הופעות"
+    },
+    "identity": {
+      "completed": "אתה אדם שמופיע גם כשאין חשק.",
+      "partial": "עשית פחות ועדיין הופעת. זה בונה אמון עם עצמך.",
+      "comeback": "חזרת באותו יום. זה זהות בפעולה.",
+      "recovery": "התאוששות היא חלק מהדרך — לא ההפך מהתקדמות.",
+      "lowEnergyWin": "הופעת עם אנרגיה נמוכה. זה מי שאתה הופך להיות."
+    },
+    "antiShame": {
+      "skip": "מידע טוב. עכשיו נכייל — לא נעניש.",
+      "partial": "partial נספר. אנחנו מכוונים את התוכנית, לא אותך."
+    },
+    "earlyWarning": {
+      "title": "בסיכון",
+      "body": "שני ימים שקטים או אנרגיה נמוכה עם הרבה ממתין. היום: צעד של 2 דקות.",
+      "cta": "התחל צעד של 2 דקות"
+    },
+    "closure": {
+      "title": "סגירת יום",
+      "closed": "מה נסגר היום",
+      "open": "מה נשאר פתוח",
+      "firstTomorrow": "הצעד הראשון למחר: {step}"
+    },
+    "lifeContextMode": {
+      "title": "היום שלך לא רגיל?",
+      "body": "נתאים את האימון למצב שלך — פחות צעדים, יותר התאוששות, ויעדים עדינים יותר."
+    },
+    "social": {
+      "shareWeekly": "העתק עדכון שבועי",
+      "copied": "העדכון השבועי הועתק",
+      "shared": "שותף"
+    }
+  },
+  "featureDiscovery": {
+    "new": "חדש"
+  },
+  "featureHints": {
+    "dismiss": "הבנתי",
+    "checkin": "דופק קצר של אנרגיה ומיקוד — בערך דקה.",
+    "morning_ritual": "פותח את היום עם מצב רגשי, זהות ומשימה אחת — לפני שהיום רץ עליך.",
+    "evening_reset": "סוגר את היום, מזהה מה עבד, ומכין את מחר — לא יומן, סגירה שמזינה את הצעדים.",
+    "weekly_review": "פעם בשבוע — דפוסים בצעדים והתאמת התוכנית.",
+    "formulation": "הבהרה מובנית שהופכת מטרה מעורפלת למשהו קונקרטי."
+  },
+  "featureUnlock": {
+    "checkin": "צ׳ק-אין יומי",
+    "life_coach": "Life Coach",
+    "morning_ritual": "טקס בוקר",
+    "multi_domain": "כל תחומי החיים",
+    "formulation": "בירור מעמיק",
+    "unlocksInOneDay": "נפתח מחר",
+    "unlocksInDays": "נפתח בעוד {days} ימים",
+    "hint": "המשך — זה נפתח ככל שאתה בונה הרגל."
+  },
+  "home": {
+    "momentumScore": "מומנטום",
+    "streakDays": "{count} ימים רצוף",
+    "compact": {
+      "weekLine": "{done}/{total} צעדים השבוע",
+      "weekProgress": "שבוע: {done}/{target}",
+      "allDoneToday": "סיימת להיום",
+      "viewGoal": "ליעד הפעיל",
+      "viewDomains": "לתחומים"
+    },
+    "more": {
+      "toggle": "פירוט והתקדמות",
+      "hint": "אתגר שבועי, תחומים, תובנות, תגים — כשתרצה לעצור ולהסתכל"
+    },
+    "dailyQuestEyebrow": "משימת היום",
+    "dailyQuestTitle": "הקווסט הברור של היום",
+    "dailyQuestProgress": "קווסט {current}/{total}",
+    "dailyStepsEyebrow": "צעדי היום",
+    "dailyStepsTitle": "הצעד הבא שלך",
+    "coachMessageEyebrow": "המאמן שלך היום",
+    "dailyStepsProgress": "צעד {current}/{total}",
+    "dayMode": {
+      "light": "יום קל",
+      "execution": "יום ביצוע",
+      "recovery": "יום התאוששות"
+    },
+    "weeklyMinutesInvested": "{minutes} דקות השקעה השבוע",
+    "nextAction": {
+      "markStep": "עכשיו: סמן צעד",
+      "generateSteps": "עכשיו: צור צעדי היום",
+      "setGoal": "עכשיו: הגדר מטרה ראשונה",
+      "backDashboard": "עכשיו: חזור לדשבורד"
+    },
+    "weeklyChallengeEyebrow": "אתגר שבועי",
+    "weeklyChallengeTitle": "השלם {target} צעדים השבוע",
+    "weeklyChallengeComplete": "האתגר השבועי הושלם",
+    "weeklyChallengeBody": "{done}/{target} צעדים הושלמו. שמור על הריצה.",
+    "weeklyChallengeEmpty": "צור תוכנית להיום כדי להתחיל את אתגר השבוע.",
+    "weeklyChallengeProgress": "יעד",
+    "microRewardStep": "+10 מומנטום — צעד הושלם",
+    "celebrationEyebrow": "רגע ניצחון",
+    "celebrations": {
+      "firstStep": {
+        "title": "זזת היום.",
+        "body": "פעולה אמיתית אחת מספיקה כדי לשמור על הזהות בחיים."
+      },
+      "allDone": {
+        "title": "ניקוי מלא.",
+        "body": "כל הצעדים שתוכננו נסגרו. תן לזה רגע לפני שאתה רץ הלאה."
+      },
+      "weeklyChallenge": {
+        "title": "האתגר השבועי נסגר.",
+        "body": "עמדת ביעד השבועי. המערכת מתחילה לסמוך על העקביות שלך."
+      },
+      "multiGoal": {
+        "title": "כמה זירות פעילות.",
+        "body": "אתה בונה מומנטום ביותר מתחום חיים אחד."
+      }
+    },
+    "personalBestsTitle": "שיאים אישיים",
+    "personalBests": {
+      "bestMomentum": "מומנטום שיא",
+      "bestWeek": "השבוע",
+      "bestRitual": "רצף טקסים",
+      "strongestDomain": "התחום החזק",
+      "points": "נקודות",
+      "steps": "צעדים",
+      "days": "ימים",
+      "score": "ציון {score}/10",
+      "activeGoals": "מטרות פעילות"
+    },
+    "momentumLevels": {
+      "starter": "מתחיל",
+      "building": "בבנייה",
+      "lockedIn": "במסלול",
+      "unstoppable": "בלתי ניתן לעצירה"
+    },
+    "badgesTitle": "תגים",
+    "badgesSubtitle": "{done}/{total} נפתחו",
+    "nextBadge": "הבא",
+    "lockedBadge": "נעול",
+    "badges": {
+      "firstStep": {
+        "title": "צעד ראשון",
+        "body": "השלם פעולה יומית אחת."
+      },
+      "weekBuilder": {
+        "title": "בונה שבוע",
+        "body": "סיים 4 צעדים השבוע."
+      },
+      "ritualSpark": {
+        "title": "ניצוץ טקס",
+        "body": "שמור על רצף טקס של 3 ימים."
+      },
+      "goalSetter": {
+        "title": "מגדיר מטרות",
+        "body": "צור מטרה פעילה אחת."
+      },
+      "multiDomain": {
+        "title": "כמה תחומים",
+        "body": "הפעל שני תחומי חיים."
+      },
+      "comeback": {
+        "title": "קאמבק",
+        "body": "חזור לפעולה אחרי יום קשה."
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "איך זה עובד",
+      "title": "איך זה עובד?",
+      "collapsedLabel": "איך זה עובד? · טקס בוקר → צעדים → סיכום",
+      "collapse": "קפל",
+      "steps": {
+        "checkin": {
+          "title": "טקס בוקר",
+          "body": "כוונה, אנרגיה ומיקוד — המאמן מתאים את הצעדים להיום."
+        },
+        "steps": {
+          "title": "צעדים מותאמים",
+          "body": "ה-AI הופך את זה לפעולות יומיות קטנות."
+        },
+        "learn": {
+          "title": "סיכום ולמידה",
+          "body": "איפוס ערב — סוגר את היום, מזהה מה עבד, ומכין את מחר."
+        }
+      }
+    },
+    "nowAction": {
+      "eyebrow": "הצעד המומלץ עכשיו",
+      "whyLabel": "למה זה מתאים לך היום?",
+      "reasons": {
+        "morningRitual": "כי עדיין לא התחלת את שגרת הבוקר, וזה הצעד עם ההשפעה הכי גבוהה כרגע.",
+        "dailyStep": "יש לך צעד ממתין — זה המינוף הכי גבוה עכשיו.",
+        "dailyFocus": "משימת הבוקר והפוקוס היומי כבר ברורים — נהפוך אותם לצעד אחד שאפשר לבצע עכשיו.",
+        "dailyFocusLinked": "משימת הבוקר כבר מחוברת לצעד יומי — זה הדבר שכדאי לפתוח עכשיו.",
+        "dailyStepEvening": "סגור צעד אחד לפני איפוס הערב.",
+        "eveningReset": "הצעדים נסגרו — איפוס ערב קצר מנקה את היום ומכין את מחר.",
+        "eveningPending": "לפני שינה: איפוס ערב יוצר מעבר נקי למחר.",
+        "generateSteps": "אין תוכנית להיום — צור צעדים מותאמים לפני שמתחילים.",
+        "setGoal": "בלי מטרה פעילה אין צעד ברור — התחל מכיוון אחד קטן.",
+        "allDoneEvening": "הכל נסגר להיום. איפוס ערב ילכוד מה שלמדת.",
+        "allDoneDay": "סיימת את הצעדים — שמור מומנטום או סגור עם איפוס ערב."
+      },
+      "cta": {
+        "morningRitual": "התחל טקס בוקר",
+        "dailyStep": "סמן כהושלם",
+        "dailyFocus": "הפוך לצעד יומי",
+        "eveningReset": "התחל איפוס ערב",
+        "generateSteps": "צור צעדים להיום",
+        "setGoal": "הגדר מטרה",
+        "viewSteps": "למטרות",
+        "adaptDay": "התאם למצב שלי"
+      },
+      "cards": {
+        "morningRitual": {
+          "title": "טקס בוקר קצר",
+          "status": "עוד לא התחלת את היום שלך בכוונה.",
+          "meta": "10 דקות · נשימה, מיקוד וכוונה ליום"
+        },
+        "eveningReset": {
+          "title": "איפוס ערב קצר",
+          "meta": "5 דקות · סגירה, למידה והכנה למחר"
+        },
+        "generateSteps": {
+          "title": "תוכנית ליום שלך",
+          "meta": "צעדים קטנים שמותאמים למצב שלך היום"
+        },
+        "setGoal": {
+          "title": "כיוון אחד להתחיל ממנו",
+          "meta": "מטרה קטנה שאפשר לפעול עליה כבר היום"
+        }
+      },
+      "dailyFocusEyebrow": "מחובר לפוקוס שהגדרת היום",
+      "softProgress": "השבוע חזרת לצעדים {done}/{total} פעמים — זה נחשב."
+    },
+    "softProgress": {
+      "eyebrow": "מה השתפר השבוע",
+      "title": "התקדמות היא לא רק סטריק.",
+      "consistencyLabel": "עקביות",
+      "consistencyValue": "חזרת לצעדים שלך {count} פעמים.",
+      "energyLabel": "ימים קשים",
+      "energyValue": "גם באנרגיה נמוכה השלמת {count} צעד/ים.",
+      "energyFallback": "עוד אין ניצחון באנרגיה נמוכה — אפשרות 2 הדקות מחכה כשצריך.",
+      "depthLabel": "עומק",
+      "depthValue": "נגעת ב־{count} תחומי חיים.",
+      "minutesValue": "{minutes} דקות שהשקעת בעצמך."
+    },
+    "domainAttention": {
+      "eyebrow": "תשומת לב לפי תחומי חיים",
+      "title": "לאן השבוע שלך הולך",
+      "titleWithDomain": "השבוע נטה לכיוון {domain}",
+      "stepsDone": "{count} צעד/ים הושלמו",
+      "noSteps": "עוד לא הושלמו צעדים",
+      "neglectedHint": "ל־{domain} יש מטרה פעילה אבל אין צעד שהושלם השבוע. פעולה קטנה שם תאזן את השבוע.",
+      "cta": "בחר צעד קטן"
+    },
+    "recommendedPath": {
+      "title": "הצעד הבא שלך להיום",
+      "nowPrefer": "עכשיו עדיף {tool}",
+      "tools": {
+        "morningRitual": "טקס בוקר",
+        "dailyStep": "צעד",
+        "evening": "איפוס ערב"
+      },
+      "reasons": {
+        "lowEnergyCheckin": "אנרגיה נמוכה — צ׳ק-אין קצר יתאים את הצעד הבא שלך."
+      }
+    },
+    "primaryActionLabel": "הפעולה הכי חשובה עכשיו",
+    "primaryActionStart": "התחל עכשיו",
+    "primaryActionAllDone": "סיימת הכל היום!",
+    "primaryActionAllDoneBody": "כל הצעדים הושלמו. כל הכבוד — נתראה מחר.",
+    "primaryActionEmpty": "לא תוכנן שום צעד להיום",
+    "primaryActionEmptyHint": "צור את התוכנית האישית שלך להיום בלחיצה אחת.",
+    "primaryActionGenerateCta": "צור תוכנית להיום",
+    "primaryActionNoGoals": "מוכן להגדיר את המטרה הראשונה שלך?",
+    "primaryActionNoGoalsHint": "הגדר מטרה ו-AI יהפוך אותה לצעדים יומיים.",
+    "primaryActionGoalCta": "הגדר מטרה ראשונה ←",
+    "viewAllSteps": "כל הצעדים",
+    "goalProgressLabel": "מטרה פעילה",
+    "goalDoneSteps": "{done}/{total} צעדים הושלמו",
+    "goalDaysLeft": "נשארו {days} ימים",
+    "kpiStreak": "רצף",
+    "kpiDoneWeek": "השבוע",
+    "kpiCompletionRate": "ביצוע",
+    "kpiGoalAligned": "קשורים ליעד",
+    "kpiBarrierTouched": "נגעו בחסם",
+    "kpiEnergyTrend": "אנרגיה",
+    "toolsWhenTitle": "כלים נוספים",
+    "toolsMorning": "טקס בוקר",
+    "toolsMorningWhen": "לפני התחלה",
+    "toolsEvening": "איפוס ערב",
+    "toolsEveningWhen": "לסגירה וללמידה",
+    "toolsCheckin": "צ׳ק-אין",
+    "toolsCheckinWhen": "כשצריך כיוון",
+    "toolsCoach": "Life Coach",
+    "toolsCoachWhen": "לתכנון מטרות",
+    "toolsDone": "בוצע ✓",
+    "toolsPending": "ממתין",
+    "toolsGoalCount": "{count} מטרות"
+  },
+  "schedule": {
+    "stepSuggestedTime": "מומלץ בשעה {time}",
+    "stepSuggestedFromWake": "הצעד הראשון מומלץ מ-{wakeTime}",
+    "dashboard": {
+      "greeting": {
+        "preWake": "עוד מעט בוקר, {name}.",
+        "morning": "בוקר טוב, {name}.",
+        "afternoon": "טוב שחזרת, {name}.",
+        "evening": "ערב טוב, {name}.",
+        "night": "לילה טוב, {name}."
+      },
+      "subtitle": {
+        "beforeWake": "הצעד הראשון מומלץ מ-{wakeTime} — עד אז אפשר להתכונן בשקט.",
+        "preWake": "היום עוד לא התחיל לפי הקצב שלך — זה זמן טוב להתכונן.",
+        "morning": "הבוקר שלך — התחל מצעד אחד ברור לפני שהיום נסחף.",
+        "afternoon": "אמצע היום — עדיין יש מקום לצעד קטן שמזיז אותך קדימה.",
+        "evening": "לפני השינה — צעד קל של סגירה או הכנה ליום מחר.",
+        "night": "מעבר לשעת השינה שלך — רק הרגעה או מנוחה, בלי לחץ."
+      }
+    },
+    "toolsBar": {
+      "tomorrowAt": "מחר ב-{wakeTime} — הצעדים מחכים לך.",
+      "nightRest": "עכשיו זמן מנוחה. בלי לחץ לביצוע.",
+      "eveningOptional": "רוצה איפוס ערב קצר? →",
+      "eveningBadge": "מומלץ עכשיו"
+    },
+    "evening": {
+      "suggestLateSleep": "יום ארוך — מומלץ איפוס ערב קצר (3 דק׳)."
+    },
+    "actionWindow": {
+      "recommended": "מומלץ",
+      "shortDay": "יום קצר בין קימה לשינה — נציע צעדים קטנים יותר.",
+      "applySuggested": "החל חלון מומלץ: {window}"
+    },
+    "stepsPlannedFrom": "תוכננו {count} צעדים מ-{wakeTime}",
+    "reminders": {
+      "title": "תזכורות לפי לוח הזמנים שלך",
+      "help": "השעות נגזרות משעת הקימה והשינה בהגדרות — לא צריך לבחור ידנית.",
+      "morningLabel": "תזכורת בוקר — צעדים יומיים",
+      "eveningLabel": "תזכורת ערב — איפוס לפני שינה",
+      "morningTime": "בשעה {time} (קימה + 15 דק׳)",
+      "eveningTime": "בשעה {time} (שינה − 45 דק׳)",
+      "enable": "הפעל תזכורות",
+      "enabled": "התזכורות הופעלו במכשיר הזה.",
+      "denied": "התראות חסומות בדפדפן הזה.",
+      "unsupported": "הדפדפן הזה לא תומך בהתראות.",
+      "note": "נשלחות רק כשהאפליקציה פתוחה במכשיר הזה.",
+      "morningNotificationTitle": "הצעדים שלך מוכנים",
+      "morningNotificationBody": "קח 5 דקות לצעד הראשון של היום.",
+      "eveningNotificationTitle": "איפוס ערב",
+      "eveningNotificationBody": "כמה דקות לפני השינה — זמן לסגור את היום בשקט."
+    }
+  },
+  "lifeContext": {
+    "chipLabel": "מותאם ל: {context}",
+    "chipTooltip": "התוכן וההצעות מותאמים להקשר החיים שבחרת בהגדרות",
+    "recommended": "מומלץ לך",
+    "dashboard": {
+      "combined": "{context} — {schedule}",
+      "subtitle": {
+        "student": "בין לימודים לחיים — יש מקום לצעד אחד ברור היום.",
+        "new_parent": "יום קצר? צעד קטן עדיין נספר.",
+        "manager": "בין פגישות — מה הצעד הכי קטן שאפשר היום?",
+        "caregiver": "גם כשהעומס גבוה — צעד קטן לעצמך עדיין חשוב.",
+        "between_jobs": "במעבר הזה — יציבות בצעדים קטנים עדיפה על לחץ.",
+        "other": "התחל מהצעד הבא שנכון לך עכשיו — לא צריך נאום.",
+        "multi": "כשיש כמה הקשרים ביחד ({contexts}) — צעד קטן אחד עדיין משנה.",
+        "combo": {
+          "studentNewParent": "בין לימודים להורות חדשה — צעד קטן אחד מספיק להיום.",
+          "newParentCaregiver": "בין הורות לטיפול — גם צעד קטן לעצמך נספר.",
+          "managerCaregiver": "בין ניהול לטיפול — מה הצעד הכי קטן שאפשר היום?",
+          "studentManager": "בין לימודים לניהול — צעד ברור אחד עדיף על לחץ."
+        }
+      }
+    },
+    "checkin": {
+      "placeholder": {
+        "student": "המהלך האחד של היום — משימה, למידה או מנוחה קצרה…",
+        "new_parent": "המהלך האחד של היום — קטן, אפשרי, גם עם שינה מקוטעת…",
+        "manager": "המהלך האחד של היום — בין פגישות, מה הכי חשוב עכשיו?",
+        "caregiver": "המהלך האחד של היום — משהו קטן לעצמך, גם כשהעומס גבוה…",
+        "between_jobs": "המהלך האחד של היום — צעד קטן ליציבות במעבר…",
+        "other": "המהלך האחד של היום…",
+        "multi": "המהלך האחד של היום — קטן, ברור, אפשרי…",
+        "combo": {
+          "studentNewParent": "המהלך האחד של היום — קטן מספיק גם ללימודים וגם להורות…",
+          "newParentCaregiver": "המהלך האחד של היום — משהו קטן לעצמך בין טיפול להורות…",
+          "managerCaregiver": "המהלך האחד של היום — מה הכי דחוף בין ניהול לטיפול?",
+          "studentManager": "המהלך האחד של היום — צעד אחד ברור בין לימודים לעבודה…"
+        }
+      },
+      "starter": {
+        "student": {
+          "1": "אסיים את המטלה ב…",
+          "2": "אלמד 25 דקות ב…",
+          "3": "אכין את עצמי ל…"
+        },
+        "new_parent": {
+          "1": "אקח 10 דקות לעצמי ב…",
+          "2": "אסדר משהו קטן ב…",
+          "3": "אבקש עזרה ב…"
+        },
+        "manager": {
+          "1": "אסגור את הנושא ב…",
+          "2": "אכין את הפגישה ב…",
+          "3": "אגביר גבול ב…"
+        },
+        "caregiver": {
+          "1": "אדאג לעצמי ב…",
+          "2": "אסדר משהו קטן ב…",
+          "3": "אבקש תמיכה ב…"
+        },
+        "between_jobs": {
+          "1": "אשלח מועמדות ל…",
+          "2": "אתרגל ל…",
+          "3": "אתקדם ב…"
+        },
+        "other": {
+          "1": "אסיים את…",
+          "2": "אתחיל להתקדם ב…",
+          "3": "אדבר עם…"
+        },
+        "combo": {
+          "studentNewParent": {
+            "1": "אסיים משהו קטן בלימודים…",
+            "2": "אקח 10 דקות לעצמי…",
+            "3": "אסדר משהו בבית ב…"
+          },
+          "newParentCaregiver": {
+            "1": "אקח רגע לעצמי ב…",
+            "2": "אבקש עזרה ב…",
+            "3": "אסדר משהו קטן ב…"
+          },
+          "managerCaregiver": {
+            "1": "אסגור נושא אחד ב…",
+            "2": "אדאג לעצמי ב…",
+            "3": "אבטל משהו לא דחוף ב…"
+          },
+          "studentManager": {
+            "1": "אסיים משימה ב…",
+            "2": "אכין לפגישה ב…",
+            "3": "אלמד 20 דקות ב…"
+          }
+        }
+      }
+    },
+    "onboarding": {
+      "step2": {
+        "student": "הציון הנמוך ביותר שלך הוא ב{domain}. כסטודנט/ית, לימודים ולחץ מנטלי לרוב בוערים שם.",
+        "new_parent": "הציון הנמוך ביותר שלך הוא ב{domain}. כהורה חדש, שינה ואנרגיה לרוב מרגישים דחופים.",
+        "newParentHealth": "כהורה חדש, שינה ואנרגיה לרוב בוערים — שווה לבדוק את תחום הבריאות (הנמוך שלך: {domain}).",
+        "studentMind": "כסטודנט/ית, לחץ לימודים לרוב משפיע על המוח — תחום המוח עלה (הנמוך שלך: {domain}).",
+        "betweenJobsCareer": "במעבר תעסוקתי, קריירה לרוב מרגישה הכי דחופה (הנמוך שלך: {domain}).",
+        "managerTime": "כמנהל/ת, זמן וגבולות לרוב בוערים — שווה לבדוק את תחום הזמן (הנמוך שלך: {domain}).",
+        "caregiverRelations": "כמטפל/ת, יחסים ועומס רגשי לרוב בוערים (הנמוך שלך: {domain}).",
+        "manager": "הציון הנמוך ביותר שלך הוא ב{domain}. כמנהל/ת, עומס וזמן לרוב מרגישים דחופים.",
+        "caregiver": "הציון הנמוך ביותר שלך הוא ב{domain}. כמטפל/ת, עומס ואחריות לרוב בוערים שם.",
+        "between_jobs": "הציון הנמוך ביותר שלך הוא ב{domain}. במעבר, יציבות וזהות לרוב מרגישים דחופים.",
+        "other": "הציון הנמוך ביותר שלך הוא ב{domain}. לרוב שם נמצא המנוף הגדול ביותר.",
+        "multi": "כשיש כמה הקשרים ביחד, {domain} לרוב מרגיש הכי דחוף — שווה להתחיל משם.",
+        "combo": {
+          "studentNewParent": "בין לימודים להורות חדשה, {domain} לרוב בוער — שווה להתחיל משם.",
+          "newParentCaregiver": "בין הורות לטיפול, {domain} לרוב מרגיש הכי דחוף.",
+          "managerCaregiver": "בין ניהול לטיפול, {domain} לרוב דורש תשומת לב ראשונה.",
+          "studentManager": "בין לימודים לניהול, {domain} לרוב מרגיש הכי לחוץ."
+        }
+      }
+    },
+    "reflection": {
+      "hint": {
+        "student": "אולי היה יום לימודים עמוס מדי? זה בסדר — לא כל יום נראה אותו דבר.",
+        "new_parent": "זה בסדר גמור אם לא הספקת — לפעמים היום פשוט לא מאפשר.",
+        "manager": "יום עמוס בפגישות? צעד קטן מחר עדיף על לחץ היום.",
+        "caregiver": "אולי פשוט לא יכולת לצאת מהבית? זה מובן לגמרי.",
+        "between_jobs": "במעבר כזה, דילוגים הם חלק מהתמונה — לא כישלון.",
+        "other": "ימים קשים קורים. מה שחשוב הוא לא לוותר על עצמך לגמרי.",
+        "multi": "כשיש כמה הקשרים ביחד, ימים קשים הם צפויים — לא כישלון.",
+        "combo": {
+          "studentNewParent": "בין לימודים להורות — לא כל יום מאפשר. זה בסדר.",
+          "newParentCaregiver": "בין הורות לטיפול — לפעמים פשוט אין מקום. זה מובן.",
+          "managerCaregiver": "בין ניהול לטיפול — יום עמוס זה לא סימן לכישלון.",
+          "studentManager": "בין לימודים לעבודה — לא כל יום שווה. ממשיכים מחר."
+        }
+      }
+    },
+    "assessment": {
+      "starter": {
+        "current": {
+          "student": "קשה לי להתרכז בגלל לחץ לימודים",
+          "newParent": "אני עייף/ה כל הזמן ואין לי מנוחה",
+          "manager": "הימים עפים ואין לי זמן לעצמי",
+          "caregiver": "אין לי מרחב אישי בגלל עומס הטיפול",
+          "betweenJobs": "אני מרגיש/ה חוסר ודאות ולחץ כלכלי"
+        },
+        "desired": {
+          "student": "רוצה יותר בהירות ופחות לחץ סביב לימודים",
+          "newParent": "רוצה קצת יותר אנרגיה ורגעים לעצמי",
+          "manager": "רוצה גבולות ברורים ופחות שחיקה",
+          "caregiver": "רוצה לשמור על עצמי גם כשאני דואג/ת לאחרים",
+          "betweenJobs": "רוצה יציבות וכיוון ברור קדימה"
+        },
+        "combo": {
+          "studentNewParent": {
+            "current": "קשה לי לשלב לימודים עם הורות חדשה",
+            "desired": "רוצה קצת יותר איזון בין לימודים, עבודה ומשפחה"
+          },
+          "newParentCaregiver": {
+            "current": "אין לי מרחב בין הורות לטיפול באחרים",
+            "desired": "רוצה לשמור על עצמי גם כשהעומס כפול"
+          },
+          "managerCaregiver": {
+            "current": "הימים עמוסים מדי בין עבודה לטיפול",
+            "desired": "רוצה גבולות ופחות שחיקה בשני התפקידים"
+          },
+          "studentManager": {
+            "current": "קשה לי לשלב לימודים עם ניהול ועבודה",
+            "desired": "רוצה יותר בהירות ופחות לחץ בשני העולמות"
+          }
+        }
+      }
+    },
+    "evening": {
+      "winReview": {
+        "question": {
+          "student": "מה הצלחתי היום בלימודים או בפרויקט, גם אם קטן?",
+          "new_parent": "מה הצלחה קטנה הייתה היום — גם אם היום היה קצר?",
+          "manager": "מה הצלחתי לסגור היום בלי להמשיך לעבוד?",
+          "caregiver": "מתי היה רגע שבו דאגתי לעצמי, גם אם קטן?",
+          "between_jobs": "מה עשיתי היום שמרגיש כמו צעד קדימה, לא רק הישרדות?",
+          "other": "מה היה הניצחון הכי גדול שלך היום?",
+          "multi": "מה הצלחה קטנה הייתה היום — גם בין כמה תפקידים?",
+          "combo": {
+            "studentNewParent": "מה הצלחה קטנה הייתה היום בין לימודים להורות?",
+            "newParentCaregiver": "מתי דאגת לעצמך היום, גם בין הורות לטיפול?",
+            "managerCaregiver": "מה סגרת היום בלי לגרור עוד עומס לערב?",
+            "studentManager": "מה הצלחת לסגור היום בין לימודים לעבודה?"
+          }
+        },
+        "placeholder": {
+          "student": "היום הצלחתי בלימודים כש…",
+          "new_parent": "היום הצלחתי כהורה חדש כש…",
+          "manager": "היום סגרתי בעבודה…",
+          "caregiver": "היום דאגתי לעצמי כש…",
+          "between_jobs": "היום התקדמתי במעבר כש…",
+          "other": "היום אני…",
+          "multi": "היום הצלחתי כש…",
+          "combo": {
+            "studentNewParent": "היום הצלחתי כש…",
+            "newParentCaregiver": "היום דאגתי לעצמי כש…",
+            "managerCaregiver": "היום סגרתי כש…",
+            "studentManager": "היום הצלחתי כש…"
+          }
+        },
+        "examples": {
+          "student": {
+            "1": "התקדמתי במטלה",
+            "2": "למדתי בלי לדחות",
+            "3": "הגשתי משהו בזמן"
+          },
+          "new_parent": {
+            "1": "לקחתי רגע לעצמי",
+            "2": "התארגנתי לערב",
+            "3": "ביקשתי עזרה"
+          },
+          "manager": {
+            "1": "סגרתי נושא חשוב",
+            "2": "יצאתי בזמן",
+            "3": "לא עבדתי אחרי שעות"
+          },
+          "caregiver": {
+            "1": "שתיתי מים בזמן",
+            "2": "לקחתי נשימה לפני משימה",
+            "3": "ביקשתי תמיכה"
+          },
+          "between_jobs": {
+            "1": "שלחתי מועמדות",
+            "2": "למדתי משהו חדש",
+            "3": "סידרתי צעד קדימה"
+          },
+          "other": {
+            "1": "עשיתי אימון",
+            "2": "שיחקתי עם הילדים",
+            "3": "לא גללתי בטלפון"
+          }
+        }
+      },
+      "tomorrowsWin": {
+        "question": {
+          "student": "אם מחר ייחשב יום לימודים טוב, מה חייב לקרות?",
+          "new_parent": "אם מחר ייחשב יום טוב כהורה חדש, מה הדבר האחד שחשוב?",
+          "manager": "אם מחר ייחשב יום עבודה טוב, מה אסגור לפני הערב?",
+          "caregiver": "אם מחר ייחשב יום טוב, מתי אדאג לעצמי?",
+          "between_jobs": "אם מחר ייחשב צעד קדימה במעבר, מה זה יהיה?",
+          "other": "אם מחר ייחשב כיום מוצלח, מה חייב לקרות?",
+          "multi": "אם מחר ייחשב יום טוב, מה הדבר האחד שחשוב?",
+          "combo": {
+            "studentNewParent": "אם מחר ייחשב יום טוב, מה הדבר האחד בין לימודים להורות?",
+            "newParentCaregiver": "אם מחר ייחשב יום טוב, מתי אדאג לעצמי?",
+            "managerCaregiver": "אם מחר ייחשב יום טוב, מה אסגור לפני הערב?",
+            "studentManager": "אם מחר ייחשב יום טוב, מה הדבר האחד בין לימודים לעבודה?"
+          }
+        },
+        "placeholder": {
+          "student": "מחר יהיה הצלחה אם אסיים…",
+          "new_parent": "מחר יהיה הצלחה אם אקח רגע ל…",
+          "manager": "מחר יהיה הצלחה אם אסגור…",
+          "caregiver": "מחר יהיה הצלחה אם אדאג לעצמי ב…",
+          "between_jobs": "מחר יהיה הצלחה אם אתקדם ב…",
+          "other": "מחר יהיה הצלחה אם אני…",
+          "multi": "מחר יהיה הצלחה אם…",
+          "combo": {
+            "studentNewParent": "מחר יהיה הצלחה אם…",
+            "newParentCaregiver": "מחר יהיה הצלחה אם…",
+            "managerCaregiver": "מחר יהיה הצלחה אם…",
+            "studentManager": "מחר יהיה הצלחה אם…"
+          }
+        }
+      }
+    },
+    "survival": {
+      "trigger": {
+        "student": "יום לימודים קשה?",
+        "new_parent": "יום קשה עם השינה?",
+        "manager": "יום עמוס מדי?",
+        "caregiver": "יום עמוס בטיפול?",
+        "between_jobs": "יום קשה במעבר?",
+        "other": "יום קשה?",
+        "multi": "יום קשה?",
+        "combo": {
+          "studentNewParent": "יום קשה בין לימודים להורות?",
+          "newParentCaregiver": "יום קשה בין הורות לטיפול?",
+          "managerCaregiver": "יום עמוס בין עבודה לטיפול?",
+          "studentManager": "יום לחוץ בין לימודים לעבודה?"
+        }
+      },
+      "title": {
+        "student": "מצב הישרדות — יום לימודים",
+        "new_parent": "מצב הישרדות — בלי אשמה",
+        "manager": "מצב הישרדות — יום עמוס",
+        "caregiver": "מצב הישרדות — יום עמוס",
+        "between_jobs": "מצב הישרדות — במעבר",
+        "other": "מצב הישרדות",
+        "multi": "מצב הישרדות",
+        "combo": {
+          "studentNewParent": "מצב הישרדות — לימודים והורות",
+          "newParentCaregiver": "מצב הישרדות — הורות וטיפול",
+          "managerCaregiver": "מצב הישרדות — עבודה וטיפול",
+          "studentManager": "מצב הישרדות — לימודים ועבודה"
+        }
+      },
+      "subtitle": {
+        "student": "יום מבחנים או עומס? בחר מה שמתאים — צעד של 2 דק׳ או דיווח שקשה.",
+        "new_parent": "יום קשה עם השינה? בחר מה שמתאים — בלי אשמה.",
+        "manager": "יום עמוס בפגישות? לא חייבים הכל — בחר מה שמתאים.",
+        "caregiver": "עומס טיפולי? צעד קטן או דיווח שקשה — שניהם בסדר.",
+        "between_jobs": "במעבר, ימים קשים צפויים — בחר מה שמתאים להיום.",
+        "other": "לא צריך לעשות הכל — בחר מה שמתאים להיום.",
+        "multi": "כשיש כמה הקשרים, ימים קשים צפויים — בחר מה שמתאים.",
+        "combo": {
+          "studentNewParent": "בין לימודים להורות — בחר מה שמתאים, בלי אשמה.",
+          "newParentCaregiver": "בין הורות לטיפול — צעד קטן או דיווח שקשה.",
+          "managerCaregiver": "בין עבודה לטיפול — לא חייבים הכל היום.",
+          "studentManager": "בין לימודים לעבודה — בחר מה שמתאים להיום."
+        }
+      }
+    },
+    "ritual": {
+      "morning": {
+        "missionPlaceholder": {
+          "student": "המשימה החשובה ביותר שלי היום בלימודים היא…",
+          "new_parent": "הדבר האחד שחשוב לי היום, גם אם קטן, הוא…",
+          "manager": "הדבר האחיד שאסגור היום בין הפגישות הוא…",
+          "caregiver": "הדבר הקטן שאדאג לו לעצמי היום הוא…",
+          "between_jobs": "הצעד הקדימה הכי חשוב שלי היום הוא…",
+          "other": "המשימה החשובה ביותר שלי היום היא…",
+          "multi": "הדבר האחד הכי חשוב שלי היום הוא…",
+          "combo": {
+            "studentNewParent": "הדבר האחד הכי חשוב שלי היום בין לימודים להורות…",
+            "newParentCaregiver": "הדבר הקטן שאדאג לו לעצמי היום…",
+            "managerCaregiver": "הדבר האחיד שאסגור היום…",
+            "studentManager": "הדבר האחיד שאסגור היום בין לימודים לעבודה…"
+          }
+        },
+        "gratitudePlaceholders": {
+          "student": {
+            "1": "רגע של בהירות בלימודים…",
+            "2": "משהו שלמדתי שהרגיש שווה…",
+            "3": "התקדמות קטנה ששמתי לב אליה…"
+          },
+          "new_parent": {
+            "1": "משהו קטן שהתינוק/ת עשה שחייך לי…",
+            "2": "רגע שקט לפני שהערב התפצל…",
+            "3": "עזרה קטנה שקיבלתי…"
+          },
+          "manager": {
+            "1": "ניצחון קטן בעבודה שלא דחיתי…",
+            "2": "רגע שבו הרגשתי בשליטה…",
+            "3": "משהו שסגרתי בזמן…"
+          },
+          "caregiver": {
+            "1": "רגע שדאגתי לעצמי, גם אם קטן…",
+            "2": "משהו שעזר לי לנשום…",
+            "3": "תמיכה שקיבלתי…"
+          },
+          "between_jobs": {
+            "1": "צעד קטן שקידם אותי קדימה…",
+            "2": "משהו שלמדתי היום…",
+            "3": "רגע של יציבות…"
+          },
+          "other": {
+            "1": "משהו קטן שהרגיש טוב…",
+            "2": "רגע של שקט…",
+            "3": "משהו שעבד היום…"
+          }
+        },
+        "suggest": {
+          "student": "לפני לימודים — מצב מהיר (3 דק׳) לרוב מתאים יותר.",
+          "new_parent": "עם שינה מקוטעת — מצב מהיר מומלץ.",
+          "manager": "בין פגישות — מצב מהיר יכול להספיק.",
+          "caregiver": "עם עומס טיפולי — מצב מהיר ורגוע מומלץ.",
+          "between_jobs": "במעבר — מצב סטנדרטי או מהיר, לפי מה שמתאים היום.",
+          "multi": "עם כמה הקשרים ביחד — מצב מהיר לרוב מתאים יותר.",
+          "combo": {
+            "studentNewParent": "בין לימודים להורות — מצב מהיר (3 דק׳) מומלץ.",
+            "newParentCaregiver": "בין הורות לטיפול — מצב מהיר ורגוע מומלץ.",
+            "managerCaregiver": "בין ניהול לטיפול — מצב מהיר יכול להספיק.",
+            "studentManager": "בין לימודים לניהול — מצב מהיר לפני היום העמוס."
+          }
+        }
+      },
+      "evening": {
+        "suggest": {
+          "student": "אחרי יום לימודים — איפוס ערב קצר יכול לעזור לשחרר את הראש.",
+          "new_parent": "לפני שינה מקוטעת — איפוס קצר (3 דק׳) מומלץ.",
+          "manager": "אחרי יום עמוס — איפוס קצר לסגור את היום.",
+          "caregiver": "לפני שינה — איפוס קצר לשחרור אחריות.",
+          "between_jobs": "במעבר — איפוס ערב קצר לבנות יציבות.",
+          "multi": "עם כמה הקשרים — איפוס קצר (3 דק׳) לסגור את היום.",
+          "combo": {
+            "studentNewParent": "אחרי יום של לימודים והורות — איפוס קצר מומלץ.",
+            "newParentCaregiver": "בין הורות לטיפול — איפוס קצר לשחרור.",
+            "managerCaregiver": "אחרי יום עמוס — איפוס קצר לסגור את היום.",
+            "studentManager": "אחרי לימודים ועבודה — איפוס קצר לשחרר את הראש."
+          }
+        }
+      }
+    },
+    "noteLabel": "הערה קצרה על ההקשר שלך (אופציונלי)",
+    "notePlaceholder": "למשל: עובד/ת מהבית, מטפל/ת בהורה מבוגר, שנה אחרונה לתואר…",
+    "weeklyReview": {
+      "empty": {
+        "student": "בין מבחנים לפרויקטים — גם צעד אחד בשבוע כזה שווה משהו. הסיכום יופיע כשיהיו מספיק נתונים.",
+        "new_parent": "שבוע קצר? גם צעד אחד בשבוע שכזה שווה משהו. הסיכום יופיע כשיהיו מספיק נתונים.",
+        "manager": "שבוע עמוס? הסיכום יעזור לראות מה באמת זז — לא רק מה תוכנן.",
+        "caregiver": "שבוע עמוס בטיפול? הסיכום יראה מה הצליח למרות העומס.",
+        "between_jobs": "במעבר — יציבות חשובה יותר מקצב. הסיכום יופיע כשיהיו מספיק נתונים.",
+        "other": "הסיכום השבועי יופיע כשיהיו מספיק נתונים — נתחיל מצעדים קטנים.",
+        "multi": "כשיש כמה הקשרים ביחד — הסיכום יעזור לראות מה באמת זז.",
+        "combo": {
+          "studentNewParent": "בין לימודים להורות — גם צעד אחד בשבוע שווה משהו.",
+          "newParentCaregiver": "בין הורות לטיפול — הסיכום יראה מה הצליח למרות העומס.",
+          "managerCaregiver": "בין עבודה לטיפול — הסיכום יעזור לראות מה באמת זז.",
+          "studentManager": "בין לימודים לעבודה — הסיכום יראה מה הצליח השבוע."
+        }
+      },
+      "framing": {
+        "student": "מה באמת זז השבוע — בין לימודים לחיים?",
+        "new_parent": "מה הצליח השבוע — גם ביום קצר?",
+        "manager": "מה באמת זז השבוע — בין פגישות?",
+        "caregiver": "מה הצליח השבוע — למרות העומס?",
+        "between_jobs": "מה זז קדימה השבוע — במעבר?",
+        "other": "סיכום השבוע שלך",
+        "multi": "מה באמת זז השבוע — בכל התפקידים?",
+        "combo": {
+          "studentNewParent": "מה הצליח השבוע — בין לימודים להורות?",
+          "newParentCaregiver": "מה הצליח השבוע — בין הורות לטיפול?",
+          "managerCaregiver": "מה באמת זז — בין עבודה לטיפול?",
+          "studentManager": "מה הצליח השבוע — בין לימודים לעבודה?"
+        }
+      }
+    },
+    "goalStarter": {
+      "student": {
+        "career": {
+          "1": "לסיים סמסטר בלי לשרוף",
+          "2": "להתקדם בפרויקט אחד בכל שבוע",
+          "3": "לבנות שגרת למידה יציבה"
+        },
+        "mind": {
+          "1": "פחות לחץ סביב מבחנים",
+          "2": "יותר בהירות לפני הגשות",
+          "3": "לישון טוב יותר בלילות לימודים"
+        },
+        "time": {
+          "1": "לתכנן את השבוע מראש",
+          "2": "פחות דחיינות על משימות חשובות",
+          "3": "לשמור על זמן לעצמי"
+        }
+      },
+      "new_parent": {
+        "health": {
+          "1": "לישון שעה נוספת השבוע",
+          "2": "לחזור לאנרגיה יציבה יותר",
+          "3": "לטפל בעייפות בלי אשמה"
+        },
+        "time": {
+          "1": "למצוא 10 דקות לעצמי בכל יום",
+          "2": "לסדר את הערב בלי כאוס",
+          "3": "לבקש עזרה כשצריך"
+        },
+        "relationships": {
+          "1": "זמן איכות עם בן/בת הזוג",
+          "2": "תקשורת טובה יותר בבית",
+          "3": "פחות מתח סביב חלוקת משימות"
+        }
+      },
+      "manager": {
+        "time": {
+          "1": "לצאת מהמשרד בזמן פעמיים השבוע",
+          "2": "גבולות ברורים בין עבודה לבית",
+          "3": "פחות עבודה אחרי שעות"
+        },
+        "career": {
+          "1": "לסגור פרויקט אחד חשוב",
+          "2": "להיות נוכח/ת בפגישות בלי להתפזר",
+          "3": "לשפר את איכות העבודה, לא רק הכמות"
+        },
+        "mind": {
+          "1": "פחות שחיקה",
+          "2": "יותר שקט בראש בין פגישות",
+          "3": "לנהל עומס בלי להתרסק"
+        }
+      },
+      "caregiver": {
+        "mind": {
+          "1": "לשמור על עצמי גם כשאני דואג/ת לאחרים",
+          "2": "פחות עומס רגשי",
+          "3": "רגעים של מנוחה אמיתית"
+        },
+        "relationships": {
+          "1": "גבולות ברורים עם מי שאני דואג/ת לו",
+          "2": "לבקש תמיכה מהמשפחה",
+          "3": "פחות מתח סביב האחריות"
+        }
+      },
+      "between_jobs": {
+        "career": {
+          "1": "למצוא כיוון ברור קדימה",
+          "2": "לשלוח 3 מועמדויות השבוע",
+          "3": "לבנות מיומנות חדשה למעבר"
+        },
+        "wealth": {
+          "1": "יציבות כלכלית במעבר",
+          "2": "לשלוט בהוצאות בזמן המעבר",
+          "3": "תוכנית פיננסית ל-3 חודשים"
+        },
+        "mind": {
+          "1": "פחות חרדה מהעתיד",
+          "2": "יותר ביטחון במעבר",
+          "3": "שגרה יומית שמחזיקה אותי"
+        }
+      }
+    },
+    "settings": {
+      "impactHelp": "משפיע על: שאלות, מטרות, צעדים יומיים, צ׳ק-אין וריטואלים.",
+      "savedWithImpact": "עדכנו את ההתאמה — ההצעות הבאות יתחשבו בזה.",
+      "regenerateSteps": "רענן את הצעדים להיום",
+      "regeneratingSteps": "מרענן צעדים…",
+      "stepsRegenerated": "הצעדים להיום עודכנו.",
+      "stepsRegenerateError": "לא הצלחנו לרענן — נסה שוב."
+    }
+  },
+  "survivalMode": {
+    "trigger": "יום קשה?",
+    "adaptTrigger": "התאם למצב שלי",
+    "positiveEmergencyLabel": "מצב חירום חיובי",
+    "positiveExplainer": "כשאין כוח, האפליקציה מצמצמת ולא מענישה.",
+    "title": "מצב הישרדות",
+    "subtitle": "לא צריך לעשות הכל — בחר מה שמתאים להיום",
+    "optionEasy": "צעד של 2 דקות",
+    "optionEasyDesc": "הצעד הכי קל שאפשר — רק כדי לא לשבור את הרצף",
+    "optionSkip": "דיווח שקשה",
+    "optionSkipDesc": "אני מסמן שהיום היה קשה ועובר הלאה — בלי שאלות",
+    "optionPause": "חופשה מהאפליקציה היום",
+    "optionPauseDesc": "הסטריק ב-Freeze עד מחר — ממשיכים מחר",
+    "confirm": "בחר",
+    "cancel": "ביטול",
+    "doneTitle": "בסדר גמור.",
+    "doneSkip": "סימנת שהיום קשה. הסטריק שלך ב-Freeze עד מחר.",
+    "donePause": "חופשה מאושרת. הסטריק שלך ב-Freeze — ממשיכים מחר.",
+    "doneEasy": "הצעד הקל נשמר. בהצלחה — 2 דקות זה מספיק להיום.",
+    "close": "סגור"
+  },
+  "survivalModeSoft": {
+    "trigger": "העומס גבוה — לא חייבים היום",
+    "title": "מצב רך — לפני שבירה",
+    "subtitle": "המערכת מצמצמת כי זיהינו עומס. בחר רק מה שאפשר.",
+    "positiveExplainer": "לא צריך להוכיח כלום היום — נשמר עליך, לא נעניש.",
+    "optionEasyDesc": "דקה-שתיים בלבד — מספיק שלא לוותר על עצמך",
+    "optionSkipDesc": "יום כבד — מסמנים וממשיכים מחר, בלי אשמה"
+  }
+}

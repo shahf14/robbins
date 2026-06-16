@@ -1,0 +1,904 @@
+{
+  "mind": {
+    "he": {
+      "title": "בוא נדייק מה באמת קורה במיינד וברגשות שלך",
+      "introLowest": "מיינד ורגשות הוא התחום שהכי דורש תשומת לב כרגע. כאן ננסה להבין מה בדיוק יושב שם: מחשבות, מוטיבציה, לחץ, ביטחון עצמי או תחושת עומס. אין צורך לנסח מושלם — מספיק לבחור מה הכי קרוב.",
+      "introChosen": "בחרת להתמקד במיינד וברגשות. המטרה כאן היא לא לנתח אותך, אלא להבין מה הכי מפריע לך כרגע כדי לבנות מטרה פשוטה וריאלית.",
+      "painQuestion": "מה הכי מתאר את מה שאתה מרגיש כרגע?",
+      "painHint": "אפשר לבחור כמה תשובות. גם אם זה לא מדויק ב־100%, תבחר את מה שהכי קרוב.",
+      "painChips": [
+        {"id": "racing_thoughts", "label": "מחשבות שלא מפסיקות לרוץ"},
+        {"id": "negative_self_talk", "label": "דיבור עצמי שלילי"},
+        {"id": "hard_to_start", "label": "קשה לי להתניע"},
+        {"id": "low_motivation", "label": "חוסר מוטיבציה"},
+        {"id": "head_overload", "label": "תחושת עומס בראש"},
+        {"id": "stress_no_calm", "label": "לחץ או חוסר שקט"},
+        {"id": "low_confidence", "label": "ביטחון עצמי נמוך"},
+        {"id": "avoidance", "label": "אני נמנע מדברים חשובים"},
+        {"id": "stuck", "label": "אני מרגיש תקוע"},
+        {"id": "mental_fatigue", "label": "עייפות נפשית"},
+        {"id": "hard_to_focus", "label": "קושי להתרכז"},
+        {"id": "mood_swings", "label": "מצבי רוח משתנים"},
+        {"id": "know_but_dont_do", "label": "אני יודע מה צריך לעשות אבל לא עושה"},
+        {"id": "not_progressing", "label": "אני מרגיש שאני לא מתקדם"}
+      ],
+      "painPlaceholder": "לדוגמה: אני מרגיש שהראש שלי עמוס, קשה לי להתניע, ואני נתקע הרבה במחשבות במקום לפעול.",
+      "starterPhrases": [
+        "אני מרגיש שהראש שלי עמוס ואני מתקשה להתמקד במה שחשוב.",
+        "אני יודע מה אני צריך לעשות, אבל קשה לי להתחיל ולהתמיד.",
+        "אני מרגיש שחוסר מוטיבציה ודיבור עצמי שלילי עוצרים אותי.",
+        "אני מרגיש תקוע, כאילו אני לא מתקדם למרות שאני רוצה להשתנות.",
+        "אני מתעייף מהר מנטלית ומתקשה לשמור על יציבות לאורך היום."
+      ],
+      "visionQuestion": "איך היית רוצה להרגיש בעוד 90 יום?",
+      "visionHint": "בחר את הכיוון שהכי חשוב לך כרגע. אפשר לבחור כמה.",
+      "visionChips": [
+        {"id": "calmer", "label": "יותר רגוע ויציב"},
+        {"id": "focused", "label": "יותר ממוקד"},
+        {"id": "confident", "label": "יותר בטוח בעצמי"},
+        {"id": "act_without_stuck", "label": "מתחיל לפעול בלי להיתקע"},
+        {"id": "less_thoughts", "label": "פחות נשאב למחשבות"},
+        {"id": "routine_no_motivation", "label": "שומר על שגרה גם כשאין מוטיבציה"},
+        {"id": "more_control", "label": "מרגיש יותר שליטה ביום שלי"},
+        {"id": "less_avoidance", "label": "פחות נמנע מדברים חשובים"}
+      ],
+      "visionPlaceholder": "לדוגמה: אני רוצה לקום בבוקר עם יותר בהירות, להתחיל משימות בלי להיתקע, ולהרגיש שאני בשליטה על הראש שלי.",
+      "reflections": [
+        {
+          "matchAny": ["racing_thoughts", "head_overload", "hard_to_focus", "mental_fatigue"],
+          "summary": "נראה שהאתגר המרכזי שלך הוא עומס מחשבתי שמקשה על פעולה.",
+          "goal": "המטרה כאן תהיה לבנות בהירות, להפחית רעש פנימי, ולהחזיר תחושת שליטה בצעדים קטנים."
+        },
+        {
+          "matchAny": ["hard_to_start", "low_motivation", "know_but_dont_do", "not_progressing", "stuck"],
+          "summary": "נראה שהפער הגדול הוא בין לדעת לבין לפעול — וההתנעה וההתמדה הם האתגר.",
+          "goal": "המטרה כאן תהיה לבנות צעדים קטנים מספיק כדי להתחיל, ולחזור לתחושת התקדמות."
+        },
+        {
+          "matchAny": ["negative_self_talk", "low_confidence", "avoidance"],
+          "summary": "נראה שדיבור עצמי קשה או חוסר ביטחון מעכבים אותך מלהתקדם.",
+          "goal": "המטרה כאן תהיה לבנות תנועה קטנה שמחזירה אמון עצמי — לא לחכות להרגשה מושלמת לפני שמתחילים."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "נראה שיש כאן משהו שמפריע לך מבפנים ומקשה על תנועה קדימה.",
+        "goal": "המטרה כאן תהיה להבין מה הכי תוקע אותך — ולבנות מטרה קטנה שמתאימה למצב האמיתי שלך."
+      }
+    },
+    "en": {
+      "title": "Let's get specific about your mind and emotions",
+      "introLowest": "Mind and emotions is the area that needs the most attention right now. Here we'll understand what's really going on inside: thoughts, motivation, pressure, confidence, or overload. You don't need perfect words — just pick what's closest.",
+      "introChosen": "You chose to focus on mind and emotions. The goal isn't to analyze you, but to understand what bothers you most right now so we can build a simple, realistic goal.",
+      "painQuestion": "What best describes how you feel right now?",
+      "painHint": "You can pick several. Even if it's not 100% exact, choose what's closest.",
+      "painChips": [
+        {"id": "racing_thoughts", "label": "Thoughts that won't stop running"},
+        {"id": "negative_self_talk", "label": "Negative self-talk"},
+        {"id": "hard_to_start", "label": "Hard to get started"},
+        {"id": "low_motivation", "label": "Low motivation"},
+        {"id": "head_overload", "label": "Mental overload"},
+        {"id": "stress_no_calm", "label": "Stress or no inner calm"},
+        {"id": "low_confidence", "label": "Low self-confidence"},
+        {"id": "avoidance", "label": "I avoid important things"},
+        {"id": "stuck", "label": "I feel stuck"},
+        {"id": "mental_fatigue", "label": "Mental fatigue"},
+        {"id": "hard_to_focus", "label": "Hard to focus"},
+        {"id": "mood_swings", "label": "Mood swings"},
+        {"id": "know_but_dont_do", "label": "I know what to do but don't do it"},
+        {"id": "not_progressing", "label": "I feel I'm not progressing"}
+      ],
+      "painPlaceholder": "e.g. My head feels overloaded, it's hard to get started, and I get stuck in thoughts instead of acting.",
+      "starterPhrases": [
+        "My head feels overloaded and I struggle to focus on what matters.",
+        "I know what I need to do, but it's hard to start and stay consistent.",
+        "Low motivation and negative self-talk are holding me back.",
+        "I feel stuck, like I'm not moving forward even though I want to change.",
+        "I tire mentally quickly and struggle to stay steady through the day."
+      ],
+      "visionQuestion": "How would you want to feel in 90 days?",
+      "visionHint": "Pick the direction that matters most right now. You can choose several.",
+      "visionChips": [
+        {"id": "calmer", "label": "Calmer and more stable"},
+        {"id": "focused", "label": "More focused"},
+        {"id": "confident", "label": "More self-confident"},
+        {"id": "act_without_stuck", "label": "I start acting without getting stuck"},
+        {"id": "less_thoughts", "label": "Less pulled into thoughts"},
+        {"id": "routine_no_motivation", "label": "I keep a routine even without motivation"},
+        {"id": "more_control", "label": "More control over my day"},
+        {"id": "less_avoidance", "label": "Less avoidance of important things"}
+      ],
+      "visionPlaceholder": "e.g. I want to wake up clearer, start tasks without getting stuck, and feel in control of my head.",
+      "reflections": [
+        {
+          "matchAny": ["racing_thoughts", "head_overload", "hard_to_focus", "mental_fatigue"],
+          "summary": "It looks like mental overload is making action hard.",
+          "goal": "The goal here is to build clarity, reduce inner noise, and restore a sense of control through small steps."
+        },
+        {
+          "matchAny": ["hard_to_start", "low_motivation", "know_but_dont_do", "not_progressing", "stuck"],
+          "summary": "It looks like the gap between knowing and doing is the main challenge — starting and staying consistent.",
+          "goal": "The goal here is to build steps small enough to start, and bring back a sense of progress."
+        },
+        {
+          "matchAny": ["negative_self_talk", "low_confidence", "avoidance"],
+          "summary": "It looks like harsh self-talk or low confidence is holding you back.",
+          "goal": "The goal here is small movement that rebuilds self-trust — not waiting to feel perfect before you start."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "It looks like something inside is getting in the way of moving forward.",
+        "goal": "The goal here is to understand what blocks you most — and build a small goal that fits your real situation."
+      }
+    }
+  },
+  "health": {
+    "he": {
+      "title": "בוא נדייק מה קורה בבריאות ובגוף שלך",
+      "introLowest": "בריאות וגוף הוא התחום שהכי דורש תשומת לב כרגע. כאן נבין מה באמת מוריד לך אנרגיה: שינה, תזונה, כאבים, עייפות או חוסר שגרה. אין צורך לנסח מושלם.",
+      "introChosen": "בחרת להתמקד בבריאות וגוף. המטרה היא להבין מה הכי מפריע לך כרגע — ולבנות מטרה פשוטה שמתאימה לחיים האמיתיים שלך.",
+      "painQuestion": "מה הכי מתאר את מה שאתה חווה בגוף כרגע?",
+      "painHint": "אפשר לבחור כמה תשובות. תבחר את מה שהכי קרוב.",
+      "painChips": [
+        {"id": "tired", "label": "עייף/ה רוב הזמן"},
+        {"id": "no_energy", "label": "אין אנרגיה ליום-יום"},
+        {"id": "bad_sleep", "label": "שינה לא טובה"},
+        {"id": "pain", "label": "כאבים או אי נוחות בגוף"},
+        {"id": "no_movement", "label": "כמעט לא מתנועע/ת"},
+        {"id": "unhealthy_eating", "label": "אכילה לא מאוזנת"},
+        {"id": "skip_body", "label": "אני מזניח/ה את הגוף"},
+        {"id": "crash_afternoon", "label": "נשבר/ת אחרי הצהריים"},
+        {"id": "wake_tired", "label": "קם/ה עייף/ה כל בוקר"},
+        {"id": "body_limits", "label": "הגוף מגביל אותי בדברים חשובים"}
+      ],
+      "painPlaceholder": "לדוגמה: אני קם עייף, אין לי אנרגיה אחרי הצהריים, וקשה לי לשמור על שגרת שינה.",
+      "starterPhrases": [
+        "אני מרגיש/ה עייף/ה רוב הזמן ואין לי אנרגיה למה שחשוב.",
+        "השינה שלי לא עקבית ואני מתעורר/ת מותש/ת.",
+        "אני יודע/ת מה טוב לגוף שלי, אבל קשה לי להתמיד.",
+        "הגוף שלי מרגיש כבד ומגביל אותי ביום-יום.",
+        "אני מדלג/ת על תנועה ואוכל בצורה שלא תומכת בי."
+      ],
+      "visionQuestion": "איך היית רוצה להרגיש בגוף בעוד 90 יום?",
+      "visionHint": "בחר את הכיוון שהכי חשוב לך. אפשר לבחור כמה.",
+      "visionChips": [
+        {"id": "more_energy", "label": "יותר אנרגיה ביום-יום"},
+        {"id": "better_sleep", "label": "שינה טובה ועקבית"},
+        {"id": "lighter_body", "label": "גוף קל וחזק יותר"},
+        {"id": "steady_routine", "label": "שגרה שתומכת בגוף"},
+        {"id": "less_pain", "label": "פחות כאבים ואי נוחות"},
+        {"id": "proud_body", "label": "גאה במה שאני עושה לגוף"}
+      ],
+      "visionPlaceholder": "לדוגמה: אני רוצה לקום רענן/ה, עם אנרגיה יציבה לאורך היום ושגרה שמרגישה אפשרית.",
+      "reflections": [
+        {
+          "matchAny": ["bad_sleep", "wake_tired", "tired"],
+          "summary": "נראה שהשינה והאנרגיה הם צוואר הבקבוק — בלי זה קשה להתקדם בשאר החיים.",
+          "goal": "המטרה כאן תהיה לבנות שגרה קטנה שמחזירה אנרגיה, לא מהפכה גדולה."
+        },
+        {
+          "matchAny": ["no_movement", "unhealthy_eating", "skip_body"],
+          "summary": "נראה שהפער הוא בין לדעת מה טוב לגוף לבין לעשות את זה בעקביות.",
+          "goal": "המטרה כאן תהיה צעדים קטנים שאפשר לשמור עליהם — לא תוכנית מושלמת."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "נראה שהגוף שלך מבקש יותר תשומת לב ממה שאתה נותן לו כרגע.",
+        "goal": "המטרה כאן תהיה לבנות תנועה קטנה שמחזירה אנרגיה ותחושת שליטה."
+      }
+    },
+    "en": {
+      "title": "Let's get specific about your body and health",
+      "introLowest": "Body and health is the area that needs the most attention right now. Here we'll understand what drains your energy: sleep, nutrition, pain, fatigue, or missing routines. No need for perfect words.",
+      "introChosen": "You chose to focus on body and health. The goal is to understand what bothers you most — and build a simple goal that fits real life.",
+      "painQuestion": "What best describes what your body feels like right now?",
+      "painHint": "You can pick several. Choose what's closest.",
+      "painChips": [
+        {"id": "tired", "label": "Tired most of the time"},
+        {"id": "no_energy", "label": "No energy for daily life"},
+        {"id": "bad_sleep", "label": "Poor sleep"},
+        {"id": "pain", "label": "Pain or physical discomfort"},
+        {"id": "no_movement", "label": "Almost no movement"},
+        {"id": "unhealthy_eating", "label": "Unbalanced eating"},
+        {"id": "skip_body", "label": "I neglect my body"},
+        {"id": "crash_afternoon", "label": "I crash in the afternoon"},
+        {"id": "wake_tired", "label": "I wake up tired every morning"},
+        {"id": "body_limits", "label": "My body limits important things"}
+      ],
+      "painPlaceholder": "e.g. I wake up tired, have no energy after noon, and struggle to keep a sleep routine.",
+      "starterPhrases": [
+        "I feel tired most of the time and have no energy for what matters.",
+        "My sleep isn't consistent and I wake up exhausted.",
+        "I know what's good for my body, but I struggle to stay consistent.",
+        "My body feels heavy and limits me day to day.",
+        "I skip movement and eat in ways that don't support me."
+      ],
+      "visionQuestion": "How would you want your body to feel in 90 days?",
+      "visionHint": "Pick what matters most. You can choose several.",
+      "visionChips": [
+        {"id": "more_energy", "label": "More daily energy"},
+        {"id": "better_sleep", "label": "Good, consistent sleep"},
+        {"id": "lighter_body", "label": "A lighter, stronger body"},
+        {"id": "steady_routine", "label": "A routine that supports my body"},
+        {"id": "less_pain", "label": "Less pain and discomfort"},
+        {"id": "proud_body", "label": "Proud of what I do for my body"}
+      ],
+      "visionPlaceholder": "e.g. I want to wake up refreshed, with steady energy and a routine that feels doable.",
+      "reflections": [
+        {
+          "matchAny": ["bad_sleep", "wake_tired", "tired"],
+          "summary": "It looks like sleep and energy are the bottleneck — without them, everything else is harder.",
+          "goal": "The goal here is a small routine that restores energy, not a big overhaul."
+        },
+        {
+          "matchAny": ["no_movement", "unhealthy_eating", "skip_body"],
+          "summary": "It looks like the gap is between knowing what's good for your body and doing it consistently.",
+          "goal": "The goal here is small steps you can keep — not a perfect plan."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "It looks like your body is asking for more attention than you're giving it right now.",
+        "goal": "The goal here is a small move that brings back energy and a sense of control."
+      }
+    }
+  },
+  "time": {
+    "he": {
+      "title": "בוא נדייק מה קורה בזמן ובמשמעת שלך",
+      "introLowest": "זמן ומשמעת הוא התחום שהכי דורש תשומת לב כרגע. כאן נבין מה באמת גוזל לך זמן: דחיינות, עומס, הסחות דעת או חוסר סדר. אין צורך לנסח מושלם.",
+      "introChosen": "בחרת להתמקד בזמן ומשמעת. המטרה היא להבין מה הכי מפריע לך כרגע — ולבנות מטרה פשוטה וריאלית.",
+      "painQuestion": "מה הכי מתאר את איך הזמן שלך מרגיש כרגע?",
+      "painHint": "אפשר לבחור כמה תשובות. תבחר את מה שהכי קרוב.",
+      "painChips": [
+        {"id": "days_fly", "label": "הימים עפים ואני לא מספיק/ה"},
+        {"id": "procrastination", "label": "דוחה דברים חשובים"},
+        {"id": "distracted", "label": "מוסח/ת כל הזמן"},
+        {"id": "no_priorities", "label": "לא ברור לי מה הכי חשוב"},
+        {"id": "no_me_time", "label": "אין לי זמן לעצמי"},
+        {"id": "endless_lists", "label": "רשימות שלא נגמרות"},
+        {"id": "reactive", "label": "אני רק מגיב/ה, לא מתכנן/ת"},
+        {"id": "start_hard", "label": "קשה לי להתחיל משימות"},
+        {"id": "no_routine", "label": "אין שגרה שעובדת"},
+        {"id": "overwhelmed", "label": "מרגיש/ה מוצף/ת מדי"}
+      ],
+      "painPlaceholder": "לדוגמה: הימים עפים, אני דוחה דברים חשובים, ומרגיש/ה שאין לי שליטה על הזמן.",
+      "starterPhrases": [
+        "אני מרגיש/ה שהימים עפים ואני לא מספיק/ה לדברים שחשובים לי.",
+        "אני יודע/ת מה צריך לעשות, אבל דוחה ומתפזר/ת.",
+        "אין לי שגרה ברורה ואני מגיב/ה לכל מה שקופץ.",
+        "אני מרגיש/ה מוצף/ת מרשימות ומשימות שלא נגמרות.",
+        "קשה לי להתחיל ולסיים דברים גם כשאני יודע/ת שהם חשובים."
+      ],
+      "visionQuestion": "איך היית רוצה שהזמן שלך ירגיש בעוד 90 יום?",
+      "visionHint": "בחר את הכיוון שהכי חשוב לך. אפשר לבחור כמה.",
+      "visionChips": [
+        {"id": "clear_priorities", "label": "יודע/ת מה חשוב השבוע"},
+        {"id": "less_delay", "label": "פחות דחיינות על מה שחשוב"},
+        {"id": "more_control", "label": "יותר שליטה על היום"},
+        {"id": "me_time", "label": "יש לי זמן לעצמי"},
+        {"id": "consistent", "label": "פועל/ת בעקביות גם בלי מוטיבציה"},
+        {"id": "calmer_days", "label": "ימים רגועים יותר ופחות עומס"}
+      ],
+      "visionPlaceholder": "לדוגמה: אני רוצה לדעת מה חשוב השבוע, להתחיל בלי לדחות, ולהרגיש שליטה על היום.",
+      "reflections": [
+        {
+          "matchAny": ["procrastination", "start_hard", "distracted"],
+          "summary": "נראה שהאתגר המרכזי הוא להתחיל ולהישאר ממוקד/ת — לא רק לתכנן.",
+          "goal": "המטרה כאן תהיה לבנות צעדים קטנים שמקלים על ההתחלה ומפחיתים הסחות."
+        },
+        {
+          "matchAny": ["days_fly", "no_priorities", "reactive", "overwhelmed"],
+          "summary": "נראה שהזמן שלך נשלט על ידי דחיפות ולא על ידי מה שחשוב באמת.",
+          "goal": "המטרה כאן תהיה לבנות בהירות על עדיפויות ולחזור לתחושת שליטה."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "נראה שיש פער בין איך אתה רוצה שהזמן ירגיש לבין איך הוא מרגיש עכשיו.",
+        "goal": "המטרה כאן תהיה לבנות שגרה קטנה שמחזירה שליטה — צעד אחד בכל פעם."
+      }
+    },
+    "en": {
+      "title": "Let's get specific about your time and discipline",
+      "introLowest": "Time and discipline is the area that needs the most attention right now. Here we'll understand what steals your time: procrastination, overload, distractions, or lack of structure. No need for perfect words.",
+      "introChosen": "You chose to focus on time and discipline. The goal is to understand what bothers you most — and build a simple, realistic goal.",
+      "painQuestion": "What best describes how your time feels right now?",
+      "painHint": "You can pick several. Choose what's closest.",
+      "painChips": [
+        {"id": "days_fly", "label": "Days fly by and I don't get enough done"},
+        {"id": "procrastination", "label": "I put off important things"},
+        {"id": "distracted", "label": "I'm distracted all the time"},
+        {"id": "no_priorities", "label": "I'm not sure what's most important"},
+        {"id": "no_me_time", "label": "I have no time for myself"},
+        {"id": "endless_lists", "label": "Never-ending to-do lists"},
+        {"id": "reactive", "label": "I only react, I don't plan"},
+        {"id": "start_hard", "label": "Hard to start tasks"},
+        {"id": "no_routine", "label": "No routine that works"},
+        {"id": "overwhelmed", "label": "I feel too overwhelmed"}
+      ],
+      "painPlaceholder": "e.g. Days fly by, I put off important things, and I feel no control over my time.",
+      "starterPhrases": [
+        "I feel days fly by and I don't get to what matters.",
+        "I know what to do, but I procrastinate and get distracted.",
+        "I have no clear routine and just react to whatever pops up.",
+        "I feel overwhelmed by lists and tasks that never end.",
+        "It's hard to start and finish things even when I know they matter."
+      ],
+      "visionQuestion": "How would you want your time to feel in 90 days?",
+      "visionHint": "Pick what matters most. You can choose several.",
+      "visionChips": [
+        {"id": "clear_priorities", "label": "I know what matters this week"},
+        {"id": "less_delay", "label": "Less procrastination on what matters"},
+        {"id": "more_control", "label": "More control over my day"},
+        {"id": "me_time", "label": "I have time for myself"},
+        {"id": "consistent", "label": "I act consistently even without motivation"},
+        {"id": "calmer_days", "label": "Calmer days with less overload"}
+      ],
+      "visionPlaceholder": "e.g. I want to know what matters this week, start without delaying, and feel in control of my day.",
+      "reflections": [
+        {
+          "matchAny": ["procrastination", "start_hard", "distracted"],
+          "summary": "It looks like starting and staying focused is the main challenge — not just planning.",
+          "goal": "The goal here is small steps that make starting easier and reduce distractions."
+        },
+        {
+          "matchAny": ["days_fly", "no_priorities", "reactive", "overwhelmed"],
+          "summary": "It looks like urgency controls your time more than what truly matters.",
+          "goal": "The goal here is clarity on priorities and restoring a sense of control."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "It looks like there's a gap between how you want time to feel and how it feels now.",
+        "goal": "The goal here is a small routine that restores control — one step at a time."
+      }
+    }
+  },
+  "wealth": {
+    "he": {
+      "title": "בוא נדייק מה קורה בכסף ובביטחון כלכלי",
+      "introLowest": "כסף וביטחון כלכלי הוא התחום שהכי דורש תשומת לב כרגע. כאן נבין מה יוצר לחץ: הוצאות, חוסר תכנון, חובות או חרדה מכסף. אין צורך לנסח מושלם.",
+      "introChosen": "בחרת להתמקד בכסף וביטחון כלכלי. המטרה היא להבין מה הכי מפריע לך כרגע — ולבנות מטרה פשוטה וריאלית.",
+      "painQuestion": "מה הכי מתאר את איך הכסף מרגיש לך כרגע?",
+      "painHint": "אפשר לבחור כמה תשובות. תבחר את מה שהכי קרוב.",
+      "painChips": [
+        {"id": "money_stress", "label": "לחץ כלכלי קבוע"},
+        {"id": "money_anxiety", "label": "חרדה מכסף"},
+        {"id": "no_plan", "label": "אין לי תכנון ברור"},
+        {"id": "overspend", "label": "מוציא/ה יותר מדי"},
+        {"id": "no_saving", "label": "קשה לי לחסוך"},
+        {"id": "debt", "label": "חובות שמלחיצים אותי"},
+        {"id": "avoid_money", "label": "אני נמנע/ת מלהתמודד עם כסף"},
+        {"id": "income_uncertain", "label": "הכנסה לא יציבה"},
+        {"id": "no_control", "label": "אין לי שליטה על ההוצאות"},
+        {"id": "shame", "label": "אני מתבייש/ת מהמצב הכלכלי"}
+      ],
+      "painPlaceholder": "לדוגמה: יש לי לחץ כלכלי, אני נמנע/ת לבדוק חשבון, וקשה לי לחסוך.",
+      "starterPhrases": [
+        "אני מרגיש/ה לחץ כלכלי קבוע וקשה לי לישון בשקט.",
+        "אני יודע/ת שצריך לתכנן, אבל נמנע/ת מלהתמודד עם זה.",
+        "ההוצאות שלי גבוהות מההכנסה ואני לא יודע/ת איך לעצור.",
+        "אני רוצה לחסוך אבל משהו תמיד קופץ ומפריע.",
+        "המצב הכלכלי שלי מלחיץ אותי ומשפיע על שאר החיים."
+      ],
+      "visionQuestion": "איך היית רוצה להרגיש לגבי כסף בעוד 90 יום?",
+      "visionHint": "בחר את הכיוון שהכי חשוב לך. אפשר לבחור כמה.",
+      "visionChips": [
+        {"id": "less_stress", "label": "פחות לחץ סביב כסף"},
+        {"id": "clear_plan", "label": "תכנון ברור שאני שומר/ת עליו"},
+        {"id": "saving", "label": "חיסכון קבוע, גם קטן"},
+        {"id": "control", "label": "שליטה על הוצאות והכנסות"},
+        {"id": "security", "label": "תחושת ביטחון כלכלי"},
+        {"id": "face_money", "label": "אני מתמודד/ת עם כסף בלי לברוח"}
+      ],
+      "visionPlaceholder": "לדוגמה: אני רוצה פחות לחץ, תכנון פשוט שאני שומר/ת עליו, ותחושת שליטה.",
+      "reflections": [
+        {
+          "matchAny": ["money_stress", "money_anxiety", "avoid_money", "shame"],
+          "summary": "נראה שהלחץ והחרדה סביב כסף הם האתגר המרכזי — לא רק המספרים.",
+          "goal": "המטרה כאן תהיה לבנות בהירות קטנה שמפחיתה לחץ ומחזירה תחושת שליטה."
+        },
+        {
+          "matchAny": ["no_plan", "overspend", "no_saving", "no_control"],
+          "summary": "נראה שהפער הוא בין לדעת מה צריך לעשות לבין לעשות את זה בעקביות.",
+          "goal": "המטרה כאן תהיה צעדים קטנים שאפשר לשמור עליהם — לא תוכנית מושלמת."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "נראה שיש משהו בכסף שמפריע לך ומשפיע על השקט הפנימי.",
+        "goal": "המטרה כאן תהיה לבנות מטרה קטנה שמחזירה שליטה ומפחיתה לחץ."
+      }
+    },
+    "en": {
+      "title": "Let's get specific about money and financial security",
+      "introLowest": "Money and financial security is the area that needs the most attention right now. Here we'll understand what creates pressure: spending, lack of planning, debt, or money anxiety. No need for perfect words.",
+      "introChosen": "You chose to focus on money and financial security. The goal is to understand what bothers you most — and build a simple, realistic goal.",
+      "painQuestion": "What best describes how money feels to you right now?",
+      "painHint": "You can pick several. Choose what's closest.",
+      "painChips": [
+        {"id": "money_stress", "label": "Constant financial stress"},
+        {"id": "money_anxiety", "label": "Anxiety about money"},
+        {"id": "no_plan", "label": "No clear plan"},
+        {"id": "overspend", "label": "I spend too much"},
+        {"id": "no_saving", "label": "Hard to save"},
+        {"id": "debt", "label": "Debt that pressures me"},
+        {"id": "avoid_money", "label": "I avoid dealing with money"},
+        {"id": "income_uncertain", "label": "Unstable income"},
+        {"id": "no_control", "label": "No control over spending"},
+        {"id": "shame", "label": "I'm ashamed of my financial situation"}
+      ],
+      "painPlaceholder": "e.g. I have financial stress, I avoid checking my account, and I struggle to save.",
+      "starterPhrases": [
+        "I feel constant financial stress and it's hard to sleep peacefully.",
+        "I know I should plan, but I avoid dealing with it.",
+        "My spending is higher than my income and I don't know how to stop.",
+        "I want to save but something always comes up.",
+        "My financial situation stresses me and affects the rest of my life."
+      ],
+      "visionQuestion": "How would you want to feel about money in 90 days?",
+      "visionHint": "Pick what matters most. You can choose several.",
+      "visionChips": [
+        {"id": "less_stress", "label": "Less stress around money"},
+        {"id": "clear_plan", "label": "A clear plan I stick to"},
+        {"id": "saving", "label": "Steady saving, even small"},
+        {"id": "control", "label": "Control over spending and income"},
+        {"id": "security", "label": "A sense of financial security"},
+        {"id": "face_money", "label": "I face money without avoiding it"}
+      ],
+      "visionPlaceholder": "e.g. I want less stress, a simple plan I stick to, and a sense of control.",
+      "reflections": [
+        {
+          "matchAny": ["money_stress", "money_anxiety", "avoid_money", "shame"],
+          "summary": "It looks like stress and anxiety around money is the main challenge — not just the numbers.",
+          "goal": "The goal here is small clarity that reduces stress and restores a sense of control."
+        },
+        {
+          "matchAny": ["no_plan", "overspend", "no_saving", "no_control"],
+          "summary": "It looks like the gap is between knowing what to do and doing it consistently.",
+          "goal": "The goal here is small steps you can keep — not a perfect plan."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "It looks like something about money is bothering you and affecting your inner calm.",
+        "goal": "The goal here is a small goal that restores control and reduces stress."
+      }
+    }
+  },
+  "career": {
+    "he": {
+      "title": "בוא נדייק מה קורה בקריירה ובעבודה שלך",
+      "introLowest": "קריירה ועבודה הוא התחום שהכי דורש תשומת לב כרגע. כאן נבין מה באמת מפריע: תקיעות, שחיקה, חוסר כיוון או תחושת חוסר ערך. אין צורך לנסח מושלם.",
+      "introChosen": "בחרת להתמקד בקריירה ועבודה. המטרה היא להבין מה הכי מפריע לך כרגע — ולבנות מטרה פשוטה וריאלית.",
+      "painQuestion": "מה הכי מתאר את איך העבודה מרגישה לך כרגע?",
+      "painHint": "אפשר לבחור כמה תשובות. תבחר את מה שהכי קרוב.",
+      "painChips": [
+        {"id": "stuck", "label": "אני מרגיש/ה תקוע/ה"},
+        {"id": "no_direction", "label": "אין לי כיוון ברור"},
+        {"id": "burnout", "label": "שחיקה או עייפות מעבודה"},
+        {"id": "afraid_leave", "label": "פחד לעזוב או לשנות"},
+        {"id": "no_progress", "label": "אין התקדמות נראית"},
+        {"id": "undervalued", "label": "מרגיש/ה לא מוערך/ת"},
+        {"id": "no_meaning", "label": "העבודה לא מרגישה משמעותית"},
+        {"id": "work_life", "label": "העבודה שוחקת את שאר החיים"},
+        {"id": "imposter", "label": "תחושת מתחזה"},
+        {"id": "know_change", "label": "יודע/ת שצריך לשנות אבל לא עושה"}
+      ],
+      "painPlaceholder": "לדוגמה: אני מרגיש/ה תקוע/ה בעבודה, אין לי כיוון, וקשה לי לראות התקדמות.",
+      "starterPhrases": [
+        "אני מרגיש/ה תקוע/ה בעבודה ולא יודע/ת לאן ללכת.",
+        "אני שחוק/ה אבל מפחד/ת לעשות שינוי.",
+        "אני עובד/ת קשה אבל לא מרגיש/ה שמתקדם/ת.",
+        "העבודה לא מרגישה משמעותית ואני מתעייף/ת ממנה.",
+        "אני יודע/ת שצריך לשנות משהו, אבל לא מצליח/ה להתחיל."
+      ],
+      "visionQuestion": "איך היית רוצה שהעבודה תרגיש בעוד 90 יום?",
+      "visionHint": "בחר את הכיוון שהכי חשוב לך. אפשר לבחור כמה.",
+      "visionChips": [
+        {"id": "direction", "label": "כיוון ברור יותר"},
+        {"id": "progress", "label": "תחושת התקדמות"},
+        {"id": "meaning", "label": "העבודה מרגישה משמעותית"},
+        {"id": "balance", "label": "איזון טוב יותר עם שאר החיים"},
+        {"id": "valued", "label": "מרגיש/ה מוערך/ת"},
+        {"id": "energy", "label": "יותר אנרגיה לעבודה"}
+      ],
+      "visionPlaceholder": "לדוגמה: אני רוצה לדעת לאן אני הולך/ת, להרגיש התקדמות, ושהעבודה לא תשאב את כל האנרגיה.",
+      "reflections": [
+        {
+          "matchAny": ["stuck", "no_direction", "afraid_leave", "know_change"],
+          "summary": "נראה שהאתגר המרכזי הוא תקיעות — אתה יודע שמשהו צריך להשתנות אבל קשה לזוז.",
+          "goal": "המטרה כאן תהיה לבנות צעד קטן שמחזיר תנועה, בלי לדרוש החלטה גדולה מיד."
+        },
+        {
+          "matchAny": ["burnout", "work_life", "no_meaning", "undervalued"],
+          "summary": "נראה שהעבודה שוחקת אותך — בגוף, בערך, או באיזון עם שאר החיים.",
+          "goal": "המטרה כאן תהיה לבנות גבולות קטנים ולחזור לתחושת משמעות."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "נראה שיש פער בין איך אתה רוצה שהעבודה תרגיש לבין איך היא מרגישה עכשיו.",
+        "goal": "המטרה כאן תהיה לבנות מטרה קטנה שמחזירה תנועה ותחושת שליטה."
+      }
+    },
+    "en": {
+      "title": "Let's get specific about your career and work",
+      "introLowest": "Career and work is the area that needs the most attention right now. Here we'll understand what's really bothering you: being stuck, burnout, no direction, or feeling undervalued. No need for perfect words.",
+      "introChosen": "You chose to focus on career and work. The goal is to understand what bothers you most — and build a simple, realistic goal.",
+      "painQuestion": "What best describes how work feels to you right now?",
+      "painHint": "You can pick several. Choose what's closest.",
+      "painChips": [
+        {"id": "stuck", "label": "I feel stuck"},
+        {"id": "no_direction", "label": "No clear direction"},
+        {"id": "burnout", "label": "Burnout or work fatigue"},
+        {"id": "afraid_leave", "label": "Afraid to leave or change"},
+        {"id": "no_progress", "label": "No visible progress"},
+        {"id": "undervalued", "label": "I feel undervalued"},
+        {"id": "no_meaning", "label": "Work doesn't feel meaningful"},
+        {"id": "work_life", "label": "Work drains the rest of my life"},
+        {"id": "imposter", "label": "Imposter feelings"},
+        {"id": "know_change", "label": "I know I need to change but don't act"}
+      ],
+      "painPlaceholder": "e.g. I feel stuck at work, have no direction, and struggle to see progress.",
+      "starterPhrases": [
+        "I feel stuck at work and don't know where to go.",
+        "I'm burned out but afraid to make a change.",
+        "I work hard but don't feel I'm progressing.",
+        "Work doesn't feel meaningful and I'm tired of it.",
+        "I know something needs to change, but I can't get started."
+      ],
+      "visionQuestion": "How would you want work to feel in 90 days?",
+      "visionHint": "Pick what matters most. You can choose several.",
+      "visionChips": [
+        {"id": "direction", "label": "A clearer direction"},
+        {"id": "progress", "label": "A sense of progress"},
+        {"id": "meaning", "label": "Work feels meaningful"},
+        {"id": "balance", "label": "Better balance with the rest of life"},
+        {"id": "valued", "label": "I feel valued"},
+        {"id": "energy", "label": "More energy for work"}
+      ],
+      "visionPlaceholder": "e.g. I want to know where I'm headed, feel progress, and not let work drain all my energy.",
+      "reflections": [
+        {
+          "matchAny": ["stuck", "no_direction", "afraid_leave", "know_change"],
+          "summary": "It looks like being stuck is the main challenge — you know something needs to change but it's hard to move.",
+          "goal": "The goal here is a small step that brings movement back, without requiring a big decision right away."
+        },
+        {
+          "matchAny": ["burnout", "work_life", "no_meaning", "undervalued"],
+          "summary": "It looks like work is draining you — physically, in value, or in balance with the rest of life.",
+          "goal": "The goal here is small boundaries and restoring a sense of meaning."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "It looks like there's a gap between how you want work to feel and how it feels now.",
+        "goal": "The goal here is a small goal that brings movement and a sense of control."
+      }
+    }
+  },
+  "relationships": {
+    "he": {
+      "title": "בוא נדייק מה קורה במערכות היחסים שלך",
+      "introLowest": "מערכות יחסים הוא התחום שהכי דורש תשומת לב כרגע. כאן נבין מה באמת מפריע: מרחק, קושי לדבר, ריבים, בדידות או חוסר זמן איכות. אין צורך לנסח מושלם.",
+      "introChosen": "בחרת להתמקד במערכות יחסים. המטרה היא להבין מה הכי מפריע לך כרגע — ולבנות מטרה פשוטה וריאלית.",
+      "painQuestion": "מה הכי מתאר את איך היחסים שלך מרגישים כרגע?",
+      "painHint": "אפשר לבחור כמה תשובות. תבחר את מה שהכי קרוב.",
+      "painChips": [
+        {"id": "distance", "label": "מרגיש/ה מרוחק/ה מאנשים קרובים"},
+        {"id": "hard_talk", "label": "קשה לי לדבר על מה שחשוב"},
+        {"id": "conflict", "label": "ריבים או מתחים"},
+        {"id": "lonely", "label": "בדידות"},
+        {"id": "no_time", "label": "אין זמן איכות אמיתי"},
+        {"id": "hard_open", "label": "קשה לי לפתוח לב"},
+        {"id": "avoid_hard", "label": "אני נמנע/ת משיחות קשות"},
+        {"id": "not_heard", "label": "מרגיש/ה שלא שומעים אותי"},
+        {"id": "guilt", "label": "אשמה על זה שלא מספיק נוכח/ת"},
+        {"id": "surface", "label": "היחסים מרגישים שטחיים"}
+      ],
+      "painPlaceholder": "לדוגמה: אני מרגיש/ה מרוחק/ה, קשה לי לדבר על מה שחשוב, ואין לנו זמן איכות אמיתי.",
+      "starterPhrases": [
+        "אני מרגיש/ה מרוחק/ה מאנשים שחשובים לי, גם כשאנחנו ליד.",
+        "קשה לי לדבר על מה שבאמת מפריע לי ביחסים.",
+        "יש מתחים שאני נמנע/ת מלהתמודד איתם.",
+        "אני מרגיש/ה בודד/ה גם כשאני לא לבד.",
+        "אני רוצה להיות יותר נוכח/ת אבל לא יודע/ת איך."
+      ],
+      "visionQuestion": "איך היית רוצה שהיחסים ירגישו בעוד 90 יום?",
+      "visionHint": "בחר את הכיוון שהכי חשוב לך. אפשר לבחור כמה.",
+      "visionChips": [
+        {"id": "closer", "label": "קרוב/ה יותר לאנשים חשובים"},
+        {"id": "open_talk", "label": "תקשורת פתוחה וברורה"},
+        {"id": "quality_time", "label": "יותר זמן איכות אמיתי"},
+        {"id": "resolve", "label": "פותר/ת מתחים בלי לברוח"},
+        {"id": "present", "label": "יותר נוכח/ת ברגע"},
+        {"id": "heard", "label": "מרגיש/ה שמקשיבים לי"}
+      ],
+      "visionPlaceholder": "לדוגמה: אני רוצה להרגיש קרוב/ה יותר, לדבר בפתיחות, ולהיות נוכח/ת באמת.",
+      "reflections": [
+        {
+          "matchAny": ["distance", "hard_talk", "hard_open", "avoid_hard", "surface"],
+          "summary": "נראה שהמרחק והקושי לדבר על מה שחשוב הם האתגר המרכזי.",
+          "goal": "המטרה כאן תהיה לבנות צעד קטן שמחזיר קרבה — לא שיחה מושלמת, אלא תנועה אמיתית."
+        },
+        {
+          "matchAny": ["conflict", "not_heard", "lonely"],
+          "summary": "נראה שיש מתח או בדידות שמקשים על תחושת חיבור.",
+          "goal": "המטרה כאן תהיה לבנות תקשורת קטנה שמחזירה תחושת שמיעה וקרבה."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "נראה שיש משהו ביחסים שמפריע לך ומקשה על תחושת קרבה.",
+        "goal": "המטרה כאן תהיה לבנות צעד קטן שמחזיר חיבור — לא לפתור הכל בבת אחת."
+      }
+    },
+    "en": {
+      "title": "Let's get specific about your relationships",
+      "introLowest": "Relationships is the area that needs the most attention right now. Here we'll understand what's really bothering you: distance, hard conversations, conflict, loneliness, or lack of quality time. No need for perfect words.",
+      "introChosen": "You chose to focus on relationships. The goal is to understand what bothers you most — and build a simple, realistic goal.",
+      "painQuestion": "What best describes how your relationships feel right now?",
+      "painHint": "You can pick several. Choose what's closest.",
+      "painChips": [
+        {"id": "distance", "label": "I feel distant from people close to me"},
+        {"id": "hard_talk", "label": "Hard to talk about what matters"},
+        {"id": "conflict", "label": "Conflict or tension"},
+        {"id": "lonely", "label": "Loneliness"},
+        {"id": "no_time", "label": "No real quality time"},
+        {"id": "hard_open", "label": "Hard to open up"},
+        {"id": "avoid_hard", "label": "I avoid hard conversations"},
+        {"id": "not_heard", "label": "I don't feel heard"},
+        {"id": "guilt", "label": "Guilt about not being present enough"},
+        {"id": "surface", "label": "Relationships feel superficial"}
+      ],
+      "painPlaceholder": "e.g. I feel distant, it's hard to talk about what matters, and we don't have real quality time.",
+      "starterPhrases": [
+        "I feel distant from people who matter, even when we're together.",
+        "It's hard to talk about what really bothers me in relationships.",
+        "There are tensions I avoid dealing with.",
+        "I feel lonely even when I'm not alone.",
+        "I want to be more present but don't know how."
+      ],
+      "visionQuestion": "How would you want relationships to feel in 90 days?",
+      "visionHint": "Pick what matters most. You can choose several.",
+      "visionChips": [
+        {"id": "closer", "label": "Closer to people who matter"},
+        {"id": "open_talk", "label": "Open, clear communication"},
+        {"id": "quality_time", "label": "More real quality time"},
+        {"id": "resolve", "label": "I resolve tension without withdrawing"},
+        {"id": "present", "label": "More present in the moment"},
+        {"id": "heard", "label": "I feel heard"}
+      ],
+      "visionPlaceholder": "e.g. I want to feel closer, talk openly, and be truly present.",
+      "reflections": [
+        {
+          "matchAny": ["distance", "hard_talk", "hard_open", "avoid_hard", "surface"],
+          "summary": "It looks like distance and difficulty talking about what matters is the main challenge.",
+          "goal": "The goal here is a small step that brings closeness back — not a perfect conversation, but real movement."
+        },
+        {
+          "matchAny": ["conflict", "not_heard", "lonely"],
+          "summary": "It looks like tension or loneliness is making connection hard.",
+          "goal": "The goal here is small communication that restores a sense of being heard and close."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "It looks like something in relationships is bothering you and making closeness hard.",
+        "goal": "The goal here is a small step that brings connection back — not solving everything at once."
+      }
+    }
+  },
+  "spirit": {
+    "he": {
+      "title": "בוא נדייק מה קורה ברוח ובמשמעות שלך",
+      "introLowest": "רוח ומשמעות הוא התחום שהכי דורש תשומת לב כרגע. כאן נבין מה באמת חסר: משמעות, שקט פנימי, חיבור לערכים או תחושת ריק. אין צורך לנסח מושלם.",
+      "introChosen": "בחרת להתמקד ברוח ומשמעות. המטרה היא להבין מה הכי מפריע לך כרגע — ולבנות מטרה פשוטה וריאלית.",
+      "painQuestion": "מה הכי מתאר את איך אתה מרגיש מבפנים כרגע?",
+      "painHint": "אפשר לבחור כמה תשובות. תבחר את מה שהכי קרוב.",
+      "painChips": [
+        {"id": "no_meaning", "label": "חוסר משמעות"},
+        {"id": "autopilot", "label": "אני חי/ה על אוטומט"},
+        {"id": "no_quiet", "label": "אין שקט פנימי"},
+        {"id": "disconnected", "label": "מרוחק/ה מהערכים שלי"},
+        {"id": "no_intention", "label": "אין כוונה או כיוון"},
+        {"id": "emptiness", "label": "תחושת ריק"},
+        {"id": "going_through", "label": "רק עובר/ת את היום"},
+        {"id": "lost", "label": "מרגיש/ה אבוד/ה"},
+        {"id": "no_gratitude", "label": "קשה לי להרגיש הכרת תודה"},
+        {"id": "surface_life", "label": "החיים מרגישים שטחיים"}
+      ],
+      "painPlaceholder": "לדוגמה: אני חי/ה על אוטומט, אין לי משמעות ברורה, וקשה לי למצוא שקט פנימי.",
+      "starterPhrases": [
+        "אני מרגיש/ה שאני חי/ה על אוטומט בלי כיוון ברור.",
+        "קשה לי למצוא משמעות ביום-יום.",
+        "אני מרוחק/ה ממה שחשוב לי באמת.",
+        "אין לי שקט פנימי ואני מרגיש/ה ריק/ה.",
+        "אני עובר/ת את הימים אבל לא מרגיש/ה שאני באמת חי/ה."
+      ],
+      "visionQuestion": "איך היית רוצה להרגיש מבפנים בעוד 90 יום?",
+      "visionHint": "בחר את הכיוון שהכי חשוב לך. אפשר לבחור כמה.",
+      "visionChips": [
+        {"id": "connected_values", "label": "מחובר/ת לערכים שלי"},
+        {"id": "purpose", "label": "תחושת משמעות וכיוון"},
+        {"id": "inner_quiet", "label": "יותר שקט פנימי"},
+        {"id": "intentional", "label": "חי/ה בכוונה, לא על אוטומט"},
+        {"id": "grateful", "label": "יותר הכרת תודה ביום-יום"},
+        {"id": "contribute", "label": "תורם/ת למשהו גדול מעצמי"}
+      ],
+      "visionPlaceholder": "לדוגמה: אני רוצה להרגיש מחובר/ת למה שחשוב לי, עם יותר שקט פנימי וכיוון ברור.",
+      "reflections": [
+        {
+          "matchAny": ["no_meaning", "emptiness", "lost", "surface_life"],
+          "summary": "נראה שחוסר משמעות או ריקנות הם האתגר המרכזי.",
+          "goal": "המטרה כאן תהיה לבנות צעד קטן שמחזיר חיבור למה שחשוב — לא לפתור את כל החיים בבת אחת."
+        },
+        {
+          "matchAny": ["autopilot", "going_through", "no_intention", "disconnected"],
+          "summary": "נראה שאתה חי/ה על אוטומט, מרוחק/ה ממה שחשוב באמת.",
+          "goal": "המטרה כאן תהיה לבנות רגעים קטנים של כוונה שמחזירים תחושת חיים אמיתית."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "נראה שיש משהו מבפנים שמבקש יותר תשומת לב.",
+        "goal": "המטרה כאן תהיה לבנות צעד קטן שמחזיר חיבור ומשמעות."
+      }
+    },
+    "en": {
+      "title": "Let's get specific about your spirit and meaning",
+      "introLowest": "Spirit and meaning is the area that needs the most attention right now. Here we'll understand what's missing: purpose, inner quiet, connection to values, or emptiness. No need for perfect words.",
+      "introChosen": "You chose to focus on spirit and meaning. The goal is to understand what bothers you most — and build a simple, realistic goal.",
+      "painQuestion": "What best describes how you feel inside right now?",
+      "painHint": "You can pick several. Choose what's closest.",
+      "painChips": [
+        {"id": "no_meaning", "label": "Lack of meaning"},
+        {"id": "autopilot", "label": "I'm on autopilot"},
+        {"id": "no_quiet", "label": "No inner quiet"},
+        {"id": "disconnected", "label": "Disconnected from my values"},
+        {"id": "no_intention", "label": "No intention or direction"},
+        {"id": "emptiness", "label": "Emptiness"},
+        {"id": "going_through", "label": "Just getting through the day"},
+        {"id": "lost", "label": "I feel lost"},
+        {"id": "no_gratitude", "label": "Hard to feel gratitude"},
+        {"id": "surface_life", "label": "Life feels superficial"}
+      ],
+      "painPlaceholder": "e.g. I'm on autopilot, have no clear meaning, and struggle to find inner quiet.",
+      "starterPhrases": [
+        "I feel I'm on autopilot with no clear direction.",
+        "It's hard to find meaning in daily life.",
+        "I'm disconnected from what truly matters to me.",
+        "I have no inner quiet and feel empty.",
+        "I get through days but don't feel truly alive."
+      ],
+      "visionQuestion": "How would you want to feel inside in 90 days?",
+      "visionHint": "Pick what matters most. You can choose several.",
+      "visionChips": [
+        {"id": "connected_values", "label": "Connected to my values"},
+        {"id": "purpose", "label": "A sense of purpose and direction"},
+        {"id": "inner_quiet", "label": "More inner quiet"},
+        {"id": "intentional", "label": "Living with intention, not autopilot"},
+        {"id": "grateful", "label": "More gratitude day to day"},
+        {"id": "contribute", "label": "Contributing to something bigger than me"}
+      ],
+      "visionPlaceholder": "e.g. I want to feel connected to what matters, with more inner quiet and clear direction.",
+      "reflections": [
+        {
+          "matchAny": ["no_meaning", "emptiness", "lost", "surface_life"],
+          "summary": "It looks like lack of meaning or emptiness is the main challenge.",
+          "goal": "The goal here is a small step that reconnects you to what matters — not solving all of life at once."
+        },
+        {
+          "matchAny": ["autopilot", "going_through", "no_intention", "disconnected"],
+          "summary": "It looks like you're on autopilot, disconnected from what truly matters.",
+          "goal": "The goal here is small moments of intention that bring back a sense of being alive."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "It looks like something inside is asking for more attention.",
+        "goal": "The goal here is a small step that brings back connection and meaning."
+      }
+    }
+  },
+  "house_family": {
+    "he": {
+      "title": "בוא נדייק מה קורה בבית ובמשפחה שלך",
+      "introLowest": "בית ומשפחה הוא התחום שהכי דורש תשומת לב כרגע. כאן נבין מה באמת מפריע: כאוס, עומס, חוסר סדר או לחץ מהמשפחה. אין צורך לנסח מושלם.",
+      "introChosen": "בחרת להתמקד בבית ומשפחה. המטרה היא להבין מה הכי מפריע לך כרגע — ולבנות מטרה פשוטה וריאלית.",
+      "painQuestion": "מה הכי מתאר את איך הבית והמשפחה מרגישים כרגע?",
+      "painHint": "אפשר לבחור כמה תשובות. תבחר את מה שהכי קרוב.",
+      "painChips": [
+        {"id": "chaos", "label": "כאוס בבית"},
+        {"id": "family_overload", "label": "עומס משפחתי כבד"},
+        {"id": "no_order", "label": "אין סדר שעובד"},
+        {"id": "kids_stress", "label": "לחץ מהילדים"},
+        {"id": "no_space", "label": "אין מרחב אישי"},
+        {"id": "chores_pile", "label": "עבודות בית מצטברות"},
+        {"id": "tension_home", "label": "מתחים בבית"},
+        {"id": "alone_carry", "label": "אני נושא/ת הכל לבד"},
+        {"id": "no_routine", "label": "אין שגרות שעובדות"},
+        {"id": "home_drains", "label": "הבית שוחק אותי במקום לתמוך"}
+      ],
+      "painPlaceholder": "לדוגמה: יש כאוס בבית, עבודות מצטברות, ואני מרגיש/ה שאין לי מרחב לעצמי.",
+      "starterPhrases": [
+        "הבית מרגיש כאוטי ואני לא מספיק/ה לסדר.",
+        "אני נושא/ת עומס משפחתי כבד לבד.",
+        "אין לי מרחב אישי ואני מתעייף/ת מהבית.",
+        "עבודות הבית מצטברות ואני מרגיש/ה מוצף/ת.",
+        "יש מתחים בבית שאני לא יודע/ת איך לפתור."
+      ],
+      "visionQuestion": "איך היית רוצה שהבית ירגיש בעוד 90 יום?",
+      "visionHint": "בחר את הכיוון שהכי חשוב לך. אפשר לבחור כמה.",
+      "visionChips": [
+        {"id": "calmer_home", "label": "בית רגוע ויציב יותר"},
+        {"id": "routines", "label": "שגרות שעובדות"},
+        {"id": "shared_load", "label": "אחריות משותפת שמתפקדת"},
+        {"id": "personal_space", "label": "יש לי מרחב אישי"},
+        {"id": "supportive", "label": "הבית תומך בי"},
+        {"id": "order", "label": "סדר שאפשר לשמור עליו"}
+      ],
+      "visionPlaceholder": "לדוגמה: אני רוצה בית רגוע יותר, שגרות שעובדות, ומרחב לנשום.",
+      "reflections": [
+        {
+          "matchAny": ["chaos", "no_order", "chores_pile", "no_routine"],
+          "summary": "נראה שהכאוס והעומס הפיזי בבית הם האתגר המרכזי.",
+          "goal": "המטרה כאן תהיה לבנות שגרה קטנה שמחזירה סדר — לא לנקות הכל בבת אחת."
+        },
+        {
+          "matchAny": ["family_overload", "alone_carry", "kids_stress", "no_space", "home_drains"],
+          "summary": "נראה שהעומס המשפחתי שוחק אותך ואין מספיק מרחב לעצמך.",
+          "goal": "המטרה כאן תהיה לבנות גבולות קטנים ולחזור לתחושה שהבית תומך בך."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "נראה שהבית מבקש יותר תשומת לב ממה שאתה נותן לו כרגע.",
+        "goal": "המטרה כאן תהיה לבנות צעד קטן שמחזיר רוגע ותחושת שליטה."
+      }
+    },
+    "en": {
+      "title": "Let's get specific about your home and family",
+      "introLowest": "Home and family is the area that needs the most attention right now. Here we'll understand what's really bothering you: chaos, overload, lack of order, or family pressure. No need for perfect words.",
+      "introChosen": "You chose to focus on home and family. The goal is to understand what bothers you most — and build a simple, realistic goal.",
+      "painQuestion": "What best describes how home and family feel right now?",
+      "painHint": "You can pick several. Choose what's closest.",
+      "painChips": [
+        {"id": "chaos", "label": "Chaos at home"},
+        {"id": "family_overload", "label": "Heavy family load"},
+        {"id": "no_order", "label": "No order that works"},
+        {"id": "kids_stress", "label": "Stress from kids"},
+        {"id": "no_space", "label": "No personal space"},
+        {"id": "chores_pile", "label": "Piling chores"},
+        {"id": "tension_home", "label": "Tension at home"},
+        {"id": "alone_carry", "label": "I carry everything alone"},
+        {"id": "no_routine", "label": "No routines that work"},
+        {"id": "home_drains", "label": "Home drains me instead of supporting me"}
+      ],
+      "painPlaceholder": "e.g. There's chaos at home, chores pile up, and I have no space for myself.",
+      "starterPhrases": [
+        "Home feels chaotic and I can't keep up with order.",
+        "I carry a heavy family load alone.",
+        "I have no personal space and I'm tired of home.",
+        "Chores pile up and I feel overwhelmed.",
+        "There's tension at home I don't know how to resolve."
+      ],
+      "visionQuestion": "How would you want home to feel in 90 days?",
+      "visionHint": "Pick what matters most. You can choose several.",
+      "visionChips": [
+        {"id": "calmer_home", "label": "A calmer, steadier home"},
+        {"id": "routines", "label": "Routines that work"},
+        {"id": "shared_load", "label": "Shared responsibility that works"},
+        {"id": "personal_space", "label": "I have personal space"},
+        {"id": "supportive", "label": "Home supports me"},
+        {"id": "order", "label": "Order I can maintain"}
+      ],
+      "visionPlaceholder": "e.g. I want a calmer home, routines that work, and space to breathe.",
+      "reflections": [
+        {
+          "matchAny": ["chaos", "no_order", "chores_pile", "no_routine"],
+          "summary": "It looks like chaos and physical overload at home is the main challenge.",
+          "goal": "The goal here is a small routine that brings order back — not cleaning everything at once."
+        },
+        {
+          "matchAny": ["family_overload", "alone_carry", "kids_stress", "no_space", "home_drains"],
+          "summary": "It looks like family load is draining you and there's not enough space for yourself.",
+          "goal": "The goal here is small boundaries and restoring a sense that home supports you."
+        }
+      ],
+      "defaultReflection": {
+        "summary": "It looks like home is asking for more attention than you're giving it right now.",
+        "goal": "The goal here is a small step that brings calm and a sense of control."
+      }
+    }
+  }
+}

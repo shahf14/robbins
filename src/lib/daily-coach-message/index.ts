@@ -1,0 +1,1 @@
+export {generateDailyCoachMessage} from './generate';

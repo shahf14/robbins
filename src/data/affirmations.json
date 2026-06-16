@@ -1,0 +1,1150 @@
+{
+  "affirmations": [
+    {
+      "id": "default-1",
+      "title_he": "תנועה",
+      "title_en": "Motion",
+      "text_he": "אני לא מחכה למוטיבציה. אני יוצר תנועה.",
+      "text_en": "I do not wait for motivation. I create motion.",
+      "tags": [
+        "discipline",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-2",
+      "title_he": "פעולה",
+      "title_en": "Action",
+      "text_he": "היום אני בוחר פעולה על פני בריחה.",
+      "text_en": "Today I choose action over escape.",
+      "tags": [
+        "discipline",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-3",
+      "title_he": "סיום",
+      "title_en": "Finisher",
+      "text_he": "אני אדם שמסיים דברים.",
+      "text_en": "I am the kind of person who finishes what he starts.",
+      "tags": [
+        "identity",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-4",
+      "title_he": "רגיעה",
+      "title_en": "Calm",
+      "text_he": "אני נשאר רגוע תחת לחץ ופועל מתוך בהירות.",
+      "text_en": "I stay calm under pressure and act from clarity.",
+      "tags": [
+        "calm",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-5",
+      "title_he": "עומק",
+      "title_en": "Depth",
+      "text_he": "אני בוחר עומק על פני בריחה. כל יום מחדש.",
+      "text_en": "I choose depth over escape. Every single day.",
+      "tags": [
+        "identity",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-6",
+      "title_he": "סטנדרט",
+      "title_en": "Standard",
+      "text_he": "אני לא מוריד סטנדרט כי קשה. אני עולה אליו.",
+      "text_en": "I do not lower my standard because it is hard. I rise to it.",
+      "tags": [
+        "discipline",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-7",
+      "title_he": "שליטה במחשבה",
+      "title_en": "Mind Control",
+      "text_he": "המוח שלי הוא המשרת שלי, לא המנהל שלי.",
+      "text_en": "My mind is my servant, not my master.",
+      "tags": [
+        "discipline",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-8",
+      "title_he": "חיווט מחדש",
+      "title_en": "Rewired",
+      "text_he": "אני ממוקד רק במה שבשליטתי ומשחרר את השאר.",
+      "text_en": "I focus only on what I can control and release the rest.",
+      "tags": [
+        "calm",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-9",
+      "title_he": "המצב שלי",
+      "title_en": "My State",
+      "text_he": "אני קובע את הטון של היום הזה, לא הנסיבות.",
+      "text_en": "I dictate the tone of this day, not my circumstances.",
+      "tags": [
+        "identity",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-10",
+      "title_he": "אי נוחות",
+      "title_en": "Discomfort",
+      "text_he": "אי נוחות היא רק חומרי הבנייה של הגרסה הבאה שלי.",
+      "text_en": "Discomfort is just the building blocks of my next version.",
+      "tags": [
+        "discipline",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-11",
+      "title_he": "עכשיו",
+      "title_en": "Now",
+      "text_he": "העבר שלי לא מגדיר את העתיד שלי. הרגע הזה כן.",
+      "text_en": "My past does not define my future. This moment does.",
+      "tags": [
+        "identity",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-12",
+      "title_he": "פוקוס לייזר",
+      "title_en": "Laser Focus",
+      "text_he": "היכן שהפוקוס שלי נמצא, האנרגיה שלי זורמת.",
+      "text_en": "Where focus goes, energy flows.",
+      "tags": [
+        "energy",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-13",
+      "title_he": "עצמאות רגשית",
+      "title_en": "Emotional Freedom",
+      "text_he": "שום דבר בחוץ לא יכול להרוס את השקט שבניתי בפנים.",
+      "text_en": "Nothing outside can break the peace I built inside.",
+      "tags": [
+        "calm",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-14",
+      "title_he": "צעד אחד",
+      "title_en": "One Step",
+      "text_he": "אני לא צריך לראות את כל המדרגות. רק את הצעד הבא.",
+      "text_en": "I don't need to see the whole staircase. Just the next step.",
+      "tags": [
+        "calm",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-15",
+      "title_he": "עשייה אקטיבית",
+      "title_en": "Active Doing",
+      "text_he": "פחד הוא רק אות אזהרה, לא סיבה לעצור.",
+      "text_en": "Fear is just a signal, not a reason to stop.",
+      "tags": [
+        "confidence",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-16",
+      "title_he": "משמעת",
+      "title_en": "Discipline",
+      "text_he": "אני עושה את מה שצריך לעשות, גם כשלא בא לי.",
+      "text_en": "I do what needs to be done, especially when I don't feel like it.",
+      "tags": [
+        "discipline",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-17",
+      "title_he": "נוכחות",
+      "title_en": "Presence",
+      "text_he": "אני כאן, אני ער, ואני מחויב ב-100% לרגע הזה.",
+      "text_en": "I am here, I am awake, and I am 100% committed to this moment.",
+      "tags": [
+        "identity",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-18",
+      "title_he": "אמונה עצמית",
+      "title_en": "Self-Belief",
+      "text_he": "אני סומך על היכולת שלי לפצח כל בעיה שתצוץ.",
+      "text_en": "I trust my ability to figure out any problem that appears.",
+      "tags": [
+        "confidence",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-19",
+      "title_he": "תדלוק",
+      "title_en": "Fuel",
+      "text_he": "קשיים הם לא מכשולים, הם הדלק של המומנטום שלי.",
+      "text_en": "Difficulties are not obstacles; they are fuel for my momentum.",
+      "tags": [
+        "energy",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-20",
+      "title_he": "ניצחון בוקר",
+      "title_en": "Morning Win",
+      "text_he": "הבוקר הזה שייך לי. היום הזה נבנה על ידי.",
+      "text_en": "This morning belongs to me. This day is built by me.",
+      "tags": [
+        "energy",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-21",
+      "title_he": "חוסן פיזי",
+      "title_en": "Physical Resilience",
+      "text_he": "הגוף שלי חזק, המוח שלי חד, האנרגיה שלי גבוהה.",
+      "text_en": "My body is strong, my mind is sharp, my energy is high.",
+      "tags": [
+        "energy",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-22",
+      "title_he": "עקביות",
+      "title_en": "Consistency",
+      "text_he": "צעדים קטנים בכל יום בונים אימפריה בלתי ניתנת לעצירה.",
+      "text_en": "Small daily steps build an unstoppable empire.",
+      "tags": [
+        "discipline",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-23",
+      "title_he": "חוסר פחד",
+      "title_en": "Fearless",
+      "text_he": "אני גדול יותר מכל אתגר שהיום הזה יכול להציב בפניי.",
+      "text_en": "I am bigger than any challenge this day can bring.",
+      "tags": [
+        "confidence",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-24",
+      "title_he": "מרכז שקט",
+      "title_en": "Quiet Center",
+      "text_he": "בתוך הסערה שבחוץ, השקט הפנימי שלי נשאר יציב.",
+      "text_en": "Within the chaos outside, my inner quiet remains solid.",
+      "tags": [
+        "calm",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-25",
+      "title_he": "אחריות",
+      "title_en": "Ownership",
+      "text_he": "אני לא מאשים. אני לא מתלונן. אני לוקח אחריות ופועל.",
+      "text_en": "I don't blame. I don't complain. I take ownership and act.",
+      "tags": [
+        "identity",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-26",
+      "title_he": "התמדה",
+      "title_en": "Persistence",
+      "text_he": "אני לא מפסיק כשנמאס לי, אני מפסיק כשסיימתי.",
+      "text_en": "I don't stop when I'm tired; I stop when I'm done.",
+      "tags": [
+        "discipline",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-27",
+      "title_he": "ערך פנימי",
+      "title_en": "Worth",
+      "text_he": "הערך שלי לא תלוי באישור של אף אחד אחר.",
+      "text_en": "My worth does not depend on anyone else's approval.",
+      "tags": [
+        "confidence",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-28",
+      "title_he": "צמיחה",
+      "title_en": "Growth",
+      "text_he": "כל חוויה היום הופכת אותי לחזק, חכם וטוב יותר.",
+      "text_en": "Every experience today makes me stronger, wiser, and better.",
+      "tags": [
+        "identity",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-29",
+      "title_he": "בהירות פנימית",
+      "title_en": "Inner Clarity",
+      "text_he": "אני יודע מי אני, מה המטרות שלי ולאן אני הולך.",
+      "text_en": "I know who I am, what my goals are, and where I am going.",
+      "tags": [
+        "identity",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-30",
+      "title_he": "הזדמנות",
+      "title_en": "Opportunity",
+      "text_he": "הבעיות של היום הן הניצחונות וההזדמנויות של מחר.",
+      "text_en": "Today's problems are tomorrow's wins and opportunities.",
+      "tags": [
+        "energy",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-31",
+      "title_he": "החלטה",
+      "title_en": "Decision",
+      "text_he": "החלטה אמיתית נמדדת בפעולה חדשה בשטח.",
+      "text_en": "A real decision is measured by a new action in reality.",
+      "tags": [
+        "discipline",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-32",
+      "title_he": "נחישות",
+      "title_en": "Determination",
+      "text_he": "אין תירוצים. יש רק תוצאות ודרכים חדשות להתקדם.",
+      "text_en": "No excuses. Only results and new ways forward.",
+      "tags": [
+        "discipline",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-33",
+      "title_he": "שחרור דאגה",
+      "title_en": "Release Worry",
+      "text_he": "דאגה היא בזבוז אנרגיה. אני מתעל אותה לעשייה.",
+      "text_en": "Worrying is a waste of energy. I channel it into doing.",
+      "tags": [
+        "calm",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-34",
+      "title_he": "אדריכל החיים",
+      "title_en": "Life Architect",
+      "text_he": "אני לא מחכה שהמזל ישתנה. אני מעצב את המציאות שלי.",
+      "text_en": "I don't wait for luck to change. I design my reality.",
+      "tags": [
+        "identity",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-35",
+      "title_he": "ללא גבולות",
+      "title_en": "Limitless",
+      "text_he": "הגבולות היחידים שלי הם אלו שאני מציב במחשבה שלי.",
+      "text_en": "The only limits I have are the ones I place in my mind.",
+      "tags": [
+        "confidence",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-36",
+      "title_he": "עצירת רעש",
+      "title_en": "Stop the Noise",
+      "text_he": "הסחות דעת מנסות לגנוב את העתיד שלי. אני נשאר ממוקד.",
+      "text_en": "Distractions try to steal my future. I stay locked in.",
+      "tags": [
+        "discipline",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-37",
+      "title_he": "שבירת פחד",
+      "title_en": "Breaking Fear",
+      "text_he": "אני פועל באומץ רב בדיוק במקומות שבהם הפחד מופיע.",
+      "text_en": "I act with courage exactly where fear appears.",
+      "tags": [
+        "confidence",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-38",
+      "title_he": "עמוד שדרה",
+      "title_en": "Backbone",
+      "text_he": "אני עומד זקוף. המערכת העצבית שלי מוכנה לכל תרחיש.",
+      "text_en": "I stand tall. My nervous system is ready for anything.",
+      "tags": [
+        "energy",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-39",
+      "title_he": "למידה",
+      "title_en": "Mastery",
+      "text_he": "כל טעות היום היא רק שיעור בדרך למאסטרי שלי.",
+      "text_en": "Every mistake today is just a lesson on my path to mastery.",
+      "tags": [
+        "confidence",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-40",
+      "title_he": "קצב פנימי",
+      "title_en": "Internal Pace",
+      "text_he": "אני מנווט את היום שלי מתוך רוגע פנימי עמוק.",
+      "text_en": "I navigate my day from a place of deep inner calm.",
+      "tags": [
+        "calm",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-41",
+      "title_he": "אנרגיה גבוהה",
+      "title_en": "Peak State",
+      "text_he": "אני מביא אנרגיה שיא לכל משימה, קטנה כגדולה.",
+      "text_en": "I bring peak energy to every task, big or small.",
+      "tags": [
+        "energy",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-42",
+      "title_he": "תחרות עצמית",
+      "title_en": "Self-Competition",
+      "text_he": "אני לא מתחרה באחרים. אני מנצח את הגרסה של אתמול.",
+      "text_en": "I don't compete with others. I beat yesterday's version of myself.",
+      "tags": [
+        "identity",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-43",
+      "title_he": "שקט בחזה",
+      "title_en": "Chest Calm",
+      "text_he": "הנשימה שלי עמוקה, הכתפיים שלי משוחררות, אני בשליטה.",
+      "text_en": "My breath is deep, my shoulders are dropped, I am in control.",
+      "tags": [
+        "calm",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-44",
+      "title_he": "סבלנות אקטיבית",
+      "title_en": "Active Patience",
+      "text_he": "אני זורע את הזרעים בעבודה קשה וסומך על התהליך.",
+      "text_en": "I sow the seeds with hard work and trust the process.",
+      "tags": [
+        "discipline",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-45",
+      "title_he": "השפעה",
+      "title_en": "Impact",
+      "text_he": "הנוכחות שלי היום מביאה ערך וכוח לסובבים אותי.",
+      "text_en": "My presence today brings value and strength to those around me.",
+      "tags": [
+        "identity",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-46",
+      "title_he": "ביצוע",
+      "title_en": "Execution",
+      "text_he": "רעיונות הם זולים. ביצוע הוא הכל. היום אני מבצע.",
+      "text_en": "Ideas are cheap. Execution is everything. Today, I execute.",
+      "tags": [
+        "discipline",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-47",
+      "title_he": "חוסן רגשי",
+      "title_en": "Emotional Fitness",
+      "text_he": "אני מסוגל להכיל אי נוחות מבלי להישבר או לברוח.",
+      "text_en": "I can handle discomfort without breaking or running away.",
+      "tags": [
+        "confidence",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-48",
+      "title_he": "בחירת פוקוס",
+      "title_en": "Choosing Focus",
+      "text_he": "אני מסרב להקדיש זמן למה שאינו מקדם את המטרות שלי.",
+      "text_en": "I refuse to spend time on things that do not move my goals forward.",
+      "tags": [
+        "discipline",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-49",
+      "title_he": "שחרור העבר",
+      "title_en": "Letting Go",
+      "text_he": "אני מניח למה שהיה ומשקיע את כולי במה שישנו.",
+      "text_en": "I let go of what was and invest my all into what is.",
+      "tags": [
+        "calm",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-50",
+      "title_he": "ניצחון פנימי",
+      "title_en": "Inner Victory",
+      "text_he": "הניצחון הראשון והחשוב ביותר מתרחש בתוך הראש שלי.",
+      "text_en": "The first and most important victory happens inside my own head.",
+      "tags": [
+        "identity",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-51",
+      "title_he": "פרודוקטיביות",
+      "title_en": "Productivity",
+      "text_he": "אני לא סתם עסוק. אני מתקדם ביעילות לעבר היעדים.",
+      "text_en": "I am not just busy. I am productively moving toward my goals.",
+      "tags": [
+        "discipline",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-52",
+      "title_he": "מגנט אנרגיה",
+      "title_en": "Energy Magnet",
+      "text_he": "האנרגיה החיובית שלי מדבקת ומניעה אנשים לפעולה.",
+      "text_en": "My positive energy is contagious and drives people to action.",
+      "tags": [
+        "energy",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-53",
+      "title_he": "עצירה מודעת",
+      "title_en": "Conscious Pause",
+      "text_he": "כשמגיע דחף לברוח, אני עוצר, נושם ובוחר בעומק.",
+      "text_en": "When the urge to escape comes, I pause, breathe, and choose depth.",
+      "tags": [
+        "calm",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-54",
+      "title_he": "ביטחון גופני",
+      "title_en": "Body Confidence",
+      "text_he": "אני נע בעולם מתוך תחושת כוח, יציבות וביטחון עצמי.",
+      "text_en": "I move through the world with a sense of strength, stability, and confidence.",
+      "tags": [
+        "confidence",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-55",
+      "title_he": "ללא תנאים",
+      "title_en": "Unconditional",
+      "text_he": "רמת המחויבות שלי לא תלויה במצב הרוח שבו קמתי.",
+      "text_en": "My level of commitment does not depend on the mood I woke up in.",
+      "tags": [
+        "discipline",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-56",
+      "title_he": "אינטליגנציה",
+      "title_en": "Resourcefulness",
+      "text_he": "אם אין דרך, אני לא מרים ידיים. אני מוצא או מייצר אחת.",
+      "text_en": "If there is no way, I don't give up. I find one or make one.",
+      "tags": [
+        "confidence",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-57",
+      "title_he": "שלווה",
+      "title_en": "Serenity",
+      "text_he": "אני מקבל באהבה את מה שאיני יכול לשנות, ומשנה את מה שכן.",
+      "text_en": "I accept what I cannot change, and courageously change what I can.",
+      "tags": [
+        "calm",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-58",
+      "title_he": "מומנטום",
+      "title_en": "Momentum",
+      "text_he": "כל פעולה קטנה שלי עכשיו מזינה מומנטום ענק להמשך.",
+      "text_en": "Every small action I take now feeds a massive momentum for later.",
+      "tags": [
+        "energy",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-59",
+      "title_he": "זהות מנצחת",
+      "title_en": "Winning Identity",
+      "text_he": "אני אדם שעומד במילים שלו ומקיים הבטחות לעצמו.",
+      "text_en": "I am a person who keeps his word and fulfills promises to himself.",
+      "tags": [
+        "identity",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-60",
+      "title_he": "פרו-אקטיבי",
+      "title_en": "Proactive",
+      "text_he": "אני יוצר הזדמנויות, לא מחכה שהן יפלו עליי מהשמים.",
+      "text_en": "I create opportunities; I don't wait for them to drop from the sky.",
+      "tags": [
+        "energy",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-61",
+      "title_he": "עצמאות",
+      "title_en": "Self-Reliance",
+      "text_he": "יש בי את כל המשאבים הדרושים כדי להצליח היום.",
+      "text_en": "I possess all the resources necessary to succeed today.",
+      "tags": [
+        "confidence",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-62",
+      "title_he": "זמן איכות",
+      "title_en": "Quality Time",
+      "text_he": "אני נוכח לחלוטין עבור האנשים שאני אוהב היום.",
+      "text_en": "I am fully present for the people I love today.",
+      "tags": [
+        "calm",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-63",
+      "title_he": "בהירות מטרות",
+      "title_en": "Clear Goals",
+      "text_he": "החזון שלי ברור, ואני צועד אליו בצעדים בטוחים.",
+      "text_en": "My vision is clear, and I march toward it with certain steps.",
+      "tags": [
+        "identity",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-64",
+      "title_he": "ללא פשרות",
+      "title_en": "No Compromise",
+      "text_he": "אני מסרב להתפשר על פחות מהטוב ביותר שלי.",
+      "text_en": "I refuse to compromise on less than my absolute best.",
+      "tags": [
+        "discipline",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-65",
+      "title_he": "חוסן מנטלי",
+      "title_en": "Mental Toughness",
+      "text_he": "ביקורת או דעות של אחרים לא מזיזות אותי מהמסלול.",
+      "text_en": "Criticism or opinions of others do not move me off my track.",
+      "tags": [
+        "confidence",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-66",
+      "title_he": "שחרור לחץ",
+      "title_en": "Decompress",
+      "text_he": "לחץ הוא רק אנרגיה שמחפשת כיוון. אני מכוון אותה ליצירה.",
+      "text_en": "Pressure is just energy looking for direction. I guide it to creation.",
+      "tags": [
+        "calm",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-67",
+      "title_he": "התפתחות",
+      "title_en": "Evolution",
+      "text_he": "אני משתפר וצומח ב-1% בכל יום. זה שערורייתי לטווח הארוך.",
+      "text_en": "I improve and grow by 1% every day. This compounds massively.",
+      "tags": [
+        "identity",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-68",
+      "title_he": "אומץ לעשות",
+      "title_en": "Courage to Do",
+      "text_he": "אני עושה את הדבר המפחיד ראשון על הבוקר ומנצח אותו.",
+      "text_en": "I do the scary thing first thing in the morning and conquer it.",
+      "tags": [
+        "confidence",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-69",
+      "title_he": "מיקוד פנימי",
+      "title_en": "Internal Focus",
+      "text_he": "אני מפסיק להשוות את הפנים שלי לחוץ של אחרים.",
+      "text_en": "I stop comparing my inside to everyone else's outside.",
+      "tags": [
+        "calm",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-70",
+      "title_he": "משמעת ברזל",
+      "title_en": "Iron Discipline",
+      "text_he": "החופש האמיתי שלי נמצא בתוך המשמעת שאני גוזר על עצמי.",
+      "text_en": "My true freedom is found within the discipline I enforce on myself.",
+      "tags": [
+        "discipline",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-71",
+      "title_he": "השראה אקטיבית",
+      "title_en": "Inspiration",
+      "text_he": "אני לא מחכה להשראה שתיפול. העבודה שלי מייצרת אותה.",
+      "text_en": "I don't wait for inspiration to strike. My work generates it.",
+      "tags": [
+        "energy",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-72",
+      "title_he": "ערך עצמי",
+      "title_en": "Self-Worth",
+      "text_he": "אני ראוי להצלחה, לאושר ולשגשוג שאני בונה במו ידיי.",
+      "text_en": "I am worthy of the success, happiness, and prosperity I build.",
+      "tags": [
+        "confidence",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-73",
+      "title_he": "שליטה רגשית",
+      "title_en": "Emotional Control",
+      "text_he": "אני בוחר איך להגיב לכל סיטואציה. התגובה היא העוצמה שלי.",
+      "text_en": "I choose how to respond to any situation. My response is my power.",
+      "tags": [
+        "calm",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-74",
+      "title_he": "לנצח את הנוחות",
+      "title_en": "Beating Comfort",
+      "text_he": "אזור הנוחות הוא מקום נעים, אך שום דבר לא צומח שם.",
+      "text_en": "The comfort zone is a nice place, but nothing ever grows there.",
+      "tags": [
+        "discipline",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-75",
+      "title_he": "מנהיגות",
+      "title_en": "Leadership",
+      "text_he": "אני מוביל את עצמי קודם כל. הדוגמה האישית שלי היא המנהיגות.",
+      "text_en": "I lead myself first. My personal example is my leadership.",
+      "tags": [
+        "identity",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-76",
+      "title_he": "תודעת שפע",
+      "title_en": "Abundance",
+      "text_he": "יש אינספור הזדמנויות בעולם, ואני מוכן לקחת את שלי.",
+      "text_en": "There are endless opportunities out there, and I am ready to claim mine.",
+      "tags": [
+        "energy",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-77",
+      "title_he": "פשטות בקצב",
+      "title_en": "Simplicity",
+      "text_he": "אני מפרק בעיות גדולות לפעולות פשוטות ומבצע מיד.",
+      "text_en": "I break large problems into simple actions and execute immediately.",
+      "tags": [
+        "calm",
+        "discipline"
+      ]
+    },
+    {
+      "id": "default-78",
+      "title_he": "יציבות פיזית",
+      "title_en": "Physical Solid",
+      "text_he": "הגוף שלי הוא העוגן שלי. אני מרגיש מחובר, יציב וחזק.",
+      "text_en": "My body is my anchor. I feel grounded, stable, and strong.",
+      "tags": [
+        "energy",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-79",
+      "title_he": "חגיגת ניצחון",
+      "title_en": "Celebrate Wins",
+      "text_he": "אני חוגג כל ניצחון קטן כדי לחווק את המוח שלי להצלחה.",
+      "text_en": "I celebrate every small win to wire my brain for success.",
+      "tags": [
+        "confidence",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-80",
+      "title_he": "מיקוד אסטרטגי",
+      "title_en": "Strategy",
+      "text_he": "אני לא רק עובד קשה, אני עובד חכם וממוקד מטרה.",
+      "text_en": "I don't just work hard; I work smart and goal-focused.",
+      "tags": [
+        "discipline",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-81",
+      "title_he": "שבירת תקיעות",
+      "title_en": "Breakthrough",
+      "text_he": "תקיעות היא רק הזמנה לפעול אחרת. אני משנה גישה ומנצח.",
+      "text_en": "Being stuck is just an invitation to act differently. I shift and win.",
+      "tags": [
+        "energy",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-82",
+      "title_he": "בניית ערך",
+      "title_en": "Building Value",
+      "text_he": "העבודה שלי היום בונה את הערך והביטחון של המחר שלי.",
+      "text_en": "My work today builds the value and security of my tomorrow.",
+      "tags": [
+        "discipline",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-83",
+      "title_he": "נשימה ואיפוס",
+      "title_en": "Breathe & Reset",
+      "text_he": "בכל רגע של לחץ, אני לוקח נשימה עמוקה ומאפס את המערכת.",
+      "text_en": "In any moment of stress, I take a deep breath and reset my system.",
+      "tags": [
+        "calm",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-84",
+      "title_he": "יוצר מציאות",
+      "title_en": "Reality Creator",
+      "text_he": "אני השחקן הראשי בחיים שלי, לא צופה מהצד.",
+      "text_en": "I am the lead actor in my life, not a spectator.",
+      "tags": [
+        "identity",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-85",
+      "title_he": "שחרור ספק",
+      "title_en": "Crush Doubt",
+      "text_he": "אני מוחק את הספק העצמי באמצעות פעולה מיידית בשטח.",
+      "text_en": "I crush self-doubt through immediate action in reality.",
+      "tags": [
+        "confidence",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-86",
+      "title_he": "התמדה עיקשת",
+      "title_en": "Stubborn Grit",
+      "text_he": "הנחישות שלי גדולה יותר מכל מכשול זמני שיעמוד מולי.",
+      "text_en": "My grit is bigger than any temporary obstacle in front of me.",
+      "tags": [
+        "discipline",
+        "energy"
+      ]
+    },
+    {
+      "id": "default-87",
+      "title_he": "בהירות דיבור",
+      "title_en": "Clear Speak",
+      "text_he": "המילים שאני בוחר להגיד לעצמי בונות את הכימיה של הגוף שלי.",
+      "text_en": "The words I choose to tell myself build my body's chemistry.",
+      "tags": [
+        "identity",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-88",
+      "title_he": "מיקוד אבסולוטי",
+      "title_en": "Absolute Focus",
+      "text_he": "היום אני עושה פחות דברים, אבל בעומק ובאיכות הרבה יותר גבוהים.",
+      "text_en": "Today I do fewer things, but with much greater depth and quality.",
+      "tags": [
+        "discipline",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-89",
+      "title_he": "חיוניות",
+      "title_en": "Vitality",
+      "text_he": "אני מזרים חיוניות ואנרגיה לכל תא ותא בגוף שלי ברגע זה.",
+      "text_en": "I pump vitality and energy into every single cell of my body right now.",
+      "tags": [
+        "energy",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-90",
+      "title_he": "שחרור אשמה",
+      "title_en": "No Guilt",
+      "text_he": "טעויות העבר שלי שולמו. היום הוא דף חלק, נקי לחלוטין.",
+      "text_en": "My past mistakes are paid for. Today is a completely clean slate.",
+      "tags": [
+        "calm",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-91",
+      "title_he": "מחויבות",
+      "title_en": "Commitment",
+      "text_he": "אני לא רק מנסה. אני מחויב לחלוטין להשיג את התוצאה.",
+      "text_en": "I am not just trying. I am completely committed to getting the result.",
+      "tags": [
+        "discipline",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-92",
+      "title_he": "ביטחון ברור",
+      "title_en": "Quiet Power",
+      "text_he": "העוצמה שלי היא שקטה, יציבה ואינה זקוקה לרעש חיצוני כדי להתקיים.",
+      "text_en": "My power is quiet, stable, and requires no external noise to exist.",
+      "tags": [
+        "confidence",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-93",
+      "title_he": "אדרנלין פוקוס",
+      "title_en": "Focus Adrenaline",
+      "text_he": "אני מתרגש מהאתגרים של היום ומסתער עליהם בראש מורם.",
+      "text_en": "I am excited by today's challenges and attack them with my head held high.",
+      "tags": [
+        "energy",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-94",
+      "title_he": "שליטה בזמן",
+      "title_en": "Time Master",
+      "text_he": "אני מנהל את הזמן שלי, הזמן לא מנהל אותי.",
+      "text_en": "I manage my time; time does not manage me.",
+      "tags": [
+        "discipline",
+        "calm"
+      ]
+    },
+    {
+      "id": "default-95",
+      "title_he": "שלמות פנימית",
+      "title_en": "Wholeness",
+      "text_he": "אני לא מושלם, אבל אני שלם, מתפתח ונע קדימה ללא הרף.",
+      "text_en": "I am not perfect, but I am whole, evolving, and constantly moving forward.",
+      "tags": [
+        "identity",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-96",
+      "title_he": "חוסן אקטיבי",
+      "title_en": "Active Shield",
+      "text_he": "שום אנרגיה שלילית של אנשים אחרים לא חודרת את המגן שלי היום.",
+      "text_en": "No negative energy from others penetrates my shield today.",
+      "tags": [
+        "calm",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-97",
+      "title_he": "חדשנות",
+      "title_en": "Innovation",
+      "text_he": "אני חושב מחוץ לקופסה ומוצא פתרונות חכמים ויצירתיים.",
+      "text_en": "I think outside the box and find smart, creative solutions.",
+      "tags": [
+        "energy",
+        "confidence"
+      ]
+    },
+    {
+      "id": "default-98",
+      "title_he": "חריצות",
+      "title_en": "Grit",
+      "text_he": "אני גאה בזיעה ובעבודה הקשה שאני משקיע בעתיד שלי.",
+      "text_en": "I am proud of the sweat and hard work I invest in my future.",
+      "tags": [
+        "discipline",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-99",
+      "title_he": "איזון עמוק",
+      "title_en": "Deep Alignment",
+      "text_he": "הפעולות שלי היום נמצאות בהלימה מלאה עם הערכים הכי עמוקים שלי.",
+      "text_en": "My actions today are in perfect alignment with my deepest values.",
+      "tags": [
+        "calm",
+        "identity"
+      ]
+    },
+    {
+      "id": "default-100",
+      "title_he": "ניצחון מוחלט",
+      "title_en": "Total Win",
+      "text_he": "אני מסיים את היום הזה כשאני גאה בעצמי, בפעולות שלי ובמי שהפכתי להיות.",
+      "text_en": "I finish this day proud of myself, my actions, and who I have become.",
+      "tags": [
+        "identity",
+        "confidence",
+        "discipline"
+      ]
+    },
+    {
+      "id": "ctx-new-parent-1",
+      "title_he": "מספיק קטן",
+      "title_en": "Small Enough",
+      "text_he": "אני לא צריך/ה לעשות הכל היום. מספיק לשמור על עצמי בצעד קטן אחד.",
+      "text_en": "I do not need to do everything today. Keeping myself steady with one small step is enough.",
+      "tags": ["energy", "calm"],
+      "life_context_include": ["new_parent"]
+    },
+    {
+      "id": "ctx-student-1",
+      "title_he": "צעד אחד",
+      "title_en": "One Step",
+      "text_he": "בין לימודים לחיים — אני בוחר/ת צעד אחד ברור במקום לרדוף אחרי הכל.",
+      "text_en": "Between studies and life — I choose one clear step instead of chasing everything.",
+      "tags": ["discipline", "calm"],
+      "life_context_include": ["student"]
+    },
+    {
+      "id": "ctx-manager-1",
+      "title_he": "גבול",
+      "title_en": "Boundary",
+      "text_he": "אני יכול/ה להיות אפקטיבי/ת גם כשאני שומר/ת על גבול — לא רק כשאני נותן/ת מכל הכוח.",
+      "text_en": "I can be effective while keeping a boundary — not only when I give everything.",
+      "tags": ["confidence", "calm"],
+      "life_context_include": ["manager"]
+    },
+    {
+      "id": "ctx-caregiver-1",
+      "title_he": "גם אני",
+      "title_en": "Me Too",
+      "text_he": "לטפל באחרים לא אומר לוותר עליי. גם אני ראוי/ה לרגע של הקלה.",
+      "text_en": "Caring for others does not mean giving up on myself. I deserve a moment of ease too.",
+      "tags": ["calm", "energy"],
+      "life_context_include": ["caregiver"]
+    },
+    {
+      "id": "ctx-between-jobs-1",
+      "title_he": "יציבות",
+      "title_en": "Stability",
+      "text_he": "במעבר הזה אני בונה יציבות בצעדים קטנים — לא בלחץ להוכיח הכל מחדש.",
+      "text_en": "In this transition I build stability in small steps — not by pressuring myself to prove everything again.",
+      "tags": ["confidence", "identity"],
+      "life_context_include": ["between_jobs"]
+    }
+  ]
+}

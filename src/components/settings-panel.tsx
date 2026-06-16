@@ -1,0 +1,615 @@
+'use client';
+
+import {useTranslations} from 'next-intl';
+import {type FormEvent, useEffect, useRef, useState} from 'react';
+import {Link} from '@/i18n/navigation';
+import {normalizeLifeContextSelection} from '@/lib/formulation/life-context';
+import {
+  isParticipantGender,
+  normalizeParticipantAge,
+  PARTICIPANT_GENDERS,
+  type ParticipantGender,
+} from '@/lib/formulation/participant-profile';
+import {LifeContextChip} from '@/components/life-context-chip';
+import {formulationApi, lifeCoachApi} from '@/lib/life-coach/api-client';
+import {useLocale} from 'next-intl';
+import type {AppLocale} from '@/i18n/config';
+import {
+  AVAILABLE_TIME_OPTIONS,
+  INTENSITY_PREFERENCES,
+  LIFE_CONTEXT_STATUSES,
+  type AvailableTimePerDay,
+  type IntensityPreference,
+  type LifeContextStatus,
+} from '@/lib/life-coach/types';
+import {
+  COACHING_STYLES,
+  FAMILY_STATUSES,
+  PHYSICAL_CONSIDERATIONS,
+  PREFERRED_ACTION_WINDOWS,
+  loadUserPreferences,
+  saveUserPreferences,
+  type FamilyStatus,
+  type PhysicalConsideration,
+  type PreferredActionWindow,
+} from '@/lib/user-preferences';
+import {inferPreferredActionWindow, isShortAwakeDay} from '@/lib/schedule-content';
+import {syncSchedulePrefsToServer} from '@/lib/sync-schedule-to-server';
+import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microcopy';
+import {LanguageSwitcher} from './language-switcher';
+import {ThemeToggle} from './theme-toggle';
+import {ScheduleReminderSettings} from './schedule-reminder-settings';
+
+export function SettingsPanel() {
+  const t = useTranslations();
+  const locale = useLocale() as AppLocale;
+  const displayNameRef = useRef<HTMLInputElement>(null);
+  const wakeTimeRef = useRef<HTMLInputElement>(null);
+  const sleepTimeRef = useRef<HTMLInputElement>(null);
+  const behavioralAnalyticsRef = useRef<HTMLInputElement>(null);
+  const [coachingStyle, setCoachingStyle] = useState<string>('supportive');
+  const [lifeContexts, setLifeContexts] = useState<LifeContextStatus[]>([]);
+  const [lifeContextNote, setLifeContextNote] = useState('');
+  const [gender, setGender] = useState<ParticipantGender | null>(null);
+  const [age, setAge] = useState('');
+  const [agePreferNot, setAgePreferNot] = useState(false);
+  const [wakeTime, setWakeTime] = useState('07:00');
+  const [sleepTime, setSleepTime] = useState('22:30');
+  const [actionWindow, setActionWindow] = useState<PreferredActionWindow>('flexible');
+  const [availableTime, setAvailableTime] = useState<AvailableTimePerDay>(10);
+  const [intensity, setIntensity] = useState<IntensityPreference>('balanced');
+  const [familyStatus, setFamilyStatus] = useState<FamilyStatus | ''>('');
+  const [physical, setPhysical] = useState<PhysicalConsideration[]>([]);
+  const [saveState, setSaveState] = useState<'idle' | 'saved'>('idle');
+  const [saveMessage, setSaveMessage] = useState('');
+  const [lifeContextChanged, setLifeContextChanged] = useState(false);
+  const [regeneratingSteps, setRegeneratingSteps] = useState(false);
+  const saveResetTimeoutRef = useRef<number | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const timeout = window.setTimeout(() => {
+      const prefs = loadUserPreferences();
+      if (cancelled) return;
+      if (displayNameRef.current) displayNameRef.current.value = prefs.display_name;
+      if (wakeTimeRef.current) wakeTimeRef.current.value = prefs.wake_time;
+      if (sleepTimeRef.current) sleepTimeRef.current.value = prefs.sleep_time;
+      setWakeTime(prefs.wake_time);
+      setSleepTime(prefs.sleep_time);
+      setActionWindow(prefs.preferred_action_window);
+      setAvailableTime(prefs.available_time_per_day);
+      setIntensity(prefs.intensity_preference);
+      setFamilyStatus(prefs.family_status ?? '');
+      setPhysical(prefs.physical_considerations ?? []);
+      if (behavioralAnalyticsRef.current) behavioralAnalyticsRef.current.checked = prefs.behavioral_analytics_enabled;
+      setCoachingStyle(prefs.coaching_style);
+      setLifeContexts(prefs.life_context_statuses ?? []);
+      setLifeContextNote(prefs.life_context_note ?? '');
+      setGender(prefs.gender ?? null);
+      setAgePreferNot(prefs.age_prefer_not === true);
+      setAge(prefs.age != null ? String(prefs.age) : '');
+      void formulationApi.getParticipantProfile().then((profile) => {
+        if (cancelled) return;
+        if ((prefs.life_context_statuses?.length ?? 0) === 0 && profile.life_context_statuses.length > 0) {
+          setLifeContexts(profile.life_context_statuses);
+        }
+        if (!prefs.life_context_note && profile.life_context_note) {
+          setLifeContextNote(profile.life_context_note);
+        }
+        if (!prefs.gender && profile.gender && isParticipantGender(profile.gender)) {
+          setGender(profile.gender);
+        }
+        if (prefs.age == null && profile.age != null) {
+          setAge(String(profile.age));
+        }
+      });
+    }, 0);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeout);
+      if (saveResetTimeoutRef.current) {
+        window.clearTimeout(saveResetTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  function scheduleSaveReset() {
+    if (saveResetTimeoutRef.current) {
+      window.clearTimeout(saveResetTimeoutRef.current);
+    }
+    saveResetTimeoutRef.current = window.setTimeout(() => {
+      setSaveState('idle');
+      saveResetTimeoutRef.current = null;
+    }, 2800);
+  }
+
+  function savePreferences(event?: FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
+    const prevContexts = normalizeLifeContextSelection(
+      loadUserPreferences().life_context_statuses ?? []
+    );
+    const contexts = normalizeLifeContextSelection(lifeContexts);
+    const contextChanged =
+      JSON.stringify(prevContexts) !== JSON.stringify(contexts);
+    const parsedAge = normalizeParticipantAge(age);
+    const nextWake = wakeTimeRef.current?.value ?? wakeTime;
+    const nextSleep = sleepTimeRef.current?.value ?? sleepTime;
+    const saved = saveUserPreferences({
+      display_name: displayNameRef.current?.value ?? '',
+      wake_time: nextWake,
+      sleep_time: nextSleep,
+      preferred_action_window: actionWindow,
+      available_time_per_day: availableTime,
+      intensity_preference: intensity,
+      family_status: familyStatus || undefined,
+      physical_considerations: physical.length ? physical : undefined,
+      coaching_style: coachingStyle as 'supportive' | 'direct' | 'motivational',
+      behavioral_analytics_enabled: behavioralAnalyticsRef.current?.checked ?? true,
+      gender: gender ?? undefined,
+      age: agePreferNot ? undefined : (parsedAge ?? undefined),
+      age_prefer_not: agePreferNot || undefined,
+      life_context_statuses: contexts.length > 0 ? contexts : undefined,
+      life_context_note: lifeContextNote.trim() || undefined,
+    });
+    syncSchedulePrefsToServer(saved);
+    void formulationApi.updateParticipantProfile({
+      life_context_statuses: contexts,
+      life_context_note: lifeContextNote.trim() || null,
+      gender: gender,
+      age: agePreferNot ? null : parsedAge,
+    });
+    setLifeContextChanged(contextChanged && contexts.length > 0);
+    setSaveMessage(
+      contextChanged && contexts.length > 0
+        ? t('lifeContext.settings.savedWithImpact')
+        : t('settings.saved')
+    );
+    setSaveState('saved');
+    scheduleSaveReset();
+  }
+
+  async function regenerateTodaySteps() {
+    setRegeneratingSteps(true);
+    try {
+      const prefs = loadUserPreferences();
+      await lifeCoachApi.generateDailySteps({
+        locale,
+        wake_time: prefs.wake_time,
+        sleep_time: prefs.sleep_time,
+        coaching_style: prefs.coaching_style,
+        force: true,
+      });
+      setSaveMessage(t('lifeContext.settings.stepsRegenerated'));
+      setSaveState('saved');
+      setLifeContextChanged(false);
+      scheduleSaveReset();
+    } catch {
+      setSaveMessage(t('lifeContext.settings.stepsRegenerateError'));
+      setSaveState('saved');
+      scheduleSaveReset();
+    } finally {
+      setRegeneratingSteps(false);
+    }
+  }
+
+  return (
+    <>
+      {saveState === 'saved' ? (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-6 left-1/2 z-[80] flex max-w-md -translate-x-1/2 flex-col items-center gap-2 animate-[fadeIn_0.2s_ease-out]"
+        >
+          <div className="rounded-full border border-emerald-500/30 bg-emerald-500/15 px-5 py-3 text-sm font-semibold text-emerald-300 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur">
+            {saveMessage || t('settings.saved')}
+          </div>
+          {lifeContextChanged ? (
+            <div className="flex flex-col items-center gap-2">
+              <button
+                type="button"
+                className="focus-ring rounded-full border border-[var(--blue)]/35 bg-[var(--blue)]/15 px-4 py-2 text-xs font-bold text-white"
+                disabled={regeneratingSteps}
+                aria-busy={regeneratingSteps}
+                onClick={() => void regenerateTodaySteps()}
+              >
+                {regeneratingSteps
+                  ? t('lifeContext.settings.regeneratingSteps')
+                  : t('lifeContext.settings.regenerateSteps')}
+              </button>
+              <AiActionHelpMicrocopy kind="lifeContextRegenerate" className="text-center" />
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {/* Header */}
+      <section className="panel-surface-strong px-6 py-8 sm:px-8 sm:py-10" aria-label={t('settings.title')}>
+        <p className="eyebrow">{t('settings.eyebrow')}</p>
+        <h1 className="mt-4 text-3xl font-black sm:text-4xl">{t('settings.title')}</h1>
+        <p className="mt-4 max-w-2xl leading-8 text-[var(--muted)]">{t('settings.subtitle')}</p>
+      </section>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="grid gap-6">
+
+          {/* Section: Profile */}
+          <section className="panel-surface p-6 sm:p-8" aria-labelledby="settings-profile-heading">
+            <SectionHeader title={t('settings.sectionProfile')} id="settings-profile-heading" />
+            <form className="mt-5 grid gap-5" onSubmit={savePreferences}>
+              <label className="grid gap-2">
+                <span className="field-label mb-0">{t('settings.displayName')}</span>
+                <input
+                  ref={displayNameRef}
+                  className="focus-ring input-base"
+                  maxLength={60}
+                  placeholder={t('settings.displayNamePlaceholder')}
+                />
+              </label>
+              <div className="grid gap-2">
+                <span className="field-label mb-0">{t('settings.gender')}</span>
+                <p className="text-xs text-white/40">{t('settings.genderHelp')}</p>
+                <div className="flex flex-wrap gap-2">
+                  {PARTICIPANT_GENDERS.map((g) => (
+                    <button
+                      key={g}
+                      type="button"
+                      aria-pressed={gender === g}
+                      className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
+                        gender === g
+                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
+                          : 'border-white/10 text-white/60'
+                      }`}
+                      onClick={() => setGender(g)}
+                    >
+                      {t(`formulation.consent.genderOptions.${g}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <span className="field-label mb-0">{t('settings.age')}</span>
+                <p className="text-xs text-white/40">{t('settings.ageHelp')}</p>
+                <input
+                  className="focus-ring input-base w-32"
+                  type="number"
+                  inputMode="numeric"
+                  min={16}
+                  max={120}
+                  value={agePreferNot ? '' : age}
+                  disabled={agePreferNot}
+                  aria-label={t('settings.age')}
+                  onChange={(e) => setAge(e.target.value)}
+                  placeholder={t('settings.agePlaceholder')}
+                />
+                <label className="flex items-center gap-2 text-xs text-white/55">
+                  <input
+                    type="checkbox"
+                    className="focus-ring accent-[var(--blue)]"
+                    checked={agePreferNot}
+                    onChange={(e) => {
+                      setAgePreferNot(e.target.checked);
+                      if (e.target.checked) setAge('');
+                    }}
+                  />
+                  {t('settings.agePreferNot')}
+                </label>
+              </div>
+              <div className="grid gap-2">
+                <span className="field-label mb-0">{t('settings.lifeContext')}</span>
+                <p className="text-xs text-white/40">{t('settings.lifeContextHelp')}</p>
+                <p className="text-xs text-white/40">{t('lifeContext.settings.impactHelp')}</p>
+                <p className="text-xs text-white/40">{t('formulation.consent.lifeContextMulti')}</p>
+                <LifeContextChip statuses={lifeContexts} className="mt-1" />
+                <div className="flex flex-wrap gap-2">
+                  {LIFE_CONTEXT_STATUSES.map((status) => (
+                    <button
+                      key={status}
+                      type="button"
+                      aria-pressed={lifeContexts.includes(status)}
+                      className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
+                        lifeContexts.includes(status)
+                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
+                          : 'border-white/10 text-white/60'
+                      }`}
+                      onClick={() => {
+                        setLifeContexts((current) => {
+                          if (status === 'prefer_not') {
+                            return current.includes('prefer_not') ? [] : ['prefer_not'];
+                          }
+                          return normalizeLifeContextSelection(
+                            current.includes(status)
+                              ? current.filter((s) => s !== status)
+                              : [...current.filter((s) => s !== 'prefer_not'), status]
+                          );
+                        });
+                      }}
+                    >
+                      {t(`formulation.consent.contexts.${status}`)}
+                    </button>
+                  ))}
+                </div>
+                {lifeContexts.some((c) => c !== 'prefer_not') && (
+                  <label className="mt-2 grid gap-2">
+                    <span className="text-xs text-white/45">{t('lifeContext.noteLabel')}</span>
+                    <textarea
+                      className="focus-ring textarea-base min-h-20"
+                      value={lifeContextNote}
+                      maxLength={200}
+                      placeholder={t('lifeContext.notePlaceholder')}
+                      onChange={(e) => setLifeContextNote(e.target.value)}
+                    />
+                  </label>
+                )}
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <button className="focus-ring btn-primary" type="submit">
+                  {t('settings.save')}
+                </button>
+                <span className="text-sm font-semibold text-white/45">
+                  {t('settings.localOnly')}
+                </span>
+              </div>
+            </form>
+          </section>
+
+          {/* Section: AI Coaching */}
+          <section className="panel-surface p-6 sm:p-8" aria-labelledby="settings-coaching-heading">
+            <SectionHeader title={t('settings.coachingTitle')} id="settings-coaching-heading" />
+            <div
+              className="mt-4 rounded-xl border border-sky-400/20 bg-sky-500/6 px-4 py-3"
+              role="note"
+            >
+              <p className="text-xs font-bold uppercase tracking-wide text-sky-200/90">
+                {t('settings.coachingImpactTitle')}
+              </p>
+              <p className="mt-1.5 text-sm leading-6 text-sky-100/85">{t('settings.coachingImpactBody')}</p>
+            </div>
+            <form className="mt-5 grid gap-6" onSubmit={savePreferences}>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="grid gap-2">
+                  <span className="field-label mb-0">{t('settings.wakeTime')}</span>
+                  <p className="text-xs leading-5 text-white/40">{t('settings.wakeTimeHelp')}</p>
+                  <input
+                    ref={wakeTimeRef}
+                    type="time"
+                    className="focus-ring input-base w-36"
+                    defaultValue="07:00"
+                    onChange={(e) => setWakeTime(e.target.value)}
+                  />
+                </label>
+                <label className="grid gap-2">
+                  <span className="field-label mb-0">{t('settings.sleepTime')}</span>
+                  <p className="text-xs leading-5 text-white/40">{t('settings.sleepTimeHelp')}</p>
+                  <input
+                    ref={sleepTimeRef}
+                    type="time"
+                    className="focus-ring input-base w-36"
+                    defaultValue="22:30"
+                    onChange={(e) => setSleepTime(e.target.value)}
+                  />
+                </label>
+              </div>
+
+              <div className="grid gap-2">
+                <span className="field-label mb-0">{t('settings.actionWindow')}</span>
+                <p className="text-xs text-white/40">{t('settings.actionWindowHelp')}</p>
+                {isShortAwakeDay(wakeTime, sleepTime) && (
+                  <p className="text-xs leading-6 text-amber-400/90">{t('schedule.actionWindow.shortDay')}</p>
+                )}
+                {(() => {
+                  const inferred = inferPreferredActionWindow(wakeTime, sleepTime);
+                  if (inferred === 'flexible' || actionWindow === inferred) return null;
+                  return (
+                    <button
+                      type="button"
+                      className="focus-ring text-start text-xs font-semibold text-[var(--blue)]/90 hover:text-[var(--blue)]"
+                      onClick={() => setActionWindow(inferred)}
+                    >
+                      {t('schedule.actionWindow.applySuggested', {window: t(`onboarding.actionWindow.${inferred}`)})}
+                    </button>
+                  );
+                })()}
+                <div className="flex flex-wrap gap-2">
+                  {PREFERRED_ACTION_WINDOWS.map((w) => {
+                    const inferred = inferPreferredActionWindow(wakeTime, sleepTime);
+                    return (
+                    <button
+                      key={w}
+                      type="button"
+                      aria-pressed={actionWindow === w}
+                      className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
+                        actionWindow === w ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white' : 'border-white/10 text-white/60'
+                      }`}
+                      onClick={() => setActionWindow(w)}
+                    >
+                      {t(`onboarding.actionWindow.${w}`)}
+                      {w === inferred && w !== 'flexible' ? ` · ${t('schedule.actionWindow.recommended')}` : ''}
+                    </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <span className="field-label mb-0">{t('settings.availableTime')}</span>
+                <p className="text-xs text-white/40">{t('settings.availableTimeHelp')}</p>
+                <div className="flex flex-wrap gap-2">
+                  {AVAILABLE_TIME_OPTIONS.map((mins) => (
+                    <button
+                      key={mins}
+                      type="button"
+                      aria-pressed={availableTime === mins}
+                      className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
+                        availableTime === mins ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white' : 'border-white/10 text-white/60'
+                      }`}
+                      onClick={() => setAvailableTime(mins)}
+                    >
+                      {t('onboarding.availableTimeOption', {mins})}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <span className="field-label mb-0">{t('settings.intensityPreference')}</span>
+                <p className="text-xs text-white/40">{t('settings.intensityPreferenceHelp')}</p>
+                <div className="flex flex-wrap gap-2">
+                  {INTENSITY_PREFERENCES.map((pref) => (
+                    <button
+                      key={pref}
+                      type="button"
+                      aria-pressed={intensity === pref}
+                      className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
+                        intensity === pref ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white' : 'border-white/10 text-white/60'
+                      }`}
+                      onClick={() => setIntensity(pref)}
+                    >
+                      {t(`onboarding.intensity.${pref}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <span className="field-label mb-0">{t('settings.familyStatus')}</span>
+                <div className="flex flex-wrap gap-2">
+                  {FAMILY_STATUSES.map((fs) => (
+                    <button
+                      key={fs}
+                      type="button"
+                      aria-pressed={familyStatus === fs}
+                      className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
+                        familyStatus === fs ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white' : 'border-white/10 text-white/60'
+                      }`}
+                      onClick={() => setFamilyStatus(familyStatus === fs ? '' : fs)}
+                    >
+                      {t(`onboarding.family.${fs}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <span className="field-label mb-0">{t('settings.physicalConsiderations')}</span>
+                <p className="text-xs text-white/40">{t('settings.physicalConsiderationsHelp')}</p>
+                <div className="flex flex-wrap gap-2">
+                  {PHYSICAL_CONSIDERATIONS.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      aria-pressed={physical.includes(item)}
+                      className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
+                        physical.includes(item) ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white' : 'border-white/10 text-white/60'
+                      }`}
+                      onClick={() => setPhysical((cur) => cur.includes(item) ? cur.filter((x) => x !== item) : [...cur, item])}
+                    >
+                      {t(`onboarding.physical.${item}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <span className="field-label mb-0">{t('settings.coachingStyle')}</span>
+                <p className="text-xs leading-5 text-white/40">{t('settings.coachingStyleHelp')}</p>
+                <div className="mt-1 grid gap-2 sm:grid-cols-3">
+                  {COACHING_STYLES.map((style) => (
+                    <button
+                      key={style}
+                      type="button"
+                      className={`focus-ring rounded-2xl border px-4 py-3 text-sm font-semibold text-start transition ${
+                        coachingStyle === style
+                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.14)] text-white'
+                          : 'border-white/12 bg-white/3 text-white/60 hover:border-white/20 hover:text-white'
+                      }`}
+                      onClick={() => setCoachingStyle(style)}
+                      aria-pressed={coachingStyle === style}
+                    >
+                      <span className="block">{t(`settings.coachingStyleOption.${style}`)}</span>
+                      <span className="mt-1 block text-xs font-normal text-white/45">
+                        {t(`settings.coachingStyleDesc.${style}`)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <button className="focus-ring btn-primary" type="submit">
+                  {t('settings.save')}
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section className="panel-surface p-6 sm:p-8" aria-labelledby="settings-privacy-heading">
+            <SectionHeader title={t('settings.privacyControlsTitle')} id="settings-privacy-heading" />
+            <label className="mt-4 flex items-start gap-3 rounded-2xl border border-white/10 bg-white/3 p-4">
+              <input
+                ref={behavioralAnalyticsRef}
+                type="checkbox"
+                defaultChecked
+                className="focus-ring mt-1 h-4 w-4 accent-[var(--blue)]"
+              />
+              <span>
+                <span className="block text-sm font-bold text-white">{t('settings.behavioralAnalytics')}</span>
+                <span className="mt-1 block text-xs leading-6 text-white/50">{t('settings.behavioralAnalyticsHelp')}</span>
+              </span>
+            </label>
+            <button className="focus-ring btn-primary mt-4" type="button" onClick={() => savePreferences()}>
+              {t('settings.save')}
+            </button>
+          </section>
+
+          {/* Section: Reminder (#17 — moved from check-in) */}
+          <section className="panel-surface p-6 sm:p-8" aria-label={t('schedule.reminders.title')}>
+            <ScheduleReminderSettings />
+          </section>
+        </div>
+
+        <div className="grid gap-6 self-start">
+          {/* Section: Appearance */}
+          <section className="panel-surface p-6" aria-labelledby="settings-theme-heading">
+            <SectionHeader title={t('settings.themeTitle')} id="settings-theme-heading" />
+            <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{t('settings.themeHelp')}</p>
+            <div className="mt-4">
+              <ThemeToggle />
+            </div>
+          </section>
+
+          {/* Section: Language */}
+          <section className="panel-surface p-6" aria-labelledby="settings-language-heading">
+            <SectionHeader title={t('settings.languageTitle')} id="settings-language-heading" />
+            <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{t('settings.languageHelp')}</p>
+            <div className="mt-4">
+              <LanguageSwitcher />
+            </div>
+          </section>
+
+          {/* Section: Support */}
+          <section className="panel-surface p-6" aria-labelledby="settings-support-heading">
+            <SectionHeader title={t('settings.secondaryTitle')} id="settings-support-heading" />
+            <div className="mt-4 grid gap-2">
+              <Link href="/help" className="focus-ring btn-ghost justify-start">
+                {t('nav.help')}
+              </Link>
+              <Link href="/privacy" className="focus-ring btn-ghost justify-start">
+                {t('nav.privacy')}
+              </Link>
+              <Link href="/terms" className="focus-ring btn-ghost justify-start">
+                {t('nav.terms')}
+              </Link>
+            </div>
+          </section>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function SectionHeader({title, id}: {title: string; id?: string}) {
+  return (
+    <div className="flex items-center gap-3">
+      <h2 id={id} className="text-base font-bold text-white">{title}</h2>
+    </div>
+  );
+}

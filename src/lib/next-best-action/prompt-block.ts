@@ -1,0 +1,16 @@
+export const NEXT_BEST_ACTION_PROMPT_BLOCK = [
+  '## next_best_action (REQUIRED on every response):',
+  'End with exactly one small, concrete action the user can take in the next few minutes.',
+  'Shape: { label, action_type, target_id?, estimated_minutes? }.',
+  'action_type must be one of:',
+  '- open_life_coach — review goals / daily steps',
+  '- open_coach — talk to the virtual coach',
+  '- open_morning_ritual — do your morning ritual',
+  '- complete_daily_step — finish one pending baby step (set target_id to step id when known)',
+  '- generate_daily_steps — generate today\'s steps',
+  '- save_goal — confirm and save a structured goal preview',
+  '- shrink_tomorrow / change_time / plan_b — skip-recovery adjustments after a missed step',
+  'label: short button text in the response language (max 8 words), specific not generic.',
+  'estimated_minutes: realistic time for the action (usually 2–15).',
+  'Pick the single highest-leverage move — not a list.',
+].join('\n');

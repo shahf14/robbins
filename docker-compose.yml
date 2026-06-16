@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    image: robbins-app:latest
+    container_name: robbins-app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    volumes:
+      # Named volume: SQLite + WAL do not behave reliably on Windows bind mounts
+      - robbins_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  robbins_data:

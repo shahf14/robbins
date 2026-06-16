@@ -1,0 +1,31 @@
+'use client';
+
+import {useTranslations} from 'next-intl';
+
+type Props = {
+  className?: string;
+  compact?: boolean;
+};
+
+export function DomainScoreExplainer({className = '', compact = false}: Props) {
+  const t = useTranslations();
+
+  if (compact) {
+    return (
+      <p className={`text-xs leading-5 text-white/45 ${className}`}>
+        <span className="font-semibold text-white/55">{t('lifeCoach.domainScoreLabel')}: </span>
+        {t('lifeCoach.domainScoreExplainer')}
+      </p>
+    );
+  }
+
+  return (
+    <p
+      role="note"
+      className={`rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-sm leading-6 text-white/55 ${className}`}
+    >
+      <span className="font-semibold text-white/70">{t('lifeCoach.domainScoreLabel')}: </span>
+      {t('lifeCoach.domainScoreExplainer')}
+    </p>
+  );
+}

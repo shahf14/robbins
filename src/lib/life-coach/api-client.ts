@@ -1,0 +1,415 @@
+'use client';
+
+import type {
+  AiCoachingInsight,
+  CoachHandoff,
+  DailyBabyStep,
+  DailyReflection,
+  DomainCardSummary,
+  FormulationApproved,
+  FormulationGateResponse,
+  FormulationSession,
+  Goal,
+  LifeDomain,
+  LifeDomainState,
+  LifeContextStatus,
+  Milestone,
+  ReflectionAnalysis,
+  WeeklyReview,
+} from './types';
+import type {DailyFocusContext} from '@/lib/daily-focus-context';
+import {parseGoalCreateResponse} from './schemas';
+import type {formulationSessionPatchSchema} from './schemas';
+import type {z} from 'zod';
+
+type GoalWithMilestones = Goal & {milestones?: Milestone[]};
+
+async function lifeCoachFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(path, {
+    ...init,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(init?.headers ?? {}),
+    },
+  });
+
+  const payload = (await response.json()) as T & {error?: string; details?: unknown};
+
+  if (!response.ok) {
+    const details =
+      payload.details != null
+        ? typeof payload.details === 'string'
+          ? payload.details
+          : JSON.stringify(payload.details)
+        : '';
+    throw new Error(
+      [payload.error || 'Request failed.', details].filter(Boolean).join(' — ')
+    );
+  }
+
+  return payload;
+}
+
+export const lifeCoachApi = {
+  listDomains() {
+    return lifeCoachFetch<{domains: DomainCardSummary[]; states: LifeDomainState[]}>('/api/life-coach/domains');
+  },
+  getDomain(domain: LifeDomain) {
+    return lifeCoachFetch<{
+      domain: LifeDomain;
+      state: LifeDomainState | null;
+      goals: GoalWithMilestones[];
+      todaySteps: DailyBabyStep[];
+      recentSteps: DailyBabyStep[];
+      insights: AiCoachingInsight[];
+      weeklyReview: AiCoachingInsight | null;
+      dailyFocus: DailyFocusContext;
+    }>(`/api/life-coach/domains/${domain}`);
+  },
+  saveAssessment(domain: LifeDomain, input: Omit<LifeDomainState, 'id' | 'user_id' | 'domain' | 'created_at' | 'updated_at'>) {
+    return lifeCoachFetch<{state: LifeDomainState}>(`/api/life-coach/domains/${domain}/assessment`, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+  inspireGoal(input: Record<string, unknown>) {
+    return lifeCoachFetch<{inspiration: string}>('/api/life-coach/ai/inspire-goal', {
+      method: 'POST',
+      body: JSON.stringify({...input, mode: 'goal'}),
+    });
+  },
+  expandText(input: Record<string, unknown>) {
+    return lifeCoachFetch<{expanded: string}>('/api/life-coach/ai/expand-text', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+  inspireMilestones(input: Record<string, unknown>) {
+    return lifeCoachFetch<{days_30: string; days_60: string; days_90: string}>('/api/life-coach/ai/inspire-goal', {
+      method: 'POST',
+      body: JSON.stringify({...input, mode: 'milestones'}),
+    });
+  },
+  structureGoal(input: Record<string, unknown>) {
+    return lifeCoachFetch<{
+      goal: Partial<Goal>;
+      milestones: Array<{
+        title: string;
+        description: string;
+        target_date: string | null;
+      }>;
+      suggested_baby_steps: Array<{
+        domain: LifeDomain;
+        goal_id: string | null;
+        title: string;
+        description: string;
+        estimated_minutes: number;
+        difficulty: 'easy' | 'medium' | 'hard';
+      }>;
+      execution_plan?: import('@/lib/life-coach/types').HealthExecutionPlan | null;
+      plan_source?: 'ai' | 'fallback';
+      realism_check?: import('@/lib/life-coach/types').GoalRealismCheck | null;
+      next_best_action?: import('@/lib/life-coach/types').NextBestAction | null;
+    }>('/api/life-coach/ai/structure-goal', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+  async createGoal(input: Record<string, unknown>) {
+    const payload = await lifeCoachFetch<unknown>('/api/life-coach/goals', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+    parseGoalCreateResponse(payload);
+    return payload as {goal: Goal};
+  },
+  createFreestyleGoal(input: {
+    domain: LifeDomain;
+    title: string;
+    times_per_day: number;
+    target_days: number;
+    success_metric?: string;
+  }) {
+    return lifeCoachFetch<{goal: Goal}>('/api/life-coach/goals/freestyle', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+  listGoals() {
+    return lifeCoachFetch<{goals: GoalWithMilestones[]}>('/api/life-coach/goals');
+  },
+  getGoal(id: string) {
+    return lifeCoachFetch<{goal: Goal; milestones: Milestone[]}>(`/api/life-coach/goals/${id}`);
+  },
+  updateGoal(id: string, input: Record<string, unknown>) {
+    return lifeCoachFetch<{goal: Goal}>(`/api/life-coach/goals/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    });
+  },
+  updateMilestoneStatus(id: string, status: 'pending' | 'completed') {
+    return lifeCoachFetch<{milestone: Milestone}>(`/api/life-coach/milestones/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({status}),
+    });
+  },
+  deleteGoal(id: string) {
+    return lifeCoachFetch<{ok: boolean}>(`/api/life-coach/goals/${id}`, {
+      method: 'DELETE',
+    });
+  },
+  generateDailySteps(input: Record<string, unknown>) {
+    return lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>('/api/life-coach/ai/generate-daily-steps', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+  createDailyStep(input: {
+    goal_id: string | null;
+    domain: LifeDomain;
+    title: string;
+    description?: string;
+    estimated_minutes: number;
+    difficulty: 'easy' | 'medium' | 'hard';
+    scheduled_date: string;
+    status?: 'pending' | 'completed' | 'skipped' | 'partial';
+  }) {
+    return lifeCoachFetch<{step: DailyBabyStep}>('/api/life-coach/daily-steps', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+  getDailySteps(date: string) {
+    return lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>(`/api/life-coach/daily-steps?date=${date}`);
+  },
+  getDailyCoachMessage(date: string, locale?: string) {
+    const params = new URLSearchParams({date});
+    if (locale) params.set('locale', locale);
+    return lifeCoachFetch<{
+      message: {
+        sentence: string;
+        action_framing: string;
+        text: string;
+        primary_step_id: string | null;
+      };
+    }>(`/api/life-coach/daily-coach-message?${params.toString()}`);
+  },
+  getDailyFocus(date?: string) {
+    const path = date
+      ? `/api/life-coach/daily-focus?date=${encodeURIComponent(date)}`
+      : '/api/life-coach/daily-focus';
+    return lifeCoachFetch<{dailyFocus: DailyFocusContext}>(path);
+  },
+  getDailyStepsRange(start: string, end: string) {
+    return lifeCoachFetch<{start: string; end: string; steps: DailyBabyStep[]}>(
+      `/api/life-coach/daily-steps?start=${start}&end=${end}`
+    );
+  },
+  updateDailyStepStatus(id: string, input: Record<string, unknown>) {
+    return lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    });
+  },
+  updateDailyStepContent(
+    id: string,
+    input: {
+      title: string;
+      description?: string;
+      estimated_minutes: number;
+      difficulty: 'easy' | 'medium' | 'hard';
+    }
+  ) {
+    return lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}/content`, {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    });
+  },
+  suggestSkipRecovery(
+    id: string,
+    input: {locale?: string; blocker_reason?: string | null} = {}
+  ) {
+    return lifeCoachFetch<{
+      content: {
+        title: string;
+        description: string;
+        estimated_minutes: number;
+        difficulty: 'easy' | 'medium' | 'hard';
+      };
+    }>(`/api/life-coach/daily-steps/${id}/simplify`, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+  rescheduleDailyStep(id: string, scheduledDate: string, rescheduledFrom?: string) {
+    return lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({scheduled_date: scheduledDate, rescheduled_from: rescheduledFrom}),
+    });
+  },
+  deleteDailyStep(id: string) {
+    return lifeCoachFetch<{ok: boolean}>(`/api/life-coach/daily-steps/${id}`, {
+      method: 'DELETE',
+    });
+  },
+  saveSkipCoachAdjustment(input: {
+    skip_date?: string;
+    step_id?: string | null;
+    goal_id?: string | null;
+    blocker_reason?: string | null;
+    coach_action: 'shrink_tomorrow' | 'change_time' | 'plan_b';
+    locale?: string;
+  }) {
+    return lifeCoachFetch<{adjustment: import('@/lib/skip-coach-loop').SkipCoachAdjustment}>(
+      '/api/life-coach/skip-coach-adjustment',
+      {method: 'POST', body: JSON.stringify(input)}
+    );
+  },
+  saveGamificationUnlock(input: {
+    kind: 'mystery_unlock' | 'reflection_loot' | 'identity_title';
+    reward_key: string;
+    week_start?: string | null;
+    context?: Record<string, unknown> | null;
+  }) {
+    return lifeCoachFetch<{unlock: import('@/lib/db/repositories/gamification-unlocks').GamificationUnlock | null}>(
+      '/api/life-coach/gamification-unlocks',
+      {method: 'POST', body: JSON.stringify(input)}
+    );
+  },
+  listGamificationUnlocks() {
+    return lifeCoachFetch<{unlocks: import('@/lib/db/repositories/gamification-unlocks').GamificationUnlock[]}>(
+      '/api/life-coach/gamification-unlocks'
+    );
+  },
+  saveReflection(input: Record<string, unknown>) {
+    return lifeCoachFetch<{reflection: DailyReflection}>('/api/life-coach/reflections', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+  analyzeReflection(input: Record<string, unknown>) {
+    return lifeCoachFetch<{analysis: ReflectionAnalysis}>('/api/life-coach/ai/analyze-reflection', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+  generateWeeklyReview(input: Record<string, unknown>) {
+    return lifeCoachFetch<{review: WeeklyReview; insight: AiCoachingInsight}>('/api/life-coach/ai/weekly-review', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+  getLatestWeeklyReview() {
+    return lifeCoachFetch<{review: AiCoachingInsight | null}>('/api/life-coach/weekly-review/latest');
+  },
+  listInsights() {
+    return lifeCoachFetch<{insights: AiCoachingInsight[]}>('/api/life-coach/insights');
+  },
+};
+
+export const formulationApi = {
+  getGate() {
+    return lifeCoachFetch<{gate: FormulationGateResponse}>('/api/life-coach/formulation-sessions/gate');
+  },
+  getLatest() {
+    return lifeCoachFetch<{draft: FormulationSession | null; completed: FormulationSession | null}>(
+      '/api/life-coach/formulation-sessions/latest'
+    );
+  },
+  create(locale?: 'he' | 'en') {
+    return lifeCoachFetch<{session: FormulationSession}>('/api/life-coach/formulation-sessions', {
+      method: 'POST',
+      body: JSON.stringify({locale}),
+    });
+  },
+  get(id: string) {
+    return lifeCoachFetch<{session: FormulationSession}>(`/api/life-coach/formulation-sessions/${id}`);
+  },
+  patch(id: string, body: z.infer<typeof formulationSessionPatchSchema>) {
+    return lifeCoachFetch<{
+      session: FormulationSession;
+      risk_needs_follow_up?: boolean;
+    }>(`/api/life-coach/formulation-sessions/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
+  },
+  complete(id: string) {
+    return lifeCoachFetch<{session: FormulationSession}>(
+      `/api/life-coach/formulation-sessions/${id}/complete`,
+      {method: 'POST', body: '{}'}
+    );
+  },
+  runAi(
+    id: string,
+    action:
+      | 'reflect'
+      | 'generate_exploration_questions'
+      | 'draft_formulation'
+      | 'suggest_micro_goal',
+    locale?: 'he' | 'en'
+  ) {
+    return lifeCoachFetch<{
+      session?: FormulationSession;
+      reflection?: string;
+      questions?: FormulationSession['llm_exploration_questions'];
+      formulation?: FormulationApproved;
+      suggestions?: Partial<CoachHandoff> & {
+        burning_focus?: string;
+        goal_options?: Array<{
+          id: string;
+          goal_type: 'practical' | 'mindset' | 'freestyle';
+          title: string;
+          value: string;
+          micro_goal_week: string;
+          anticipated_barrier: string;
+          plan_b: string;
+        }>;
+        generated_by?: 'llm';
+      };
+      generated_by?: 'llm';
+    }>(`/api/life-coach/formulation-sessions/${id}/ai`, {
+      method: 'POST',
+      body: JSON.stringify({action, locale}),
+    });
+  },
+  getParticipantProfile() {
+    return lifeCoachFetch<{
+      gender: string | null;
+      age: number | null;
+      life_context_statuses: LifeContextStatus[];
+      life_context_note: string | null;
+      wake_time: string | null;
+      sleep_time: string | null;
+      preferred_action_window: import('@/lib/user-preferences').PreferredActionWindow | null;
+    }>('/api/life-coach/profile');
+  },
+  updateParticipantProfile(input: {
+    life_context_statuses?: LifeContextStatus[];
+    life_context_note?: string | null;
+    gender?: string | null;
+    age?: number | null;
+    wake_time?: string | null;
+    sleep_time?: string | null;
+    preferred_action_window?: import('@/lib/user-preferences').PreferredActionWindow | null;
+    coaching_style?: import('@/lib/user-preferences').CoachingStyle | null;
+    family_status?: import('@/lib/user-preferences').FamilyStatus | null;
+    physical_considerations?: import('@/lib/user-preferences').PhysicalConsideration[] | null;
+  }) {
+    return lifeCoachFetch<{
+      gender: string | null;
+      age: number | null;
+      life_context_statuses: LifeContextStatus[];
+      life_context_note: string | null;
+      wake_time: string | null;
+      sleep_time: string | null;
+      preferred_action_window: import('@/lib/user-preferences').PreferredActionWindow | null;
+    }>('/api/life-coach/profile', {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    });
+  },
+  updateLifeContexts(statuses: LifeContextStatus[]) {
+    return this.updateParticipantProfile({life_context_statuses: statuses});
+  },
+};
