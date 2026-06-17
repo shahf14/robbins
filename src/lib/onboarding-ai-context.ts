@@ -1,6 +1,7 @@
 import type {AppLocale} from '@/i18n/config';
 import type {ParticipantGender} from '@/lib/formulation/participant-profile';
 import type {CoachingStyle} from '@/lib/user-preferences';
+import {defaultUserPreferences} from '@/lib/user-preferences';
 import type {
   AvailableTimePerDay,
   IntensityPreference,
@@ -53,8 +54,8 @@ export function buildOnboardingAiContext(input: {
     locale: input.locale,
     domain: input.domain,
     domainScore: input.domainScore,
-    availableTime: input.availableTime,
-    intensityPreference: input.intensityPreference,
+    availableTime: defaultUserPreferences.available_time_per_day,
+    intensityPreference: defaultUserPreferences.intensity_preference,
     coachingStyle: input.coachingStyle,
     familyStatus: input.familyStatus,
     age: parsedAge && !Number.isNaN(parsedAge) ? parsedAge : undefined,
@@ -62,7 +63,7 @@ export function buildOnboardingAiContext(input: {
     lifeContextStatuses: input.lifeContextStatuses,
     wakeTime: input.wakeTime,
     sleepTime: input.sleepTime,
-    preferredActionWindow: input.preferredActionWindow,
+    preferredActionWindow: defaultUserPreferences.preferred_action_window,
     physicalConsiderations: input.physicalConsiderations,
   };
 }

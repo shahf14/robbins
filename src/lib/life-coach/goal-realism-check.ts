@@ -40,8 +40,8 @@ const AMBITIOUS_HE =
 const AMBITIOUS_EN =
   /marathon|million|fluent|lose\s*\d+|gain\s*\d+\s*(kg|lb|pounds)|ceo|financial\s*freedom|transform\s*my\s*life|completely|entirely|90.day/i;
 
-function availableMinutes(input: GoalRealismStructuringInput): number {
-  return Math.max(5, input.assessment?.available_time_per_day ?? 10);
+function availableMinutes(_input: GoalRealismStructuringInput): number {
+  return 10;
 }
 
 function isAmbitiousGoalText(text: string): boolean {
@@ -58,7 +58,6 @@ function assessRiskScore(input: GoalRealismStructuringInput, plan: StructuredGoa
   if (minutes <= 10) score += 2;
   if (minutes <= 5) score += 1;
   if (isAmbitiousGoalText(goalText)) score += 3;
-  if (input.assessment?.intensity_preference === 'gentle') score += 1;
   if (input.known_blockers?.has_no_time_signal) score += 2;
   if (
     input.known_blockers?.dominant_kind === 'energy' ||

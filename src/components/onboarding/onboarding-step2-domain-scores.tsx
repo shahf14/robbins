@@ -401,7 +401,6 @@ export function Step2DomainScores({
             <p className="mt-2 text-sm font-semibold leading-6 txt-soft">
               {t('onboarding.domainPreview.body', {
                 domain: selectedDomainLabel,
-                mins: s.availableTime,
               })}
             </p>
           </div>

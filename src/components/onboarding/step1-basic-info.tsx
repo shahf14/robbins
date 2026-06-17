@@ -1,24 +1,20 @@
 'use client';
 
-import {useMemo, useState, type ReactNode} from 'react';
+import {useState, type ReactNode} from 'react';
 import {useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 import {normalizeLifeContextSelection} from '@/lib/formulation/life-context';
 import {PARTICIPANT_GENDERS, type ParticipantGender} from '@/lib/formulation/participant-profile';
-import {AVAILABLE_TIME_OPTIONS, INTENSITY_PREFERENCES, LIFE_CONTEXT_STATUSES} from '@/lib/life-coach/types';
+import {LIFE_CONTEXT_STATUSES} from '@/lib/life-coach/types';
 import type {LifeContextStatus} from '@/lib/life-coach/types';
-import type {AvailableTimePerDay, IntensityPreference} from '@/lib/life-coach/types';
 import {
   COACHING_STYLES,
   FAMILY_STATUSES,
   PHYSICAL_CONSIDERATIONS,
-  PREFERRED_ACTION_WINDOWS,
   type CoachingStyle,
   type FamilyStatus,
   type PhysicalConsideration,
-  type PreferredActionWindow,
 } from '@/lib/user-preferences';
-import {inferPreferredActionWindow, isShortAwakeDay} from '@/lib/schedule-content';
 
 type Step1ProfileState = {
   name: string;
@@ -28,9 +24,6 @@ type Step1ProfileState = {
   lifeContextNote: string;
   wakeTime: string;
   sleepTime: string;
-  preferredActionWindow: PreferredActionWindow;
-  availableTime: AvailableTimePerDay;
-  intensityPreference: IntensityPreference;
   coachingStyle: CoachingStyle;
   familyStatus: FamilyStatus | '';
   age: string;
@@ -89,14 +82,6 @@ function ChipButton({
 
 export function Step1BasicInfo({s, set, onNext}: Props) {
   const t = useTranslations();
-  const inferredWindow = useMemo(
-    () => inferPreferredActionWindow(s.wakeTime, s.sleepTime),
-    [s.wakeTime, s.sleepTime]
-  );
-  const shortDay = useMemo(
-    () => isShortAwakeDay(s.wakeTime, s.sleepTime),
-    [s.wakeTime, s.sleepTime]
-  );
   const [showMore, setShowMore] = useState(false);
   const [nameTouched, setNameTouched] = useState(false);
   const nameValid = s.name.trim().length > 0;
@@ -184,34 +169,6 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
           )}
         </Question>
 
-        <Question label={t('onboarding.availableTimeLabel')}>
-          <div className="flex flex-wrap gap-2">
-            {AVAILABLE_TIME_OPTIONS.map((mins) => (
-              <ChipButton
-                key={mins}
-                active={s.availableTime === mins}
-                onClick={() => set({availableTime: mins})}
-              >
-                {t('onboarding.availableTimeOption', {mins})}
-              </ChipButton>
-            ))}
-          </div>
-        </Question>
-
-        <Question label={t('onboarding.intensityLabel')}>
-          <div className="flex flex-wrap gap-2">
-            {INTENSITY_PREFERENCES.map((pref) => (
-              <ChipButton
-                key={pref}
-                active={s.intensityPreference === pref}
-                onClick={() => set({intensityPreference: pref})}
-              >
-                {t(`onboarding.intensity.${pref}`)}
-              </ChipButton>
-            ))}
-          </div>
-        </Question>
-
         <Question label={t('onboarding.scheduleQuestion')}>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="grid gap-2">
@@ -232,37 +189,6 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
                 onChange={(e) => set({sleepTime: e.target.value})}
               />
             </label>
-          </div>
-        </Question>
-
-        <Question label={t('onboarding.actionWindowLabel')}>
-          {shortDay && (
-            <p className="text-sm text-amber-400/90">{t('schedule.actionWindow.shortDay')}</p>
-          )}
-          {inferredWindow !== 'flexible' && s.preferredActionWindow !== inferredWindow && (
-            <button
-              type="button"
-              className="focus-ring text-start text-sm font-medium text-[var(--blue)] hover:text-[var(--blue)]/80"
-              onClick={() => set({preferredActionWindow: inferredWindow})}
-            >
-              {t('schedule.actionWindow.applySuggested', {
-                window: t(`onboarding.actionWindow.${inferredWindow}`),
-              })}
-            </button>
-          )}
-          <div className="flex flex-wrap gap-2">
-            {PREFERRED_ACTION_WINDOWS.map((w) => (
-              <ChipButton
-                key={w}
-                active={s.preferredActionWindow === w}
-                onClick={() => set({preferredActionWindow: w})}
-              >
-                {t(`onboarding.actionWindow.${w}`)}
-                {w === inferredWindow && w !== 'flexible'
-                  ? ` · ${t('schedule.actionWindow.recommended')}`
-                  : ''}
-              </ChipButton>
-            ))}
           </div>
         </Question>
 

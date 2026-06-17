@@ -14,26 +14,17 @@ import {LifeContextChip} from '@/components/life-context-chip';
 import {formulationApi, lifeCoachApi} from '@/lib/life-coach/api-client';
 import {useLocale} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
-import {
-  AVAILABLE_TIME_OPTIONS,
-  INTENSITY_PREFERENCES,
-  LIFE_CONTEXT_STATUSES,
-  type AvailableTimePerDay,
-  type IntensityPreference,
-  type LifeContextStatus,
-} from '@/lib/life-coach/types';
+import {LIFE_CONTEXT_STATUSES, type LifeContextStatus} from '@/lib/life-coach/types';
 import {
   COACHING_STYLES,
   FAMILY_STATUSES,
   PHYSICAL_CONSIDERATIONS,
-  PREFERRED_ACTION_WINDOWS,
+  defaultUserPreferences,
   loadUserPreferences,
   saveUserPreferences,
   type FamilyStatus,
   type PhysicalConsideration,
-  type PreferredActionWindow,
 } from '@/lib/user-preferences';
-import {inferPreferredActionWindow, isShortAwakeDay} from '@/lib/schedule-content';
 import {syncSchedulePrefsToServer} from '@/lib/sync-schedule-to-server';
 import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microcopy';
 import {LanguageSwitcher} from './language-switcher';
@@ -55,9 +46,6 @@ export function SettingsPanel() {
   const [agePreferNot, setAgePreferNot] = useState(false);
   const [wakeTime, setWakeTime] = useState('07:00');
   const [sleepTime, setSleepTime] = useState('22:30');
-  const [actionWindow, setActionWindow] = useState<PreferredActionWindow>('flexible');
-  const [availableTime, setAvailableTime] = useState<AvailableTimePerDay>(10);
-  const [intensity, setIntensity] = useState<IntensityPreference>('balanced');
   const [familyStatus, setFamilyStatus] = useState<FamilyStatus | ''>('');
   const [physical, setPhysical] = useState<PhysicalConsideration[]>([]);
   const [saveState, setSaveState] = useState<'idle' | 'saved'>('idle');
@@ -75,9 +63,6 @@ export function SettingsPanel() {
       if (sleepTimeRef.current) sleepTimeRef.current.value = prefs.sleep_time;
       setWakeTime(prefs.wake_time);
       setSleepTime(prefs.sleep_time);
-      setActionWindow(prefs.preferred_action_window);
-      setAvailableTime(prefs.available_time_per_day);
-      setIntensity(prefs.intensity_preference);
       setFamilyStatus(prefs.family_status ?? '');
       setPhysical(prefs.physical_considerations ?? []);
       if (behavioralAnalyticsRef.current) behavioralAnalyticsRef.current.checked = prefs.behavioral_analytics_enabled;
@@ -137,9 +122,9 @@ export function SettingsPanel() {
       display_name: displayNameRef.current?.value ?? '',
       wake_time: nextWake,
       sleep_time: nextSleep,
-      preferred_action_window: actionWindow,
-      available_time_per_day: availableTime,
-      intensity_preference: intensity,
+      preferred_action_window: defaultUserPreferences.preferred_action_window,
+      available_time_per_day: defaultUserPreferences.available_time_per_day,
+      intensity_preference: defaultUserPreferences.intensity_preference,
       family_status: familyStatus || undefined,
       physical_considerations: physical.length ? physical : undefined,
       coaching_style: coachingStyle as 'supportive' | 'direct' | 'motivational',
@@ -387,86 +372,6 @@ export function SettingsPanel() {
                     onChange={(e) => setSleepTime(e.target.value)}
                   />
                 </label>
-              </div>
-
-              <div className="grid gap-2">
-                <span className="field-label mb-0">{t('settings.actionWindow')}</span>
-                <p className="text-xs txt-muted">{t('settings.actionWindowHelp')}</p>
-                {isShortAwakeDay(wakeTime, sleepTime) && (
-                  <p className="text-xs leading-6 text-amber-400/90">{t('schedule.actionWindow.shortDay')}</p>
-                )}
-                {(() => {
-                  const inferred = inferPreferredActionWindow(wakeTime, sleepTime);
-                  if (inferred === 'flexible' || actionWindow === inferred) return null;
-                  return (
-                    <button
-                      type="button"
-                      className="focus-ring text-start text-xs font-semibold text-[var(--blue)]/90 hover:text-[var(--blue)]"
-                      onClick={() => setActionWindow(inferred)}
-                    >
-                      {t('schedule.actionWindow.applySuggested', {window: t(`onboarding.actionWindow.${inferred}`)})}
-                    </button>
-                  );
-                })()}
-                <div className="flex flex-wrap gap-2">
-                  {PREFERRED_ACTION_WINDOWS.map((w) => {
-                    const inferred = inferPreferredActionWindow(wakeTime, sleepTime);
-                    return (
-                    <button
-                      key={w}
-                      type="button"
-                      aria-pressed={actionWindow === w}
-                      className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
-                        actionWindow === w ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong' : 'border-[color:var(--color-border)] txt-soft'
-                      }`}
-                      onClick={() => setActionWindow(w)}
-                    >
-                      {t(`onboarding.actionWindow.${w}`)}
-                      {w === inferred && w !== 'flexible' ? ` · ${t('schedule.actionWindow.recommended')}` : ''}
-                    </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <span className="field-label mb-0">{t('settings.availableTime')}</span>
-                <p className="text-xs txt-muted">{t('settings.availableTimeHelp')}</p>
-                <div className="flex flex-wrap gap-2">
-                  {AVAILABLE_TIME_OPTIONS.map((mins) => (
-                    <button
-                      key={mins}
-                      type="button"
-                      aria-pressed={availableTime === mins}
-                      className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
-                        availableTime === mins ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong' : 'border-[color:var(--color-border)] txt-soft'
-                      }`}
-                      onClick={() => setAvailableTime(mins)}
-                    >
-                      {t('onboarding.availableTimeOption', {mins})}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <span className="field-label mb-0">{t('settings.intensityPreference')}</span>
-                <p className="text-xs txt-muted">{t('settings.intensityPreferenceHelp')}</p>
-                <div className="flex flex-wrap gap-2">
-                  {INTENSITY_PREFERENCES.map((pref) => (
-                    <button
-                      key={pref}
-                      type="button"
-                      aria-pressed={intensity === pref}
-                      className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
-                        intensity === pref ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong' : 'border-[color:var(--color-border)] txt-soft'
-                      }`}
-                      onClick={() => setIntensity(pref)}
-                    >
-                      {t(`onboarding.intensity.${pref}`)}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               <div className="grid gap-2">

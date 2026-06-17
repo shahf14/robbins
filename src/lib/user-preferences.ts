@@ -57,7 +57,7 @@ export type UserPreferences = {
   physical_considerations?: PhysicalConsideration[];
 };
 
-const defaultUserPreferences: UserPreferences = {
+export const defaultUserPreferences: UserPreferences = {
   preferred_language: defaultLocale,
   display_name: '',
   timezone: 'Asia/Jerusalem',
