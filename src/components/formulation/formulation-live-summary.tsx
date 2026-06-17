@@ -59,7 +59,7 @@ function ScoreDots({score, max = 5}: {score: number; max?: number}) {
         <span
           key={`dot-${i}`}
           className={`inline-block h-1.5 w-1.5 rounded-full transition-colors ${
-            i < score ? 'bg-[var(--blue)]' : 'bg-white/15'
+            i < score ? 'bg-[var(--blue)]' : 'fill-3'
           }`}
         />
       ))}
@@ -72,10 +72,10 @@ function MiniProgressBar({value, max, label}: {value: number; max: number; label
   return (
     <div className="grid gap-1.5">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] text-white/50">{label}</span>
-        <span className="text-[10px] font-semibold tabular-nums text-white/60">{pct}%</span>
+        <span className="text-[10px] txt-muted">{label}</span>
+        <span className="text-[10px] font-semibold tabular-nums txt-soft">{pct}%</span>
       </div>
-      <div className="h-1 overflow-hidden rounded-full bg-white/10">
+      <div className="h-1 overflow-hidden rounded-full fill-3">
         <div
           className="h-full rounded-full bg-[var(--blue)] transition-all duration-500"
           style={{width: `${pct}%`}}
@@ -91,8 +91,8 @@ const CHIP_COLORS: Record<string, string> = {
   a_lot: 'border-red-400/40 bg-red-400/10 text-red-300',
   moderate: 'border-amber-400/40 bg-amber-400/10 text-amber-300',
   a_little: 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300',
-  not_at_all: 'border-white/15 bg-white/4 text-white/45',
-  not_sure: 'border-white/15 bg-white/4 text-white/50',
+  not_at_all: 'border-[color:var(--color-border-strong)] fill-1 txt-muted',
+  not_sure: 'border-[color:var(--color-border-strong)] fill-1 txt-muted',
 };
 
 function ChipBadge({chip, label}: {chip: string; label: string}) {
@@ -128,7 +128,7 @@ function SummarySection({
       ? 'bg-emerald-400'
       : status === 'current'
         ? 'bg-[var(--blue)] animate-pulse'
-        : 'bg-white/20';
+        : 'fill-3';
 
   return (
     <div
@@ -136,13 +136,13 @@ function SummarySection({
         status === 'current'
           ? 'border-[var(--blue)]/30 bg-[rgba(26,109,255,0.04)]'
           : status === 'completed'
-            ? 'border-white/8 bg-white/2'
-            : 'border-white/5 bg-transparent'
+            ? 'border-[color:var(--color-border)] fill-1'
+            : 'border-[color:var(--color-border)] bg-transparent'
       }`}
     >
       <button
         type="button"
-        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-start transition-colors hover:bg-white/3"
+        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-start transition-colors hover:fill-1"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
       >
@@ -155,7 +155,7 @@ function SummarySection({
         {/* Title */}
         <span
           className={`flex-1 text-xs font-semibold tracking-wide ${
-            status === 'upcoming' ? 'text-white/30' : 'text-white/80'
+            status === 'upcoming' ? 'txt-faint' : 'txt-strong'
           }`}
         >
           {title}
@@ -166,7 +166,7 @@ function SummarySection({
 
         {/* Chevron */}
         <svg
-          className={`h-3 w-3 shrink-0 text-white/30 transition-transform duration-200 ${
+          className={`h-3 w-3 shrink-0 txt-faint transition-transform duration-200 ${
             open ? 'rotate-180' : ''
           }`}
           aria-hidden="true"
@@ -193,10 +193,10 @@ function SummarySection({
 function DataRow({label, value, muted}: {label: string; value: string; muted?: boolean}) {
   return (
     <div className="flex items-start gap-2 py-1">
-      <span className="shrink-0 text-[10px] leading-relaxed text-white/35">{label}</span>
+      <span className="shrink-0 text-[10px] leading-relaxed txt-faint">{label}</span>
       <span
         className={`ms-auto text-end text-xs leading-snug ${
-          muted ? 'text-white/45' : 'text-white/80'
+          muted ? 'txt-muted' : 'txt-strong'
         }`}
       >
         {value}
@@ -219,7 +219,7 @@ function RatingRow({
   const dots = useDistress && ratingId ? distressWeight(ratingId, score) : score;
   return (
     <div className="flex items-center gap-2 py-0.5">
-      <span className="min-w-0 flex-1 truncate text-[11px] leading-snug text-white/65">{label}</span>
+      <span className="min-w-0 flex-1 truncate text-[11px] leading-snug txt-soft">{label}</span>
       <ScoreDots score={dots} />
     </div>
   );
@@ -228,7 +228,7 @@ function RatingRow({
 function ChipRow({label, answer, chipKey}: {label: string; answer: string; chipKey: string}) {
   return (
     <div className="flex items-center gap-2 py-0.5">
-      <span className="min-w-0 flex-1 truncate text-[11px] leading-snug text-white/65">{label}</span>
+      <span className="min-w-0 flex-1 truncate text-[11px] leading-snug txt-soft">{label}</span>
       <ChipBadge chip={chipKey} label={answer} />
     </div>
   );
@@ -241,11 +241,11 @@ function FormulationCard({session, t}: {session: FormulationSession; t: ReturnTy
   if (!f) return null;
   return (
     <div className="grid gap-2">
-      <div className="rounded-lg bg-white/4 px-3 py-2">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-white/35">
+      <div className="rounded-lg fill-1 px-3 py-2">
+        <p className="text-[10px] font-semibold uppercase tracking-wider txt-faint">
           {t('liveSummary.central')}
         </p>
-        <p className="mt-1 text-xs leading-relaxed text-white/85">
+        <p className="mt-1 text-xs leading-relaxed txt-strong">
           {f.presenting_concern_user_words}
         </p>
       </div>
@@ -285,10 +285,10 @@ function GoalCard({session, t}: {session: FormulationSession; t: ReturnType<type
   return (
     <div className="grid gap-2">
       <div className="rounded-lg bg-[rgba(26,109,255,0.06)] px-3 py-2">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-white/35">
+        <p className="text-[10px] font-semibold uppercase tracking-wider txt-faint">
           {t('liveSummary.microGoal')}
         </p>
-        <p className="mt-1 text-xs font-medium leading-relaxed text-white/90">
+        <p className="mt-1 text-xs font-medium leading-relaxed txt-strong">
           {h.micro_goal_week}
         </p>
       </div>
@@ -467,17 +467,17 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
   return (
     <aside className="panel-surface sticky top-6 flex max-h-[calc(100vh-3rem)] flex-col overflow-hidden lg:max-h-[calc(100vh-5rem)]" aria-label={t('liveSummary.title')}>
       {/* ── Header ── */}
-      <div className="border-b border-white/8 px-4 pb-3 pt-4 md:px-5">
+      <div className="border-b border-[color:var(--color-border)] px-4 pb-3 pt-4 md:px-5">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-bold text-white">{t('liveSummary.title')}</p>
-          <span className="rounded-full bg-white/8 px-2 py-0.5 text-[10px] font-semibold tabular-nums text-white/50">
+          <p className="text-sm font-bold txt-strong">{t('liveSummary.title')}</p>
+          <span className="rounded-full fill-2 px-2 py-0.5 text-[10px] font-semibold tabular-nums txt-muted">
             {completedSections}/7
           </span>
         </div>
-        <p className="mt-1 text-[11px] leading-relaxed text-white/40">{t('liveSummary.subtitle')}</p>
+        <p className="mt-1 text-[11px] leading-relaxed txt-muted">{t('liveSummary.subtitle')}</p>
 
         {/* Overall progress bar */}
-        <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/8">
+        <div className="mt-3 h-1 overflow-hidden rounded-full fill-2">
           <div
             className="h-full rounded-full bg-gradient-to-r from-[var(--blue)] to-[var(--accent)] transition-all duration-700"
             style={{width: `${Math.round((completedSections / 7) * 100)}%`}}
@@ -488,7 +488,7 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
       {/* ── Scrollable sections ── */}
       <div className="flex-1 space-y-1.5 overflow-y-auto px-2.5 py-3 scrollbar-thin md:px-3">
         {!hasAnything && (
-          <p className="mb-2 rounded-lg border border-dashed border-white/10 px-3 py-5 text-center text-xs leading-relaxed text-white/40">
+          <p className="mb-2 rounded-lg border border-dashed border-[color:var(--color-border)] px-3 py-5 text-center text-xs leading-relaxed txt-muted">
             {t('liveSummary.empty')}
           </p>
         )}
@@ -534,7 +534,7 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
               )}
             </div>
           ) : (
-            <p className="text-[10px] text-white/25">{t('liveSummary.notFilled')}</p>
+            <p className="text-[10px] txt-faint">{t('liveSummary.notFilled')}</p>
           )}
         </SummarySection>
 
@@ -560,7 +560,7 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
               {riskQ2 != null && <DataRow label={t('liveSummary.riskQ2')} value={riskQ2} />}
             </div>
           ) : (
-            <p className="text-[10px] text-white/25">{t('liveSummary.notFilled')}</p>
+            <p className="text-[10px] txt-faint">{t('liveSummary.notFilled')}</p>
           )}
         </SummarySection>
 
@@ -572,7 +572,7 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
           defaultOpen={sectionDefaultOpen('open', phase)}
           badge={
             ratingsProgress.total > 0 ? (
-              <span className="text-[10px] tabular-nums text-white/40">
+              <span className="text-[10px] tabular-nums txt-muted">
                 {ratingsProgress.answered}/{ratingsProgress.total}
               </span>
             ) : undefined
@@ -594,13 +594,13 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
                 <RatingRow key={r.id} ratingId={r.id} label={r.label} score={r.score} />
               ))}
               {ratingsEntries.length > 8 && (
-                <p className="text-[10px] text-white/30">
+                <p className="text-[10px] txt-faint">
                   {t('liveSummary.andMore', {count: ratingsEntries.length - 8})}
                 </p>
               )}
             </div>
           ) : (
-            <p className="text-[10px] text-white/25">{t('liveSummary.notFilled')}</p>
+            <p className="text-[10px] txt-faint">{t('liveSummary.notFilled')}</p>
           )}
         </SummarySection>
 
@@ -612,9 +612,9 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
           defaultOpen={sectionDefaultOpen('dimensions', phase)}
           badge={
             session.phases_skipped?.includes('follow_ups') ? (
-              <span className="text-[10px] text-white/30">{t('liveSummary.skipped')}</span>
+              <span className="text-[10px] txt-faint">{t('liveSummary.skipped')}</span>
             ) : followUps.length > 0 ? (
-              <span className="text-[10px] tabular-nums text-white/40">{followUps.length}</span>
+              <span className="text-[10px] tabular-nums txt-muted">{followUps.length}</span>
             ) : undefined
           }
         >
@@ -625,9 +625,9 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
               ))}
             </div>
           ) : session.phases_skipped?.includes('follow_ups') ? (
-            <p className="text-[10px] italic text-white/30">{t('liveSummary.sectionSkipped')}</p>
+            <p className="text-[10px] italic txt-faint">{t('liveSummary.sectionSkipped')}</p>
           ) : (
-            <p className="text-[10px] text-white/25">{t('liveSummary.notFilled')}</p>
+            <p className="text-[10px] txt-faint">{t('liveSummary.notFilled')}</p>
           )}
         </SummarySection>
 
@@ -639,7 +639,7 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
           defaultOpen={sectionDefaultOpen('exploration', phase)}
           badge={
             explorationProgress.total > 0 ? (
-              <span className="text-[10px] tabular-nums text-white/40">
+              <span className="text-[10px] tabular-nums txt-muted">
                 {explorationProgress.answered}/{explorationProgress.total}
               </span>
             ) : undefined
@@ -661,13 +661,13 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
                 <RatingRow key={a.key} label={a.label} score={a.score} useDistress={false} />
               ))}
               {explorationAnswers.length > 6 && (
-                <p className="text-[10px] text-white/30">
+                <p className="text-[10px] txt-faint">
                   {t('liveSummary.andMore', {count: explorationAnswers.length - 6})}
                 </p>
               )}
             </div>
           ) : (
-            <p className="text-[10px] text-white/25">{t('liveSummary.notFilled')}</p>
+            <p className="text-[10px] txt-faint">{t('liveSummary.notFilled')}</p>
           )}
         </SummarySection>
 
@@ -683,7 +683,7 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
           {session.formulation_approved ? (
             <FormulationCard session={session} t={t} />
           ) : (
-            <p className="text-[10px] text-white/25">{t('liveSummary.notFilled')}</p>
+            <p className="text-[10px] txt-faint">{t('liveSummary.notFilled')}</p>
           )}
         </SummarySection>
 
@@ -697,13 +697,13 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
           {session.coach_handoff ? (
             <GoalCard session={session} t={t} />
           ) : (
-            <p className="text-[10px] text-white/25">{t('liveSummary.notFilled')}</p>
+            <p className="text-[10px] txt-faint">{t('liveSummary.notFilled')}</p>
           )}
         </SummarySection>
       </div>
 
       {/* ── Footer: Export ── */}
-      <div className="border-t border-white/8 px-4 py-3 md:px-5">
+      <div className="border-t border-[color:var(--color-border)] px-4 py-3 md:px-5">
         <FormulationExportMenu session={session} liveDraft={draft} compact />
       </div>
     </aside>

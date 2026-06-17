@@ -59,7 +59,7 @@ export function FollowUpStep({loading, followUps, onDraftChange, onSubmit, onSki
           aria-labelledby={`followup-q-${f.key}`}
           className="rounded-xl border border-[var(--blue)]/20 bg-[rgba(26,109,255,0.06)] p-4"
         >
-          <p id={`followup-q-${f.key}`} className="text-sm font-semibold text-white">{t(f.questionKey)}</p>
+          <p id={`followup-q-${f.key}`} className="text-sm font-semibold txt-strong">{t(f.questionKey)}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {CHIP_OPTIONS.map((chip) => {
               const selected = answers[f.key] === chip;
@@ -71,7 +71,7 @@ export function FollowUpStep({loading, followUps, onDraftChange, onSubmit, onSki
                   className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                     selected
                       ? 'border-[var(--blue)] bg-[var(--blue)] text-white shadow-[0_0_0_1px_rgba(26,109,255,0.4)]'
-                      : 'border-white/15 bg-white/4 text-white/60 hover:border-white/30 hover:text-white/80'
+                      : 'border-[color:var(--color-border-strong)] fill-1 txt-soft hover:border-[color:var(--color-border-strong)] hover:txt-strong'
                   }`}
                   onClick={() =>
                     setAnswers((prev) => ({
@@ -94,7 +94,7 @@ export function FollowUpStep({loading, followUps, onDraftChange, onSubmit, onSki
               onChange={(e) =>
                 setClarifications((prev) => ({...prev, [f.key]: e.target.value}))
               }
-              className="focus-ring mt-3 w-full rounded-lg border border-white/15 bg-white/4 px-3 py-2 text-sm text-white placeholder:text-white/30"
+              className="focus-ring mt-3 w-full rounded-lg border border-[color:var(--color-border-strong)] fill-1 px-3 py-2 text-sm txt-strong placeholder:txt-faint"
               maxLength={200}
             />
           )}

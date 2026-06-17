@@ -36,11 +36,11 @@ export function AiGeneratingProgress({variant = 'goal'}: Props) {
   return (
     <div className="rounded-2xl border border-[var(--blue)]/20 bg-[rgba(26,109,255,0.06)] p-5" role="status">
       <div className="flex items-center gap-3">
-        <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-[var(--blue)]" aria-hidden="true" />
-        <p className="text-sm font-bold text-white">{stages[stageIndex]}</p>
+        <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-[color:var(--color-border-strong)] border-t-[var(--blue)]" aria-hidden="true" />
+        <p className="text-sm font-bold txt-strong">{stages[stageIndex]}</p>
       </div>
       <div
-        className="mt-4 h-2 overflow-hidden rounded-full bg-white/10"
+        className="mt-4 h-2 overflow-hidden rounded-full fill-3"
         role="progressbar"
         aria-valuenow={percent}
         aria-valuemin={0}
@@ -62,12 +62,12 @@ export function AiGeneratingProgress({variant = 'goal'}: Props) {
                   ? 'bg-green-500/20 text-green-400'
                   : i === stageIndex
                     ? 'bg-[var(--blue)] text-white'
-                    : 'bg-white/10 text-white/40'
+                    : 'fill-3 txt-muted'
               }`}
             >
               {i + 1}
             </span>
-            <span className={i <= stageIndex ? 'text-white/80' : 'text-white/35'}>{stage}</span>
+            <span className={i <= stageIndex ? 'txt-strong' : 'txt-faint'}>{stage}</span>
           </div>
         ))}
       </div>

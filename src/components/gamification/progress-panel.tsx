@@ -54,7 +54,7 @@ function ProgressPanelContent() {
   }, []);
 
   if (unlocks === null) {
-    return <div className="py-10 text-center text-sm text-white/50">…</div>;
+    return <div className="py-10 text-center text-sm txt-muted">…</div>;
   }
 
   const grouped = groupByKindAndKey(unlocks);
@@ -64,7 +64,7 @@ function ProgressPanelContent() {
 
   if (unlocks.length === 0) {
     return (
-      <div className="py-10 text-center text-sm text-white/50">{t('empty')}</div>
+      <div className="py-10 text-center text-sm txt-muted">{t('empty')}</div>
     );
   }
 
@@ -72,7 +72,7 @@ function ProgressPanelContent() {
     <div className="grid gap-6">
       {titles.length > 0 && (
         <section className="grid gap-2">
-          <h2 className="text-sm font-bold text-white/80">{t('sectionTitles')}</h2>
+          <h2 className="text-sm font-bold txt-strong">{t('sectionTitles')}</h2>
           <div className="flex flex-wrap gap-2">
             {titles.map(([key, info]) => (
               <span
@@ -89,7 +89,7 @@ function ProgressPanelContent() {
 
       {mysteryUnlocks.length > 0 && (
         <section className="grid gap-2">
-          <h2 className="text-sm font-bold text-white/80">{t('sectionUnlocks')}</h2>
+          <h2 className="text-sm font-bold txt-strong">{t('sectionUnlocks')}</h2>
           <div className="flex flex-wrap gap-2">
             {mysteryUnlocks.map(([key, info]) => (
               <span
@@ -107,7 +107,7 @@ function ProgressPanelContent() {
 
       {loot.length > 0 && (
         <section className="grid gap-2">
-          <h2 className="text-sm font-bold text-white/80">{t('sectionLoot')}</h2>
+          <h2 className="text-sm font-bold txt-strong">{t('sectionLoot')}</h2>
           <div className="flex flex-wrap gap-2">
             {loot.map(([key, info]) => (
               <span
@@ -132,8 +132,8 @@ export function ProgressPanel() {
   return (
     <div className="grid gap-6">
       <div className="grid gap-1">
-        <h1 className="text-xl font-black text-white">{t('title')}</h1>
-        <p className="text-sm text-white/60">{t('subtitle')}</p>
+        <h1 className="text-xl font-black txt-strong">{t('title')}</h1>
+        <p className="text-sm txt-soft">{t('subtitle')}</p>
       </div>
       <LifeCoachAuthShell>{() => <ProgressPanelContent />}</LifeCoachAuthShell>
     </div>

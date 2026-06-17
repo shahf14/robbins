@@ -29,19 +29,19 @@ export function CompletionScreen({
       ? 'text-emerald-400'
       : readinessScore >= 50
         ? 'text-amber-400'
-        : 'text-white/70';
+        : 'txt-soft';
 
   return (
     <div className="mx-auto max-w-xl space-y-8 py-8">
       <div className="text-center space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+        <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
           {t('complete.eyebrow')}
         </p>
         <h1 className="text-3xl font-bold">{t('complete.title')}</h1>
 
-        <div className="inline-flex flex-col items-center gap-1 rounded-2xl border border-white/10 bg-white/5 px-8 py-4">
+        <div className="inline-flex flex-col items-center gap-1 rounded-2xl border border-[color:var(--color-border)] fill-2 px-8 py-4">
           <p className={`text-4xl font-bold ${scoreColor}`}>{readinessScore}/100</p>
-          <p className="text-sm text-white/50">{t('complete.readinessLabel')}</p>
+          <p className="text-sm txt-muted">{t('complete.readinessLabel')}</p>
         </div>
       </div>
 
@@ -56,24 +56,24 @@ export function CompletionScreen({
           <SummaryCard label={t('complete.tomorrowTakeaway')} value={tomorrowTakeaway} />
         )}
         {filledGratitude.length > 0 && (
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+          <div className="rounded-xl border border-[color:var(--color-border)] fill-2 p-4 space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
               {t('complete.gratitude')}
             </p>
             {filledGratitude.map((g) => (
-              <p key={g} className="text-sm text-white/70">
+              <p key={g} className="text-sm txt-soft">
                 • {g}
               </p>
             ))}
           </div>
         )}
         {preparedItems.length > 0 && (
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+          <div className="rounded-xl border border-[color:var(--color-border)] fill-2 p-4 space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
               {t('complete.prepared')}
             </p>
             {preparedItems.map((item) => (
-              <p key={item} className="text-sm text-white/70">
+              <p key={item} className="text-sm txt-soft">
                 ✓ {item}
               </p>
             ))}
@@ -82,7 +82,7 @@ export function CompletionScreen({
       </div>
 
       {streak > 0 && (
-        <p className="text-center text-sm text-white/40">
+        <p className="text-center text-sm txt-muted">
           {t('complete.streakMessage', {count: streak})}
         </p>
       )}
@@ -96,9 +96,9 @@ export function CompletionScreen({
 
 function SummaryCard({label, value}: {label: string; value: string}) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-1">
-      <p className="text-xs font-semibold uppercase tracking-widest text-white/40">{label}</p>
-      <p className="text-sm text-white/80">{value}</p>
+    <div className="rounded-xl border border-[color:var(--color-border)] fill-2 p-4 space-y-1">
+      <p className="text-xs font-semibold uppercase tracking-widest txt-muted">{label}</p>
+      <p className="text-sm txt-strong">{value}</p>
     </div>
   );
 }

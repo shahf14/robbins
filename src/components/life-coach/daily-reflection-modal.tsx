@@ -84,12 +84,12 @@ export function DailyReflectionModal({
                 tBs(skipAction === 'partial' ? 'antiShame.partial' : 'antiShame.skip')}
             </p>
             {selfContract && (
-              <div className="mt-3 rounded-xl border border-white/8 bg-white/3 px-4 py-3">
+              <div className="mt-3 rounded-xl border border-[color:var(--color-border)] fill-1 px-4 py-3">
                 <SelfContractReminder contract={selfContract} goalTitle={goalTitle} />
               </div>
             )}
             {blockerHintKey ? (
-              <p className="mt-4 rounded-xl border border-white/8 bg-white/3 px-4 py-3 text-sm leading-6 text-white/65">
+              <p className="mt-4 rounded-xl border border-[color:var(--color-border)] fill-1 px-4 py-3 text-sm leading-6 txt-soft">
                 {t(blockerHintKey)}
               </p>
             ) : null}
@@ -130,8 +130,8 @@ export function DailyReflectionModal({
                       aria-pressed={blockerReason === reason}
                       className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                         blockerReason === reason
-                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                          : 'border-white/10 bg-white/3 text-white/55 hover:border-white/20 hover:text-white'
+                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                          : 'border-[color:var(--color-border)] fill-1 txt-soft hover:border-[color:var(--color-border-strong)] hover:txt-strong'
                       }`}
                       onClick={() => setBlockerReason((prev) => prev === reason ? null : reason)}
                     >
@@ -146,7 +146,7 @@ export function DailyReflectionModal({
           /* ── Full daily reflection context ── */
           <>
             <p className="eyebrow">{t('lifeCoach.dailyReflection')}</p>
-            <h3 id="daily-reflection-title" className="mt-2 text-xl font-black text-white">{t('lifeCoach.dailyReflectionTitle')}</h3>
+            <h3 id="daily-reflection-title" className="mt-2 text-xl font-black txt-strong">{t('lifeCoach.dailyReflectionTitle')}</h3>
 
             <div className="mt-5 grid gap-4">
               <RangeInput label={t('lifeCoach.moodScore')}   value={moodScore}   onChange={setMoodScore}   tierLabel={getMoodTierLabel(moodScore, t)} />
@@ -162,8 +162,8 @@ export function DailyReflectionModal({
                       aria-pressed={blockerReason === reason}
                       className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                         blockerReason === reason
-                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                          : 'border-white/10 bg-white/3 text-white/55 hover:border-white/20 hover:text-white'
+                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                          : 'border-[color:var(--color-border)] fill-1 txt-soft hover:border-[color:var(--color-border-strong)] hover:txt-strong'
                       }`}
                       onClick={() => setBlockerReason((prev) => prev === reason ? null : reason)}
                     >

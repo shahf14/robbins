@@ -39,15 +39,15 @@ export function HomeGoalProgress({
   return (
     <Link
       href={`/life-coach/${goal.domain}`}
-      className="focus-ring group block rounded-[20px] border border-white/10 bg-white/3 px-6 py-5 transition hover:border-white/20 hover:bg-white/5"
+      className="focus-ring group block rounded-[20px] border border-[color:var(--color-border)] fill-1 px-6 py-5 transition hover:border-[color:var(--color-border-strong)] hover:fill-2"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+          <p className="text-xs font-bold uppercase tracking-widest txt-muted">
             {t('home.goalProgressLabel')} · {DOMAIN_ICONS[goal.domain as LifeDomain]}{' '}
             {t(`lifeCoach.domains.${goal.domain}.short`)}
           </p>
-          <p className="mt-2 text-base font-black leading-snug text-white line-clamp-2">
+          <p className="mt-2 text-base font-black leading-snug txt-strong line-clamp-2">
             {goal.title}
           </p>
           {goal.success_metric?.trim() && (
@@ -67,7 +67,7 @@ export function HomeGoalProgress({
         </span>
       </div>
 
-      <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-white/10">
+      <div className="mt-4 h-2 w-full overflow-hidden rounded-full fill-3">
         <div
           className="h-full rounded-full transition-[width] duration-700"
           style={{width: `${pct}%`, backgroundColor: progressColor}}
@@ -85,21 +85,21 @@ export function HomeGoalProgress({
                 className="absolute -top-0.5 flex flex-col items-center"
                 style={{left: `${markerPct}%`, transform: 'translateX(-50%)'}}
               >
-                <div className={`h-3 w-0.5 ${milestone.status === 'completed' ? 'bg-emerald-400' : 'bg-white/20'}`} />
+                <div className={`h-3 w-0.5 ${milestone.status === 'completed' ? 'bg-emerald-400' : 'fill-3'}`} />
               </div>
             );
           })}
         </div>
       )}
 
-      <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-white/40">
+      <div className="mt-3 flex flex-wrap items-center gap-4 text-xs txt-muted">
         {completed > 0 && (
           <span>{t('home.goalDoneSteps', {done: completed, total})}</span>
         )}
         {daysLeft > 0 && (
           <span>{t('home.goalDaysLeft', {days: daysLeft})}</span>
         )}
-        <span className="ms-auto text-white/25 transition group-hover:text-white/50">→</span>
+        <span className="ms-auto txt-faint transition group-hover:txt-muted">→</span>
       </div>
     </Link>
   );
@@ -119,7 +119,7 @@ export function HomeKpiStrip({
 }) {
   const completionRate = weeklyTotal > 0 ? Math.round((weeklyDone / weeklyTotal) * 100) : 0;
   const trendIcon = trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→';
-  const trendColor = trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-red-400' : 'text-white/50';
+  const trendColor = trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-red-400' : 'txt-muted';
   const aligned = behaviorChangeAnalysis?.goal_aligned_count ?? 0;
   const showUps = behaviorChangeAnalysis?.show_up_count ?? weeklyDone;
 
@@ -127,12 +127,12 @@ export function HomeKpiStrip({
     {
       label: t('home.kpiStreak'),
       value: streak > 0 ? `${streak}d` : '—',
-      color: streak >= 7 ? 'text-emerald-400' : streak > 0 ? 'text-[var(--blue)]' : 'text-white/40',
+      color: streak >= 7 ? 'text-emerald-400' : streak > 0 ? 'text-[var(--blue)]' : 'txt-muted',
     },
     {
       label: t('home.kpiDoneWeek'),
       value: weeklyTotal > 0 ? `${weeklyDone}/${weeklyTotal}` : '—',
-      color: 'text-white',
+      color: 'txt-strong',
     },
     {
       label: behaviorChangeAnalysis ? t('home.kpiGoalAligned') : t('home.kpiCompletionRate'),
@@ -148,12 +148,12 @@ export function HomeKpiStrip({
           ? 'text-emerald-400'
           : aligned > 0
             ? 'text-amber-400'
-            : 'text-white'
+            : 'txt-strong'
         : completionRate >= 70
           ? 'text-emerald-400'
           : completionRate >= 40
             ? 'text-amber-400'
-            : 'text-white',
+            : 'txt-strong',
     },
     {
       label: behaviorChangeAnalysis ? t('home.kpiBarrierTouched') : t('home.kpiEnergyTrend'),
@@ -169,7 +169,7 @@ export function HomeKpiStrip({
       color: behaviorChangeAnalysis
         ? behaviorChangeAnalysis.barrier_touched_count >= 1 || behaviorChangeAnalysis.comeback_after_barrier
           ? 'text-violet-300'
-          : 'text-white/40'
+          : 'txt-muted'
         : trendColor,
     },
     {
@@ -180,7 +180,7 @@ export function HomeKpiStrip({
           ? 'text-emerald-400'
           : behaviorScore.percent >= 40
             ? 'text-amber-400'
-            : 'text-white/40',
+            : 'txt-muted',
     },
   ];
 
@@ -189,12 +189,12 @@ export function HomeKpiStrip({
       {kpis.map(({label, value, color}) => (
         <div
           key={label}
-          className="flex flex-col items-center rounded-[18px] border border-white/8 bg-white/3 py-4 px-2"
+          className="flex flex-col items-center rounded-[18px] border border-[color:var(--color-border)] fill-1 py-4 px-2"
         >
           <span className={`text-xl font-black tabular-nums leading-none ${color}`}>
             {value}
           </span>
-          <span className="mt-1.5 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-white/35 leading-tight">
+          <span className="mt-1.5 text-center text-[10px] font-semibold uppercase tracking-[0.1em] txt-faint leading-tight">
             {label}
           </span>
         </div>
@@ -243,16 +243,16 @@ export function HomePersonalBests({
   ];
 
   return (
-    <div className="rounded-[20px] border border-white/8 bg-white/3 px-5 py-4">
-      <p className="text-xs font-bold uppercase tracking-widest text-white/35">
+    <div className="rounded-[20px] border border-[color:var(--color-border)] fill-1 px-5 py-4">
+      <p className="text-xs font-bold uppercase tracking-widest txt-faint">
         {t('home.personalBestsTitle')}
       </p>
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {bests.map((best) => (
-          <div key={best.label} className="rounded-2xl border border-white/8 bg-white/[0.025] px-3 py-3">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-white/35">{best.label}</p>
-            <p className="mt-1 truncate text-lg font-black text-white">{best.value}</p>
-            <p className="mt-0.5 text-xs text-white/40">{best.detail}</p>
+          <div key={best.label} className="rounded-2xl border border-[color:var(--color-border)] fill-1 px-3 py-3">
+            <p className="text-[10px] font-bold uppercase tracking-wider txt-faint">{best.label}</p>
+            <p className="mt-1 truncate text-lg font-black txt-strong">{best.value}</p>
+            <p className="mt-0.5 text-xs txt-muted">{best.detail}</p>
           </div>
         ))}
       </div>

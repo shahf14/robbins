@@ -56,8 +56,8 @@ function Question({
   return (
     <div className="grid gap-3">
       <div>
-        <p className="text-base font-semibold text-white">{label}</p>
-        {hint && <p className="mt-1 text-sm text-white/45">{hint}</p>}
+        <p className="text-base font-semibold txt-strong">{label}</p>
+        {hint && <p className="mt-1 text-sm txt-muted">{hint}</p>}
       </div>
       {children}
     </div>
@@ -79,7 +79,7 @@ function ChipButton({
       className={`focus-ring rounded-full px-4 py-2.5 text-sm font-medium transition ${
         active
           ? 'bg-[var(--blue)] text-white'
-          : 'bg-white/6 text-white/70 hover:bg-white/10 hover:text-white'
+          : 'fill-2 txt-soft hover:fill-3 hover:txt-strong'
       }`}
     >
       {children}
@@ -132,17 +132,17 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
   return (
     <div className="flex flex-col gap-10">
       <header>
-        <h1 className="text-[clamp(1.75rem,4.5vw,2.25rem)] font-bold leading-tight text-white">
+        <h1 className="text-[clamp(1.75rem,4.5vw,2.25rem)] font-bold leading-tight txt-strong">
           {t('onboarding.step1Title')}
         </h1>
-        <p className="mt-2 text-sm leading-6 text-white/55">{t('onboarding.step1Body')}</p>
-        <p className="mt-1 text-xs text-white/35">{t('onboarding.step1TimeHint')}</p>
+        <p className="mt-2 text-sm leading-6 txt-soft">{t('onboarding.step1Body')}</p>
+        <p className="mt-1 text-xs txt-faint">{t('onboarding.step1TimeHint')}</p>
       </header>
 
       <div className="flex flex-col gap-8">
         <Question label={t('onboarding.nameLabel')}>
           <input
-            className="focus-ring input-base border-0 bg-white/6"
+            className="focus-ring input-base border-0 fill-2"
             autoFocus
             autoComplete="given-name"
             value={s.name}
@@ -174,7 +174,7 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
           </div>
           {s.lifeContextStatuses.some((c) => c !== 'prefer_not') && (
             <textarea
-              className="focus-ring textarea-base min-h-20 border-0 bg-white/6"
+              className="focus-ring textarea-base min-h-20 border-0 fill-2"
               value={s.lifeContextNote}
               maxLength={200}
               aria-label={t('lifeContext.notePlaceholder')}
@@ -215,18 +215,18 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
         <Question label={t('onboarding.scheduleQuestion')}>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="grid gap-2">
-              <span className="text-sm text-white/45">{t('onboarding.wakeLabel')}</span>
+              <span className="text-sm txt-muted">{t('onboarding.wakeLabel')}</span>
               <input
-                className="focus-ring input-base border-0 bg-white/6"
+                className="focus-ring input-base border-0 fill-2"
                 type="time"
                 value={s.wakeTime}
                 onChange={(e) => set({wakeTime: e.target.value})}
               />
             </label>
             <label className="grid gap-2">
-              <span className="text-sm text-white/45">{t('onboarding.sleepLabel')}</span>
+              <span className="text-sm txt-muted">{t('onboarding.sleepLabel')}</span>
               <input
-                className="focus-ring input-base border-0 bg-white/6"
+                className="focus-ring input-base border-0 fill-2"
                 type="time"
                 value={s.sleepTime}
                 onChange={(e) => set({sleepTime: e.target.value})}
@@ -277,7 +277,7 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
                 className={`focus-ring flex-1 rounded-full py-2.5 text-sm font-medium transition ${
                   s.locale === l
                     ? 'bg-[var(--blue)] text-white'
-                    : 'bg-white/6 text-white/70 hover:bg-white/10'
+                    : 'fill-2 txt-soft hover:fill-3'
                 }`}
               >
                 {l === 'en' ? 'English' : 'עברית'}
@@ -288,7 +288,7 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
 
         <button
           type="button"
-          className="focus-ring self-start text-sm font-medium text-white/40 hover:text-white/65"
+          className="focus-ring self-start text-sm font-medium txt-muted hover:txt-soft"
           aria-expanded={showMore}
           onClick={() => setShowMore((v) => !v)}
         >
@@ -296,7 +296,7 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
         </button>
 
         {showMore && (
-          <div className="flex flex-col gap-8 border-t border-white/6 pt-8">
+          <div className="flex flex-col gap-8 border-t border-[color:var(--color-border)] pt-8">
             <Question label={t('settings.gender')} hint={t('onboarding.genderHelpShort')}>
               <div className="flex flex-wrap gap-2">
                 {PARTICIPANT_GENDERS.map((g) => (
@@ -345,7 +345,7 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
               {s.agePreferNot ? (
                 <button
                   type="button"
-                  className="focus-ring self-start rounded-full bg-white/6 px-4 py-2 text-sm text-white/55"
+                  className="focus-ring self-start rounded-full fill-2 px-4 py-2 text-sm txt-soft"
                   onClick={() => set({agePreferNot: false})}
                 >
                   {t('settings.agePreferNot')} ✕
@@ -353,7 +353,7 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
               ) : (
                 <div className="flex gap-2">
                   <input
-                    className="focus-ring input-base flex-1 border-0 bg-white/6"
+                    className="focus-ring input-base flex-1 border-0 fill-2"
                     type="number"
                     inputMode="numeric"
                     min={16}
@@ -365,7 +365,7 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
                   />
                   <button
                     type="button"
-                    className="focus-ring shrink-0 rounded-full bg-white/6 px-4 text-sm text-white/45"
+                    className="focus-ring shrink-0 rounded-full fill-2 px-4 text-sm txt-muted"
                     onClick={() => set({agePreferNot: true, age: ''})}
                   >
                     {t('settings.agePreferNot')}

@@ -134,14 +134,14 @@ export function SqlEditor() {
     <div className="grid gap-5">
       {/* Quick query chips */}
       <div>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/40">Quick Queries</p>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider txt-muted">Quick Queries</p>
         <div className="flex flex-wrap gap-2">
           {QUICK_QUERIES.map((q) => (
             <button
               key={q.label}
               type="button"
               onClick={() => loadQuery(q.sql)}
-              className="focus-ring rounded-full border border-white/10 bg-white/3 px-3 py-1.5 text-xs font-semibold text-white/60 transition hover:border-white/20 hover:text-white"
+              className="focus-ring rounded-full border border-[color:var(--color-border)] fill-1 px-3 py-1.5 text-xs font-semibold txt-soft transition hover:border-[color:var(--color-border-strong)] hover:txt-strong"
             >
               {q.label}
             </button>
@@ -152,11 +152,11 @@ export function SqlEditor() {
       {/* SQL textarea */}
       <div className="grid gap-2">
         <div className="flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-wider text-white/40">SQL Query</p>
+          <p className="text-xs font-semibold uppercase tracking-wider txt-muted">SQL Query</p>
           <div className="flex gap-2">
             <button
               type="button"
-              className="focus-ring rounded-lg border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold text-white/70 hover:text-white disabled:opacity-40"
+              className="focus-ring rounded-lg border border-[color:var(--color-border-strong)] fill-2 px-4 py-1.5 text-xs font-semibold txt-soft hover:txt-strong disabled:opacity-40"
               onClick={() => setSql('')}
             >
               Clear
@@ -172,7 +172,7 @@ export function SqlEditor() {
           </div>
         </div>
         <textarea
-          className="focus-ring min-h-36 w-full rounded-[18px] border border-white/10 bg-white/3 p-4 font-mono text-sm text-white placeholder-white/25 outline-none"
+          className="focus-ring min-h-36 w-full rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4 font-mono text-sm txt-strong outline-none"
           value={sql}
           onChange={(e) => setSql(e.target.value)}
           placeholder="SELECT * FROM checkins LIMIT 10;"
@@ -184,7 +184,7 @@ export function SqlEditor() {
             }
           }}
         />
-        <p className="text-right text-xs text-white/25">Ctrl+Enter to run</p>
+        <p className="text-right text-xs txt-faint">Ctrl+Enter to run</p>
       </div>
 
       {/* Error */}
@@ -198,7 +198,7 @@ export function SqlEditor() {
       {result && !error && (
         <div className="grid gap-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-white/40">
+            <p className="text-xs txt-muted">
               {result.rows_affected != null
                 ? `${result.rows_affected} rows affected`
                 : `${result.rows.length} rows`}
@@ -217,12 +217,12 @@ export function SqlEditor() {
           </div>
 
           {result.rows.length > 0 && (
-            <div className="overflow-x-auto rounded-[18px] border border-white/10">
+            <div className="overflow-x-auto rounded-[18px] border border-[color:var(--color-border)]">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 bg-white/3">
+                  <tr className="border-b border-[color:var(--color-border)] fill-1">
                     {result.columns.map((col) => (
-                      <th key={col} className="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider text-white/50">
+                      <th key={col} className="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider txt-muted">
                         {col}
                       </th>
                     ))}
@@ -230,12 +230,12 @@ export function SqlEditor() {
                 </thead>
                 <tbody>
                   {(result.rows as Record<string, unknown>[]).map((row, idx) => (
-                    <tr key={idx} className="border-b border-white/5 hover:bg-white/2">
+                    <tr key={idx} className="border-b border-[color:var(--color-border)] hover:fill-1">
                       {result.columns.map((col) => {
                         const val = row[col];
-                        const str = val == null ? <span className="text-white/20">null</span> : String(val);
+                        const str = val == null ? <span className="txt-faint">null</span> : String(val);
                         return (
-                          <td key={col} className="max-w-xs truncate px-4 py-2.5 text-xs text-white/70">
+                          <td key={col} className="max-w-xs truncate px-4 py-2.5 text-xs txt-soft">
                             {str}
                           </td>
                         );
@@ -248,7 +248,7 @@ export function SqlEditor() {
           )}
 
           {result.rows.length === 0 && result.rows_affected == null && (
-            <p className="text-center text-sm text-white/40">No rows returned</p>
+            <p className="text-center text-sm txt-muted">No rows returned</p>
           )}
         </div>
       )}

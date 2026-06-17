@@ -32,13 +32,13 @@ export function StepFilterChips({value, onChange, counts}: Props) {
             aria-selected={active}
             className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
               active
-                ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                : 'border-white/10 text-white/55 hover:border-white/20 hover:text-white/80'
+                ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                : 'border-[color:var(--color-border)] txt-soft hover:border-[color:var(--color-border-strong)] hover:txt-strong'
             }`}
             onClick={() => onChange(filter)}
           >
             {t(filter)}
-            {count > 0 && <span className="ms-1.5 tabular-nums text-white/40">({count})</span>}
+            {count > 0 && <span className="ms-1.5 tabular-nums txt-muted">({count})</span>}
           </button>
         );
       })}

@@ -129,11 +129,11 @@ export function HealthGoalPreview({preview, wizardContext, successMetric, onCanc
     <section className="panel-surface p-6">
       <div className="flex flex-wrap items-center gap-2">
         <p className="eyebrow">{t('healthWizard.previewEyebrow')}</p>
-        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
+        <span className="rounded-full border border-[color:var(--color-border)] fill-2 px-3 py-1 text-xs font-semibold txt-soft">
           {planBadge}
         </span>
       </div>
-      <h3 className="mt-4 text-2xl font-black text-white">{t('healthWizard.previewTitle')}</h3>
+      <h3 className="mt-4 text-2xl font-black txt-strong">{t('healthWizard.previewTitle')}</h3>
 
       <div className="mt-4">
         <GoalRealismBanner realismCheck={preview.realism_check} />
@@ -144,7 +144,7 @@ export function HealthGoalPreview({preview, wizardContext, successMetric, onCanc
       <div className="mt-6 grid gap-5">
         <p className="field-label mb-0">
           {t('lifeCoach.goalHierarchyGoal')}
-          <span className="font-normal text-white/40"> · {t('lifeCoach.goalHierarchyGoalRole')}</span>
+          <span className="font-normal txt-muted"> · {t('lifeCoach.goalHierarchyGoalRole')}</span>
         </p>
         <label className="grid gap-2">
           <span className="field-label mb-0">{t('lifeCoach.goalTitle')}</span>
@@ -171,14 +171,14 @@ export function HealthGoalPreview({preview, wizardContext, successMetric, onCanc
                 key={`${phase.start_day}-${phase.end_day}`}
                 className="rounded-2xl border border-[var(--blue)]/20 bg-[rgba(26,109,255,0.06)] p-4"
               >
-                <p className="text-sm font-semibold text-white">
+                <p className="text-sm font-semibold txt-strong">
                   {t('healthWizard.planPhaseRange', {
                     start: phase.start_day,
                     end: phase.end_day,
                   })}
                 </p>
                 <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{phase.focus}</p>
-                <ul className="mt-3 grid gap-1 text-sm text-white/72">
+                <ul className="mt-3 grid gap-1 text-sm txt-soft">
                   {phase.task_templates.slice(0, 3).map((task) => (
                     <li key={task.title}>• {task.title}</li>
                   ))}
@@ -191,10 +191,10 @@ export function HealthGoalPreview({preview, wizardContext, successMetric, onCanc
         <div className="grid gap-3">
           <span className="field-label mb-0">
             {t('lifeCoach.dailyBabySteps')}
-            <span className="font-normal text-white/40"> · {t('lifeCoach.goalHierarchyDailyStepRole')}</span>
+            <span className="font-normal txt-muted"> · {t('lifeCoach.goalHierarchyDailyStepRole')}</span>
           </span>
           {steps.map((step, index) => (
-            <div key={`${step.title}-${index}`} className="rounded-[18px] border border-white/10 bg-white/3 p-4">
+            <div key={`${step.title}-${index}`} className="rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4">
               <input
                 className="focus-ring input-base"
                 value={step.title}

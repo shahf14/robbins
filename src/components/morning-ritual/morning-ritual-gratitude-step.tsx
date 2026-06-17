@@ -225,15 +225,15 @@ export function GratitudeStep({
     return (
       <div className="text-center">
         <p className="eyebrow justify-center">{t('gratitude.prep.eyebrow')}</p>
-        <h2 className="mt-4 font-[var(--font-body)] text-3xl font-semibold text-white sm:text-4xl">
+        <h2 className="mt-4 font-[var(--font-body)] text-3xl font-semibold txt-strong sm:text-4xl">
           {t('gratitude.prep.title')}
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-8 text-[var(--muted)] sm:text-lg">
           {t('gratitude.prep.subtitle')}
         </p>
 
-        <div className="mx-auto mt-8 flex max-w-xl items-center justify-between gap-4 rounded-full border border-white/10 bg-white/3 px-5 py-3">
-          <span className="text-sm font-semibold text-white/70">
+        <div className="mx-auto mt-8 flex max-w-xl items-center justify-between gap-4 rounded-full border border-[color:var(--color-border)] fill-1 px-5 py-3">
+          <span className="text-sm font-semibold txt-soft">
             {t('gratitude.prep.timer', {seconds: prepRemaining})}
           </span>
           <span className="text-sm font-semibold uppercase tracking-[0.15em] text-[var(--blue)]">
@@ -243,11 +243,11 @@ export function GratitudeStep({
 
         <div className="mt-10 flex items-center justify-center">
           <div className="relative flex h-72 w-72 items-center justify-center">
-            <div className="fire-breath-halo absolute inset-0 rounded-full border border-white/10" />
+            <div className="fire-breath-halo absolute inset-0 rounded-full border border-[color:var(--color-border)]" />
             <div className="fire-breath-core relative flex h-44 w-44 items-center justify-center rounded-full border border-[rgba(232,87,42,0.28)] bg-[radial-gradient(circle,rgba(232,87,42,0.28),rgba(26,109,255,0.04))]">
               <div className="text-center">
-                <p className="text-5xl font-black text-white">{prepRemaining}</p>
-                <p className="mt-2 text-xs font-bold uppercase tracking-[0.25em] text-white/72">
+                <p className="text-5xl font-black txt-strong">{prepRemaining}</p>
+                <p className="mt-2 text-xs font-bold uppercase tracking-[0.25em] txt-soft">
                   {t('gratitude.prep.fireBreath')}
                 </p>
               </div>
@@ -274,20 +274,20 @@ export function GratitudeStep({
   return (
     <div>
       <p className="eyebrow">{t('gratitude.eyebrow')}</p>
-      <h2 className="mt-4 font-[var(--font-body)] text-3xl font-semibold text-white sm:text-4xl">{t('gratitude.title')}</h2>
+      <h2 className="mt-4 font-[var(--font-body)] text-3xl font-semibold txt-strong sm:text-4xl">{t('gratitude.title')}</h2>
       <p className="mt-3 text-[var(--muted)]">{t('gratitude.subtitle')}</p>
-      <p className="mt-6 text-lg font-semibold text-white">{t('gratitude.question')}</p>
+      <p className="mt-6 text-lg font-semibold txt-strong">{t('gratitude.question')}</p>
 
-      <div className="mt-6 rounded-[22px] border border-white/10 bg-white/3 p-5">
+      <div className="mt-6 rounded-[22px] border border-[color:var(--color-border)] fill-1 p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="field-label mb-0 text-white/50">
+          <p className="field-label mb-0 txt-muted">
             {t('gratitude.timerLabel', {current: activeIndex + 1, total: count})}
           </p>
-          <span className="text-sm font-semibold text-white/68">
+          <span className="text-sm font-semibold txt-soft">
             {t('gratitude.timerSeconds', {seconds: Math.max(0, 60 - entrySeconds)})}
           </span>
         </div>
-        <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
+        <div className="mt-4 h-1.5 overflow-hidden rounded-full fill-3">
           <div
             className="h-full rounded-full bg-[var(--blue)] transition-all duration-700"
             style={{width: `${progressPercent}%`}}
@@ -298,7 +298,7 @@ export function GratitudeStep({
       {activeTrigger ? (
         <div className="mt-6 rounded-[20px] border border-[rgba(26,109,255,0.25)] bg-[rgba(26,109,255,0.08)] p-4">
           <p className="field-label mb-0 text-[var(--blue)]">{activeTrigger.label}</p>
-          <p className="mt-3 leading-7 text-white">{activeTrigger.prompt}</p>
+          <p className="mt-3 leading-7 txt-strong">{activeTrigger.prompt}</p>
         </div>
       ) : null}
 
@@ -310,15 +310,15 @@ export function GratitudeStep({
             tabIndex={0}
             className={`w-full cursor-pointer rounded-[24px] border p-4 text-start transition-all duration-300 ${
               i === activeIndex
-                ? 'border-white/16 bg-white/5 opacity-100 shadow-[0_14px_36px_rgba(0,0,0,0.28)]'
-                : 'border-white/8 bg-white/2 opacity-40'
+                ? 'border-[color:var(--color-border-strong)] fill-2 opacity-100 shadow-[0_14px_36px_rgba(0,0,0,0.28)]'
+                : 'border-[color:var(--color-border)] fill-1 opacity-40'
             }`}
             onClick={() => activateEntry(i)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateEntry(i); } }}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="field-label mb-0 text-white/45">{t('gratitude.entryLabel', {index: i + 1})}</p>
+                <p className="field-label mb-0 txt-muted">{t('gratitude.entryLabel', {index: i + 1})}</p>
                 <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
                   {i === activeIndex ? t('gratitude.activePrompt') : t('gratitude.inactivePrompt')}
                 </p>
@@ -326,8 +326,8 @@ export function GratitudeStep({
               <button
                 className={`focus-ring inline-flex h-11 w-11 items-center justify-center rounded-full border ${
                   recordingIndex === i
-                    ? 'border-[var(--accent)] bg-[rgba(232,87,42,0.18)] text-white'
-                    : 'border-white/12 bg-white/4 text-white/72'
+                    ? 'border-[var(--accent)] bg-[rgba(232,87,42,0.18)] txt-strong'
+                    : 'border-[color:var(--color-border)] fill-2 txt-soft'
                 }`}
                 type="button"
                 aria-label={recordingIndex === i ? t('gratitude.voiceListening') : t('gratitude.voiceButton')}
@@ -366,12 +366,12 @@ export function GratitudeStep({
         ) : recordingIndex === activeIndex ? (
           <p className="mt-4 text-sm font-semibold text-[var(--blue)]">{t('gratitude.voiceListening')}</p>
         ) : speechRecognitionSupported ? (
-          <p className="mt-4 text-sm font-semibold text-white/55">{t('gratitude.voiceHelp')}</p>
+          <p className="mt-4 text-sm font-semibold txt-soft">{t('gratitude.voiceHelp')}</p>
         ) : null}
       </div>
 
       <div className="mt-8">
-        <p className="field-label mb-0 text-white/52">{t('gratitude.hint')}</p>
+        <p className="field-label mb-0 txt-soft">{t('gratitude.hint')}</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {triggers.map((triggerKey) => {
             const trigger = getTrigger(triggerKey, locale);
@@ -383,8 +383,8 @@ export function GratitudeStep({
                 aria-pressed={isSelected}
                 className={`focus-ring rounded-full border px-4 py-2 text-sm font-semibold transition ${
                   isSelected
-                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.14)] text-white'
-                    : 'border-white/10 bg-white/4 text-white/72 hover:bg-white/8'
+                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.14)] txt-strong'
+                    : 'border-[color:var(--color-border)] fill-2 txt-soft hover:fill-2'
                 }`}
                 type="button"
                 onClick={() => handleTriggerClick(triggerKey)}
@@ -396,7 +396,7 @@ export function GratitudeStep({
         </div>
       </div>
 
-      <div className="mt-6 rounded-[20px] border border-white/10 bg-white/3 p-4">
+      <div className="mt-6 rounded-[20px] border border-[color:var(--color-border)] fill-1 p-4">
         <p className="text-sm leading-7 text-[var(--muted)]">{t('gratitude.promptSupport')}</p>
       </div>
 
@@ -466,7 +466,7 @@ function GratitudeIntegrationMoment() {
         <span className="neural-link absolute right-16 top-22 w-20 rotate-[38deg]" />
       </div>
 
-      <p className="mt-8 max-w-2xl text-xl font-semibold leading-8 text-white sm:text-2xl">
+      <p className="mt-8 max-w-2xl text-xl font-semibold leading-8 txt-strong sm:text-2xl">
         {t('gratitude.integrationMessage')}
       </p>
       <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--blue)]">

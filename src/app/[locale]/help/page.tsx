@@ -40,14 +40,14 @@ export default async function HelpPage({params}: Props) {
         {/* How it works */}
         <section className="panel-surface p-6 sm:p-8">
           <p className="field-label mb-0 text-[var(--blue)]">{t('nav.help')}</p>
-          <h2 className="mt-4 text-2xl font-black text-white">{t('help.pageTitle')}</h2>
+          <h2 className="mt-4 text-2xl font-black txt-strong">{t('help.pageTitle')}</h2>
           <ol className="mt-6 grid gap-4 sm:grid-cols-2">
             {([1, 2, 3, 4] as const).map((n) => (
-              <li key={n} className="flex gap-4 rounded-[20px] border border-white/10 bg-white/3 p-5">
+              <li key={n} className="flex gap-4 rounded-[20px] border border-[color:var(--color-border)] fill-1 p-5">
                 <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--blue)]/15 text-sm font-black text-[var(--blue)]">
                   {n}
                 </span>
-                <p className="text-sm leading-7 text-white/80">{t(`help.step${n}`)}</p>
+                <p className="text-sm leading-7 txt-strong">{t(`help.step${n}`)}</p>
               </li>
             ))}
           </ol>
@@ -55,15 +55,15 @@ export default async function HelpPage({params}: Props) {
 
         {/* FAQ */}
         <section className="panel-surface p-6 sm:p-8">
-          <p className="field-label mb-0 text-white/50">FAQ</p>
-          <h2 className="mt-4 text-2xl font-black text-white">{t('help.faqTitle')}</h2>
+          <p className="field-label mb-0 txt-muted">FAQ</p>
+          <h2 className="mt-4 text-2xl font-black txt-strong">{t('help.faqTitle')}</h2>
           <div className="mt-6 grid gap-4">
             {faq.map((item, i) => (
               <details
                 key={item.q}
-                className="group rounded-[20px] border border-white/10 bg-white/3 p-5 open:border-[var(--blue)]/25 open:bg-[rgba(26,109,255,0.04)]"
+                className="group rounded-[20px] border border-[color:var(--color-border)] fill-1 p-5 open:border-[var(--blue)]/25 open:bg-[rgba(26,109,255,0.04)]"
               >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-bold text-white marker:hidden">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-bold txt-strong marker:hidden">
                   <span>{item.q}</span>
                   <span className="shrink-0 text-[var(--blue)] transition-transform group-open:rotate-45" aria-hidden>+</span>
                 </summary>
@@ -75,7 +75,7 @@ export default async function HelpPage({params}: Props) {
 
         {/* Contact */}
         <section className="panel-surface p-6 sm:p-8">
-          <p className="field-label mb-0 text-white/50">{t('help.contactTitle')}</p>
+          <p className="field-label mb-0 txt-muted">{t('help.contactTitle')}</p>
           <p className="mt-3 max-w-2xl leading-7 text-[var(--muted)]">{t('help.contactBody')}</p>
         </section>
 

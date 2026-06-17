@@ -14,7 +14,7 @@ export function NeverMissTwiceBanner() {
   return (
     <div className="rounded-xl border border-sky-400/25 bg-sky-500/8 px-4 py-3">
       <p className="text-sm font-black text-sky-100">{t('rule')}</p>
-      <p className="mt-1 text-xs leading-5 text-white/55">{t('recoveryHint')}</p>
+      <p className="mt-1 text-xs leading-5 txt-soft">{t('recoveryHint')}</p>
     </div>
   );
 }
@@ -24,7 +24,7 @@ export function EarlyWarningBanner({onTwoMinuteStep}: {onTwoMinuteStep?: () => v
   return (
     <div className="rounded-xl border border-amber-400/30 bg-amber-500/8 px-4 py-3">
       <p className="text-sm font-black text-amber-100">{t('title')}</p>
-      <p className="mt-1 text-xs leading-5 text-white/55">{t('body')}</p>
+      <p className="mt-1 text-xs leading-5 txt-soft">{t('body')}</p>
       {onTwoMinuteStep && (
         <BusyButton type="button" className="focus-ring btn-small mt-3" onClick={onTwoMinuteStep}>
           {t('cta')}
@@ -37,13 +37,13 @@ export function EarlyWarningBanner({onTwoMinuteStep}: {onTwoMinuteStep?: () => v
 export function BehaviorScoreChip({score}: {score: BehaviorScore}) {
   const t = useTranslations('behaviorScience.behaviorScore');
   return (
-    <div className="rounded-xl border border-white/10 bg-white/3 px-4 py-3" aria-label={`${t('label')}: ${score.percent}%`}>
-      <p className="text-[10px] font-bold uppercase tracking-wide text-white/35" aria-hidden="true">{t('label')}</p>
-      <p className="mt-1 text-lg font-black text-white">
+    <div className="rounded-xl border border-[color:var(--color-border)] fill-1 px-4 py-3" aria-label={`${t('label')}: ${score.percent}%`}>
+      <p className="text-[10px] font-bold uppercase tracking-wide txt-faint" aria-hidden="true">{t('label')}</p>
+      <p className="mt-1 text-lg font-black txt-strong">
         {score.showUps}/{score.opportunities}
         <span className="ms-2 text-sm font-semibold text-[var(--blue)]">{score.percent}%</span>
       </p>
-      <p className="mt-1 text-xs text-white/45">{t('hint')}</p>
+      <p className="mt-1 text-xs txt-muted">{t('hint')}</p>
     </div>
   );
 }
@@ -51,12 +51,12 @@ export function BehaviorScoreChip({score}: {score: BehaviorScore}) {
 export function EndOfDayClosureCard({closure}: {closure: EndOfDayClosure}) {
   const t = useTranslations('behaviorScience.closure');
   return (
-    <div className="rounded-xl border border-white/10 bg-white/3 px-4 py-4" aria-label={t('title')}>
-      <p className="text-xs font-bold uppercase tracking-wide text-white/40">{t('title')}</p>
+    <div className="rounded-xl border border-[color:var(--color-border)] fill-1 px-4 py-4" aria-label={t('title')}>
+      <p className="text-xs font-bold uppercase tracking-wide txt-muted">{t('title')}</p>
       {closure.closedTitles.length > 0 && (
         <div className="mt-3">
           <p className="text-xs font-semibold text-emerald-300/80">{t('closed')}</p>
-          <ul className="mt-1 list-inside list-disc text-sm text-white/65">
+          <ul className="mt-1 list-inside list-disc text-sm txt-soft">
             {closure.closedTitles.slice(0, 4).map((title) => (
               <li key={title}>{title}</li>
             ))}
@@ -66,7 +66,7 @@ export function EndOfDayClosureCard({closure}: {closure: EndOfDayClosure}) {
       {closure.openTitles.length > 0 && (
         <div className="mt-3">
           <p className="text-xs font-semibold text-amber-200/80">{t('open')}</p>
-          <ul className="mt-1 list-inside list-disc text-sm text-white/55">
+          <ul className="mt-1 list-inside list-disc text-sm txt-soft">
             {closure.openTitles.slice(0, 3).map((title) => (
               <li key={title}>{title}</li>
             ))}
@@ -87,8 +87,8 @@ export function LifeContextModeBanner({mode}: {mode: LifeContextMode}) {
   if (!mode.active) return null;
   return (
     <div className="rounded-xl bg-[var(--blue)]/8 px-4 py-3">
-      <p className="text-sm font-semibold text-white/90">{t('title')}</p>
-      <p className="mt-1 text-sm leading-6 text-white/62">{t('body')}</p>
+      <p className="text-sm font-semibold txt-strong">{t('title')}</p>
+      <p className="mt-1 text-sm leading-6 txt-soft">{t('body')}</p>
     </div>
   );
 }
@@ -127,7 +127,7 @@ export function SelfContractReminder({
 }) {
   const t = useTranslations('behaviorScience.selfContract');
   return (
-    <p className="text-xs leading-5 text-white/50">
+    <p className="text-xs leading-5 txt-muted">
       {t('reminder', {days: contract.commitmentDays, goal: goalTitle ?? t('defaultGoal')})}
     </p>
   );
@@ -144,12 +144,12 @@ export function CommitmentLadderCard({
 }) {
   const t = useTranslations('behaviorScience');
   return (
-    <div className="rounded-xl border border-white/10 bg-white/3 px-4 py-3" aria-label={t('commitmentLadder.title')}>
-      <p className="text-[10px] font-bold uppercase tracking-wide text-white/35">
+    <div className="rounded-xl border border-[color:var(--color-border)] fill-1 px-4 py-3" aria-label={t('commitmentLadder.title')}>
+      <p className="text-[10px] font-bold uppercase tracking-wide txt-faint">
         {t('commitmentLadder.title')}
       </p>
-      <p className="mt-1 text-sm font-semibold text-white">{t(stageKey)}</p>
-      <p className="mt-1 text-xs text-white/45">
+      <p className="mt-1 text-sm font-semibold txt-strong">{t(stageKey)}</p>
+      <p className="mt-1 text-xs txt-muted">
         {t('commitmentLadder.progress', {done: progress, target})}
       </p>
     </div>
@@ -180,8 +180,8 @@ export function RecoveryQuestCard({step}: {step: DailyBabyStep}) {
       <p className="text-[10px] font-bold uppercase tracking-wide text-emerald-300/80">
         {t('recoveryQuest')}
       </p>
-      <p className="mt-1 text-sm font-black text-white">{step.title}</p>
-      <p className="mt-1 text-xs text-white/50">
+      <p className="mt-1 text-sm font-black txt-strong">{step.title}</p>
+      <p className="mt-1 text-xs txt-muted">
         {step.estimated_minutes} {t('minutes')}
       </p>
     </div>

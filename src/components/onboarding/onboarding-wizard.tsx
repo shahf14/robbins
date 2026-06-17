@@ -503,18 +503,18 @@ export function OnboardingWizard() {
   const pct = Math.round((s.step / TOTAL_STEPS) * 100);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[#09090b]">
+    <div className="flex min-h-dvh flex-col bg-[var(--color-bg)]">
       <div className={`mx-auto flex w-full flex-1 flex-col px-5 py-8 sm:py-10 ${
         s.step === 2 ? 'max-w-4xl' : 'max-w-2xl'
       }`}>
 
         {/* ── Draft restore banner ─────────────────────────────────────────── */}
         {s.draftRestored && s.step < 6 && (
-          <div className="mb-6 flex items-center justify-between gap-3 rounded-xl bg-white/4 px-4 py-3">
-            <span className="text-sm text-white/60">{t('onboarding.resumeBanner')}</span>
+          <div className="mb-6 flex items-center justify-between gap-3 rounded-xl fill-1 px-4 py-3">
+            <span className="text-sm txt-soft">{t('onboarding.resumeBanner')}</span>
             <button
               type="button"
-              className="focus-ring shrink-0 text-xs font-semibold text-white/35 transition hover:text-white/60"
+              className="focus-ring shrink-0 text-xs font-semibold txt-faint transition hover:txt-soft"
               onClick={startOver}
             >
               {t('onboarding.resumeStartOver')}
@@ -526,13 +526,13 @@ export function OnboardingWizard() {
         {s.step < 6 && (
           <div className="mb-8">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold text-white/55">
+              <p className="text-sm font-semibold txt-soft">
                 {t('onboarding.stepCounter', {step: s.step, total: TOTAL_STEPS})}
               </p>
               {s.step > 1 && <DraftSavedIndicator savedAt={draftSavedAt} />}
             </div>
             <div
-              className="h-1.5 w-full overflow-hidden rounded-full bg-white/10"
+              className="h-1.5 w-full overflow-hidden rounded-full fill-3"
               role="progressbar"
               aria-valuenow={pct}
               aria-valuemin={0}

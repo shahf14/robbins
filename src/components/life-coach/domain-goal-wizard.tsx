@@ -201,7 +201,7 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
   return (
     <section className="panel-surface p-6">
       <p className="eyebrow">{t('domainWizard.eyebrow')}</p>
-      <h3 className="mt-4 text-2xl font-black text-white">{t('domainWizard.title')}</h3>
+      <h3 className="mt-4 text-2xl font-black txt-strong">{t('domainWizard.title')}</h3>
       <GoalHierarchyExplainer className="mt-4" />
 
       <div
@@ -215,7 +215,7 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
         {Array.from({length: TOTAL_STEPS}, (_, i) => (
           <div
             key={`step-${i}`}
-            className={`h-1 flex-1 rounded-full transition-colors ${i < step ? 'bg-[var(--blue)]' : 'bg-white/10'}`}
+            className={`h-1 flex-1 rounded-full transition-colors ${i < step ? 'bg-[var(--blue)]' : 'fill-3'}`}
           />
         ))}
       </div>
@@ -233,8 +233,8 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
                   onClick={() => setCategory(cat)}
                   className={`focus-ring rounded-[18px] border p-4 text-left transition-colors ${
                     category === cat
-                      ? 'border-[var(--blue)] bg-[var(--blue)]/10 text-white'
-                      : 'border-white/10 bg-white/3 text-[var(--muted)] hover:border-white/20 hover:text-white'
+                      ? 'border-[var(--blue)] bg-[var(--blue)]/10 txt-strong'
+                      : 'border-[color:var(--color-border)] fill-1 text-[var(--muted)] hover:border-[color:var(--color-border-strong)] hover:txt-strong'
                   }`}
                 >
                   <span className="text-sm font-semibold">
@@ -253,8 +253,8 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
                 onClick={() => setCategory(OTHER_CATEGORY)}
                 className={`focus-ring rounded-[18px] border p-4 text-left transition-colors ${
                   category === OTHER_CATEGORY
-                    ? 'border-[var(--blue)] bg-[var(--blue)]/10 text-white'
-                    : 'border-white/10 bg-white/3 text-[var(--muted)] hover:border-white/20 hover:text-white'
+                    ? 'border-[var(--blue)] bg-[var(--blue)]/10 txt-strong'
+                    : 'border-[color:var(--color-border)] fill-1 text-[var(--muted)] hover:border-[color:var(--color-border-strong)] hover:txt-strong'
                 }`}
               >
                 <span className="text-sm font-semibold">{t('domainWizard.otherCategory')}</span>
@@ -288,12 +288,12 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
               minHeight="min-h-32"
             />
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="w-full text-xs text-white/45">{t('domainWizard.goalExamplesLabel')}</span>
+              <span className="w-full text-xs txt-muted">{t('domainWizard.goalExamplesLabel')}</span>
               {GOAL_EXAMPLE_KEYS.map((key) => (
                 <button
                   key={key}
                   type="button"
-                  className="focus-ring rounded-full border border-white/10 bg-white/4 px-3 py-1 text-xs font-semibold text-white/60 hover:border-white/20 hover:text-white transition"
+                  className="focus-ring rounded-full border border-[color:var(--color-border)] fill-1 px-3 py-1 text-xs font-semibold txt-soft hover:border-[color:var(--color-border-strong)] hover:txt-strong transition"
                   onClick={() => setGoalText((prev) => (prev ? prev : t(key)))}
                 >
                   {t(key)}
@@ -306,7 +306,7 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
                   <button
                     key={key}
                     type="button"
-                    className="focus-ring rounded-full border border-white/10 bg-white/4 px-3 py-1 text-xs font-semibold text-white/60 hover:border-white/20 hover:text-white transition"
+                    className="focus-ring rounded-full border border-[color:var(--color-border)] fill-1 px-3 py-1 text-xs font-semibold txt-soft hover:border-[color:var(--color-border-strong)] hover:txt-strong transition"
                     onClick={() => setGoalText((prev) => prev ? prev : t(key))}
                   >
                     {t(key)}
@@ -324,7 +324,7 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
               {inspiring && (
                 <span
                   aria-hidden
-                  className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white"
+                  className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-[color:var(--color-border-strong)] border-t-[color:var(--color-border-strong)]"
                 />
               )}
               {inspiring ? t('domainWizard.inspiring') : t('domainWizard.inspireMe')}
@@ -347,13 +347,13 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
               {inspiringMilestones && (
                 <span
                   aria-hidden
-                  className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white"
+                  className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-[color:var(--color-border-strong)] border-t-[color:var(--color-border-strong)]"
                 />
               )}
               {inspiringMilestones ? t('domainWizard.inspiring') : t('domainWizard.inspireMilestones')}
             </button>
             <label className="grid gap-2">
-              <span className="text-sm font-semibold text-white/70">{t('domainWizard.day30')}</span>
+              <span className="text-sm font-semibold txt-soft">{t('domainWizard.day30')}</span>
               <input
                 className="focus-ring input-base"
                 value={milestone30}
@@ -362,7 +362,7 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
               />
             </label>
             <label className="grid gap-2">
-              <span className="text-sm font-semibold text-white/70">{t('domainWizard.day60')}</span>
+              <span className="text-sm font-semibold txt-soft">{t('domainWizard.day60')}</span>
               <input
                 className="focus-ring input-base"
                 value={milestone60}
@@ -371,7 +371,7 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
               />
             </label>
             <label className="grid gap-2">
-              <span className="text-sm font-semibold text-white/70">{t('domainWizard.day90')} ({t('domainWizard.optional')})</span>
+              <span className="text-sm font-semibold txt-soft">{t('domainWizard.day90')} ({t('domainWizard.optional')})</span>
               <input
                 className="focus-ring input-base"
                 value={milestone90}

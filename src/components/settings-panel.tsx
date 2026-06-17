@@ -206,7 +206,7 @@ export function SettingsPanel() {
             <div className="flex flex-col items-center gap-2">
               <button
                 type="button"
-                className="focus-ring rounded-full border border-[var(--blue)]/35 bg-[var(--blue)]/15 px-4 py-2 text-xs font-bold text-white"
+                className="focus-ring rounded-full border border-[var(--blue)]/35 bg-[var(--blue)]/15 px-4 py-2 text-xs font-bold txt-strong"
                 disabled={regeneratingSteps}
                 aria-busy={regeneratingSteps}
                 onClick={() => void regenerateTodaySteps()}
@@ -246,7 +246,7 @@ export function SettingsPanel() {
               </label>
               <div className="grid gap-2">
                 <span className="field-label mb-0">{t('settings.gender')}</span>
-                <p className="text-xs text-white/40">{t('settings.genderHelp')}</p>
+                <p className="text-xs txt-muted">{t('settings.genderHelp')}</p>
                 <div className="flex flex-wrap gap-2">
                   {PARTICIPANT_GENDERS.map((g) => (
                     <button
@@ -255,8 +255,8 @@ export function SettingsPanel() {
                       aria-pressed={gender === g}
                       className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
                         gender === g
-                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                          : 'border-white/10 text-white/60'
+                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                          : 'border-[color:var(--color-border)] txt-soft'
                       }`}
                       onClick={() => setGender(g)}
                     >
@@ -267,7 +267,7 @@ export function SettingsPanel() {
               </div>
               <div className="grid gap-2">
                 <span className="field-label mb-0">{t('settings.age')}</span>
-                <p className="text-xs text-white/40">{t('settings.ageHelp')}</p>
+                <p className="text-xs txt-muted">{t('settings.ageHelp')}</p>
                 <input
                   className="focus-ring input-base w-32"
                   type="number"
@@ -280,7 +280,7 @@ export function SettingsPanel() {
                   onChange={(e) => setAge(e.target.value)}
                   placeholder={t('settings.agePlaceholder')}
                 />
-                <label className="flex items-center gap-2 text-xs text-white/55">
+                <label className="flex items-center gap-2 text-xs txt-soft">
                   <input
                     type="checkbox"
                     className="focus-ring accent-[var(--blue)]"
@@ -295,9 +295,9 @@ export function SettingsPanel() {
               </div>
               <div className="grid gap-2">
                 <span className="field-label mb-0">{t('settings.lifeContext')}</span>
-                <p className="text-xs text-white/40">{t('settings.lifeContextHelp')}</p>
-                <p className="text-xs text-white/40">{t('lifeContext.settings.impactHelp')}</p>
-                <p className="text-xs text-white/40">{t('formulation.consent.lifeContextMulti')}</p>
+                <p className="text-xs txt-muted">{t('settings.lifeContextHelp')}</p>
+                <p className="text-xs txt-muted">{t('lifeContext.settings.impactHelp')}</p>
+                <p className="text-xs txt-muted">{t('formulation.consent.lifeContextMulti')}</p>
                 <LifeContextChip statuses={lifeContexts} className="mt-1" />
                 <div className="flex flex-wrap gap-2">
                   {LIFE_CONTEXT_STATUSES.map((status) => (
@@ -307,8 +307,8 @@ export function SettingsPanel() {
                       aria-pressed={lifeContexts.includes(status)}
                       className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
                         lifeContexts.includes(status)
-                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                          : 'border-white/10 text-white/60'
+                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                          : 'border-[color:var(--color-border)] txt-soft'
                       }`}
                       onClick={() => {
                         setLifeContexts((current) => {
@@ -329,7 +329,7 @@ export function SettingsPanel() {
                 </div>
                 {lifeContexts.some((c) => c !== 'prefer_not') && (
                   <label className="mt-2 grid gap-2">
-                    <span className="text-xs text-white/45">{t('lifeContext.noteLabel')}</span>
+                    <span className="text-xs txt-muted">{t('lifeContext.noteLabel')}</span>
                     <textarea
                       className="focus-ring textarea-base min-h-20"
                       value={lifeContextNote}
@@ -344,7 +344,7 @@ export function SettingsPanel() {
                 <button className="focus-ring btn-primary" type="submit">
                   {t('settings.save')}
                 </button>
-                <span className="text-sm font-semibold text-white/45">
+                <span className="text-sm font-semibold txt-muted">
                   {t('settings.localOnly')}
                 </span>
               </div>
@@ -367,7 +367,7 @@ export function SettingsPanel() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="grid gap-2">
                   <span className="field-label mb-0">{t('settings.wakeTime')}</span>
-                  <p className="text-xs leading-5 text-white/40">{t('settings.wakeTimeHelp')}</p>
+                  <p className="text-xs leading-5 txt-muted">{t('settings.wakeTimeHelp')}</p>
                   <input
                     ref={wakeTimeRef}
                     type="time"
@@ -378,7 +378,7 @@ export function SettingsPanel() {
                 </label>
                 <label className="grid gap-2">
                   <span className="field-label mb-0">{t('settings.sleepTime')}</span>
-                  <p className="text-xs leading-5 text-white/40">{t('settings.sleepTimeHelp')}</p>
+                  <p className="text-xs leading-5 txt-muted">{t('settings.sleepTimeHelp')}</p>
                   <input
                     ref={sleepTimeRef}
                     type="time"
@@ -391,7 +391,7 @@ export function SettingsPanel() {
 
               <div className="grid gap-2">
                 <span className="field-label mb-0">{t('settings.actionWindow')}</span>
-                <p className="text-xs text-white/40">{t('settings.actionWindowHelp')}</p>
+                <p className="text-xs txt-muted">{t('settings.actionWindowHelp')}</p>
                 {isShortAwakeDay(wakeTime, sleepTime) && (
                   <p className="text-xs leading-6 text-amber-400/90">{t('schedule.actionWindow.shortDay')}</p>
                 )}
@@ -417,7 +417,7 @@ export function SettingsPanel() {
                       type="button"
                       aria-pressed={actionWindow === w}
                       className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
-                        actionWindow === w ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white' : 'border-white/10 text-white/60'
+                        actionWindow === w ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong' : 'border-[color:var(--color-border)] txt-soft'
                       }`}
                       onClick={() => setActionWindow(w)}
                     >
@@ -431,7 +431,7 @@ export function SettingsPanel() {
 
               <div className="grid gap-2">
                 <span className="field-label mb-0">{t('settings.availableTime')}</span>
-                <p className="text-xs text-white/40">{t('settings.availableTimeHelp')}</p>
+                <p className="text-xs txt-muted">{t('settings.availableTimeHelp')}</p>
                 <div className="flex flex-wrap gap-2">
                   {AVAILABLE_TIME_OPTIONS.map((mins) => (
                     <button
@@ -439,7 +439,7 @@ export function SettingsPanel() {
                       type="button"
                       aria-pressed={availableTime === mins}
                       className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
-                        availableTime === mins ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white' : 'border-white/10 text-white/60'
+                        availableTime === mins ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong' : 'border-[color:var(--color-border)] txt-soft'
                       }`}
                       onClick={() => setAvailableTime(mins)}
                     >
@@ -451,7 +451,7 @@ export function SettingsPanel() {
 
               <div className="grid gap-2">
                 <span className="field-label mb-0">{t('settings.intensityPreference')}</span>
-                <p className="text-xs text-white/40">{t('settings.intensityPreferenceHelp')}</p>
+                <p className="text-xs txt-muted">{t('settings.intensityPreferenceHelp')}</p>
                 <div className="flex flex-wrap gap-2">
                   {INTENSITY_PREFERENCES.map((pref) => (
                     <button
@@ -459,7 +459,7 @@ export function SettingsPanel() {
                       type="button"
                       aria-pressed={intensity === pref}
                       className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
-                        intensity === pref ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white' : 'border-white/10 text-white/60'
+                        intensity === pref ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong' : 'border-[color:var(--color-border)] txt-soft'
                       }`}
                       onClick={() => setIntensity(pref)}
                     >
@@ -478,7 +478,7 @@ export function SettingsPanel() {
                       type="button"
                       aria-pressed={familyStatus === fs}
                       className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
-                        familyStatus === fs ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white' : 'border-white/10 text-white/60'
+                        familyStatus === fs ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong' : 'border-[color:var(--color-border)] txt-soft'
                       }`}
                       onClick={() => setFamilyStatus(familyStatus === fs ? '' : fs)}
                     >
@@ -490,7 +490,7 @@ export function SettingsPanel() {
 
               <div className="grid gap-2">
                 <span className="field-label mb-0">{t('settings.physicalConsiderations')}</span>
-                <p className="text-xs text-white/40">{t('settings.physicalConsiderationsHelp')}</p>
+                <p className="text-xs txt-muted">{t('settings.physicalConsiderationsHelp')}</p>
                 <div className="flex flex-wrap gap-2">
                   {PHYSICAL_CONSIDERATIONS.map((item) => (
                     <button
@@ -498,7 +498,7 @@ export function SettingsPanel() {
                       type="button"
                       aria-pressed={physical.includes(item)}
                       className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold ${
-                        physical.includes(item) ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white' : 'border-white/10 text-white/60'
+                        physical.includes(item) ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong' : 'border-[color:var(--color-border)] txt-soft'
                       }`}
                       onClick={() => setPhysical((cur) => cur.includes(item) ? cur.filter((x) => x !== item) : [...cur, item])}
                     >
@@ -510,7 +510,7 @@ export function SettingsPanel() {
 
               <div className="grid gap-2">
                 <span className="field-label mb-0">{t('settings.coachingStyle')}</span>
-                <p className="text-xs leading-5 text-white/40">{t('settings.coachingStyleHelp')}</p>
+                <p className="text-xs leading-5 txt-muted">{t('settings.coachingStyleHelp')}</p>
                 <div className="mt-1 grid gap-2 sm:grid-cols-3">
                   {COACHING_STYLES.map((style) => (
                     <button
@@ -518,14 +518,14 @@ export function SettingsPanel() {
                       type="button"
                       className={`focus-ring rounded-2xl border px-4 py-3 text-sm font-semibold text-start transition ${
                         coachingStyle === style
-                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.14)] text-white'
-                          : 'border-white/12 bg-white/3 text-white/60 hover:border-white/20 hover:text-white'
+                          ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.14)] txt-strong'
+                          : 'border-[color:var(--color-border-strong)] fill-1 txt-soft hover:border-[color:var(--color-border-strong)] hover:txt-strong'
                       }`}
                       onClick={() => setCoachingStyle(style)}
                       aria-pressed={coachingStyle === style}
                     >
                       <span className="block">{t(`settings.coachingStyleOption.${style}`)}</span>
-                      <span className="mt-1 block text-xs font-normal text-white/45">
+                      <span className="mt-1 block text-xs font-normal txt-muted">
                         {t(`settings.coachingStyleDesc.${style}`)}
                       </span>
                     </button>
@@ -543,7 +543,7 @@ export function SettingsPanel() {
 
           <section className="panel-surface p-6 sm:p-8" aria-labelledby="settings-privacy-heading">
             <SectionHeader title={t('settings.privacyControlsTitle')} id="settings-privacy-heading" />
-            <label className="mt-4 flex items-start gap-3 rounded-2xl border border-white/10 bg-white/3 p-4">
+            <label className="mt-4 flex items-start gap-3 rounded-2xl border border-[color:var(--color-border)] fill-1 p-4">
               <input
                 ref={behavioralAnalyticsRef}
                 type="checkbox"
@@ -551,8 +551,8 @@ export function SettingsPanel() {
                 className="focus-ring mt-1 h-4 w-4 accent-[var(--blue)]"
               />
               <span>
-                <span className="block text-sm font-bold text-white">{t('settings.behavioralAnalytics')}</span>
-                <span className="mt-1 block text-xs leading-6 text-white/50">{t('settings.behavioralAnalyticsHelp')}</span>
+                <span className="block text-sm font-bold txt-strong">{t('settings.behavioralAnalytics')}</span>
+                <span className="mt-1 block text-xs leading-6 txt-muted">{t('settings.behavioralAnalyticsHelp')}</span>
               </span>
             </label>
             <button className="focus-ring btn-primary mt-4" type="button" onClick={() => savePreferences()}>
@@ -609,7 +609,7 @@ export function SettingsPanel() {
 function SectionHeader({title, id}: {title: string; id?: string}) {
   return (
     <div className="flex items-center gap-3">
-      <h2 id={id} className="text-base font-bold text-white">{title}</h2>
+      <h2 id={id} className="text-base font-bold txt-strong">{title}</h2>
     </div>
   );
 }

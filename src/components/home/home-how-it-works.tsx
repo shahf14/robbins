@@ -40,12 +40,12 @@ export function HomeHowItWorks({firstUseComplete}: Props) {
     return (
       <button
         type="button"
-        className="focus-ring flex w-full items-center justify-between gap-3 rounded-[16px] bg-white/[0.03] px-4 py-3 text-left transition hover:bg-white/[0.05]"
+        className="focus-ring flex w-full items-center justify-between gap-3 rounded-[16px] fill-1 px-4 py-3 text-left transition hover:fill-2"
         onClick={() => setExpanded(true)}
         aria-expanded={false}
       >
-        <span className="text-sm font-medium text-white/62">{t('collapsedLabel')}</span>
-        <span className="text-white/35" aria-hidden>
+        <span className="text-sm font-medium txt-soft">{t('collapsedLabel')}</span>
+        <span className="txt-faint" aria-hidden>
           ◀
         </span>
       </button>
@@ -54,19 +54,19 @@ export function HomeHowItWorks({firstUseComplete}: Props) {
 
   return (
     <section
-      className="rounded-[20px] bg-white/[0.03] px-5 py-4 sm:px-6"
+      className="rounded-[20px] fill-1 px-5 py-4 sm:px-6"
       aria-label={t('title')}
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/48">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] txt-muted">
             {t('eyebrow')}
           </p>
-          <p className="mt-1 text-sm font-bold text-white/88" aria-hidden="true">{t('title')}</p>
+          <p className="mt-1 text-sm font-bold txt-strong" aria-hidden="true">{t('title')}</p>
         </div>
         <button
           type="button"
-          className="focus-ring shrink-0 text-[10px] font-bold uppercase tracking-wide text-white/35 hover:text-white/60"
+          className="focus-ring shrink-0 text-[10px] font-bold uppercase tracking-wide txt-faint hover:txt-soft"
           onClick={handleCollapse}
           aria-expanded
         >
@@ -78,18 +78,18 @@ export function HomeHowItWorks({firstUseComplete}: Props) {
         {STEP_KEYS.map((key, index) => (
           <li
             key={key}
-            className="relative flex items-start gap-3 rounded-xl bg-white/[0.03] px-3 py-3 sm:flex-col sm:items-stretch sm:gap-2 sm:px-3 sm:py-3"
+            className="relative flex items-start gap-3 rounded-xl fill-1 px-3 py-3 sm:flex-col sm:items-stretch sm:gap-2 sm:px-3 sm:py-3"
           >
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--blue)]/30 bg-[var(--blue)]/10 text-xs font-black text-[var(--blue)]">
               {index + 1}
             </span>
             <div className="min-w-0">
-              <p className="text-sm font-bold text-white/90">{t(`steps.${key}.title`)}</p>
-              <p className="mt-1 text-sm leading-5 text-white/58">{t(`steps.${key}.body`)}</p>
+              <p className="text-sm font-bold txt-strong">{t(`steps.${key}.title`)}</p>
+              <p className="mt-1 text-sm leading-5 txt-soft">{t(`steps.${key}.body`)}</p>
             </div>
             {index < STEP_KEYS.length - 1 ? (
               <span
-                className="pointer-events-none absolute -right-2 top-1/2 hidden -translate-y-1/2 text-white/20 sm:block"
+                className="pointer-events-none absolute -right-2 top-1/2 hidden -translate-y-1/2 txt-faint sm:block"
                 aria-hidden
               >
                 →

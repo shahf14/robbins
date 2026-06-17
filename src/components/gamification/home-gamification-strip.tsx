@@ -72,7 +72,7 @@ export function HomeGamificationStrip({
     chips.push({
       key: 'rivalry',
       node: (
-        <span className="text-xs leading-5 text-white/55">
+        <span className="text-xs leading-5 txt-soft">
           <span aria-hidden="true">{DOMAIN_ICONS[domainRivalry.leader]}</span>{' '}
           {t('domainRivalry.leads', {
             domain: t(`lifeCoach.domains.${domainRivalry.leader}.short`),
@@ -105,11 +105,11 @@ export function HomeGamificationStrip({
   if (chips.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-2 rounded-[18px] border border-white/8 bg-white/3 px-4 py-3">
+    <div className="flex flex-col gap-2 rounded-[18px] border border-[color:var(--color-border)] fill-1 px-4 py-3">
       {chips.map(({key, node}) => (
         <div key={key}>{node}</div>
       ))}
-      <Link href="/progress" className="focus-ring text-xs font-semibold text-white/45 underline">
+      <Link href="/progress" className="focus-ring text-xs font-semibold txt-muted underline">
         {t('progress.viewLink')}
       </Link>
     </div>

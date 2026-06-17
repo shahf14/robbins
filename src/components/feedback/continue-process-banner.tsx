@@ -21,8 +21,8 @@ export function ContinueProcessBanner() {
           className="focus-ring flex items-center justify-between gap-3 rounded-2xl border border-[var(--blue)]/25 bg-[var(--blue)]/8 px-4 py-3 transition hover:border-[var(--blue)]/40 hover:bg-[var(--blue)]/12"
         >
           <div className="min-w-0">
-            <p className="text-sm font-black text-white">{t(`${draft.kind}.title`)}</p>
-            <p className="mt-0.5 text-xs leading-5 text-white/55">{t(`${draft.kind}.body`)}</p>
+            <p className="text-sm font-black txt-strong">{t(`${draft.kind}.title`)}</p>
+            <p className="mt-0.5 text-xs leading-5 txt-soft">{t(`${draft.kind}.body`)}</p>
           </div>
           <span className="shrink-0 text-xs font-bold uppercase tracking-wide text-[var(--blue)]">
             {t('cta')}

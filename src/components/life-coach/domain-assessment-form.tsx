@@ -151,7 +151,7 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
             <p className="text-xs font-bold uppercase tracking-widest text-[var(--blue)]">
               {t('lifeCoach.assessmentSummaryEyebrow')}
             </p>
-            <h3 className="mt-2 text-lg font-bold text-white">{t('lifeCoach.assessmentSummaryTitle')}</h3>
+            <h3 className="mt-2 text-lg font-bold txt-strong">{t('lifeCoach.assessmentSummaryTitle')}</h3>
           </div>
           <span
             className={`shrink-0 rounded-full border px-3 py-1 text-xs font-semibold ${scoreBadgeClass(currentScore)}`}
@@ -160,10 +160,10 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
           </span>
         </div>
 
-        <p className="mt-4 text-base leading-7 text-white/90">{bottomLine}</p>
+        <p className="mt-4 text-base leading-7 txt-strong">{bottomLine}</p>
 
         {(blockerLabels.length > 0 || availableTimePerDay) && (
-          <p className="mt-3 text-sm leading-6 text-white/45">
+          <p className="mt-3 text-sm leading-6 txt-muted">
             {blockerLabels.length > 0 && (
               <span>{t('lifeCoach.assessmentSummaryBlockers', {blockers: blockerLabels.join(' · ')})}</span>
             )}
@@ -191,7 +191,7 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
   return (
     <section className="panel-surface p-6" aria-label={t('lifeCoach.assessmentTitle')}>
       <p className="eyebrow">{t('lifeCoach.assessment')}</p>
-      <h3 className="mt-4 text-xl font-black text-white">{t('lifeCoach.assessmentTitle')}</h3>
+      <h3 className="mt-4 text-xl font-black txt-strong">{t('lifeCoach.assessmentTitle')}</h3>
 
       <div className="mt-6 grid gap-6">
         <div className="grid gap-3">
@@ -210,7 +210,7 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
             <div className="flex flex-wrap gap-1.5">
               <button
                 type="button"
-                className="focus-ring rounded-full border border-[var(--blue)]/30 bg-[var(--blue)]/10 px-3 py-1 text-xs font-semibold text-white/80 transition hover:text-white"
+                className="focus-ring rounded-full border border-[var(--blue)]/30 bg-[var(--blue)]/10 px-3 py-1 text-xs font-semibold txt-strong transition hover:txt-strong"
                 onClick={() =>
                   setCurrentState((prev) => prev || t(hints.starterKeys?.current ?? 'lifeCoach.currentStateStarter1'))
                 }
@@ -224,7 +224,7 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
                 <button
                   key={key}
                   type="button"
-                  className="focus-ring rounded-full border border-white/10 bg-white/4 px-3 py-1 text-xs font-semibold text-white/60 transition hover:border-white/20 hover:text-white"
+                  className="focus-ring rounded-full border border-[color:var(--color-border)] fill-1 px-3 py-1 text-xs font-semibold txt-soft transition hover:border-[color:var(--color-border-strong)] hover:txt-strong"
                   onClick={() => setCurrentState((prev) => (prev ? prev : t(`lifeCoach.${key}`)))}
                 >
                   {t(`lifeCoach.${key}`)}
@@ -247,7 +247,7 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
             <div className="flex flex-wrap gap-1.5">
               <button
                 type="button"
-                className="focus-ring rounded-full border border-[var(--blue)]/30 bg-[var(--blue)]/10 px-3 py-1 text-xs font-semibold text-white/80 transition hover:text-white"
+                className="focus-ring rounded-full border border-[var(--blue)]/30 bg-[var(--blue)]/10 px-3 py-1 text-xs font-semibold txt-strong transition hover:txt-strong"
                 onClick={() =>
                   setDesiredState((prev) => prev || t(hints.starterKeys?.desired ?? 'lifeCoach.desiredStateStarter1'))
                 }
@@ -261,7 +261,7 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
                 <button
                   key={key}
                   type="button"
-                  className="focus-ring rounded-full border border-white/10 bg-white/4 px-3 py-1 text-xs font-semibold text-white/60 transition hover:border-white/20 hover:text-white"
+                  className="focus-ring rounded-full border border-[color:var(--color-border)] fill-1 px-3 py-1 text-xs font-semibold txt-soft transition hover:border-[color:var(--color-border-strong)] hover:txt-strong"
                   onClick={() => setDesiredState((prev) => (prev ? prev : t(`lifeCoach.${key}`)))}
                 >
                   {t(`lifeCoach.${key}`)}
@@ -290,10 +290,10 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
                 aria-pressed={blockers.includes(blocker)}
                 className={`focus-ring rounded-full border px-4 py-2 text-sm font-semibold transition ${
                   blockers.includes(blocker)
-                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
+                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
                     : suggestedBlockerSet.has(blocker)
-                      ? 'border-[var(--blue)]/35 bg-[var(--blue)]/8 text-white/85'
-                      : 'border-white/10 bg-white/3 text-white/72'
+                      ? 'border-[var(--blue)]/35 bg-[var(--blue)]/8 txt-strong'
+                      : 'border-[color:var(--color-border)] fill-1 txt-soft'
                 }`}
                 onClick={() => toggleBlocker(blocker)}
               >
@@ -322,8 +322,8 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
                 aria-pressed={availableTimePerDay === minutes}
                 className={`focus-ring rounded-full border px-4 py-2 text-sm font-semibold transition ${
                   availableTimePerDay === minutes
-                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                    : 'border-white/10 bg-white/3 text-white/72'
+                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                    : 'border-[color:var(--color-border)] fill-1 txt-soft'
                 }`}
                 onClick={() => setAvailableTimePerDay(minutes)}
               >
@@ -345,8 +345,8 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
                 aria-pressed={intensityPreference === preference}
                 className={`focus-ring rounded-full border px-4 py-2 text-sm font-semibold transition ${
                   intensityPreference === preference
-                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                    : 'border-white/10 bg-white/3 text-white/72'
+                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                    : 'border-[color:var(--color-border)] fill-1 txt-soft'
                 }`}
                 onClick={() => setIntensityPreference(preference)}
               >

@@ -46,16 +46,16 @@ export function CommitmentTodayPanel({goals, todaySteps = [], domain}: Props) {
           <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-violet-300/80">
             {t('eyebrow')}
           </p>
-          <p className="mt-1.5 text-sm font-semibold leading-6 text-white/90">
+          <p className="mt-1.5 text-sm font-semibold leading-6 txt-strong">
             {t('dayProgress', {current: progress.currentDay, total: progress.days})}
           </p>
-          <p className="mt-1 text-xs text-white/45">
+          <p className="mt-1 text-xs txt-muted">
             {t('dateRange', {
               start: formatYmdLocale(progress.start, locale),
               end: formatYmdLocale(progress.end, locale),
             })}
           </p>
-          <p className="mt-2 text-sm leading-6 text-white/70">
+          <p className="mt-2 text-sm leading-6 txt-soft">
             {t('servesGoal', {goal: goal.title})}
           </p>
           {!hasStepToday && (

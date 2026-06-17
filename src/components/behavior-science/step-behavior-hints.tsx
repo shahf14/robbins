@@ -46,7 +46,7 @@ export function StepBehaviorHints({
         : t(`implementation.${intention.anchorKey}`);
 
   return (
-    <div className="mt-3 space-y-2 rounded-xl border border-white/8 bg-white/3 px-4 py-3">
+    <div className="mt-3 space-y-2 rounded-xl border border-[color:var(--color-border)] fill-1 px-4 py-3">
       <p className="text-xs leading-6 text-[var(--blue)]/90">
         {t('implementation.sentence', {
           after: afterLabel,
@@ -54,7 +54,7 @@ export function StepBehaviorHints({
           minutes: intention.minutes,
         })}
       </p>
-      <p className="text-xs leading-5 text-white/45">
+      <p className="text-xs leading-5 txt-muted">
         {t('planB.lineWithAction', {action: planBLine, minutes: step.fallback_estimated_minutes ?? 2})}
       </p>
     </div>

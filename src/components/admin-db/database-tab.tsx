@@ -87,8 +87,8 @@ export function DatabaseTab() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="eyebrow">Database</p>
-          <h2 className="mt-1 text-xl font-black text-white">Local SQLite — life-coach.db</h2>
-          <p className="mt-1 text-sm text-white/50">
+          <h2 className="mt-1 text-xl font-black txt-strong">Local SQLite — life-coach.db</h2>
+          <p className="mt-1 text-sm txt-muted">
             {loadingTables
               ? 'Loading…'
               : `${tables.length} tables · ${tables.reduce((s, t) => s + t.row_count, 0).toLocaleString()} total rows`}
@@ -108,10 +108,10 @@ export function DatabaseTab() {
         </div>
       </div>
 
-      <div className="grid gap-3 rounded-[18px] border border-white/10 bg-white/3 p-4">
+      <div className="grid gap-3 rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4">
         <div>
-          <p className="text-sm font-bold text-white">Admin access token</p>
-          <p className="mt-1 text-xs text-white/45">
+          <p className="text-sm font-bold txt-strong">Admin access token</p>
+          <p className="mt-1 text-xs txt-muted">
             Stored in this browser tab session only. Production DB routes require ADMIN_API_TOKEN.
           </p>
         </div>
@@ -148,8 +148,8 @@ export function DatabaseTab() {
           <p className="text-sm font-semibold text-emerald-400">Sync complete</p>
           <div className="mt-2 flex flex-wrap gap-3">
             {Object.entries(syncResult.synced).map(([key, count]) => (
-              <span key={key} className="rounded-full bg-white/5 px-3 py-1 text-xs text-white/60">
-                {key}: <strong className="text-white">{count}</strong>
+              <span key={key} className="rounded-full fill-2 px-3 py-1 text-xs txt-soft">
+                {key}: <strong className="txt-strong">{count}</strong>
               </span>
             ))}
           </div>
@@ -162,7 +162,7 @@ export function DatabaseTab() {
       )}
 
       {/* View toggle */}
-      <div className="flex gap-2 rounded-full border border-white/10 bg-white/3 p-1 self-start">
+      <div className="flex gap-2 rounded-full border border-[color:var(--color-border)] fill-1 p-1 self-start">
         {(['tables', 'query'] as const).map((v) => (
           <button
             key={v}
@@ -170,8 +170,8 @@ export function DatabaseTab() {
             onClick={() => setView(v)}
             className={`rounded-full px-5 py-1.5 text-sm font-semibold transition ${
               view === v
-                ? 'bg-white/12 text-white'
-                : 'text-white/45 hover:text-white'
+                ? 'fill-3 txt-strong'
+                : 'txt-muted hover:txt-strong'
             }`}
           >
             {v === 'tables' ? 'Tables' : 'SQL Query'}
@@ -182,11 +182,11 @@ export function DatabaseTab() {
       {/* Content */}
       {view === 'tables' && (
         loadingTables ? (
-          <p className="text-sm text-white/40">Loading tables…</p>
+          <p className="text-sm txt-muted">Loading tables…</p>
         ) : tables.length === 0 ? (
-          <div className="rounded-[18px] border border-white/10 p-8 text-center">
-            <p className="text-sm text-white/50">No tables found.</p>
-            <p className="mt-2 text-xs text-white/30">Use the local import action to populate the database.</p>
+          <div className="rounded-[18px] border border-[color:var(--color-border)] p-8 text-center">
+            <p className="text-sm txt-muted">No tables found.</p>
+            <p className="mt-2 text-xs txt-faint">Use the local import action to populate the database.</p>
           </div>
         ) : (
           <TableBrowser tables={tables} onRefresh={fetchTables} />

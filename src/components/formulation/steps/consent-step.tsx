@@ -35,10 +35,10 @@ type Props = {
 
 function LockedValue({label, value, hint}: {label: string; value: string; hint?: string}) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/4 px-4 py-3">
-      <p className="text-xs text-white/45">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-white">{value}</p>
-      {hint ? <p className="mt-1 text-[10px] text-white/35">{hint}</p> : null}
+    <div className="rounded-xl border border-[color:var(--color-border)] fill-1 px-4 py-3">
+      <p className="text-xs txt-muted">{label}</p>
+      <p className="mt-1 text-sm font-semibold txt-strong">{value}</p>
+      {hint ? <p className="mt-1 text-[10px] txt-faint">{hint}</p> : null}
     </div>
   );
 }
@@ -90,14 +90,14 @@ export function ConsentStep({loading, locks, initial, onDraftChange, onSubmit}: 
   return (
     <div className="grid gap-6">
       <div>
-        <h2 className="text-xl font-black text-white">{t('consent.title')}</h2>
+        <h2 className="text-xl font-black txt-strong">{t('consent.title')}</h2>
         <p className="mt-2 max-w-xl text-sm leading-7 text-[var(--muted)]">{t('consent.intro')}</p>
       </div>
 
-      <div className="grid gap-6 rounded-[20px] border border-white/10 bg-white/3 p-5 sm:p-6">
+      <div className="grid gap-6 rounded-[20px] border border-[color:var(--color-border)] fill-1 p-5 sm:p-6">
       <div className="grid gap-2">
         <span className="field-label mb-0">{t('consent.lifeContext')}</span>
-        <p className="text-xs text-white/45">{t('consent.lifeContextMulti')}</p>
+        <p className="text-xs txt-muted">{t('consent.lifeContextMulti')}</p>
         {locks.life_context_statuses ? (
           <LockedValue
             label={t('consent.lifeContext')}
@@ -114,8 +114,8 @@ export function ConsentStep({loading, locks, initial, onDraftChange, onSubmit}: 
                   aria-pressed={selected.includes(status)}
                   className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                     selected.includes(status)
-                      ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                      : 'border-white/10 bg-white/3 text-white/60'
+                      ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                      : 'border-[color:var(--color-border)] fill-1 txt-soft'
                   }`}
                   onClick={() => toggle(status)}
                 >
@@ -153,8 +153,8 @@ export function ConsentStep({loading, locks, initial, onDraftChange, onSubmit}: 
                 aria-pressed={gender === g}
                 className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                   gender === g
-                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                    : 'border-white/10 bg-white/3 text-white/60'
+                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                    : 'border-[color:var(--color-border)] fill-1 txt-soft'
                 }`}
                 onClick={() => setGender(g)}
               >
@@ -193,7 +193,7 @@ export function ConsentStep({loading, locks, initial, onDraftChange, onSubmit}: 
               onChange={(e) => setAge(e.target.value)}
               placeholder={t('consent.agePlaceholder')}
             />
-            <label className="flex items-center gap-2 text-xs text-white/55">
+            <label className="flex items-center gap-2 text-xs txt-soft">
               <input
                 type="checkbox"
                 className="focus-ring accent-[var(--blue)]"

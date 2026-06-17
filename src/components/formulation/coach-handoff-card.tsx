@@ -34,33 +34,33 @@ export function CoachHandoffCard() {
       <p className="eyebrow">{t('title')}</p>
       <dl className="mt-4 grid gap-3 text-sm">
         <div>
-          <dt className="text-white/45">{t('concern')}</dt>
-          <dd className="font-semibold text-white">{f.presenting_concern_user_words}</dd>
+          <dt className="txt-muted">{t('concern')}</dt>
+          <dd className="font-semibold txt-strong">{f.presenting_concern_user_words}</dd>
         </div>
         {f.maintaining_factors.length > 0 && (
           <div>
-            <dt className="text-white/45">{t('maintaining')}</dt>
-            <dd className="text-white/80">{f.maintaining_factors.join(' · ')}</dd>
+            <dt className="txt-muted">{t('maintaining')}</dt>
+            <dd className="txt-strong">{f.maintaining_factors.join(' · ')}</dd>
           </div>
         )}
         {f.existing_strengths.length > 0 && (
           <div>
-            <dt className="text-white/45">{t('strengths')}</dt>
-            <dd className="text-white/80">{f.existing_strengths.join(' · ')}</dd>
+            <dt className="txt-muted">{t('strengths')}</dt>
+            <dd className="txt-strong">{f.existing_strengths.join(' · ')}</dd>
           </div>
         )}
         <div>
-          <dt className="text-white/45">{t('value')}</dt>
-          <dd className="text-white/80">{h.value}</dd>
+          <dt className="txt-muted">{t('value')}</dt>
+          <dd className="txt-strong">{h.value}</dd>
         </div>
         <div>
-          <dt className="text-white/45">{t('microGoal')}</dt>
-          <dd className="font-semibold text-white">{h.micro_goal_week}</dd>
+          <dt className="txt-muted">{t('microGoal')}</dt>
+          <dd className="font-semibold txt-strong">{h.micro_goal_week}</dd>
         </div>
         {h.do_not_touch.length > 0 && (
           <div>
-            <dt className="text-white/45">{t('doNotTouch')}</dt>
-            <dd className="text-white/80">{h.do_not_touch.join(' · ')}</dd>
+            <dt className="txt-muted">{t('doNotTouch')}</dt>
+            <dd className="txt-strong">{h.do_not_touch.join(' · ')}</dd>
           </div>
         )}
       </dl>

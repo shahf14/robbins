@@ -202,8 +202,8 @@ export function AffirmationStep({
       <h2 className="mt-4 text-3xl font-black">{t('affirmation.title')}</h2>
       <p className="mt-3 text-[var(--muted)]">{t('affirmation.subtitle')}</p>
 
-      <div className="mt-6 rounded-[20px] border border-white/10 bg-white/3 p-4">
-        <p className="text-sm leading-7 text-white/80">{t('affirmation.readAloud')}</p>
+      <div className="mt-6 rounded-[20px] border border-[color:var(--color-border)] fill-1 p-4">
+        <p className="text-sm leading-7 txt-strong">{t('affirmation.readAloud')}</p>
       </div>
 
       <div className="mt-5 flex gap-2">
@@ -211,7 +211,7 @@ export function AffirmationStep({
           className={`focus-ring rounded-full px-5 py-2 text-sm font-bold transition ${
             viewType === 'text'
               ? 'bg-[var(--accent)] text-white'
-              : 'border border-[var(--border)] bg-white/2 hover:bg-white/8'
+              : 'border border-[var(--border)] fill-1 hover:fill-2'
           }`}
           type="button"
           onClick={() => switchViewType('text')}
@@ -222,7 +222,7 @@ export function AffirmationStep({
           className={`focus-ring rounded-full px-5 py-2 text-sm font-bold transition ${
             viewType === 'youtube'
               ? 'bg-[var(--blue)] text-white'
-              : 'border border-[var(--border)] bg-white/2 hover:bg-white/8'
+              : 'border border-[var(--border)] fill-1 hover:fill-2'
           }`}
           type="button"
           onClick={() => switchViewType('youtube')}
@@ -232,7 +232,7 @@ export function AffirmationStep({
       </div>
 
       {activeAffirmation ? (
-        <div className="mt-5 rounded-[22px] border border-white/10 bg-white/4 p-6">
+        <div className="mt-5 rounded-[22px] border border-[color:var(--color-border)] fill-2 p-6">
           {activeAffirmation.type === 'text' && (
             <button
               type="button"
@@ -241,10 +241,10 @@ export function AffirmationStep({
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="field-label mb-0 text-white/48">{activeAffirmation.title}</p>
+                  <p className="field-label mb-0 txt-muted">{activeAffirmation.title}</p>
                   <p className="mt-4 text-xl font-bold leading-9">{activeAffirmation.textContent}</p>
                 </div>
-                <span className="rounded-full border border-white/12 bg-white/4 px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-white/72">
+                <span className="rounded-full border border-[color:var(--color-border)] fill-2 px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] txt-soft">
                   {t('affirmation.focusMode')}
                 </span>
               </div>
@@ -268,7 +268,7 @@ export function AffirmationStep({
           )}
           {activeAffirmation.tags.length > 0 && (
             <div className="mt-4">
-              <p className="field-label mb-0 text-white/45">{t('affirmation.filterLabel')}</p>
+              <p className="field-label mb-0 txt-muted">{t('affirmation.filterLabel')}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {activeAffirmation.tags.map((tag) => {
                   const isActive = activeTagFilter?.toLowerCase() === tag.toLowerCase();
@@ -279,7 +279,7 @@ export function AffirmationStep({
                       aria-pressed={isActive}
                       className={`focus-ring rounded-full px-3 py-1.5 text-xs font-bold transition ${
                         isActive
-                          ? 'border border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
+                          ? 'border border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
                           : 'border border-white/10 bg-black/35 text-[var(--muted)] hover:bg-white/8 hover:text-white'
                       }`}
                       type="button"

@@ -11,10 +11,10 @@ export function MilestonesWhyExplainer({className = ''}: Props) {
 
   return (
     <p
-      className={`rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-sm leading-6 text-[var(--muted)] ${className}`}
+      className={`rounded-xl border border-[color:var(--color-border)] fill-1 px-4 py-3 text-sm leading-6 text-[var(--muted)] ${className}`}
       role="note"
     >
-      <span className="font-semibold text-white/70">{t('goalWizard.milestonesWhyLabel')}: </span>
+      <span className="font-semibold txt-soft">{t('goalWizard.milestonesWhyLabel')}: </span>
       {t('goalWizard.milestonesWhyExplainer')}
     </p>
   );

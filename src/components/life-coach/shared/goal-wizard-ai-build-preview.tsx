@@ -21,11 +21,11 @@ export function GoalWizardAiBuildPreview({className = ''}: Props) {
       role="note"
       aria-label={t('goalWizard.aiBuildPreviewTitle')}
     >
-      <p className="text-sm font-bold text-white" aria-hidden="true">{t('goalWizard.aiBuildPreviewTitle')}</p>
+      <p className="text-sm font-bold txt-strong" aria-hidden="true">{t('goalWizard.aiBuildPreviewTitle')}</p>
       <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{t('goalWizard.aiBuildPreviewSummary')}</p>
       <ul className="mt-4 grid gap-2.5">
         {ITEM_KEYS.map((key) => (
-          <li key={key} className="flex items-start gap-2.5 text-sm leading-6 text-white/75">
+          <li key={key} className="flex items-start gap-2.5 text-sm leading-6 txt-soft">
             <span className="mt-0.5 shrink-0 font-bold text-[var(--blue)]" aria-hidden>
               →
             </span>

@@ -26,14 +26,14 @@ export function LifeDomainCard({summary}: {summary: DomainCardSummary}) {
       href={`/life-coach/${summary.domain}`}
       className={`focus-ring interactive-panel group block overflow-hidden rounded-[22px] p-5 transition-all duration-200 hover:-translate-y-0.5 ${
         isUntouched
-          ? 'border border-dashed border-white/15 bg-white/[0.015] opacity-80 hover:border-[var(--blue)]/40 hover:opacity-100'
+          ? 'border border-dashed border-[color:var(--color-border-strong)] fill-1 opacity-80 hover:border-[var(--blue)]/40 hover:opacity-100'
           : 'panel-surface border-l-2 border-l-[var(--blue)] shadow-[0_0_0_1px_rgba(26,109,255,0.12)]'
       }`}
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="field-label mb-0 text-white/45">{t(`lifeCoach.domains.${summary.domain}.short`)}</p>
-          <h3 className="mt-3 text-xl font-black text-white">{t(`lifeCoach.domains.${summary.domain}.label`)}</h3>
+          <p className="field-label mb-0 txt-muted">{t(`lifeCoach.domains.${summary.domain}.short`)}</p>
+          <h3 className="mt-3 text-xl font-black txt-strong">{t(`lifeCoach.domains.${summary.domain}.label`)}</h3>
         </div>
         <div className="flex flex-col items-end gap-2">
           {!isUntouched && (
@@ -44,13 +44,13 @@ export function LifeDomainCard({summary}: {summary: DomainCardSummary}) {
           )}
           <div className="text-end">
             {summary.current_score != null && (
-              <p className="field-label mb-1 text-white/40">{t('lifeCoach.domainScoreLabel')}</p>
+              <p className="field-label mb-1 txt-muted">{t('lifeCoach.domainScoreLabel')}</p>
             )}
             <span
               className={`inline-flex rounded-full border px-3 py-1.5 text-sm font-semibold ${
                 isUntouched
-                  ? 'border-dashed border-white/20 bg-transparent text-white/55'
-                  : 'border-white/12 bg-white/4 text-white/72'
+                  ? 'border-dashed border-[color:var(--color-border-strong)] bg-transparent txt-soft'
+                  : 'border-[color:var(--color-border)] fill-1 txt-soft'
               }`}
             >
               {summary.current_score != null ? `${summary.current_score}/10` : t('lifeCoach.notSet')}
@@ -63,17 +63,17 @@ export function LifeDomainCard({summary}: {summary: DomainCardSummary}) {
         <>
           {/* Skeleton placeholders mirroring the active layout so card heights match */}
           <div className="mt-5 grid gap-3 sm:grid-cols-2" aria-hidden>
-            <div className="rounded-[18px] border border-dashed border-white/10 bg-white/[0.015] p-4">
-              <div className="h-2.5 w-16 rounded-full bg-white/10" />
-              <div className="mt-3 h-4 w-10 rounded-full bg-white/7" />
+            <div className="rounded-[18px] border border-dashed border-[color:var(--color-border)] fill-1 p-4">
+              <div className="h-2.5 w-16 rounded-full fill-3" />
+              <div className="mt-3 h-4 w-10 rounded-full fill-2" />
             </div>
-            <div className="rounded-[18px] border border-dashed border-white/10 bg-white/[0.015] p-4">
-              <div className="h-2.5 w-16 rounded-full bg-white/10" />
-              <div className="mt-3 h-4 w-20 rounded-full bg-white/7" />
+            <div className="rounded-[18px] border border-dashed border-[color:var(--color-border)] fill-1 p-4">
+              <div className="h-2.5 w-16 rounded-full fill-3" />
+              <div className="mt-3 h-4 w-20 rounded-full fill-2" />
             </div>
           </div>
 
-          <p className="mt-5 text-sm leading-6 text-white/65">
+          <p className="mt-5 text-sm leading-6 txt-soft">
             {t(`lifeCoach.domains.${summary.domain}.setupValue`)}
           </p>
 
@@ -81,8 +81,8 @@ export function LifeDomainCard({summary}: {summary: DomainCardSummary}) {
             <div className="flex items-center gap-3">
               <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--blue)]/15 text-lg" aria-hidden />
               <div>
-                <p className="text-sm font-bold leading-5 text-white">{t('lifeCoach.cardStartCta')}</p>
-                <p className="mt-0.5 text-xs text-white/50">{t('lifeCoach.cardSetupTime')}</p>
+                <p className="text-sm font-bold leading-5 txt-strong">{t('lifeCoach.cardStartCta')}</p>
+                <p className="mt-0.5 text-xs txt-muted">{t('lifeCoach.cardSetupTime')}</p>
               </div>
             </div>
             <span className="shrink-0 text-lg font-bold text-[var(--blue)] transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" aria-hidden="true">
@@ -93,25 +93,25 @@ export function LifeDomainCard({summary}: {summary: DomainCardSummary}) {
       ) : (
         <>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <p className="rounded-[18px] border border-white/10 bg-white/3 p-4 text-sm leading-7 text-white/80">
-              <span className="field-label mb-0 block text-white/45">{t('lifeCoach.activeGoals')}</span>
-              <span className="mt-2 block text-lg font-bold text-white">{summary.active_goals_count}</span>
+            <p className="rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4 text-sm leading-7 txt-strong">
+              <span className="field-label mb-0 block txt-muted">{t('lifeCoach.activeGoals')}</span>
+              <span className="mt-2 block text-lg font-bold txt-strong">{summary.active_goals_count}</span>
             </p>
-            <p className="rounded-[18px] border border-white/10 bg-white/3 p-4 text-sm leading-7 text-white/80">
-              <span className="field-label mb-0 block text-white/45">{t('lifeCoach.todayStatus')}</span>
-              <span className="mt-2 block text-base font-semibold text-white">
+            <p className="rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4 text-sm leading-7 txt-strong">
+              <span className="field-label mb-0 block txt-muted">{t('lifeCoach.todayStatus')}</span>
+              <span className="mt-2 block text-base font-semibold txt-strong">
                 {t(`lifeCoach.stepStatus.${summary.today_baby_step_status}`)}
               </span>
             </p>
           </div>
 
           <div className="mt-5">
-            <div className="flex items-center justify-between gap-3 text-sm text-white/60">
+            <div className="flex items-center justify-between gap-3 text-sm txt-soft">
               <span>{t('lifeCoach.progress')}</span>
               <span>{summary.progress_percent}%</span>
             </div>
             <div
-              className="mt-3 h-2 overflow-hidden rounded-full bg-white/10"
+              className="mt-3 h-2 overflow-hidden rounded-full fill-3"
               role="progressbar"
               aria-valuenow={summary.progress_percent}
               aria-valuemin={0}
@@ -125,11 +125,11 @@ export function LifeDomainCard({summary}: {summary: DomainCardSummary}) {
             </div>
           </div>
 
-          <div className="mt-4 rounded-[18px] border border-white/10 bg-white/3 p-4">
+          <div className="mt-4 rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="field-label mb-0 text-white/45">{t('lifeCoach.mastery.title')}</p>
-                <p className="mt-1 text-sm font-black text-white">
+                <p className="field-label mb-0 txt-muted">{t('lifeCoach.mastery.title')}</p>
+                <p className="mt-1 text-sm font-black txt-strong">
                   {t(`lifeCoach.mastery.levels.${mastery}`)}
                 </p>
               </div>
@@ -141,7 +141,7 @@ export function LifeDomainCard({summary}: {summary: DomainCardSummary}) {
               {[1, 2, 3, 4].map((level) => (
                 <span
                   key={level}
-                  className={`h-1.5 rounded-full ${level <= mastery ? 'bg-[var(--blue)]' : 'bg-white/10'}`}
+                  className={`h-1.5 rounded-full ${level <= mastery ? 'bg-[var(--blue)]' : 'fill-3'}`}
                 />
               ))}
             </div>

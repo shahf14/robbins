@@ -13,11 +13,11 @@ export function DailyRollUpCard({rollUp}: {rollUp: DailyRollUp}) {
       <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-300/90">
         {t('eyebrow')}
       </p>
-      <p className="mt-2 text-lg font-black text-white">
+      <p className="mt-2 text-lg font-black txt-strong">
         {t('summary', {count: rollUp.completedCount, minutes: rollUp.totalMinutes})}
       </p>
       {rollUp.topDomain && (
-        <p className="mt-2 text-sm text-white/65">
+        <p className="mt-2 text-sm txt-soft">
           {DOMAIN_ICONS[rollUp.topDomain]}{' '}
           {t('topDomain', {
             domain: tRoot(`lifeCoach.domains.${rollUp.topDomain}.short`),

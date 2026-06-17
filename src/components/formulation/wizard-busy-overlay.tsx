@@ -18,10 +18,10 @@ export function WizardBusyOverlay({label, hint, percent}: Props) {
       aria-live="polite"
       aria-busy="true"
     >
-      <p className="text-sm font-semibold text-white">{label}</p>
-      {hint ? <p className="mt-1 text-xs leading-relaxed text-white/50">{hint}</p> : null}
+      <p className="text-sm font-semibold txt-strong">{label}</p>
+      {hint ? <p className="mt-1 text-xs leading-relaxed txt-muted">{hint}</p> : null}
       <div
-        className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10"
+        className="mt-3 h-1.5 overflow-hidden rounded-full fill-3"
         role="progressbar"
         aria-valuenow={percent ?? 0}
         aria-valuemin={0}

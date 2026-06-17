@@ -116,7 +116,7 @@ function GuidedVisualization({steps}: {steps: string[]}) {
   if (currentStep >= steps.length) return null;
 
   return (
-    <div className="mt-4 flex min-h-28 items-center justify-center rounded-[20px] border border-white/10 bg-white/4 p-6">
+    <div className="mt-4 flex min-h-28 items-center justify-center rounded-[20px] border border-[color:var(--color-border)] fill-2 p-6">
       <p
         className="text-center text-xl font-bold transition-opacity duration-400"
         style={{opacity: visible ? 1 : 0}}
@@ -184,8 +184,8 @@ export function IdentityStep({
             key={option}
             className={`focus-ring rounded-lg border-2 px-4 py-3 text-start font-bold transition ${
               text === option
-                ? 'border-[var(--accent)] bg-white/5'
-                : 'border-[var(--border)] bg-white/2 hover:border-[var(--accent)]'
+                ? 'border-[var(--accent)] fill-2'
+                : 'border-[var(--border)] fill-1 hover:border-[var(--accent)]'
             }`}
             type="button"
             onClick={() => onChange(option)}
@@ -298,7 +298,7 @@ export function MissionStep({
       />
 
       <div className="mt-4">
-        <p className="field-label mb-0 text-white/50">{t('mission.timeBlock')}</p>
+        <p className="field-label mb-0 txt-muted">{t('mission.timeBlock')}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {timeBlocks.map((block) => (
             <button
@@ -306,7 +306,7 @@ export function MissionStep({
               className={`focus-ring rounded-full px-4 py-2 text-sm font-bold transition ${
                 timeBlock === block
                   ? 'bg-[var(--accent)] text-white'
-                  : 'border border-[var(--border)] bg-white/2 hover:bg-white/8'
+                  : 'border border-[var(--border)] fill-1 hover:fill-2'
               }`}
               type="button"
               onClick={() => onTimeBlockChange(block)}
@@ -317,13 +317,13 @@ export function MissionStep({
         </div>
       </div>
 
-      <div className="mt-8 grid gap-5 rounded-2xl border border-white/10 bg-white/4 p-4">
-        <p className="text-sm font-bold text-white/80">{t('mission.calibrationTitle')}</p>
+      <div className="mt-8 grid gap-5 rounded-2xl border border-[color:var(--color-border)] fill-2 p-4">
+        <p className="text-sm font-bold txt-strong">{t('mission.calibrationTitle')}</p>
         <p className="text-sm leading-6 text-[var(--muted)]">{t('mission.calibrationHint')}</p>
         <label className="grid gap-2">
           <span className="flex items-center justify-between gap-3">
             <span className="field-label mb-0">{tRoot('checkin.energy')}</span>
-            <span className="text-sm font-semibold text-white/70">{energyScore}/10</span>
+            <span className="text-sm font-semibold txt-soft">{energyScore}/10</span>
           </span>
           <input
             className="focus-ring"
@@ -337,7 +337,7 @@ export function MissionStep({
         <label className="grid gap-2">
           <span className="flex items-center justify-between gap-3">
             <span className="field-label mb-0">{tRoot('checkin.focus')}</span>
-            <span className="text-sm font-semibold text-white/70">{focusScore}/10</span>
+            <span className="text-sm font-semibold txt-soft">{focusScore}/10</span>
           </span>
           <input
             className="focus-ring"

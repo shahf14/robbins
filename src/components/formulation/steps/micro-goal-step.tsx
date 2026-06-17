@@ -95,19 +95,19 @@ export function MicroGoalStep({loading, session, onSuggest, onSubmit}: Props) {
       <FormulationInsightsPanel session={session} />
 
       <div className="rounded-xl border border-[var(--blue)]/25 bg-[rgba(26,109,255,0.08)] px-4 py-3">
-        <p className="text-xs font-bold uppercase tracking-wide text-white/45">
+        <p className="text-xs font-bold uppercase tracking-wide txt-muted">
           {t('microGoal.burningThisWeek')}
         </p>
-        <p className="mt-1 text-sm font-semibold leading-snug text-white">{burningFocus}</p>
+        <p className="mt-1 text-sm font-semibold leading-snug txt-strong">{burningFocus}</p>
         {generatedBy === 'llm' && (
-          <p className="mt-2 text-[10px] text-white/45">{t('microGoal.llmGenerated')}</p>
+          <p className="mt-2 text-[10px] txt-muted">{t('microGoal.llmGenerated')}</p>
         )}
       </div>
 
       <div className="grid gap-2">
-        <p className="text-sm font-semibold text-white">{t('microGoal.pickOneOfFive')}</p>
+        <p className="text-sm font-semibold txt-strong">{t('microGoal.pickOneOfFive')}</p>
         {aiLoading && goalOptions.length === 0 && (
-          <p className="text-xs text-white/50" aria-live="polite">{t('microGoal.loadingOptions')}</p>
+          <p className="text-xs txt-muted" aria-live="polite">{t('microGoal.loadingOptions')}</p>
         )}
         {optionsError && <p className="text-xs text-amber-300/90" role="alert">{optionsError}</p>}
         <div className="grid gap-2">
@@ -121,7 +121,7 @@ export function MicroGoalStep({loading, session, onSuggest, onSubmit}: Props) {
                 className={`focus-ring rounded-xl border px-4 py-3 text-start transition ${
                   selected
                     ? 'border-[var(--blue)] bg-[var(--blue)]/20 shadow-[0_0_0_1px_rgba(26,109,255,0.35)]'
-                    : 'border-white/12 bg-white/4 hover:border-white/25'
+                    : 'border-[color:var(--color-border)] fill-1 hover:border-[color:var(--color-border-strong)]'
                 }`}
                 onClick={() =>
                   applyOption(option, {
@@ -133,8 +133,8 @@ export function MicroGoalStep({loading, session, onSuggest, onSubmit}: Props) {
                   })
                 }
               >
-                <p className="text-sm font-semibold text-white">{option.title}</p>
-                <p className="mt-1 text-xs leading-relaxed text-white/65">
+                <p className="text-sm font-semibold txt-strong">{option.title}</p>
+                <p className="mt-1 text-xs leading-relaxed txt-soft">
                   {option.micro_goal_week}
                 </p>
                 {option.goal_type === 'mindset' && option.why_this_exercise && (

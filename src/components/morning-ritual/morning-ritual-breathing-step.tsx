@@ -178,7 +178,7 @@ export function BreathingStep({
                 className={`focus-ring rounded-full px-4 py-2 text-sm font-bold transition ${
                   breathingType === type
                     ? 'bg-[var(--blue)] text-white'
-                    : 'border border-[var(--border)] bg-white/2 hover:bg-white/8'
+                    : 'border border-[var(--border)] fill-1 hover:fill-2'
                 }`}
                 type="button"
                 onClick={() => onTypeChange(type)}
@@ -193,7 +193,7 @@ export function BreathingStep({
 
       <div className="mt-8 flex min-h-[240px] items-center justify-center">
         <div className="relative flex h-64 w-64 items-center justify-center">
-          <div className="absolute inset-5 rounded-full border border-white/10 bg-white/2" />
+          <div className="absolute inset-5 rounded-full border border-[color:var(--color-border)] fill-1" />
           <div
             className={`relative flex h-48 w-48 items-center justify-center rounded-full transition-all duration-[1200ms] ease-in-out ${isRunning ? 'ritual-circle-glow' : ''}`}
             style={{

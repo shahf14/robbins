@@ -198,7 +198,7 @@ export function FormulationSessionWizard() {
   }
 
   if (loading) {
-    return <p className="text-sm text-white/50">{t('loading')}</p>;
+    return <p className="text-sm txt-muted">{t('loading')}</p>;
   }
 
   if (error || !session) {
@@ -240,14 +240,14 @@ export function FormulationSessionWizard() {
     <div className="mx-auto max-w-6xl">
       <header className="panel-surface p-6 md:p-8">
         <p className="eyebrow">{t('eyebrow')}</p>
-        <h1 className="mt-4 text-2xl font-black text-white">{t('pageTitle')}</h1>
+        <h1 className="mt-4 text-2xl font-black txt-strong">{t('pageTitle')}</h1>
         <FeatureHint feature="formulation" className="mt-4" />
         {phase !== 'complete' && (
           <>
-            <p className="mt-2 text-xs text-white/45">
+            <p className="mt-2 text-xs txt-muted">
               {t('progress', {current: progress.current, total: progress.total})}
             </p>
-            <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/10">
+            <div className="mt-3 h-1 overflow-hidden rounded-full fill-3">
               <div
                 className="h-full rounded-full bg-[var(--accent)] transition-all duration-500"
                 style={{width: `${stepPercent}%`}}

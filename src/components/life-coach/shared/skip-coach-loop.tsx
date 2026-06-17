@@ -37,8 +37,8 @@ export function SkipCoachLoop({
               aria-pressed={blockerReason === reason}
               className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                 blockerReason === reason
-                  ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                  : 'border-white/10 bg-white/3 text-white/55 hover:border-white/20'
+                  ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                  : 'border-[color:var(--color-border)] fill-1 txt-soft hover:border-[color:var(--color-border-strong)]'
               }`}
               onClick={() => onBlockerChange(blockerReason === reason ? null : reason)}
             >
@@ -50,7 +50,7 @@ export function SkipCoachLoop({
 
       <div>
         <p id="skip-coach-tomorrow-label" className="text-xs font-bold uppercase tracking-wide text-sky-200/80">{t('tomorrowTitle')}</p>
-        <p className="mt-1 text-xs leading-5 text-white/50">
+        <p className="mt-1 text-xs leading-5 txt-muted">
           {introMessage ?? t('tomorrowHint')}
         </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-3" role="group" aria-labelledby="skip-coach-tomorrow-label">
@@ -58,13 +58,13 @@ export function SkipCoachLoop({
             <BusyButton
               key={action}
               type="button"
-              className="focus-ring rounded-xl border border-white/12 bg-white/4 px-3 py-3 text-left text-sm font-semibold text-white transition hover:border-[var(--blue)]/40 hover:bg-[rgba(26,109,255,0.08)]"
+              className="focus-ring rounded-xl border border-[color:var(--color-border)] fill-1 px-3 py-3 text-left text-sm font-semibold txt-strong transition hover:border-[var(--blue)]/40 hover:bg-[rgba(26,109,255,0.08)]"
               busy={busy}
               busyLabel={t('saving')}
               onClick={() => onSelectAction(action)}
             >
-              <span className="block text-white">{t(`actions.${action}.title`)}</span>
-              <span className="mt-1 block text-[11px] font-normal leading-4 text-white/45">
+              <span className="block txt-strong">{t(`actions.${action}.title`)}</span>
+              <span className="mt-1 block text-[11px] font-normal leading-4 txt-muted">
                 {t(`actions.${action}.hint`)}
               </span>
             </BusyButton>

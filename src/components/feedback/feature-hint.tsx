@@ -27,13 +27,13 @@ export function FeatureHint({feature, className = ''}: Props) {
 
   return (
     <div
-      className={`flex items-start justify-between gap-3 rounded-xl border border-white/10 bg-white/4 px-4 py-3 ${className}`}
+      className={`flex items-start justify-between gap-3 rounded-xl border border-[color:var(--color-border)] fill-1 px-4 py-3 ${className}`}
       role="note"
     >
-      <p className="text-xs leading-6 text-white/55">{t(feature)}</p>
+      <p className="text-xs leading-6 txt-soft">{t(feature)}</p>
       <button
         type="button"
-        className="focus-ring shrink-0 text-[10px] font-bold uppercase tracking-wide text-white/35 hover:text-white/60"
+        className="focus-ring shrink-0 text-[10px] font-bold uppercase tracking-wide txt-faint hover:txt-soft"
         aria-label={t('dismiss')}
         onClick={() => {
           dismissFeatureHint(feature);

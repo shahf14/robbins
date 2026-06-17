@@ -11,10 +11,10 @@ export function FinalBossBanner({step}: {step: DailyBabyStep}) {
       <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-amber-300/90" aria-hidden="true">
         {t('eyebrow')}
       </p>
-      <p className="mt-1 text-base font-black text-white">
+      <p className="mt-1 text-base font-black txt-strong">
         {t('title', {minutes: step.estimated_minutes})}
       </p>
-      <p className="mt-1 text-xs leading-5 text-white/55">{step.title}</p>
+      <p className="mt-1 text-xs leading-5 txt-soft">{step.title}</p>
     </div>
   );
 }

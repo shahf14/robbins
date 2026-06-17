@@ -24,11 +24,11 @@ export function StepExplainability({reasoning, className = ''}: StepExplainabili
 
   return (
     <div
-      className={`rounded-xl border border-white/10 bg-white/3 px-3 py-2.5 ${className}`.trim()}
+      className={`rounded-xl border border-[color:var(--color-border)] fill-1 px-3 py-2.5 ${className}`.trim()}
       role="note"
     >
-      <p className="text-xs font-semibold text-white/55">{t('lifeCoach.stepWhyReceivedTitle')}</p>
-      <p className="mt-1 text-xs leading-5 text-white/70">{body}</p>
+      <p className="text-xs font-semibold txt-soft">{t('lifeCoach.stepWhyReceivedTitle')}</p>
+      <p className="mt-1 text-xs leading-5 txt-soft">{body}</p>
     </div>
   );
 }

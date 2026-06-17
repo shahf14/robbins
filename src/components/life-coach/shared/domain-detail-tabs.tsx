@@ -17,7 +17,7 @@ export function DomainDetailTabNav({value, onChange, goalSetupNeeded}: Props) {
 
   return (
     <nav
-      className="flex gap-1 overflow-x-auto rounded-2xl border border-white/8 bg-white/[0.02] p-1"
+      className="flex gap-1 overflow-x-auto rounded-2xl border border-[color:var(--color-border)] fill-1 p-1"
       aria-label={t('ariaLabel')}
     >
       {TABS.map((tab) => {
@@ -31,8 +31,8 @@ export function DomainDetailTabNav({value, onChange, goalSetupNeeded}: Props) {
             onClick={() => onChange(tab)}
             className={`focus-ring relative shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
               selected
-                ? 'bg-[var(--blue)]/15 text-white'
-                : 'text-white/50 hover:bg-white/[0.04] hover:text-white/75'
+                ? 'bg-[var(--blue)]/15 txt-strong'
+                : 'txt-muted hover:fill-1 hover:txt-soft'
             }`}
           >
             {t(tab)}

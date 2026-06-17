@@ -31,9 +31,9 @@ export function CustomTimePicker({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <div className="flex items-center gap-1 rounded-2xl border border-white/12 bg-white/4 p-1.5">
+      <div className="flex items-center gap-1 rounded-2xl border border-[color:var(--color-border)] fill-1 p-1.5">
         <select
-          className="focus-ring rounded-xl bg-transparent px-3 py-2 text-lg font-bold text-white outline-none [&>option]:bg-[#0b1220]"
+          className="focus-ring rounded-xl bg-transparent px-3 py-2 text-lg font-bold txt-strong outline-none [&>option]:bg-[#0b1220]"
           value={hour12}
           onChange={(e) => emit(Number(e.target.value), minute, period)}
           aria-label={t('pickerHour')}
@@ -44,9 +44,9 @@ export function CustomTimePicker({
             </option>
           ))}
         </select>
-        <span className="text-lg font-black text-white/40">:</span>
+        <span className="text-lg font-black txt-muted">:</span>
         <select
-          className="focus-ring rounded-xl bg-transparent px-3 py-2 text-lg font-bold text-white outline-none [&>option]:bg-[#0b1220]"
+          className="focus-ring rounded-xl bg-transparent px-3 py-2 text-lg font-bold txt-strong outline-none [&>option]:bg-[#0b1220]"
           value={minute}
           onChange={(e) => emit(hour12, Number(e.target.value), period)}
           aria-label={t('pickerMinute')}
@@ -59,7 +59,7 @@ export function CustomTimePicker({
         </select>
       </div>
 
-      <div className="inline-flex rounded-2xl border border-white/12 bg-white/4 p-1">
+      <div className="inline-flex rounded-2xl border border-[color:var(--color-border)] fill-1 p-1">
         {(['am', 'pm'] as const).map((p) => (
           <button
             key={p}
@@ -67,7 +67,7 @@ export function CustomTimePicker({
             onClick={() => emit(hour12, minute, p)}
             aria-pressed={period === p}
             className={`focus-ring rounded-xl px-4 py-2 text-sm font-bold transition ${
-              period === p ? 'bg-[var(--blue)] text-white' : 'text-white/55 hover:text-white'
+              period === p ? 'bg-[var(--blue)] text-white' : 'txt-soft hover:txt-strong'
             }`}
           >
             {t(`picker_${p}`)}

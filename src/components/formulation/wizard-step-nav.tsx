@@ -17,7 +17,7 @@ export function WizardStepNav({loading, canGoBack, canRestart, onBack, onRestart
 
   return (
     <nav
-      className="mt-8 flex flex-wrap gap-2 border-t border-white/10 pt-6"
+      className="mt-8 flex flex-wrap gap-2 border-t border-[color:var(--color-border)] pt-6"
       aria-label={t('nav.ariaLabel')}
     >
       {canGoBack && (
@@ -34,7 +34,7 @@ export function WizardStepNav({loading, canGoBack, canRestart, onBack, onRestart
       {canRestart && (
         <button
           type="button"
-          className="focus-ring btn-ghost text-white/55"
+          className="focus-ring btn-ghost txt-soft"
           disabled={loading}
           aria-busy={loading}
           onClick={onRestart}

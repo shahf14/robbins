@@ -36,11 +36,11 @@ export function DailyStepsEmptyState({
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--blue)]">
         {t('lifeCoach.noDailyStepsEyebrow')}
       </p>
-      <h3 className="text-lg font-black leading-snug text-white sm:text-xl">
+      <h3 className="text-lg font-black leading-snug txt-strong sm:text-xl">
         {t('lifeCoach.noDailyStepsTitle')}
       </h3>
       <p className="text-sm leading-7 text-[var(--muted)]">{t('lifeCoach.noDailyStepsGuide')}</p>
-      <ol className="grid gap-2 text-sm leading-6 text-white/70">
+      <ol className="grid gap-2 text-sm leading-6 txt-soft">
         <li className="flex gap-2">
           <span className="font-black text-[var(--blue)]">1.</span>
           <span>{t('lifeCoach.noDailyStepsStepGoal')}</span>

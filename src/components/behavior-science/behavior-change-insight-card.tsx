@@ -13,7 +13,7 @@ export function BehaviorChangeInsightCard({headline, detailLines = [], className
     >
       <p className="text-sm font-semibold leading-7 text-violet-100/95">{headline}</p>
       {detailLines.length > 0 && (
-        <ul className="mt-3 space-y-1.5 text-xs leading-5 text-white/50">
+        <ul className="mt-3 space-y-1.5 text-xs leading-5 txt-muted">
           {detailLines.map((line) => (
             <li key={line}>{line}</li>
           ))}

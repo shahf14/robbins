@@ -210,7 +210,7 @@ function HealthDetailContent() {
             <div className="grid gap-5">
               {!hasHealthGoals && (
                 <div className="rounded-2xl border border-[var(--blue)]/20 bg-[var(--blue)]/[0.05] px-4 py-4">
-                  <p className="text-sm leading-7 text-white/70">{t('lifeCoach.domainTabs.noGoalHint')}</p>
+                  <p className="text-sm leading-7 txt-soft">{t('lifeCoach.domainTabs.noGoalHint')}</p>
                   <button
                     type="button"
                     className="focus-ring mt-3 text-sm font-semibold text-[var(--blue)]"
@@ -295,7 +295,7 @@ function HealthDetailContent() {
                 className="panel-surface scroll-mt-24 p-5 sm:p-6"
                 aria-label={t('lifeCoach.todayPlan')}
               >
-                <h2 className="text-lg font-bold text-white">{t('lifeCoach.todayPlan')}</h2>
+                <h2 className="text-lg font-bold txt-strong">{t('lifeCoach.todayPlan')}</h2>
                 <div className="mt-5">
                   <DailyBabyStepsList
                     steps={healthSteps}
@@ -372,7 +372,7 @@ function HealthDetailContent() {
                 onRefresh={refresh}
               />
               <section className="panel-surface p-6" aria-label={t('lifeCoach.activeGoals')}>
-                <h2 className="text-lg font-bold text-white">{t('lifeCoach.activeGoals')}</h2>
+                <h2 className="text-lg font-bold txt-strong">{t('lifeCoach.activeGoals')}</h2>
                 <div className="mt-5 grid gap-4">
                   {goals.filter((goal) => goal.domain === 'health').length === 0 ? (
                     <p className="text-sm leading-7 text-[var(--muted)]">{t('lifeCoach.domainTabs.noGoalHint')}</p>

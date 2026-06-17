@@ -17,7 +17,7 @@ export function GoalHierarchyExplainer({className = ''}: Props) {
 
   return (
     <div
-      className={`rounded-xl border border-white/10 bg-white/3 px-4 py-3 ${className}`}
+      className={`rounded-xl border border-[color:var(--color-border)] fill-1 px-4 py-3 ${className}`}
       role="note"
       aria-label={t('lifeCoach.goalHierarchyAria')}
     >
@@ -25,12 +25,12 @@ export function GoalHierarchyExplainer({className = ''}: Props) {
         {ITEMS.map((item, index) => (
           <div
             key={item.labelKey}
-            className={index < ITEMS.length - 1 ? 'sm:border-e sm:border-white/10 sm:pe-4' : ''}
+            className={index < ITEMS.length - 1 ? 'sm:border-e sm:border-[color:var(--color-border)] sm:pe-4' : ''}
           >
-            <p className="text-sm font-bold text-white">
+            <p className="text-sm font-bold txt-strong">
               {t(item.labelKey)}
-              <span className="font-semibold text-white/45"> = </span>
-              <span className="font-semibold text-white/70">{t(item.roleKey)}</span>
+              <span className="font-semibold txt-muted"> = </span>
+              <span className="font-semibold txt-soft">{t(item.roleKey)}</span>
             </p>
           </div>
         ))}

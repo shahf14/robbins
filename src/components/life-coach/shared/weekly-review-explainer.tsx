@@ -12,8 +12,8 @@ export function WeeklyReviewExplainer({className = '', compact = false}: Props) 
 
   if (compact) {
     return (
-      <p className={`text-xs leading-5 text-white/55 ${className}`.trim()}>
-        <span className="font-semibold text-white/70">{t('lifeCoach.weeklyReviewWhenWhyTitle')}: </span>
+      <p className={`text-xs leading-5 txt-soft ${className}`.trim()}>
+        <span className="font-semibold txt-soft">{t('lifeCoach.weeklyReviewWhenWhyTitle')}: </span>
         {t('lifeCoach.weeklyReviewWhenWhyExplainer')}
       </p>
     );
@@ -27,7 +27,7 @@ export function WeeklyReviewExplainer({className = '', compact = false}: Props) 
       <p className="text-xs font-bold uppercase tracking-wide text-[var(--blue)]">
         {t('lifeCoach.weeklyReviewWhenWhyTitle')}
       </p>
-      <p className="mt-1.5 text-sm leading-6 text-white/80">{t('lifeCoach.weeklyReviewWhenWhyExplainer')}</p>
+      <p className="mt-1.5 text-sm leading-6 txt-strong">{t('lifeCoach.weeklyReviewWhenWhyExplainer')}</p>
     </div>
   );
 }

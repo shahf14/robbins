@@ -64,7 +64,7 @@ export function ConfirmProvider({children}: {children: ReactNode}) {
             className="panel-surface-strong w-full max-w-md rounded-[24px] p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 id="confirm-dialog-title" className={`text-xl font-black text-white ${pending.title ? '' : 'sr-only'}`}>
+            <h2 id="confirm-dialog-title" className={`text-xl font-black txt-strong ${pending.title ? '' : 'sr-only'}`}>
               {pending.title ?? pending.message}
             </h2>
             <p id="confirm-dialog-message" className={`text-sm leading-7 text-[var(--muted)] ${pending.title ? 'mt-3' : ''}`}>

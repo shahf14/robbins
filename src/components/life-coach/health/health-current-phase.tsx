@@ -25,8 +25,8 @@ export function HealthCurrentPhase({goals}: Props) {
 
   return (
     <section className="rounded-2xl border border-[var(--blue)]/20 bg-[rgba(26,109,255,0.06)] p-5" aria-label={t('healthWizard.currentPhaseTitle')}>
-      <p className="text-sm font-semibold text-white">{t('healthWizard.currentPhaseTitle')}</p>
-      <p className="mt-2 text-xs font-medium text-white/55">
+      <p className="text-sm font-semibold txt-strong">{t('healthWizard.currentPhaseTitle')}</p>
+      <p className="mt-2 text-xs font-medium txt-soft">
         {t('healthWizard.currentPhaseWeek', {week: summary.weekLabel, day: summary.dayIndex})}
       </p>
       <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{summary.focus}</p>

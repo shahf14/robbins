@@ -114,42 +114,42 @@ export function Step3Clarification({
   const chipClass = (selected: boolean) =>
     `focus-ring rounded-2xl border px-4 py-3 text-sm font-medium leading-snug transition ${
       selected
-        ? 'border-[var(--blue)]/60 bg-[var(--blue)]/10 text-white'
-        : 'border-white/8 bg-white/[0.02] text-white/65 hover:border-white/15 hover:bg-white/[0.04]'
+        ? 'border-[var(--blue)]/60 bg-[var(--blue)]/10 txt-strong'
+        : 'border-[color:var(--color-border)] fill-1 txt-soft hover:border-[color:var(--color-border-strong)] hover:fill-1'
     }`;
 
   return (
     <div className="flex flex-col gap-10">
       <header className="grid gap-4">
         <p className="eyebrow text-[var(--blue)]">{t('onboarding.step3Eyebrow')}</p>
-        <h1 className="text-[clamp(1.75rem,5vw,2.35rem)] font-black leading-tight text-white">
+        <h1 className="text-[clamp(1.75rem,5vw,2.35rem)] font-black leading-tight txt-strong">
           {content.title}
         </h1>
-        <p className="max-w-prose text-base leading-7 text-white/60">{content.intro}</p>
+        <p className="max-w-prose text-base leading-7 txt-soft">{content.intro}</p>
 
-        <div className="mt-1 rounded-2xl border border-white/6 bg-white/[0.02] px-4 py-3.5">
-          <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-white/70">
+        <div className="mt-1 rounded-2xl border border-[color:var(--color-border)] fill-1 px-4 py-3.5">
+          <p className="flex flex-wrap items-center gap-2 text-sm font-semibold txt-soft">
             <span aria-hidden="true">{DOMAIN_ICONS[domain]}</span>
             <span>{domainLabel}</span>
           </p>
-          <p className="mt-2 text-xs font-bold uppercase tracking-widest text-white/30">
+          <p className="mt-2 text-xs font-bold uppercase tracking-widest txt-faint">
             {t('onboarding.step3Quick.scoreLabel')}
           </p>
-          <p className="mt-1 text-lg font-black text-white">
+          <p className="mt-1 text-lg font-black txt-strong">
             <span className="tabular-nums" style={{color: scoreColor}}>
               {rating.score}/10
             </span>
-            <span className="text-white/30"> · </span>
+            <span className="txt-faint"> · </span>
             <span style={{color: scoreColor}}>{bandLabel}</span>
           </p>
-          <p className="mt-2 text-sm leading-6 text-white/50">{t(rating.descriptionKey)}</p>
+          <p className="mt-2 text-sm leading-6 txt-muted">{t(rating.descriptionKey)}</p>
         </div>
       </header>
 
       <section className="grid gap-5">
         <div>
-          <h2 className="text-lg font-bold text-white">{content.painQuestion}</h2>
-          <p className="mt-1.5 text-sm leading-6 text-white/45">{content.painHint}</p>
+          <h2 className="text-lg font-bold txt-strong">{content.painQuestion}</h2>
+          <p className="mt-1.5 text-sm leading-6 txt-muted">{content.painHint}</p>
         </div>
         <div className="flex flex-wrap gap-2.5">
           {content.painChips.map((chip) => (
@@ -174,8 +174,8 @@ export function Step3Clarification({
             <p className="text-xs font-bold uppercase tracking-widest text-[var(--blue)]/80">
               {t('onboarding.step3Quick.reflectionEyebrow')}
             </p>
-            <p className="mt-2 text-sm font-semibold leading-6 text-white/85">{reflection.summary}</p>
-            <p className="mt-2 text-sm leading-6 text-white/55">{reflection.goal}</p>
+            <p className="mt-2 text-sm font-semibold leading-6 txt-strong">{reflection.summary}</p>
+            <p className="mt-2 text-sm leading-6 txt-soft">{reflection.goal}</p>
           </div>
         )}
 
@@ -188,14 +188,14 @@ export function Step3Clarification({
             {t('onboarding.step3Quick.phraseHelpToggle')}
           </button>
           {phraseHelpOpen && (
-            <div className="grid gap-2 rounded-2xl border border-white/6 bg-white/[0.02] p-3">
-              <p className="text-xs leading-5 text-white/40">{t('onboarding.step3Quick.phraseHelpHint')}</p>
+            <div className="grid gap-2 rounded-2xl border border-[color:var(--color-border)] fill-1 p-3">
+              <p className="text-xs leading-5 txt-muted">{t('onboarding.step3Quick.phraseHelpHint')}</p>
               {content.starterPhrases.map((phrase) => (
                 <button
                   key={phrase}
                   type="button"
                   onClick={() => applyStarterPhrase(phrase)}
-                  className="focus-ring rounded-xl border border-white/6 bg-white/[0.02] px-3 py-2.5 text-start text-sm leading-6 text-white/70 transition hover:border-white/12 hover:bg-white/[0.04] hover:text-white/90"
+                  className="focus-ring rounded-xl border border-[color:var(--color-border)] fill-1 px-3 py-2.5 text-start text-sm leading-6 txt-soft transition hover:border-[color:var(--color-border)] hover:fill-1 hover:txt-strong"
                 >
                   {phrase}
                 </button>
@@ -215,8 +215,8 @@ export function Step3Clarification({
 
       <section className="grid gap-5">
         <div>
-          <h2 className="text-lg font-bold text-white">{content.visionQuestion}</h2>
-          <p className="mt-1.5 text-sm leading-6 text-white/45">{content.visionHint}</p>
+          <h2 className="text-lg font-bold txt-strong">{content.visionQuestion}</h2>
+          <p className="mt-1.5 text-sm leading-6 txt-muted">{content.visionHint}</p>
         </div>
         <div className="flex flex-wrap gap-2.5">
           {content.visionChips.map((chip) => (
@@ -250,7 +250,7 @@ export function Step3Clarification({
           type="button"
           disabled={busy}
           onClick={handleHelpMe}
-          className="focus-ring self-start text-sm font-semibold text-white/40 underline decoration-white/15 underline-offset-4 transition hover:text-white/65"
+          className="focus-ring self-start text-sm font-semibold txt-muted underline decoration-white/15 underline-offset-4 transition hover:txt-soft"
         >
           {t('onboarding.helpMeExpress')}
         </button>
@@ -261,7 +261,7 @@ export function Step3Clarification({
           <p className="text-xs font-bold uppercase tracking-widest text-[var(--blue)]">
             {t('onboarding.insightLabel')}
           </p>
-          <p className="mt-3 text-base leading-7 text-white/90">{insight}</p>
+          <p className="mt-3 text-base leading-7 txt-strong">{insight}</p>
         </div>
       )}
 

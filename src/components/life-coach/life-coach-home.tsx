@@ -300,7 +300,7 @@ function LifeCoachHomeContent() {
 
       <section className="panel-surface-strong mt-6 overflow-hidden px-6 py-8 sm:px-8 sm:py-10">
         <p className="eyebrow">{t('lifeCoach.homeEyebrow')}</p>
-        <h1 className="mt-4 text-[clamp(2.4rem,6vw,4.2rem)] font-black leading-[1.06] text-white">
+        <h1 className="mt-4 text-[clamp(2.4rem,6vw,4.2rem)] font-black leading-[1.06] txt-strong">
           {t('lifeCoach.homeTitle')}
         </h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-[var(--muted)]">{t('lifeCoach.homeBody')}</p>
@@ -323,15 +323,15 @@ function LifeCoachHomeContent() {
             {!hasAnyGoal && (
               <section className="panel-surface overflow-hidden p-6 sm:p-8">
                 <p className="eyebrow">{t('lifeCoach.onboardingEyebrow')}</p>
-                <h2 className="mt-4 text-2xl font-black text-white">{t('lifeCoach.onboardingTitle')}</h2>
+                <h2 className="mt-4 text-2xl font-black txt-strong">{t('lifeCoach.onboardingTitle')}</h2>
                 <p className="mt-3 max-w-2xl text-base leading-7 text-[var(--muted)]">{t('lifeCoach.onboardingBody')}</p>
                 <ol className="mt-6 grid gap-4 sm:grid-cols-3">
                   {[1, 2, 3].map((n) => (
-                    <li key={n} className="rounded-2xl border border-white/10 bg-white/3 p-4">
+                    <li key={n} className="rounded-2xl border border-[color:var(--color-border)] fill-1 p-4">
                       <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--blue)]/15 text-sm font-black text-[var(--blue)]">
                         {n}
                       </span>
-                      <p className="mt-3 text-sm font-bold text-white">{t(`lifeCoach.onboardingStep${n}Title`)}</p>
+                      <p className="mt-3 text-sm font-bold txt-strong">{t(`lifeCoach.onboardingStep${n}Title`)}</p>
                       <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{t(`lifeCoach.onboardingStep${n}Body`)}</p>
                     </li>
                   ))}
@@ -419,7 +419,7 @@ function LifeCoachHomeContent() {
               <FeatureHint feature="weekly_review" className="mb-4" />
               <p className="eyebrow">{t('lifeCoach.dailyBabySteps')}</p>
               <div className="mt-4 flex flex-wrap items-center gap-3">
-                <h2 className="text-2xl font-black text-white">{t('lifeCoach.todayPlan')}</h2>
+                <h2 className="text-2xl font-black txt-strong">{t('lifeCoach.todayPlan')}</h2>
                 <EnergyAdaptedBadge domainStates={domainStates} />
               </div>
               {todaySteps.length > 0 && (
@@ -553,7 +553,7 @@ function LifeCoachHomeContent() {
               <WeeklyReviewCard insight={weeklyReview} recentSteps={weekSteps} />
               <section className="panel-surface p-6" aria-label={t('lifeCoach.aiInsights')}>
                 <p className="eyebrow">{t('lifeCoach.aiInsights')}</p>
-                <h2 className="mt-4 text-2xl font-black text-white">{t('lifeCoach.patternsAndAdjustments')}</h2>
+                <h2 className="mt-4 text-2xl font-black txt-strong">{t('lifeCoach.patternsAndAdjustments')}</h2>
                 <AiInsightsVsWeeklyReviewExplainer className="mt-4" />
                 <div className="mt-6 grid gap-4" aria-live="polite">
                   {insights.length === 0 ? (
@@ -663,19 +663,19 @@ function DomainsSetupProgress({configured, total}: {configured: number; total: n
 
   return (
     <article className="panel-surface p-5 sm:p-6" aria-label={t('lifeCoach.domainsSetupProgressEyebrow')}>
-      <p className="field-label mb-0 text-white/50">{t('lifeCoach.domainsSetupProgressEyebrow')}</p>
-      <p className="mt-2 text-lg font-black leading-snug text-white sm:text-xl">
+      <p className="field-label mb-0 txt-muted">{t('lifeCoach.domainsSetupProgressEyebrow')}</p>
+      <p className="mt-2 text-lg font-black leading-snug txt-strong sm:text-xl">
         {t('lifeCoach.domainsSetupProgressHeadline', {configured, total})}
       </p>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">{t(hintKey)}</p>
       <div className="mt-4 flex items-center gap-3">
-        <div className="h-2.5 min-w-0 flex-1 overflow-hidden rounded-full bg-white/10">
+        <div className="h-2.5 min-w-0 flex-1 overflow-hidden rounded-full fill-3">
           <div
             className="h-full rounded-full transition-[width] duration-700"
             style={{width: `${progressPercent}%`, backgroundColor: barColor}}
           />
         </div>
-        <span className="shrink-0 text-sm font-bold tabular-nums text-white/55">
+        <span className="shrink-0 text-sm font-bold tabular-nums txt-soft">
           {t('lifeCoach.domainsSetupProgressFraction', {configured, total})}
         </span>
       </div>
@@ -698,8 +698,8 @@ function LifeCoachHomeSection({
 
   return (
     <section id={id} className="mt-8 scroll-mt-24" aria-labelledby={`${id}-heading`}>
-      <header className="mb-6 border-b border-white/10 pb-5">
-        <h2 id={`${id}-heading`} className="text-xl font-black text-white sm:text-2xl">
+      <header className="mb-6 border-b border-[color:var(--color-border)] pb-5">
+        <h2 id={`${id}-heading`} className="text-xl font-black txt-strong sm:text-2xl">
           {t(titleKey)}
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">{t(bodyKey)}</p>
@@ -783,10 +783,10 @@ function CrossDomainBlockerCard({domainStates}: {domainStates: LifeDomainState[]
       <div className="mt-4 grid gap-3">
         {sharedBlockers.map(([blocker, domains]) => (
           <div key={blocker} className="rounded-2xl border border-amber-500/15 bg-amber-500/5 p-4">
-            <p className="text-sm font-semibold text-white">
+            <p className="text-sm font-semibold txt-strong">
               {t('lifeCoach.crossDomainBlocker', {blocker, count: String(domains.length)})}
             </p>
-            <p className="mt-1 text-xs leading-5 text-white/50">
+            <p className="mt-1 text-xs leading-5 txt-muted">
               {t('lifeCoach.crossDomainSuggestion')}
             </p>
           </div>

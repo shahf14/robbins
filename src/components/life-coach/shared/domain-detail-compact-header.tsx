@@ -29,11 +29,11 @@ export function DomainDetailCompactHeader({
         ]}
       />
       <div>
-        <h1 className="text-[clamp(1.65rem,4.5vw,2.25rem)] font-black leading-tight text-white">
+        <h1 className="text-[clamp(1.65rem,4.5vw,2.25rem)] font-black leading-tight txt-strong">
           {domainLabel}
         </h1>
         {totalToday > 0 && (
-          <p className="mt-2 text-sm font-medium text-white/50">
+          <p className="mt-2 text-sm font-medium txt-muted">
             {t('lifeCoach.domainTabs.todaySummary', {
               completed: completedToday,
               total: totalToday,
@@ -42,7 +42,7 @@ export function DomainDetailCompactHeader({
           </p>
         )}
         {totalToday === 0 && streakDays > 0 && (
-          <p className="mt-2 text-sm font-medium text-white/50">
+          <p className="mt-2 text-sm font-medium txt-muted">
             {t('lifeCoach.domainTabs.streakOnly', {streak: streakDays})}
           </p>
         )}

@@ -113,7 +113,7 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="field-label mb-0 text-[var(--blue)]" aria-hidden="true">{t('enhancedReview.eyebrow')}</p>
-          <h2 className="mt-3 text-xl font-black text-white">{t(framingKey)}</h2>
+          <h2 className="mt-3 text-xl font-black txt-strong">{t(framingKey)}</h2>
         </div>
         <button
           className="focus-ring btn-small"
@@ -134,8 +134,8 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
 
       {/* AI Review Summary */}
       {insight && metadata && (
-        <div className="mt-5 rounded-2xl border border-white/10 bg-white/3 p-4" aria-live="polite">
-          <p className="text-base font-bold text-white">{insight.content}</p>
+        <div className="mt-5 rounded-2xl border border-[color:var(--color-border)] fill-1 p-4" aria-live="polite">
+          <p className="text-base font-bold txt-strong">{insight.content}</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <MiniStat label={t('lifeCoach.completedSteps')} value={String(metadata.completed_steps_count)} />
             <MiniStat label={t('lifeCoach.mainBlocker')} value={metadata.main_blocker} />
@@ -150,9 +150,9 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
             <WeeklyReviewRecurringPatternSection pattern={metadata.recurring_pattern} />
           ) : null}
           {metadata.pattern_insights && metadata.pattern_insights.length > 0 && (
-            <ul className="mt-4 space-y-2 text-sm leading-6 text-white/70">
+            <ul className="mt-4 space-y-2 text-sm leading-6 txt-soft">
               {metadata.pattern_insights.map((insight) => (
-                <li key={insight} className="rounded-lg border border-white/8 bg-white/2 px-3 py-2">
+                <li key={insight} className="rounded-lg border border-[color:var(--color-border)] fill-1 px-3 py-2">
                   {insight}
                 </li>
               ))}
@@ -253,10 +253,10 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
 
       {/* Reflection Questions */}
       <div className="mt-6 grid gap-4">
-        <p className="text-sm font-bold text-white">{t('enhancedReview.reflectTitle')}</p>
+        <p className="text-sm font-bold txt-strong">{t('enhancedReview.reflectTitle')}</p>
 
         <label className="grid gap-2">
-          <span className="text-xs font-semibold text-white/50">
+          <span className="text-xs font-semibold txt-muted">
             1. {t('enhancedReview.q1')}
           </span>
           {completedSteps.length > 0 && (
@@ -282,7 +282,7 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
         </label>
 
         <label className="grid gap-2">
-          <span className="text-xs font-semibold text-white/50">
+          <span className="text-xs font-semibold txt-muted">
             2. {t('enhancedReview.q2')}
           </span>
           {skippedSteps.length > 0 && (
@@ -308,7 +308,7 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
         </label>
 
         <label className="grid gap-2">
-          <span className="text-xs font-semibold text-white/50">
+          <span className="text-xs font-semibold txt-muted">
             3. {t('enhancedReview.q3')}
           </span>
           <input
@@ -320,7 +320,7 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
         </label>
 
         {streak.consistency_rate > 0 && (
-          <div className="rounded-xl border border-white/8 bg-white/2 p-3 text-xs leading-5 text-white/40">
+          <div className="rounded-xl border border-[color:var(--color-border)] fill-1 p-3 text-xs leading-5 txt-muted">
             {t('enhancedReview.energyNote', {rate: String(streak.consistency_rate)})}
           </div>
         )}
@@ -345,11 +345,11 @@ function MiniStat({
         ? 'text-yellow-400'
         : valueColor === 'green'
           ? 'text-green-400'
-          : 'text-white';
+          : 'txt-strong';
 
   return (
-    <div className="rounded-[14px] border border-white/8 bg-white/2 p-3">
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">{label}</p>
+    <div className="rounded-[14px] border border-[color:var(--color-border)] fill-1 p-3">
+      <p className="text-[10px] font-semibold uppercase tracking-wider txt-muted">{label}</p>
       <p className={`mt-1 text-lg font-black ${colorClass}`}>{value}</p>
     </div>
   );

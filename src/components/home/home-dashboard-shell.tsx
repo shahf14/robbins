@@ -30,8 +30,8 @@ export function HomeCelebrationMoment({
       <p className="text-xs font-bold uppercase tracking-widest text-amber-300/80">
         {t('home.celebrationEyebrow')}
       </p>
-      <p className="mt-2 text-lg font-black text-white">{t(`home.celebrations.${id}.title`)}</p>
-      <p className="mt-1 text-sm leading-6 text-white/55">{t(`home.celebrations.${id}.body`)}</p>
+      <p className="mt-2 text-lg font-black txt-strong">{t(`home.celebrations.${id}.title`)}</p>
+      <p className="mt-1 text-sm leading-6 txt-soft">{t(`home.celebrations.${id}.body`)}</p>
     </div>
   );
 }
@@ -46,7 +46,7 @@ export function HomeSkeleton() {
       {[130, 200, 120, 56, 56].map((h, i) => (
         <div
           key={`skeleton-${i}`}
-          className="animate-pulse rounded-[24px] bg-white/4"
+          className="animate-pulse rounded-[24px] fill-2"
           style={{height: h}}
           aria-hidden="true"
         />
@@ -82,19 +82,19 @@ export function HomeCompactHeader({
     <div className="flex flex-wrap items-start justify-between gap-3 px-1">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-[clamp(1.5rem,4.5vw,2.25rem)] font-black leading-tight text-white">
+          <h1 className="text-[clamp(1.5rem,4.5vw,2.25rem)] font-black leading-tight txt-strong">
             {greeting}
           </h1>
         </div>
         {weeklyTotal > 0 && (
-          <p className="mt-1.5 text-sm font-medium text-white/58">
+          <p className="mt-1.5 text-sm font-medium txt-soft">
             {t('home.compact.weekLine', {done: weeklyDone, total: weeklyTotal})}
           </p>
         )}
         <LifeContextChip statuses={lifeContexts} className="mt-2" />
       </div>
       {streak > 0 && (
-        <span className="shrink-0 rounded-full border border-white/10 bg-white/4 px-3 py-1.5 text-sm font-bold text-white/70">
+        <span className="shrink-0 rounded-full border border-[color:var(--color-border)] fill-2 px-3 py-1.5 text-sm font-bold txt-soft">
           {t('home.streakDays', {count: streak})}
         </span>
       )}
@@ -122,9 +122,9 @@ export function HomeCompactProgress({
   if (!hasGoals && weeklyDone === 0 && streak === 0) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-[16px] bg-white/[0.035] px-4 py-3">
+    <div className="flex flex-wrap items-center gap-2 rounded-[16px] fill-1 px-4 py-3">
       {weeklyDone > 0 || weeklyTarget > 0 ? (
-        <span className="text-sm font-semibold text-white/78">
+        <span className="text-sm font-semibold txt-soft">
           {t('home.compact.weekProgress', {done: weeklyDone, target: weeklyTarget})}
         </span>
       ) : null}

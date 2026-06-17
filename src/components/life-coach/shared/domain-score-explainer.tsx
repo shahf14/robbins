@@ -12,8 +12,8 @@ export function DomainScoreExplainer({className = '', compact = false}: Props) {
 
   if (compact) {
     return (
-      <p className={`text-xs leading-5 text-white/45 ${className}`}>
-        <span className="font-semibold text-white/55">{t('lifeCoach.domainScoreLabel')}: </span>
+      <p className={`text-xs leading-5 txt-muted ${className}`}>
+        <span className="font-semibold txt-soft">{t('lifeCoach.domainScoreLabel')}: </span>
         {t('lifeCoach.domainScoreExplainer')}
       </p>
     );
@@ -22,9 +22,9 @@ export function DomainScoreExplainer({className = '', compact = false}: Props) {
   return (
     <p
       role="note"
-      className={`rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-sm leading-6 text-white/55 ${className}`}
+      className={`rounded-xl border border-[color:var(--color-border)] fill-1 px-4 py-3 text-sm leading-6 txt-soft ${className}`}
     >
-      <span className="font-semibold text-white/70">{t('lifeCoach.domainScoreLabel')}: </span>
+      <span className="font-semibold txt-soft">{t('lifeCoach.domainScoreLabel')}: </span>
       {t('lifeCoach.domainScoreExplainer')}
     </p>
   );

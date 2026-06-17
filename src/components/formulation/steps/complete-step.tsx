@@ -86,7 +86,7 @@ export function CompleteStep({session}: Props) {
       {/* ── Celebration header ───────────────────────────────────────────── */}
       <div className="panel-surface-strong overflow-hidden rounded-[24px] p-6 sm:p-8">
         <span className="inline-block text-4xl" aria-hidden="true">✅</span>
-        <h2 className="mt-4 text-2xl font-black text-white">{t('complete.title')}</h2>
+        <h2 className="mt-4 text-2xl font-black txt-strong">{t('complete.title')}</h2>
         <p className="mt-3 leading-7 text-[var(--muted)]">{t('complete.body')}</p>
       </div>
 
@@ -95,14 +95,14 @@ export function CompleteStep({session}: Props) {
         <div className="panel-surface rounded-[20px] p-5">
           <p className="field-label mb-0 text-[var(--blue)]">{t('complete.insightLabel')}</p>
           {approved.presenting_concern_user_words && (
-            <blockquote className="mt-3 border-s-2 border-[var(--blue)]/40 ps-4 text-base font-semibold leading-7 text-white">
+            <blockquote className="mt-3 border-s-2 border-[var(--blue)]/40 ps-4 text-base font-semibold leading-7 txt-strong">
               &ldquo;{approved.presenting_concern_user_words}&rdquo;
             </blockquote>
           )}
           {approved.existing_strengths.length > 0 && (
-            <p className="mt-3 text-sm leading-6 text-white/60">
+            <p className="mt-3 text-sm leading-6 txt-soft">
               {t('complete.strengthsLabel')}:{' '}
-              <span className="text-white/80">
+              <span className="txt-strong">
                 {approved.existing_strengths.join(' · ')}
               </span>
             </p>
@@ -114,7 +114,7 @@ export function CompleteStep({session}: Props) {
       {handoff?.micro_goal_week && (
         <div className="rounded-[20px] border border-emerald-500/20 bg-emerald-500/6 p-5">
           <p className="field-label mb-0 text-emerald-400">{t('complete.microGoalLabel')}</p>
-          <p className="mt-3 text-base font-bold leading-7 text-white">
+          <p className="mt-3 text-base font-bold leading-7 txt-strong">
             {handoff.micro_goal_week}
           </p>
         </div>
@@ -125,9 +125,9 @@ export function CompleteStep({session}: Props) {
       {firstWinStep && (
         <div className="rounded-[20px] border border-amber-500/25 bg-amber-500/8 p-5">
           <p className="field-label mb-0 text-amber-300">{t('complete.firstWinLabel')}</p>
-          <p className="mt-3 text-base font-bold leading-7 text-white">{firstWinStep.title}</p>
+          <p className="mt-3 text-base font-bold leading-7 txt-strong">{firstWinStep.title}</p>
           {firstWinDisplayReasoning(firstWinStep) && (
-            <p className="mt-2 text-sm leading-6 text-white/70">
+            <p className="mt-2 text-sm leading-6 txt-soft">
               {firstWinDisplayReasoning(firstWinStep)}
             </p>
           )}
@@ -143,10 +143,10 @@ export function CompleteStep({session}: Props) {
           ? 'border-emerald-500/25 bg-emerald-500/6 text-emerald-300'
           : genError
           ? 'border-red-500/25 bg-red-500/6 text-red-300'
-          : 'border-white/10 bg-white/4 text-white/60'
+          : 'border-[color:var(--color-border)] fill-1 txt-soft'
       }`}>
         {generating && (
-          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white/70" aria-hidden="true" />
+          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[color:var(--color-border)] border-t-[color:var(--color-border-strong)]" aria-hidden="true" />
         )}
         {generated  && <span aria-hidden="true">✓</span>}
         {genError   && <span aria-hidden="true">⚠</span>}

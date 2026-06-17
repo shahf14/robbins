@@ -104,7 +104,7 @@ export function FormulationEditStep({
   return (
     <div className="grid gap-6">
       <p className="text-sm text-[var(--muted)]">{t('formulationEdit.subtitle')}</p>
-      <div aria-live="polite">{aiLoading && <p className="text-sm text-white/50">{t('aiWorking')}</p>}</div>
+      <div aria-live="polite">{aiLoading && <p className="text-sm txt-muted">{t('aiWorking')}</p>}</div>
 
       <FormulationInsightsPanel session={session} />
 

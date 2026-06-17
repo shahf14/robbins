@@ -30,7 +30,7 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 const TONE_STYLES: Record<ToastTone, string> = {
   success: 'border-emerald-400/30 bg-emerald-500/15 text-emerald-100',
   error: 'border-red-400/30 bg-red-500/15 text-red-100',
-  info: 'border-[var(--blue)]/30 bg-[var(--blue)]/10 text-white',
+  info: 'border-[var(--blue)]/30 bg-[var(--blue)]/10 txt-strong',
 };
 
 export function ToastProvider({children}: {children: ReactNode}) {

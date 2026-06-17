@@ -20,9 +20,9 @@ export function GoalRealismBanner({realismCheck}: Props) {
         {t('realismAdjustedTitle')}
       </p>
       {realismCheck.first_week_adjustment ? (
-        <p className="text-sm leading-6 text-white/75">{realismCheck.first_week_adjustment}</p>
+        <p className="text-sm leading-6 txt-soft">{realismCheck.first_week_adjustment}</p>
       ) : null}
-      <p className="text-xs leading-5 text-white/50">{realismCheck.risk_reason}</p>
+      <p className="text-xs leading-5 txt-muted">{realismCheck.risk_reason}</p>
     </div>
   );
 }

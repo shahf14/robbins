@@ -121,7 +121,7 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
       <p className="eyebrow">
         {t('healthDashboard.eyebrowForDomain', {domain: t(`lifeCoach.domains.${domain}.label`)})}
       </p>
-      <h2 className="mt-4 text-2xl font-black text-white">{t('healthDashboard.title')}</h2>
+      <h2 className="mt-4 text-2xl font-black txt-strong">{t('healthDashboard.title')}</h2>
 
       <div className="mt-6 grid gap-6">
         {/* Health Score */}
@@ -141,15 +141,15 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
             suffix="%"
             color="green"
           />
-          <div className="rounded-[18px] border border-white/10 bg-white/3 p-4">
-            <p className="field-label mb-0 flex items-center gap-1.5 text-white/45">
+          <div className="rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4">
+            <p className="field-label mb-0 flex items-center gap-1.5 txt-muted">
               {t('healthDashboard.vsLastMonth')}
               <InfoDot text={t('healthDashboard.vsLastMonthInfo')} />
             </p>
             <p className={`mt-2 text-2xl font-black ${monthComparison.diff >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {monthComparison.diff >= 0 ? '+' : ''}{monthComparison.diff}
             </p>
-            <p className="mt-1 text-xs text-white/40">
+            <p className="mt-1 text-xs txt-muted">
               {monthComparison.thisMonth} {t('healthDashboard.thisMonth')} / {monthComparison.lastMonth} {t('healthDashboard.lastMonth')}
             </p>
           </div>
@@ -157,16 +157,16 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
 
         {/* Goal Progress Bar */}
         {goalProgress && (
-          <div className="rounded-[18px] border border-white/10 bg-white/3 p-4">
+          <div className="rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4">
             <div className="flex items-center justify-between gap-3">
-              <p className="flex items-center gap-1.5 text-sm font-semibold text-white">
+              <p className="flex items-center gap-1.5 text-sm font-semibold txt-strong">
                 {goalProgress.goalTitle}
                 <InfoDot text={t('healthDashboard.goalProgressInfo')} />
               </p>
               <span className="text-sm font-bold text-[var(--blue)]">{goalProgress.percent}%</span>
             </div>
             <div
-              className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-white/10"
+              className="mt-3 h-2.5 w-full overflow-hidden rounded-full fill-3"
               role="progressbar"
               aria-valuenow={goalProgress.percent}
               aria-valuemin={0}
@@ -178,7 +178,7 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
                 style={{width: `${Math.min(goalProgress.percent, 100)}%`}}
               />
             </div>
-            <p className="mt-2 text-xs text-white/40">
+            <p className="mt-2 text-xs txt-muted">
               {goalProgress.completed}/{goalProgress.total} {t('healthDashboard.stepsCompleted')}
             </p>
           </div>
@@ -186,10 +186,10 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
 
         {/* 90-Day Timeline with milestone markers */}
         {timeline && (
-          <div className="rounded-[18px] border border-white/10 bg-white/3 p-4">
+          <div className="rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4">
             <div className="flex items-center justify-between gap-3">
-              <p className="field-label mb-0 text-white/45">{t('healthDashboard.timelineTitle')}</p>
-              <span className="text-xs font-semibold text-white/55">
+              <p className="field-label mb-0 txt-muted">{t('healthDashboard.timelineTitle')}</p>
+              <span className="text-xs font-semibold txt-soft">
                 {timeline.dayIndex === 0
                   ? t('healthDashboard.timelineNotStarted')
                   : t('healthDashboard.daysPassed', {count: timeline.dayIndex})}
@@ -197,7 +197,7 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
             </div>
             {/* Bar */}
             <div
-              className="relative mt-8 mb-2 h-2 rounded-full bg-white/10"
+              className="relative mt-8 mb-2 h-2 rounded-full fill-3"
               role="progressbar"
               aria-valuenow={timeline.dayIndex}
               aria-valuemin={0}
@@ -218,10 +218,10 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
                 >
                   <div
                     className={`h-3 w-[2px] -translate-x-1/2 rtl:translate-x-1/2 ${
-                      timeline.dayIndex >= marker ? 'bg-white/60' : 'bg-white/20'
+                      timeline.dayIndex >= marker ? 'bg-[var(--color-text)]' : 'fill-3'
                     }`}
                   />
-                  <span className="absolute top-3 -translate-x-1/2 rtl:translate-x-1/2 whitespace-nowrap text-[10px] text-white/35">
+                  <span className="absolute top-3 -translate-x-1/2 rtl:translate-x-1/2 whitespace-nowrap text-[10px] txt-faint">
                     {t('healthDashboard.timelineDayLabel', {day: marker})}
                   </span>
                 </div>
@@ -260,14 +260,14 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
             {timeline.milestoneMarkers.length > 0 && (
               <div className="mt-8 flex flex-wrap gap-x-4 gap-y-1">
                 {timeline.milestoneMarkers.map((m) => (
-                  <span key={m.id} className={`inline-flex items-center gap-1.5 text-[11px] font-semibold ${m.completed ? 'text-emerald-400' : m.isPast ? 'text-white/40' : 'text-white/60'}`}>
+                  <span key={m.id} className={`inline-flex items-center gap-1.5 text-[11px] font-semibold ${m.completed ? 'text-emerald-400' : m.isPast ? 'txt-muted' : 'txt-soft'}`}>
                     <span>{m.completed ? '✓' : '·'} {m.title}</span>
-                    <span className="ms-1 text-white/30">
+                    <span className="ms-1 txt-faint">
                       ({t('healthDashboard.timelineDayLabel', {day: m.dayIndex})})
                     </span>
                     <button
                       type="button"
-                      className="focus-ring rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-white/55 transition hover:border-[var(--blue)] hover:text-white"
+                      className="focus-ring rounded-full border border-[color:var(--color-border)] px-2 py-0.5 text-[10px] txt-soft transition hover:border-[var(--blue)] hover:txt-strong"
                       disabled={updatingMilestone === m.id}
                       aria-busy={updatingMilestone === m.id}
                       onClick={async () => {
@@ -286,17 +286,17 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
                 ))}
               </div>
             )}
-            <p className={`text-xs text-white/40 ${timeline.milestoneMarkers.length > 0 ? 'mt-3' : 'mt-6'}`}>
+            <p className={`text-xs txt-muted ${timeline.milestoneMarkers.length > 0 ? 'mt-3' : 'mt-6'}`}>
               {t('healthDashboard.daysRemaining', {count: timeline.remaining})}
             </p>
 
-            <div className="mt-5 rounded-2xl border border-white/8 bg-black/10 p-4">
+            <div className="mt-5 rounded-2xl border border-[color:var(--color-border)] bg-black/10 p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-white/35">
+                  <p className="text-xs font-bold uppercase tracking-widest txt-faint">
                     {t('healthDashboard.questMapTitle')}
                   </p>
-                  <p className="mt-1 text-sm text-white/50">
+                  <p className="mt-1 text-sm txt-muted">
                     {t('healthDashboard.questMapBody')}
                   </p>
                 </div>
@@ -313,7 +313,7 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
                         ? 'border-emerald-400/30 bg-emerald-500/[0.09] text-emerald-300'
                         : checkpoint.current
                           ? 'border-[var(--blue)]/35 bg-[var(--blue)]/[0.09] text-blue-200 shadow-[0_0_20px_rgba(26,109,255,0.12)]'
-                          : 'border-white/8 bg-white/[0.025] text-white/35'
+                          : 'border-[color:var(--color-border)] fill-1 txt-faint'
                     }`}
                     aria-label={t('healthDashboard.questMapDay', {day: checkpoint.day})}
                   >
@@ -330,7 +330,7 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
 
         {/* Heat Map */}
         <div>
-          <p className="field-label mb-3 text-white/45">{t('healthDashboard.activityMap')}</p>
+          <p className="field-label mb-3 txt-muted">{t('healthDashboard.activityMap')}</p>
           <div className="flex flex-wrap gap-[3px]">
             {heatMap.map((day) => (
               <div
@@ -341,7 +341,7 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
               />
             ))}
           </div>
-          <div className="mt-3 flex items-center gap-2 text-[10px] text-white/40" aria-hidden="true">
+          <div className="mt-3 flex items-center gap-2 text-[10px] txt-muted" aria-hidden="true">
             <span>{t('healthDashboard.less')}</span>
             {([0, 1, 2, 3, 4] as const).map((level) => (
               <div
@@ -364,7 +364,7 @@ function InfoDot({text}: {text: string}) {
       tabIndex={0}
       title={text}
       aria-label={text}
-      className="focus-ring inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-white/20 text-[10px] font-bold text-white/45 transition-colors hover:border-white/40 hover:text-white/70"
+      className="focus-ring inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-[color:var(--color-border-strong)] text-[10px] font-bold txt-muted transition-colors hover:border-[color:var(--color-border-strong)] hover:txt-soft"
     >
       i
     </span>
@@ -409,8 +409,8 @@ function ScoreCard({
     : 'text-[var(--blue)]';
 
   return (
-    <div className="rounded-[18px] border border-white/10 bg-white/3 p-4">
-      <p className="field-label mb-0 flex items-center gap-1.5 text-white/45">
+    <div className="rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4">
+      <p className="field-label mb-0 flex items-center gap-1.5 txt-muted">
         {label}
         {info && <InfoDot text={info} />}
       </p>
@@ -431,12 +431,12 @@ function ScoreCard({
           </svg>
         </div>
         <div>
-          <span className="text-3xl font-black text-white">{value}{suffix}</span>
+          <span className="text-3xl font-black txt-strong">{value}{suffix}</span>
           <p className={`mt-0.5 text-xs font-bold ${levelColor}`}>{t(`healthDashboard.${levelKey}`)}</p>
         </div>
       </div>
       {percent > 0 && (
-        <p className="mt-3 text-xs leading-5 text-white/40">{t(`healthDashboard.${tipKey}`)}</p>
+        <p className="mt-3 text-xs leading-5 txt-muted">{t(`healthDashboard.${tipKey}`)}</p>
       )}
     </div>
   );

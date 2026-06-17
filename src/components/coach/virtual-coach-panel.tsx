@@ -156,7 +156,7 @@ export function VirtualCoachPanel() {
     <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
       <section className="panel-surface p-6 sm:p-8" aria-label={t('page.title')}>
         <p className="eyebrow">{t('eyebrow')}</p>
-        <h1 className="mt-3 text-3xl font-black text-white sm:text-4xl">{t('page.title')}</h1>
+        <h1 className="mt-3 text-3xl font-black txt-strong sm:text-4xl">{t('page.title')}</h1>
         <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{t('page.subtitle')}</p>
 
         {prefilled ? (
@@ -186,7 +186,7 @@ export function VirtualCoachPanel() {
               <button
                 key={action.key}
                 type="button"
-                className="focus-ring rounded-full border border-white/10 bg-white/4 px-3 py-1.5 text-xs font-semibold text-white/70 transition hover:border-[var(--blue)]/40 hover:bg-[var(--blue)]/10 hover:text-white disabled:opacity-50"
+                className="focus-ring rounded-full border border-[color:var(--color-border)] fill-1 px-3 py-1.5 text-xs font-semibold txt-soft transition hover:border-[var(--blue)]/40 hover:bg-[var(--blue)]/10 hover:txt-strong disabled:opacity-50"
                 disabled={loading}
                 aria-busy={loading}
                 onClick={() => handleQuickAction(action)}
@@ -207,8 +207,8 @@ export function VirtualCoachPanel() {
                 aria-pressed={emotion === key}
                 className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                   emotion === key
-                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                    : 'border-white/10 bg-white/3 text-white/55 hover:border-white/20'
+                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                    : 'border-[color:var(--color-border)] fill-1 txt-soft hover:border-[color:var(--color-border-strong)]'
                 }`}
                 onClick={() => setEmotion(key)}
               >
@@ -258,17 +258,17 @@ export function VirtualCoachPanel() {
       </section>
 
       <section className="panel-surface p-6 sm:p-8" aria-label={t('title')} aria-live="polite" aria-busy={loading}>
-        <p className="field-label mb-0 text-white/50" aria-hidden="true">{t('title')}</p>
+        <p className="field-label mb-0 txt-muted" aria-hidden="true">{t('title')}</p>
         {!response ? (
           <p className="mt-4 text-sm leading-7 text-[var(--muted)]">{t('responsePreview')}</p>
         ) : (
           <>
             {source ? (
-              <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-white/40">
+              <p className="mt-3 text-xs font-semibold uppercase tracking-wide txt-muted">
                 {source === 'openai' ? t('page.sourceAi') : t('page.sourceLocal')}
               </p>
             ) : null}
-            <div className="mt-4 whitespace-pre-wrap rounded-2xl border border-white/10 bg-white/3 p-5 text-sm leading-7 text-white/85">
+            <div className="mt-4 whitespace-pre-wrap rounded-2xl border border-[color:var(--color-border)] fill-1 p-5 text-sm leading-7 txt-strong">
               {response}
             </div>
             {nextAction ? (
@@ -304,7 +304,7 @@ function ScoreSlider({
   return (
     <label className="block">
       <span className="field-label">{label}</span>
-      <p className="mt-1 text-xs text-white/45">{hint}</p>
+      <p className="mt-1 text-xs txt-muted">{hint}</p>
       <div className="mt-3 flex items-center gap-3">
         <input
           type="range"
@@ -318,7 +318,7 @@ function ScoreSlider({
           aria-valuemax={10}
           aria-valuetext={`${value}/10`}
         />
-        <span className="w-8 text-right text-lg font-black tabular-nums text-white" aria-hidden="true">{value}</span>
+        <span className="w-8 text-right text-lg font-black tabular-nums txt-strong" aria-hidden="true">{value}</span>
       </div>
     </label>
   );

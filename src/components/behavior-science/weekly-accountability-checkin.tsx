@@ -41,7 +41,7 @@ export function WeeklyAccountabilityCheckin({onComplete, accountability = null}:
       <p className="text-xs font-bold uppercase tracking-wide text-[var(--blue)]/80">{t('title')}</p>
       {(['committed', 'happened', 'changeNext'] as const).map((key) => (
         <label key={key} className="mt-3 block">
-          <span className="text-xs font-semibold text-white/55">{labels[key]}</span>
+          <span className="text-xs font-semibold txt-soft">{labels[key]}</span>
           <textarea
             className="focus-ring textarea-base mt-1 min-h-16 text-sm"
             value={answers[key]}

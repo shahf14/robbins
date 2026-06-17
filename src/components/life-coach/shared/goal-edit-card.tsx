@@ -220,10 +220,10 @@ export function GoalEditCard({goal, onChanged, weekSteps = []}: Props) {
   }
 
   return (
-    <article className="rounded-[20px] border border-white/10 bg-white/3 p-5" aria-label={goal.title}>
+    <article className="rounded-[20px] border border-[color:var(--color-border)] fill-1 p-5" aria-label={goal.title}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-lg font-black text-white">{goal.title}</h3>
+          <h3 className="text-lg font-black txt-strong">{goal.title}</h3>
           {goal.status === 'completed' ? (
             <span className="mt-2 inline-flex rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-300">
               {t('lifeCoach.goalCompleted')}
@@ -233,7 +233,7 @@ export function GoalEditCard({goal, onChanged, weekSteps = []}: Props) {
         <div className="flex shrink-0 gap-2">
           <button
             type="button"
-            className="focus-ring rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white/70 transition hover:text-white"
+            className="focus-ring rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 text-xs font-semibold txt-soft transition hover:txt-strong"
             onClick={() => setEditing(true)}
           >
             {t('lifeCoach.editGoal')}
@@ -256,25 +256,25 @@ export function GoalEditCard({goal, onChanged, weekSteps = []}: Props) {
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-violet-300/80">
               {tBs('selfContract.title')}
             </p>
-            <p className="mt-1.5 text-sm font-semibold leading-6 text-white/85">
+            <p className="mt-1.5 text-sm font-semibold leading-6 txt-strong">
               {tBs('selfContract.sentence', {days: savedDays})}
             </p>
-            <p className="mt-2 text-xs leading-6 text-white/45">
+            <p className="mt-2 text-xs leading-6 txt-muted">
               {tBs('selfContract.horizonHint')}
             </p>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-lg border border-white/8 bg-white/3 px-3 py-2.5">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-white/35">
+              <div className="rounded-lg border border-[color:var(--color-border)] fill-1 px-3 py-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-wider txt-faint">
                   {tBs('selfContract.startLabel')}
                 </p>
-                <p className="mt-1 text-sm font-semibold text-white/85">{startLabel}</p>
+                <p className="mt-1 text-sm font-semibold txt-strong">{startLabel}</p>
               </div>
-              <div className="rounded-lg border border-white/8 bg-white/3 px-3 py-2.5">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-white/35">
+              <div className="rounded-lg border border-[color:var(--color-border)] fill-1 px-3 py-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-wider txt-faint">
                   {tBs('selfContract.endLabel')}
                 </p>
-                <p className="mt-1 text-sm font-semibold text-white/85">{endLabel}</p>
+                <p className="mt-1 text-sm font-semibold txt-strong">{endLabel}</p>
               </div>
             </div>
 
@@ -305,12 +305,12 @@ export function GoalEditCard({goal, onChanged, weekSteps = []}: Props) {
             )}
 
             <label className="mt-4 block">
-              <span className="text-xs font-semibold text-white/45">{tBs('selfContract.daysLabel')}</span>
+              <span className="text-xs font-semibold txt-muted">{tBs('selfContract.daysLabel')}</span>
               <input
                 type="number"
                 min={7}
                 max={90}
-                className="focus-ring mt-1 w-24 rounded-lg border border-white/10 bg-white/4 px-3 py-2 text-sm text-white"
+                className="focus-ring mt-1 w-24 rounded-lg border border-[color:var(--color-border)] fill-1 px-3 py-2 text-sm txt-strong"
                 value={draftDays}
                 onChange={(e) => {
                   const days = parseInt(e.target.value, 10);
@@ -360,11 +360,11 @@ export function GoalEditCard({goal, onChanged, weekSteps = []}: Props) {
           <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--blue)]/80">
             {t('lifeCoach.whyItMatters')}
           </p>
-          <p className="mt-1.5 text-sm font-semibold leading-6 text-white/85">{goal.success_metric}</p>
+          <p className="mt-1.5 text-sm font-semibold leading-6 txt-strong">{goal.success_metric}</p>
         </div>
       )}
       {goal.status !== 'active' && goal.success_metric && (
-        <p className="mt-3 text-sm font-semibold text-white/60">{goal.success_metric}</p>
+        <p className="mt-3 text-sm font-semibold txt-soft">{goal.success_metric}</p>
       )}
       <div className="mt-4">
         {goal.status === 'completed' ? (

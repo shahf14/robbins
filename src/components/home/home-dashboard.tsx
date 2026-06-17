@@ -784,7 +784,7 @@ function HomeMoreSection({
   const [open, setOpen] = useState(false);
 
   return (
-    <section className="rounded-[18px] bg-white/[0.025]">
+    <section className="rounded-[18px] fill-1">
       <button
         type="button"
         className="focus-ring flex w-full items-center justify-between gap-3 px-5 py-4 text-start"
@@ -792,15 +792,15 @@ function HomeMoreSection({
         onClick={() => setOpen((v) => !v)}
       >
         <div>
-          <p className="text-sm font-bold text-white">{t('home.more.toggle')}</p>
-          <p className="mt-0.5 text-sm text-white/52">{t('home.more.hint')}</p>
+          <p className="text-sm font-bold txt-strong">{t('home.more.toggle')}</p>
+          <p className="mt-0.5 text-sm txt-muted">{t('home.more.hint')}</p>
         </div>
-        <span className="shrink-0 text-lg text-white/35" aria-hidden>
+        <span className="shrink-0 text-lg txt-faint" aria-hidden>
           {open ? '−' : '+'}
         </span>
       </button>
       {open && (
-        <div className="flex flex-col gap-4 border-t border-white/6 px-4 py-4 sm:px-5">
+        <div className="flex flex-col gap-4 border-t border-[color:var(--color-border)] px-4 py-4 sm:px-5">
           {children}
         </div>
       )}
@@ -829,13 +829,13 @@ function HomeFocusInput({
   }, []);
 
   return (
-    <div className="flex items-center gap-3 rounded-[16px] border border-white/10 bg-white/3 px-4 py-3">
-      <span className="text-base text-white/30" aria-hidden>⚡</span>
+    <div className="flex items-center gap-3 rounded-[16px] border border-[color:var(--color-border)] fill-1 px-4 py-3">
+      <span className="text-base txt-faint" aria-hidden>⚡</span>
       <input
         ref={focusRef}
         id="home-focus-input"
         aria-label={t('dashboard.todayFocusPlaceholder')}
-        className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-white placeholder:text-white/28 outline-none"
+        className="min-w-0 flex-1 bg-transparent text-sm font-semibold txt-strong placeholder:txt-faint outline-none"
         placeholder={t('dashboard.todayFocusPlaceholder')}
         maxLength={120}
         onBlur={(e) => {

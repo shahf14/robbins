@@ -26,7 +26,7 @@ export function BlockerDeepDive({selectedBlocker, onDeepDiveComplete}: Props) {
 
   return (
     <div className="mt-3 rounded-xl border border-[var(--blue)]/15 bg-[rgba(26,109,255,0.04)] p-4">
-      <p id="blocker-deep-dive-question" className="text-sm font-semibold text-white">{config.question}</p>
+      <p id="blocker-deep-dive-question" className="text-sm font-semibold txt-strong">{config.question}</p>
 
       {config.followUpType === 'time_of_day' && (
         <div className="mt-3 grid gap-3">
@@ -38,8 +38,8 @@ export function BlockerDeepDive({selectedBlocker, onDeepDiveComplete}: Props) {
                 aria-pressed={answer === suggestion}
                 className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                   answer === suggestion
-                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                    : 'border-white/10 bg-white/3 text-white/60'
+                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                    : 'border-[color:var(--color-border)] fill-1 txt-soft'
                 }`}
                 onClick={() => setAnswer(suggestion)}
               >
@@ -48,7 +48,7 @@ export function BlockerDeepDive({selectedBlocker, onDeepDiveComplete}: Props) {
             ))}
           </div>
           <label className="grid gap-2">
-            <span className="text-xs text-white/45">{t('blockerDeepDive.optimalTime')}</span>
+            <span className="text-xs txt-muted">{t('blockerDeepDive.optimalTime')}</span>
             <input
               className="focus-ring input-base"
               type="time"
@@ -69,8 +69,8 @@ export function BlockerDeepDive({selectedBlocker, onDeepDiveComplete}: Props) {
                 aria-pressed={availableMinutes === minutes}
                 className={`focus-ring rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                   availableMinutes === minutes
-                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                    : 'border-white/10 bg-white/3 text-white/60'
+                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                    : 'border-[color:var(--color-border)] fill-1 txt-soft'
                 }`}
                 onClick={() => setAvailableMinutes(minutes)}
               >
@@ -78,7 +78,7 @@ export function BlockerDeepDive({selectedBlocker, onDeepDiveComplete}: Props) {
               </button>
             ))}
           </div>
-          <p className="text-xs leading-5 text-white/40">{t('blockerDeepDive.miniHabitHint')}</p>
+          <p className="text-xs leading-5 txt-muted">{t('blockerDeepDive.miniHabitHint')}</p>
         </div>
       )}
 

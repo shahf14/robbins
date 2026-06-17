@@ -98,7 +98,7 @@ export function AIGoalPreview({domain, preview, onCancel, onSave}: Props) {
   return (
     <section className="panel-surface p-6" aria-label={t('lifeCoach.aiPreviewTitle')}>
       <p className="eyebrow" aria-hidden="true">{t('lifeCoach.aiPreview')}</p>
-      <h3 className="mt-4 text-2xl font-black text-white">{t('lifeCoach.aiPreviewTitle')}</h3>
+      <h3 className="mt-4 text-2xl font-black txt-strong">{t('lifeCoach.aiPreviewTitle')}</h3>
 
       <div className="mt-4">
         <GoalRealismBanner realismCheck={preview.realism_check} />
@@ -133,7 +133,7 @@ export function AIGoalPreview({domain, preview, onCancel, onSave}: Props) {
       <div className="mt-6 grid gap-5">
         <p className="field-label mb-0">
           {t('lifeCoach.goalHierarchyGoal')}
-          <span className="font-normal text-white/40"> · {t('lifeCoach.goalHierarchyGoalRole')}</span>
+          <span className="font-normal txt-muted"> · {t('lifeCoach.goalHierarchyGoalRole')}</span>
         </p>
         <label className="grid gap-2">
           <span className="field-label mb-0">{t('lifeCoach.goalTitle')}</span>
@@ -155,7 +155,7 @@ export function AIGoalPreview({domain, preview, onCancel, onSave}: Props) {
         <div className="grid gap-3" role="group" aria-label={t('lifeCoach.milestones')}>
           <span className="field-label mb-0" aria-hidden="true">{t('lifeCoach.milestones')}</span>
           {milestones.map((milestone, index) => (
-            <div key={milestone._key} className="rounded-[18px] border border-white/10 bg-white/3 p-4">
+            <div key={milestone._key} className="rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4">
               <div className="flex items-center gap-2">
                 <input
                   className="focus-ring input-base flex-1"
@@ -169,7 +169,7 @@ export function AIGoalPreview({domain, preview, onCancel, onSave}: Props) {
                 />
                 <button
                   type="button"
-                  className="focus-ring shrink-0 rounded-lg border border-white/10 px-2 py-1.5 text-sm text-white/60 transition hover:text-white disabled:opacity-30"
+                  className="focus-ring shrink-0 rounded-lg border border-[color:var(--color-border)] px-2 py-1.5 text-sm txt-soft transition hover:txt-strong disabled:opacity-30"
                   disabled={index === 0}
                   aria-label={t('lifeCoach.moveUp')}
                   onClick={() => {
@@ -182,7 +182,7 @@ export function AIGoalPreview({domain, preview, onCancel, onSave}: Props) {
                 </button>
                 <button
                   type="button"
-                  className="focus-ring shrink-0 rounded-lg border border-white/10 px-2 py-1.5 text-sm text-white/60 transition hover:text-white disabled:opacity-30"
+                  className="focus-ring shrink-0 rounded-lg border border-[color:var(--color-border)] px-2 py-1.5 text-sm txt-soft transition hover:txt-strong disabled:opacity-30"
                   disabled={index === milestones.length - 1}
                   aria-label={t('lifeCoach.moveDown')}
                   onClick={() => {
@@ -225,10 +225,10 @@ export function AIGoalPreview({domain, preview, onCancel, onSave}: Props) {
         <div className="grid gap-3">
           <span className="field-label mb-0">
             {t('lifeCoach.dailyBabySteps')}
-            <span className="font-normal text-white/40"> · {t('lifeCoach.goalHierarchyDailyStepRole')}</span>
+            <span className="font-normal txt-muted"> · {t('lifeCoach.goalHierarchyDailyStepRole')}</span>
           </span>
           {steps.map((step, index) => (
-            <div key={step._key} className="rounded-[18px] border border-white/10 bg-white/3 p-4">
+            <div key={step._key} className="rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4">
               <input
                 className="focus-ring input-base"
                 value={step.title}
@@ -283,9 +283,9 @@ export function AIGoalPreview({domain, preview, onCancel, onSave}: Props) {
 
 function ExecutionPreviewItem({label, value}: {label: string; value: string}) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-black/10 px-4 py-3">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-white/40">{label}</p>
-      <p className="mt-2 text-sm font-semibold leading-6 text-white/82">{value}</p>
+    <div className="rounded-2xl border border-[color:var(--color-border)] bg-black/10 px-4 py-3">
+      <p className="text-[10px] font-bold uppercase tracking-widest txt-muted">{label}</p>
+      <p className="mt-2 text-sm font-semibold leading-6 txt-strong">{value}</p>
     </div>
   );
 }

@@ -13,7 +13,7 @@ export function AIInsightCard({insight}: {insight: AiCoachingInsight}) {
   return (
     <article className="panel-surface p-5" aria-label={t(`lifeCoach.insightType.${insight.insight_type}`)}>
       <p className="field-label mb-0 text-[var(--blue)]" aria-hidden="true">{t(`lifeCoach.insightType.${insight.insight_type}`)}</p>
-      <p className="mt-3 whitespace-pre-line text-sm leading-7 text-white/84">{insight.content}</p>
+      <p className="mt-3 whitespace-pre-line text-sm leading-7 txt-strong">{insight.content}</p>
       {nextAction ? (
         <div className="mt-4">
           <NextBestActionCta action={nextAction} />

@@ -44,11 +44,11 @@ export function MoodCheckStep({
   return (
     <div className="space-y-8 text-center">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+        <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
           {t('moodCheck.eyebrow')}
         </p>
         <h2 className="text-2xl font-bold">{t('moodCheck.question')}</h2>
-        <p className="text-sm text-white/45">{t('moodCheck.subtitle')}</p>
+        <p className="text-sm txt-muted">{t('moodCheck.subtitle')}</p>
       </div>
 
       <div className="flex justify-center gap-3">
@@ -59,14 +59,14 @@ export function MoodCheckStep({
             onClick={() => onSelect(score)}
             className={`focus-ring flex flex-col items-center gap-1.5 rounded-2xl border px-4 py-3 transition ${
               value === score
-                ? 'border-white/40 bg-white/12 scale-110'
-                : 'border-white/10 bg-white/5 hover:bg-white/10 hover:scale-105'
+                ? 'border-[color:var(--color-border-strong)] fill-3 scale-110'
+                : 'border-[color:var(--color-border)] fill-2 hover:fill-3 hover:scale-105'
             }`}
             aria-pressed={value === score}
             aria-label={t(labelKey as Parameters<typeof t>[0])}
           >
             <span className="text-3xl leading-none" aria-hidden="true">{emoji}</span>
-            <span className="text-[10px] font-semibold text-white/40">
+            <span className="text-[10px] font-semibold txt-muted">
               {t(labelKey as Parameters<typeof t>[0])}
             </span>
           </button>
@@ -74,7 +74,7 @@ export function MoodCheckStep({
       </div>
 
       {value !== null && value <= 2 && (
-        <p className="text-sm text-white/50 animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <p className="text-sm txt-muted animate-in fade-in slide-in-from-bottom-2 duration-300">
           {t('moodCheck.hardDayNote')}
         </p>
       )}
@@ -122,7 +122,7 @@ export function WinReviewStep({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+        <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
           {t('winReview.eyebrow')}
         </p>
         <h2 className="text-2xl font-bold">
@@ -132,7 +132,7 @@ export function WinReviewStep({
               ? t(questionKey as Parameters<typeof t>[0])
               : tRoot(questionKey)}
         </h2>
-        <p className="text-sm text-white/50">{subtitle}</p>
+        <p className="text-sm txt-muted">{subtitle}</p>
       </div>
 
       <textarea
@@ -148,18 +148,18 @@ export function WinReviewStep({
               : tRoot(placeholderKey)
         }
         rows={4}
-        className="w-full resize-none rounded-xl border border-white/10 bg-white/5 p-4 text-sm placeholder-white/30 focus-ring"
+        className="w-full resize-none rounded-xl border border-[color:var(--color-border)] fill-2 p-4 text-sm placeholder-white/30 focus-ring"
       />
 
       <div className="space-y-2">
-        <p className="text-xs text-white/30">{t('winReview.examplesLabel')}</p>
+        <p className="text-xs txt-faint">{t('winReview.examplesLabel')}</p>
         <div className="flex flex-wrap gap-2">
           {examples.map((ex) => (
             <button
               key={ex}
               type="button"
               onClick={() => onChange(ex)}
-              className="focus-ring rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60 transition hover:border-white/20 hover:bg-white/10"
+              className="focus-ring rounded-full border border-[color:var(--color-border)] fill-2 px-3 py-1 text-xs txt-soft transition hover:border-[color:var(--color-border-strong)] hover:fill-3"
             >
               {ex}
             </button>
@@ -205,7 +205,7 @@ export function CompletionReviewStep({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+        <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
           {t('completionReview.eyebrow')}
         </p>
         <h2 className="text-2xl font-bold">{t('completionReview.title')}</h2>
@@ -213,18 +213,18 @@ export function CompletionReviewStep({
 
       <div className="space-y-3">
         <label className="block space-y-2">
-          <p className="text-sm font-medium text-white/70">{t('completionReview.successQuestion')}</p>
+          <p className="text-sm font-medium txt-soft">{t('completionReview.successQuestion')}</p>
           <textarea
             value={successFactors}
             onChange={(e) => setSuccessFactors(e.target.value)}
             placeholder={t('completionReview.successPlaceholder')}
             rows={3}
-            className="w-full resize-none rounded-xl border border-white/10 bg-white/5 p-3 text-sm placeholder-white/30 focus-ring"
+            className="w-full resize-none rounded-xl border border-[color:var(--color-border)] fill-2 p-3 text-sm placeholder-white/30 focus-ring"
           />
         </label>
 
         <label className="block space-y-2">
-          <p className="text-sm font-medium text-white/70">
+          <p className="text-sm font-medium txt-soft">
             {blockerCopy
               ? t(blockerCopy.questionKey as Parameters<typeof t>[0])
               : t('completionReview.blockerQuestion')}
@@ -238,7 +238,7 @@ export function CompletionReviewStep({
                 : t('completionReview.blockerPlaceholder')
             }
             rows={3}
-            className="w-full resize-none rounded-xl border border-white/10 bg-white/5 p-3 text-sm placeholder-white/30 focus-ring"
+            className="w-full resize-none rounded-xl border border-[color:var(--color-border)] fill-2 p-3 text-sm placeholder-white/30 focus-ring"
           />
         </label>
       </div>
@@ -273,11 +273,11 @@ export function EmotionalDumpStep({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+        <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
           {t('emotionalDump.eyebrow')}
         </p>
         <h2 className="text-2xl font-bold">{t('emotionalDump.question')}</h2>
-        <p className="text-sm text-white/50">{t('emotionalDump.subtitle')}</p>
+        <p className="text-sm txt-muted">{t('emotionalDump.subtitle')}</p>
       </div>
 
       <textarea
@@ -286,10 +286,10 @@ export function EmotionalDumpStep({
         aria-label={t('emotionalDump.question')}
         placeholder={t('emotionalDump.placeholder')}
         rows={6}
-        className="w-full resize-none rounded-xl border border-white/10 bg-white/5 p-4 text-sm placeholder-white/30 focus-ring"
+        className="w-full resize-none rounded-xl border border-[color:var(--color-border)] fill-2 p-4 text-sm placeholder-white/30 focus-ring"
       />
 
-      <p className="text-xs text-white/30">{t('emotionalDump.hint')}</p>
+      <p className="text-xs txt-faint">{t('emotionalDump.hint')}</p>
 
       <StepNavigation
         t={t}
@@ -345,7 +345,7 @@ export function GratitudeStep({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+        <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
           {t('gratitude.eyebrow')}
         </p>
         <h2 className="text-2xl font-bold">{t('gratitude.question')}</h2>
@@ -360,8 +360,8 @@ export function GratitudeStep({
             onClick={() => toggleCategory(cat)}
             className={`focus-ring rounded-full border px-3 py-1 text-xs transition ${
               categories.includes(cat)
-                ? 'border-white/40 bg-white/15 text-white'
-                : 'border-white/10 bg-white/5 text-white/50 hover:bg-white/10'
+                ? 'border-[color:var(--color-border-strong)] fill-3 txt-strong'
+                : 'border-[color:var(--color-border)] fill-2 txt-muted hover:fill-3'
             }`}
           >
             {t(`gratitude.category_${cat}`)}
@@ -372,7 +372,7 @@ export function GratitudeStep({
       <div className="space-y-3">
         {[0, 1, 2].map((i) => (
           <div key={i} className="space-y-1">
-            <p className="text-xs text-white/40">{t('gratitude.entryLabel', {index: i + 1})}</p>
+            <p className="text-xs txt-muted">{t('gratitude.entryLabel', {index: i + 1})}</p>
             <textarea
               value={items[i] ?? ''}
               aria-label={t('gratitude.entryLabel', {index: i + 1})}
@@ -385,8 +385,8 @@ export function GratitudeStep({
               rows={2}
               className={`focus-ring w-full resize-none rounded-xl border p-3 text-sm placeholder-white/30 transition ${
                 i === activeIndex
-                  ? 'border-white/25 bg-white/8'
-                  : 'border-white/10 bg-white/5'
+                  ? 'border-[color:var(--color-border-strong)] fill-2'
+                  : 'border-[color:var(--color-border)] fill-2'
               }`}
             />
           </div>
@@ -426,21 +426,21 @@ export function AiInsightStep({
   return (
     <div className="space-y-8">
       <div className="space-y-2 text-center">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+        <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
           {t('aiInsight.eyebrow')}
         </p>
         <h2 className="text-2xl font-bold">{t('aiInsight.title')}</h2>
       </div>
 
       <div
-        className={`rounded-2xl border border-white/10 bg-white/5 p-6 text-center transition-all duration-700 ${
+        className={`rounded-2xl border border-[color:var(--color-border)] fill-2 p-6 text-center transition-all duration-700 ${
           revealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
       >
-        <p className="text-lg leading-relaxed text-white/90">{insight || t('aiInsight.patternDefault')}</p>
+        <p className="text-lg leading-relaxed txt-strong">{insight || t('aiInsight.patternDefault')}</p>
       </div>
 
-      <p className="text-center text-sm text-white/40">{t('aiInsight.subtitle')}</p>
+      <p className="text-center text-sm txt-muted">{t('aiInsight.subtitle')}</p>
 
       <StepNavigation t={t} onBack={onBack} onNext={onNext} />
     </div>
@@ -477,13 +477,13 @@ export function TomorrowsWinStep({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+        <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
           {t('tomorrowsWin.eyebrow')}
         </p>
         <h2 className="text-2xl font-bold">
           {copyOverride ? t(questionKey as Parameters<typeof t>[0]) : tRoot(questionKey)}
         </h2>
-        <p className="text-sm text-white/50">{t('tomorrowsWin.subtitle')}</p>
+        <p className="text-sm txt-muted">{t('tomorrowsWin.subtitle')}</p>
       </div>
 
       <textarea
@@ -496,7 +496,7 @@ export function TomorrowsWinStep({
             : tRoot(placeholderKey)
         }
         rows={4}
-        className="w-full resize-none rounded-xl border border-white/10 bg-white/5 p-4 text-sm placeholder-white/30 focus-ring"
+        className="w-full resize-none rounded-xl border border-[color:var(--color-border)] fill-2 p-4 text-sm placeholder-white/30 focus-ring"
       />
 
       <StepNavigation

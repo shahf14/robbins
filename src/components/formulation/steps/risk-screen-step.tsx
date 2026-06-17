@@ -27,10 +27,10 @@ export function RiskScreenStep({loading, crisisStopped, needsFollowUp, onSubmit}
   if (crisisStopped) {
     return (
       <div className="grid gap-6" role="alert">
-        <div className="rounded-[20px] border border-white/10 bg-white/3 p-5 sm:p-6">
-          <h3 className="text-xl font-black text-white">{t('crisis.title')}</h3>
+        <div className="rounded-[20px] border border-[color:var(--color-border)] fill-1 p-5 sm:p-6">
+          <h3 className="text-xl font-black txt-strong">{t('crisis.title')}</h3>
           <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{t('crisis.body')}</p>
-          <p className="mt-3 text-sm leading-7 text-white/70">{t('crisis.guidance')}</p>
+          <p className="mt-3 text-sm leading-7 txt-soft">{t('crisis.guidance')}</p>
         </div>
         <Link className="focus-ring btn-primary text-center" href="/">
           {t('crisis.exit')}
@@ -46,8 +46,8 @@ export function RiskScreenStep({loading, crisisStopped, needsFollowUp, onSubmit}
         aria-pressed={selected === value}
         className={`focus-ring rounded-full border px-4 py-2 text-sm font-semibold ${
           selected === value
-            ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-            : 'border-white/10 text-white/70'
+            ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+            : 'border-[color:var(--color-border)] txt-soft'
         }`}
         onClick={() => onSelect(value)}
       >
@@ -63,13 +63,13 @@ export function RiskScreenStep({loading, crisisStopped, needsFollowUp, onSubmit}
 
   return (
     <div className="grid gap-6">
-      <p className="text-sm font-semibold text-white">{t('risk.q1')}</p>
+      <p className="text-sm font-semibold txt-strong">{t('risk.q1')}</p>
       <div className="flex flex-wrap gap-2">
         {answerButton(1, q1, setQ1, t('risk.yes'))}
         {answerButton(0, q1, setQ1, t('risk.no'))}
       </div>
 
-      <p className="text-sm font-semibold text-white">{t('risk.q2')}</p>
+      <p className="text-sm font-semibold txt-strong">{t('risk.q2')}</p>
       <div className="flex flex-wrap gap-2">
         {answerButton(1, q2, setQ2, t('risk.yes'))}
         {answerButton(0, q2, setQ2, t('risk.no'))}
@@ -77,7 +77,7 @@ export function RiskScreenStep({loading, crisisStopped, needsFollowUp, onSubmit}
 
       {(showFollowUp || needsFollowUp) && (q1 === 1 || q2 === 1) && (
         <div className="grid gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
-          <p className="text-sm text-white">{t('risk.followUp')}</p>
+          <p className="text-sm txt-strong">{t('risk.followUp')}</p>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"

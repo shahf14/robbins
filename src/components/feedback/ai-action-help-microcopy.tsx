@@ -24,10 +24,10 @@ export function AiActionHelpMicrocopy({kind, className = ''}: Props) {
 
   return (
     <p
-      className={`max-w-md text-xs leading-5 text-white/45 ${className}`.trim()}
+      className={`max-w-md text-xs leading-5 txt-muted ${className}`.trim()}
       role="note"
     >
-      <span className="block font-semibold text-white/55">{t('aiActionHelp.question')}</span>
+      <span className="block font-semibold txt-soft">{t('aiActionHelp.question')}</span>
       <span className="mt-0.5 block">{t(`aiActionHelp.${kind}`)}</span>
     </p>
   );

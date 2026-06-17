@@ -10,7 +10,7 @@ export function StepStatusButtonsHint({className = ''}: Props) {
   const t = useTranslations();
 
   return (
-    <p className={`text-xs leading-5 text-white/45 ${className}`.trim()}>
+    <p className={`text-xs leading-5 txt-muted ${className}`.trim()}>
       {t('lifeCoach.stepStatusCoachHint')}
     </p>
   );

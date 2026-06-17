@@ -109,8 +109,8 @@ export function ExplorationStep({
   if (generating) {
     return (
       <div className="grid gap-4">
-        <p className="text-sm text-white/70">{t('exploration.generating')}</p>
-        <p className="text-xs text-white/45">{t('exploration.generatingHint')}</p>
+        <p className="text-sm txt-soft">{t('exploration.generating')}</p>
+        <p className="text-xs txt-muted">{t('exploration.generatingHint')}</p>
       </div>
     );
   }
@@ -136,7 +136,7 @@ export function ExplorationStep({
   if (activeQuestions.length === 0) {
     return (
       <div className="grid gap-4">
-        <p className="text-sm text-white/70">{t('exploration.generating')}</p>
+        <p className="text-sm txt-soft">{t('exploration.generating')}</p>
       </div>
     );
   }
@@ -162,7 +162,7 @@ export function ExplorationStep({
           </button>
         </p>
       )}
-      <p className="text-xs text-white/45" aria-live="polite" aria-atomic="true">
+      <p className="text-xs txt-muted" aria-live="polite" aria-atomic="true">
         {t('exploration.questionCount', {count: activeQuestions.length})}
         {' · '}
         {t('exploration.pageProgress', {current: page + 1, total: pages.length})}
@@ -170,8 +170,8 @@ export function ExplorationStep({
 
       <div className="grid gap-5">
         {currentQuestions.map((q) => (
-          <div key={q.id} className="rounded-xl border border-white/10 bg-white/3 p-4">
-            <p className="text-sm font-semibold leading-relaxed text-white">{q.text}</p>
+          <div key={q.id} className="rounded-xl border border-[color:var(--color-border)] fill-1 p-4">
+            <p className="text-sm font-semibold leading-relaxed txt-strong">{q.text}</p>
             <div className="mt-3 grid grid-cols-5 gap-1.5">
               {[1, 2, 3, 4, 5].map((value) => (
                 <button
@@ -181,19 +181,19 @@ export function ExplorationStep({
                   aria-label={getRatingLabel(value, t('passiveRatings.scaleMin'), t('passiveRatings.scaleMax'))}
                   className={`focus-ring flex flex-col items-center rounded-lg border py-2 text-center transition ${
                     scores[q.id] === value
-                      ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.2)] text-white'
-                      : 'border-white/10 bg-white/2 text-white/55 hover:border-white/20'
+                      ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.2)] txt-strong'
+                      : 'border-[color:var(--color-border)] fill-1 txt-soft hover:border-[color:var(--color-border-strong)]'
                   }`}
                   onClick={() => setScore(q.id, value)}
                 >
                   <span className="text-sm font-bold" aria-hidden="true">{value}</span>
                   {value === 1 && (
-                    <span className="mt-1 text-[10px] leading-tight text-white/45" aria-hidden="true">
+                    <span className="mt-1 text-[10px] leading-tight txt-muted" aria-hidden="true">
                       {t('passiveRatings.scaleMin')}
                     </span>
                   )}
                   {value === 5 && (
-                    <span className="mt-1 text-[10px] leading-tight text-white/45" aria-hidden="true">
+                    <span className="mt-1 text-[10px] leading-tight txt-muted" aria-hidden="true">
                       {t('passiveRatings.scaleMax')}
                     </span>
                   )}

@@ -22,7 +22,7 @@ export function DraftSavedIndicator({savedAt}: {savedAt: number | null}) {
 
   return (
     <span
-      className="animate-fade-in inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/4 px-3 py-1 text-xs font-semibold text-white/45"
+      className="animate-fade-in inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] fill-1 px-3 py-1 text-xs font-semibold txt-muted"
       role="status"
     >
       <span aria-hidden>✓</span>

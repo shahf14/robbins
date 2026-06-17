@@ -13,7 +13,7 @@ export function Breadcrumb({crumbs}: {crumbs: Crumb[]}) {
         return (
           <span key={crumb.label} className="flex items-center gap-1.5">
             {i > 0 && (
-              <span className="text-white/25" aria-hidden>/</span>
+              <span className="txt-faint" aria-hidden>/</span>
             )}
             {crumb.href && !isLast ? (
               <Link
@@ -24,7 +24,7 @@ export function Breadcrumb({crumbs}: {crumbs: Crumb[]}) {
               </Link>
             ) : (
               <span
-                className={isLast ? 'text-white/55' : 'text-[var(--blue)]'}
+                className={isLast ? 'txt-soft' : 'text-[var(--blue)]'}
                 aria-current={isLast ? 'page' : undefined}
               >
                 {crumb.label}

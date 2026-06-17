@@ -373,7 +373,7 @@ export function EveningReset() {
     <div className="mx-auto max-w-xl space-y-2 py-8">
       <FeatureHint feature="evening_reset" className="mb-2" />
       <ProgressBar current={progressCurrent} total={totalSteps} />
-      <p className="text-center text-xs text-white/40">
+      <p className="text-center text-xs txt-muted">
         {t('common.step', {current: progressCurrent, total: totalSteps})}
       </p>
 

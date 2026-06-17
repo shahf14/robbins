@@ -65,7 +65,7 @@ export function ThemeToggle({compact = false}: {compact?: boolean}) {
     <div className="grid gap-2">
       <span className="field-label mb-0 text-sm font-bold text-[var(--muted)]">{t('settings.themeTitle')}</span>
       <div
-        className="inline-flex items-center self-start rounded-2xl border border-white/12 bg-white/4 p-1"
+        className="inline-flex items-center self-start rounded-2xl border border-[color:var(--color-border-strong)] fill-2 p-1"
         role="group"
         aria-label={t('theme.toggle')}
       >
@@ -78,7 +78,7 @@ export function ThemeToggle({compact = false}: {compact?: boolean}) {
             className={`focus-ring rounded-xl px-5 py-2 text-sm font-semibold transition-all duration-200 ${
               theme === option
                 ? 'bg-[var(--blue)] text-white shadow-sm'
-                : 'text-white/55 hover:text-white'
+                : 'txt-soft hover:txt-strong'
             }`}
           >
             {t(`theme.${option}`)}

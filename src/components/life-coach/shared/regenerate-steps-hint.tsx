@@ -17,8 +17,8 @@ export function RegenerateStepsHint({className = ''}: Props) {
       <p className="text-xs font-bold uppercase tracking-wide text-[var(--blue)]">
         {t('lifeCoach.regenerateSafeHintTitle')}
       </p>
-      <p className="mt-1.5 text-sm leading-6 text-white/80">{t('lifeCoach.regenerateSafeHint')}</p>
-      <p className="mt-1 text-xs leading-5 text-white/50">{t('lifeCoach.regenerateSafeHintDetail')}</p>
+      <p className="mt-1.5 text-sm leading-6 txt-strong">{t('lifeCoach.regenerateSafeHint')}</p>
+      <p className="mt-1 text-xs leading-5 txt-muted">{t('lifeCoach.regenerateSafeHintDetail')}</p>
     </div>
   );
 }

@@ -49,11 +49,11 @@ export function EnvironmentDesignStep({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+        <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
           {t('environmentDesign.eyebrow')}
         </p>
         <h2 className="text-2xl font-bold">{t('environmentDesign.question')}</h2>
-        <p className="text-sm text-white/50">{t('environmentDesign.subtitle')}</p>
+        <p className="text-sm txt-muted">{t('environmentDesign.subtitle')}</p>
       </div>
 
       <div className="flex gap-2 flex-wrap">
@@ -68,8 +68,8 @@ export function EnvironmentDesignStep({
               onClick={() => (active ? removeItem(label) : addItem(label))}
               className={`focus-ring rounded-full border px-3 py-1 text-sm transition ${
                 active
-                  ? 'border-white/40 bg-white/15 text-white'
-                  : 'border-white/10 bg-white/5 text-white/60 hover:bg-white/10'
+                  ? 'border-[color:var(--color-border-strong)] fill-3 txt-strong'
+                  : 'border-[color:var(--color-border)] fill-2 txt-soft hover:fill-3'
               }`}
             >
               {active ? '✓ ' : ''}{label}
@@ -86,7 +86,7 @@ export function EnvironmentDesignStep({
           onKeyDown={(e) => e.key === 'Enter' && addItem(input)}
           placeholder={t('environmentDesign.inputPlaceholder')}
           aria-label={t('environmentDesign.inputPlaceholder')}
-          className="focus-ring flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm placeholder-white/30"
+          className="focus-ring flex-1 rounded-xl border border-[color:var(--color-border)] fill-2 px-4 py-2 text-sm placeholder-white/30"
         />
         <button
           type="button"
@@ -100,12 +100,12 @@ export function EnvironmentDesignStep({
       {items.length > 0 && (
         <div className="space-y-1">
           {items.map((item) => (
-            <div key={item} className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-sm">
-              <span className="text-white/80">✓ {item}</span>
+            <div key={item} className="flex items-center justify-between rounded-lg fill-2 px-3 py-2 text-sm">
+              <span className="txt-strong">✓ {item}</span>
               <button
                 type="button"
                 onClick={() => removeItem(item)}
-                className="focus-ring text-white/30 hover:text-white/60"
+                className="focus-ring txt-faint hover:txt-soft"
                 aria-label={t('common.remove')}
               >
                 ×
@@ -116,14 +116,14 @@ export function EnvironmentDesignStep({
       )}
 
       <div className="space-y-2">
-        <p className="text-sm text-white/50">{t('environmentDesign.sleepTargetLabel')}</p>
-        <p className="text-xs text-white/40">{t('environmentDesign.screenOffHint', {hint: screenOffHint})}</p>
+        <p className="text-sm txt-muted">{t('environmentDesign.sleepTargetLabel')}</p>
+        <p className="text-xs txt-muted">{t('environmentDesign.screenOffHint', {hint: screenOffHint})}</p>
         <input
           type="text"
           value={sleepTarget}
           onChange={(e) => setSleepTarget(e.target.value)}
           placeholder={t('environmentDesign.sleepTargetPlaceholder', {sleepTime})}
-          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm placeholder-white/30 focus-ring"
+          className="w-full rounded-xl border border-[color:var(--color-border)] fill-2 px-4 py-2 text-sm placeholder-white/30 focus-ring"
         />
       </div>
 
@@ -180,15 +180,15 @@ export function VisualizationStep({
   return (
     <div className="space-y-8 text-center">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+        <p className="text-xs font-semibold uppercase tracking-widest txt-muted">
           {t('visualization.eyebrow')}
         </p>
         <h2 className="text-2xl font-bold">{t('visualization.title')}</h2>
         {meditation && (
-          <p className="text-sm leading-relaxed text-white/60">{meditation.instructions}</p>
+          <p className="text-sm leading-relaxed txt-soft">{meditation.instructions}</p>
         )}
         {personalized?.subtitle && !meditation?.avoid_deep_content && (
-          <p className="text-sm leading-relaxed text-white/60">{personalized.subtitle}</p>
+          <p className="text-sm leading-relaxed txt-soft">{personalized.subtitle}</p>
         )}
         {meditation && (
           <p className="text-[11px] text-[var(--blue)]/80">{meditation.why_this_meditation}</p>
@@ -198,17 +198,17 @@ export function VisualizationStep({
         )}
       </div>
 
-      <div className="min-h-[120px] space-y-3 rounded-2xl border border-white/10 bg-white/5 p-6">
+      <div className="min-h-[120px] space-y-3 rounded-2xl border border-[color:var(--color-border)] fill-2 p-6">
         {guidedLines.slice(0, lineIndex).map((line, index) => (
           <p
             key={`${index}-${line.slice(0, 24)}`}
-            className="text-base leading-relaxed text-white/80 transition-all duration-700 animate-in fade-in slide-in-from-bottom-2"
+            className="text-base leading-relaxed txt-strong transition-all duration-700 animate-in fade-in slide-in-from-bottom-2"
           >
             {line}
           </p>
         ))}
         {tomorrowsWin && lineIndex >= guidedLines.length && (
-          <p className="mt-2 text-sm italic text-white/50">
+          <p className="mt-2 text-sm italic txt-muted">
             {t('visualization.yourWin')}: {tomorrowsWin}
           </p>
         )}

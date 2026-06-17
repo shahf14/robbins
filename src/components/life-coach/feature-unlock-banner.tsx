@@ -41,7 +41,7 @@ export function FeatureUnlockBanner() {
         <p className="text-xs font-bold uppercase tracking-widest text-[var(--blue)]">
           {t('featureUnlock.hint')}
         </p>
-        <p className="mt-0.5 text-sm font-semibold text-white">
+        <p className="mt-0.5 text-sm font-semibold txt-strong">
           {t(`featureUnlock.${key}`)}
           {' — '}
           {daysLeft === 1
@@ -55,7 +55,7 @@ export function FeatureUnlockBanner() {
           <span
             key={threshold}
             className={`h-2 w-2 rounded-full transition-colors ${
-              days >= threshold ? 'bg-[var(--blue)]' : 'bg-white/15'
+              days >= threshold ? 'bg-[var(--blue)]' : 'fill-3'
             }`}
           />
         ))}

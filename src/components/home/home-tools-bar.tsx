@@ -31,11 +31,11 @@ export function HomeToolsBar({
 
   if (focus === 'night') {
     return (
-      <div className="rounded-[18px] border border-white/8 bg-white/3 px-6 py-6 text-center">
-        <p className="text-sm font-bold text-white/80">
+      <div className="rounded-[18px] border border-[color:var(--color-border)] fill-1 px-6 py-6 text-center">
+        <p className="text-sm font-bold txt-strong">
           {t('schedule.toolsBar.tomorrowAt', {wakeTime})}
         </p>
-        <p className="mt-2 text-xs leading-6 text-white/45">
+        <p className="mt-2 text-xs leading-6 txt-muted">
           {t('schedule.toolsBar.nightRest')}
         </p>
         <Link
@@ -95,7 +95,7 @@ export function HomeToolsBar({
 
   return (
     <div>
-      <p className="mb-3 text-xs font-semibold text-white/52">
+      <p className="mb-3 text-xs font-semibold txt-muted">
         {t('home.toolsWhenTitle')}
       </p>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
@@ -103,19 +103,19 @@ export function HomeToolsBar({
         const cls = `focus-ring group flex flex-col items-center gap-2 rounded-[16px] py-4 px-2 text-center transition ${
           emphasized
             ? 'bg-[var(--blue)]/8 hover:bg-[var(--blue)]/12'
-            : 'bg-white/[0.03] hover:bg-white/[0.06]'
+            : 'fill-1 hover:fill-2'
         }`;
         const inner = (
           <>
             <span className="text-xl leading-none">{icon}</span>
-            <span className="text-xs font-bold text-white/78 group-hover:text-white leading-tight">
+            <span className="text-xs font-bold txt-soft group-hover:txt-strong leading-tight">
               {label}
             </span>
-            <span className="text-[11px] leading-4 text-white/52">{whenToUse}</span>
+            <span className="text-[11px] leading-4 txt-muted">{whenToUse}</span>
             <span className={`text-[11px] font-semibold rounded-full px-2 py-0.5 ${
               badgeOk
                 ? 'bg-emerald-500/15 text-emerald-400'
-                : 'bg-white/6 text-white/45'
+                : 'fill-2 txt-muted'
             }`}>
               {badge}
             </span>

@@ -268,15 +268,15 @@ export function StartHereExperience() {
               <Link
                 key={item.title}
                 href={item.href}
-                className="focus-ring group grid gap-4 rounded-[22px] border border-white/10 bg-white/3 p-5 transition hover:border-[var(--blue)]/30 hover:bg-white/[0.055] md:grid-cols-[90px_1fr_auto] md:items-center"
+                className="focus-ring group grid gap-4 rounded-[22px] border border-[color:var(--color-border)] fill-1 p-5 transition hover:border-[var(--blue)]/30 hover:fill-2 md:grid-cols-[90px_1fr_auto] md:items-center"
               >
-                <span className="text-3xl font-black text-white/18 tabular-nums">{String(index + 1).padStart(2, '0')}</span>
+                <span className="text-3xl font-black txt-faint tabular-nums">{String(index + 1).padStart(2, '0')}</span>
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--blue)]/75">{item.time}</p>
                   <h3 className="mt-1 text-xl font-black">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-white/58">{item.body}</p>
+                  <p className="mt-2 text-sm leading-7 txt-soft">{item.body}</p>
                 </div>
-                <span className="text-sm font-black text-white/25 transition group-hover:text-[var(--blue)]" aria-hidden="true">→</span>
+                <span className="text-sm font-black txt-faint transition group-hover:text-[var(--blue)]" aria-hidden="true">→</span>
               </Link>
             ))}
           </div>
@@ -296,11 +296,11 @@ export function StartHereExperience() {
                 <Link
                   key={feature.title}
                   href={feature.href}
-                  className="focus-ring interactive-panel rounded-[20px] border border-white/10 bg-white/3 p-5"
+                  className="focus-ring interactive-panel rounded-[20px] border border-[color:var(--color-border)] fill-1 p-5"
                 >
                   <h3 className="text-lg font-black">{feature.title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-white/58">{feature.body}</p>
-                  <p className="mt-4 rounded-xl bg-white/4 px-3 py-2 text-xs font-semibold leading-5 text-white/48">
+                  <p className="mt-2 text-sm leading-7 txt-soft">{feature.body}</p>
+                  <p className="mt-4 rounded-xl fill-1 px-3 py-2 text-xs font-semibold leading-5 txt-muted">
                     {feature.best}
                   </p>
                   <p className="mt-4 text-sm font-black text-[var(--blue)]">{feature.cta}</p>
@@ -329,9 +329,9 @@ export function StartHereExperience() {
               </div>
               <div className="grid gap-3">
                 {content.mastery.map((item) => (
-                  <div key={item} className="flex gap-3 rounded-2xl border border-white/10 bg-white/3 p-4">
+                  <div key={item} className="flex gap-3 rounded-2xl border border-[color:var(--color-border)] fill-1 p-4">
                     <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--blue)]" />
-                    <p className="text-sm font-semibold leading-7 text-white/72">{item}</p>
+                    <p className="text-sm font-semibold leading-7 txt-soft">{item}</p>
                   </div>
                 ))}
               </div>
@@ -343,7 +343,7 @@ export function StartHereExperience() {
       <section className="page-shell pt-4">
         <div className="rounded-[28px] border border-[var(--blue)]/25 bg-[linear-gradient(135deg,rgba(26,109,255,0.16),rgba(232,87,42,0.08),rgba(255,255,255,0.03))] px-6 py-8 text-center sm:px-8">
           <h2 className="text-3xl font-black">{content.finalTitle}</h2>
-          <p className="mx-auto mt-3 max-w-3xl leading-8 text-white/68">{content.finalBody}</p>
+          <p className="mx-auto mt-3 max-w-3xl leading-8 txt-soft">{content.finalBody}</p>
           <Link href={activeMode.href} className="focus-ring btn-primary mt-6">
             {content.finalCta}
           </Link>
@@ -361,7 +361,7 @@ function InfoPanel({title, items}: {title: string; items: Array<{title: string; 
         {items.map((item) => (
           <details
             key={item.title}
-            className="group rounded-[18px] border border-white/10 bg-white/3 p-4 open:border-[var(--blue)]/30 open:bg-[var(--blue)]/5"
+            className="group rounded-[18px] border border-[color:var(--color-border)] fill-1 p-4 open:border-[var(--blue)]/30 open:bg-[var(--blue)]/5"
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-black marker:hidden">
               <span>{item.title}</span>
@@ -369,7 +369,7 @@ function InfoPanel({title, items}: {title: string; items: Array<{title: string; 
                 +
               </span>
             </summary>
-            <p className="mt-3 text-sm leading-7 text-white/58">{item.body}</p>
+            <p className="mt-3 text-sm leading-7 txt-soft">{item.body}</p>
           </details>
         ))}
       </div>

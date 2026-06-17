@@ -37,7 +37,7 @@ export function ResetUserDataSection() {
   return (
     <section className="panel-surface border border-red-500/20 p-6 sm:p-8">
       <p className="field-label mb-0 text-red-300/80">{t('eyebrow')}</p>
-      <h2 className="mt-4 text-2xl font-black text-white">{t('title')}</h2>
+      <h2 className="mt-4 text-2xl font-black txt-strong">{t('title')}</h2>
       <p className="mt-3 max-w-2xl leading-7 text-[var(--muted)]">{t('body')}</p>
       {error && (
         <p className="mt-4 rounded-[16px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">

@@ -56,13 +56,13 @@ export function FormulationExportMenu({session, liveDraft, compact}: Props) {
   }
 
   const btnClass = compact
-    ? 'focus-ring rounded-lg border border-white/15 bg-white/4 px-2.5 py-1.5 text-[10px] font-semibold text-white/70 hover:text-white'
-    : 'focus-ring rounded-lg border border-white/15 bg-white/4 px-3 py-2 text-xs font-semibold text-white/70 hover:border-white/25 hover:text-white';
+    ? 'focus-ring rounded-lg border border-[color:var(--color-border-strong)] fill-1 px-2.5 py-1.5 text-[10px] font-semibold txt-soft hover:txt-strong'
+    : 'focus-ring rounded-lg border border-[color:var(--color-border-strong)] fill-1 px-3 py-2 text-xs font-semibold txt-soft hover:border-[color:var(--color-border-strong)] hover:txt-strong';
 
   return (
     <div className={compact ? 'flex flex-col gap-2' : 'mt-4'}>
       {!compact && (
-        <p className="text-xs text-white/45">{t('export.hint')}</p>
+        <p className="text-xs txt-muted">{t('export.hint')}</p>
       )}
       <div className="flex flex-wrap gap-2">
         <button type="button" className={btnClass} onClick={() => void copyMarkdown()}>

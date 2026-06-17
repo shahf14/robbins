@@ -44,7 +44,7 @@ export function FreestyleTaskCreator({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="eyebrow">{t('sectionEyebrow')}</p>
-          <h2 className="mt-2 text-2xl font-black text-white">{t('sectionTitle')}</h2>
+          <h2 className="mt-2 text-2xl font-black txt-strong">{t('sectionTitle')}</h2>
           <p className="mt-2 max-w-xl text-sm leading-7 text-[var(--muted)]">{t('sectionBody')}</p>
         </div>
         {!open && (
@@ -109,9 +109,9 @@ function FreestyleWizard({
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/4 p-5">
+    <div className="rounded-2xl border border-[color:var(--color-border)] fill-1 p-5">
       <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm font-bold text-white">{t('newTaskTitle')}</p>
+        <p className="text-sm font-bold txt-strong">{t('newTaskTitle')}</p>
         <span className="text-xs font-semibold text-[var(--muted)]" aria-live="polite" aria-atomic="true">{step + 1}/{TOTAL_STEPS}</span>
       </div>
 
@@ -198,7 +198,7 @@ function NumberStepper({
     <div className="flex items-center gap-3">
       <button
         type="button"
-        className="focus-ring flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-lg font-bold text-white/70 hover:border-white/40"
+        className="focus-ring flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--color-border-strong)] text-lg font-bold txt-soft hover:border-[color:var(--color-border-strong)]"
         onClick={() => onChange(clamp(value - 1))}
         aria-label={`decrease ${unit}`}
       >
@@ -216,7 +216,7 @@ function NumberStepper({
       />
       <button
         type="button"
-        className="focus-ring flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-lg font-bold text-white/70 hover:border-white/40"
+        className="focus-ring flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--color-border-strong)] text-lg font-bold txt-soft hover:border-[color:var(--color-border-strong)]"
         onClick={() => onChange(clamp(value + 1))}
         aria-label={`increase ${unit}`}
       >

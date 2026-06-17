@@ -27,19 +27,19 @@ export function FormulationInsightsPanel({session}: Props) {
 
   return (
     <div className="rounded-xl border border-[var(--blue)]/25 bg-[rgba(26,109,255,0.06)] p-4" role="region" aria-labelledby="formulation-insights-title">
-      <p id="formulation-insights-title" className="text-sm font-bold text-white">{t('synthesis.title')}</p>
-      <p className="mt-2 text-xs leading-relaxed text-white/55">{insights.cross_cutting_narrative}</p>
+      <p id="formulation-insights-title" className="text-sm font-bold txt-strong">{t('synthesis.title')}</p>
+      <p className="mt-2 text-xs leading-relaxed txt-soft">{insights.cross_cutting_narrative}</p>
 
       {insights.burning_now_themes.length > 0 && (
         <>
-          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-white/40">
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wide txt-muted">
             {t('synthesis.burningNow')}
           </p>
           <ul className="mt-2 grid gap-1.5">
             {insights.burning_now_themes.slice(0, 6).map((theme) => (
-              <li key={theme.id} className="text-xs text-white/80">
+              <li key={theme.id} className="text-xs txt-strong">
                 {theme.label}{' '}
-                <span className="text-white/45">
+                <span className="txt-muted">
                   ({t('synthesis.score', {score: theme.score})})
                 </span>
               </li>
@@ -50,14 +50,14 @@ export function FormulationInsightsPanel({session}: Props) {
 
       {insights.suppressed_by_chips.length > 0 && (
         <>
-          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-white/40">
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wide txt-muted">
             {t('synthesis.suppressedByChips')}
           </p>
           <ul className="mt-2 grid gap-1.5">
             {insights.suppressed_by_chips.map((s) => (
-              <li key={s.id} className="text-xs text-white/50 line-through decoration-white/25">
+              <li key={s.id} className="text-xs txt-muted line-through decoration-[color:var(--color-border-strong)]">
                 {s.label}{' '}
-                <span className="text-white/40 no-underline">
+                <span className="txt-muted no-underline">
                   ({t('synthesis.chipNotNow', {chip: s.chip_answer})})
                 </span>
               </li>
@@ -66,13 +66,13 @@ export function FormulationInsightsPanel({session}: Props) {
         </>
       )}
 
-      <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-white/40">
+      <p className="mt-4 text-xs font-semibold uppercase tracking-wide txt-muted">
         {t('synthesis.goalFocus')}
       </p>
-      <p className="mt-1 text-sm text-white/90">{insights.primary_goal_focus}</p>
+      <p className="mt-1 text-sm txt-strong">{insights.primary_goal_focus}</p>
 
       {insights.deprioritize_for_goals.length > 0 && (
-        <p className="mt-3 text-[10px] leading-relaxed text-white/40">
+        <p className="mt-3 text-[10px] leading-relaxed txt-muted">
           {t('synthesis.notPrimary')}: {insights.deprioritize_for_goals.slice(0, 2).join(' · ')}
         </p>
       )}

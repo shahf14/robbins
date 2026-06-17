@@ -391,7 +391,7 @@ export function HealthGoalWizard({assessment, onCreated}: Props) {
   return (
     <section className="panel-surface p-6">
       <p className="eyebrow">{t('healthWizard.eyebrow')}</p>
-      <h3 className="mt-4 text-2xl font-black text-white">{t('healthWizard.title')}</h3>
+      <h3 className="mt-4 text-2xl font-black txt-strong">{t('healthWizard.title')}</h3>
       <GoalHierarchyExplainer className="mt-4" />
 
       {/* Progress Bar */}
@@ -407,11 +407,11 @@ export function HealthGoalWizard({assessment, onCreated}: Props) {
           <div
             key={`step-${i}`}
             className={`h-1.5 flex-1 rounded-full transition-colors ${
-              i < step ? 'bg-[var(--blue)]' : 'bg-white/10'
+              i < step ? 'bg-[var(--blue)]' : 'fill-3'
             }`}
           />
         ))}
-        <span className="text-xs font-semibold text-white/45">
+        <span className="text-xs font-semibold txt-muted">
           {step}/{TOTAL_STEPS}
         </span>
       </div>
@@ -419,15 +419,15 @@ export function HealthGoalWizard({assessment, onCreated}: Props) {
       {hasDraft && !draftRestored && (
         <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-[var(--blue)]/25 bg-[rgba(26,109,255,0.08)] p-4">
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-white">{t('healthWizard.resumeTitle')}</p>
-            <p className="mt-1 text-xs text-white/55">{t('healthWizard.resumeBody')}</p>
+            <p className="text-sm font-bold txt-strong">{t('healthWizard.resumeTitle')}</p>
+            <p className="mt-1 text-xs txt-soft">{t('healthWizard.resumeBody')}</p>
           </div>
           <button type="button" className="focus-ring btn-small" onClick={restoreDraft}>
             {t('healthWizard.resumeContinue')}
           </button>
           <button
             type="button"
-            className="focus-ring text-xs font-semibold text-white/50 hover:text-white/80"
+            className="focus-ring text-xs font-semibold txt-muted hover:txt-strong"
             onClick={clearDraft}
           >
             {t('healthWizard.resumeDiscard')}
@@ -595,7 +595,7 @@ function StepCategory({
 
   return (
     <div className="grid gap-4">
-      <p className="text-base font-semibold text-white">{t('healthWizard.step1Title')}</p>
+      <p className="text-base font-semibold txt-strong">{t('healthWizard.step1Title')}</p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {HEALTH_CATEGORIES.map((cat) => (
           <button
@@ -603,8 +603,8 @@ function StepCategory({
             type="button"
             className={`focus-ring flex flex-col items-center gap-2 rounded-2xl border p-4 text-center transition ${
               category === cat
-                ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                : 'border-white/10 bg-white/3 text-white/72 hover:bg-white/6'
+                ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                : 'border-[color:var(--color-border)] fill-1 txt-soft hover:fill-2'
             }`}
             onClick={() => onSelect(cat)}
           >
@@ -641,18 +641,18 @@ function StepMetrics({
 
   return (
     <div className="grid gap-5">
-      <p className="text-base font-semibold text-white">{t('healthWizard.step2Title')}</p>
+      <p className="text-base font-semibold txt-strong">{t('healthWizard.step2Title')}</p>
 
       <label className="grid gap-2">
         <span className="field-label mb-0">{t(`healthWizard.metrics.${category}.baseline`)}</span>
         {isScore ? (
           <div className="grid gap-2">
             <span className="flex items-center justify-between gap-4">
-              <span className="text-xs text-white/45">{t('healthWizard.low')}</span>
-              <span className="rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-sm font-semibold text-white">
+              <span className="text-xs txt-muted">{t('healthWizard.low')}</span>
+              <span className="rounded-full border border-[color:var(--color-border)] fill-2 px-4 py-1.5 text-sm font-semibold txt-strong">
                 {baselineValue}/10
               </span>
-              <span className="text-xs text-white/45">{t('healthWizard.high')}</span>
+              <span className="text-xs txt-muted">{t('healthWizard.high')}</span>
             </span>
             <input
               className="focus-ring"
@@ -684,11 +684,11 @@ function StepMetrics({
         {isScore ? (
           <div className="grid gap-2">
             <span className="flex items-center justify-between gap-4">
-              <span className="text-xs text-white/45">{t('healthWizard.low')}</span>
-              <span className="rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-sm font-semibold text-white">
+              <span className="text-xs txt-muted">{t('healthWizard.low')}</span>
+              <span className="rounded-full border border-[color:var(--color-border)] fill-2 px-4 py-1.5 text-sm font-semibold txt-strong">
                 {targetValue}/10
               </span>
-              <span className="text-xs text-white/45">{t('healthWizard.high')}</span>
+              <span className="text-xs txt-muted">{t('healthWizard.high')}</span>
             </span>
             <input
               className="focus-ring"
@@ -716,13 +716,13 @@ function StepMetrics({
       </label>
 
       {(baselineValue > 0 || targetValue > 0) && (
-        <div className="rounded-2xl border border-white/10 bg-white/3 p-4">
+        <div className="rounded-2xl border border-[color:var(--color-border)] fill-1 p-4">
           <div className="flex items-center justify-between gap-4">
             <div className="text-center">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">
+              <p className="text-[10px] font-semibold uppercase tracking-wider txt-muted">
                 {t('healthWizard.metricFrom')}
               </p>
-              <p className="mt-1 text-2xl font-black text-white/70">
+              <p className="mt-1 text-2xl font-black txt-soft">
                 {baselineValue}
                 {isScore ? '/10' : ''}
               </p>
@@ -739,15 +739,15 @@ function StepMetrics({
               <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--blue)]">
                 {t('healthWizard.metricTo')}
               </p>
-              <p className="mt-1 text-2xl font-black text-white">
+              <p className="mt-1 text-2xl font-black txt-strong">
                 {targetValue}
                 {isScore ? '/10' : ''}
               </p>
             </div>
           </div>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+          <div className="mt-3 h-2 overflow-hidden rounded-full fill-3">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-white/30 to-[var(--blue)] transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-r from-[color:var(--color-border-strong)] to-[var(--blue)] transition-all duration-500"
               style={{
                 width: `${Math.min(100, isScore ? (targetValue / 10) * 100 : baselineValue > 0 ? Math.min(100, (Math.min(baselineValue, targetValue) / Math.max(baselineValue, targetValue)) * 100) : 50)}%`,
               }}
@@ -756,7 +756,7 @@ function StepMetrics({
         </div>
       )}
 
-      <p className="text-xs leading-5 text-white/40">
+      <p className="text-xs leading-5 txt-muted">
         {category === 'weight' && targetValue > baselineValue
           ? t('healthWizard.metrics.weight.hintGain')
           : category === 'weight' && targetValue < baselineValue
@@ -863,12 +863,12 @@ function StepTimeline({
 
   return (
     <div className="grid gap-5">
-      <p className="text-base font-semibold text-white">{t('healthWizard.step3Title')}</p>
+      <p className="text-base font-semibold txt-strong">{t('healthWizard.step3Title')}</p>
       <MilestonesWhyExplainer />
       <p className="text-sm text-[var(--muted)]">{t('healthWizard.step3Hint')}</p>
       <button
         type="button"
-        className="focus-ring group flex w-full items-center justify-center gap-2 rounded-2xl border border-[var(--blue)]/40 bg-[rgba(26,109,255,0.12)] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[rgba(26,109,255,0.2)] disabled:opacity-60"
+        className="focus-ring group flex w-full items-center justify-center gap-2 rounded-2xl border border-[var(--blue)]/40 bg-[rgba(26,109,255,0.12)] px-5 py-3.5 text-sm font-bold txt-strong transition hover:bg-[rgba(26,109,255,0.2)] disabled:opacity-60"
         disabled={inspiringMilestones}
         aria-busy={inspiringMilestones}
         onClick={onInspireMilestones}
@@ -876,7 +876,7 @@ function StepTimeline({
         {inspiringMilestones ? (
           <span
             aria-hidden
-            className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"
+            className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[color:var(--color-border-strong)] border-t-[color:var(--color-border-strong)]"
           />
         ) : (
           <span className="text-lg" aria-hidden />
@@ -965,7 +965,7 @@ function StepDeepWhy({
 
   return (
     <div className="grid gap-5">
-      <p className="text-base font-semibold text-white">{t('healthWizard.step4Title')}</p>
+      <p className="text-base font-semibold txt-strong">{t('healthWizard.step4Title')}</p>
 
       {/* Sub-step dots */}
       <div className="flex items-center gap-2">
@@ -977,11 +977,11 @@ function StepDeepWhy({
             aria-pressed={i === subStep}
             onClick={() => setSubStep(i)}
             className={`focus-ring h-2 rounded-full transition-all ${
-              i === subStep ? 'w-8 bg-[var(--blue)]' : 'w-2 bg-white/15 hover:bg-white/30'
+              i === subStep ? 'w-8 bg-[var(--blue)]' : 'w-2 fill-3 hover:fill-3'
             }`}
           />
         ))}
-        <span className="ms-auto text-xs font-semibold text-white/45">
+        <span className="ms-auto text-xs font-semibold txt-muted">
           {t('healthWizard.whyMicroProgress', {current: subStep + 1, total: questions.length})}
         </span>
       </div>
@@ -1060,7 +1060,7 @@ function StepHabitAnchor({
 
   return (
     <div className="grid gap-5">
-      <p className="text-base font-semibold text-white">{t('healthWizard.step5Title')}</p>
+      <p className="text-base font-semibold txt-strong">{t('healthWizard.step5Title')}</p>
       <p className="text-sm leading-6 text-[var(--muted)]">{t('healthWizard.step5Body')}</p>
 
       <div className="grid gap-3">
@@ -1072,8 +1072,8 @@ function StepHabitAnchor({
               type="button"
               className={`focus-ring rounded-full border px-4 py-2 text-sm font-semibold transition ${
                 anchorHabit === anchor
-                  ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                  : 'border-white/10 bg-white/3 text-white/72'
+                  ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                  : 'border-[color:var(--color-border)] fill-1 txt-soft'
               }`}
               onClick={() => onAnchorHabitChange(anchor)}
             >
@@ -1102,7 +1102,7 @@ function StepHabitAnchor({
 
       {anchorHabit && (
         <div className="rounded-2xl border border-[var(--blue)]/20 bg-[rgba(26,109,255,0.06)] p-4">
-          <p className="text-sm font-semibold text-white">
+          <p className="text-sm font-semibold txt-strong">
             {t('healthWizard.habitFormula')}
           </p>
           <p className="mt-2 text-sm leading-6 text-[var(--muted)]">

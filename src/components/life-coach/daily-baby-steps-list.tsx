@@ -390,8 +390,8 @@ export function DailyBabyStepsList({
         if (!step) return null;
         return (
           <div className="mb-3 rounded-[18px] border border-sky-400/25 bg-sky-500/8 px-4 py-3">
-            <p className="text-sm font-black text-white">{t('lifeCoach.skipRecovery.bannerTitle')}</p>
-            <p className="mt-1 text-xs leading-5 text-white/55">{t('lifeCoach.skipRecovery.bannerBody')}</p>
+            <p className="text-sm font-black txt-strong">{t('lifeCoach.skipRecovery.bannerTitle')}</p>
+            <p className="mt-1 text-xs leading-5 txt-soft">{t('lifeCoach.skipRecovery.bannerBody')}</p>
             <BusyButton
               type="button"
               className="focus-ring btn-small mt-3"
@@ -425,7 +425,7 @@ export function DailyBabyStepsList({
         allActioned &&
         completedToday.length > 0 && (
           <div className="mb-3 rounded-[18px] border border-[var(--blue)]/25 bg-[var(--blue)]/8 px-4 py-3">
-            <p className="text-sm font-black text-white">
+            <p className="text-sm font-black txt-strong">
               {t('lifeCoach.dailySummary', {
                 count: completedToday.length,
                 minutes: totalLoggedMinutes,
@@ -453,7 +453,7 @@ export function DailyBabyStepsList({
       )}
       {accountability?.daily_step_serve && sortedSteps.length > 0 && (
         <div className="mb-3 rounded-[18px] border border-[var(--blue)]/20 bg-[var(--blue)]/6 px-4 py-3">
-          <p className="text-sm font-semibold leading-6 text-white/80">
+          <p className="text-sm font-semibold leading-6 txt-strong">
             {accountability.daily_step_serve}
           </p>
         </div>
@@ -520,10 +520,10 @@ export function DailyBabyStepsList({
                       <p className="mt-3 text-xs font-semibold leading-5 text-[var(--blue)]/85">
                         {habitAnchor.trigger}
                       </p>
-                      <h4 className="mt-1 text-lg font-black text-white">{habitAnchor.action}</h4>
+                      <h4 className="mt-1 text-lg font-black txt-strong">{habitAnchor.action}</h4>
                     </>
                   ) : (
-                    <h4 className="mt-3 text-lg font-black text-white">{step.title}</h4>
+                    <h4 className="mt-3 text-lg font-black txt-strong">{step.title}</h4>
                   )}
                   {timeLabel && (
                     <p className="mt-2 text-xs font-semibold text-[var(--blue)]/80">{timeLabel}</p>
@@ -539,16 +539,16 @@ export function DailyBabyStepsList({
                     </span>
                   )}
                   <span
-                    className="inline-flex cursor-help items-center gap-1.5 rounded-full border border-white/12 bg-white/4 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-white/72"
+                    className="inline-flex cursor-help items-center gap-1.5 rounded-full border border-[color:var(--color-border)] fill-1 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] txt-soft"
                     aria-label={step.status === 'pending' ? t('lifeCoach.pendingStatusInfo') : undefined}
                   >
                     {t(`lifeCoach.dailyStepStatus.${step.status}`)}
-                    {step.status === 'pending' && <span aria-hidden className="text-white/40">ⓘ</span>}
+                    {step.status === 'pending' && <span aria-hidden className="txt-muted">ⓘ</span>}
                   </span>
                 </div>
               </div>
               {step.status === 'pending' && (
-                <p className="mt-2 text-xs leading-5 text-white/45">{t('lifeCoach.pendingStatusHint')}</p>
+                <p className="mt-2 text-xs leading-5 txt-muted">{t('lifeCoach.pendingStatusHint')}</p>
               )}
               {(step.reschedule_count ?? 0) >= 3 && step.status === 'pending' && (
                 <p className="mt-2 text-xs leading-5 text-amber-400/80">⚠ {t('lifeCoach.rescheduledHint')}</p>
@@ -561,7 +561,7 @@ export function DailyBabyStepsList({
                 {step.description && step.description.length > 80 && (
                   <button
                     type="button"
-                    className="focus-ring mt-1 text-xs text-white/40 transition-colors hover:text-white/70"
+                    className="focus-ring mt-1 text-xs txt-muted transition-colors hover:txt-soft"
                     aria-expanded={isExpanded}
                     onClick={() => toggleDescription(step.id, !!step.read_description)}
                   >
@@ -572,7 +572,7 @@ export function DailyBabyStepsList({
 
               <StepExplainability reasoning={step.reasoning} className="mt-3" />
 
-              <p className="mt-3 text-sm font-semibold text-white/60">
+              <p className="mt-3 text-sm font-semibold txt-soft">
                 {step.estimated_minutes} {t('lifeCoach.minutes')} · {t(`lifeCoach.difficulty.${step.difficulty}`)}
               </p>
 
@@ -608,8 +608,8 @@ export function DailyBabyStepsList({
               )}
 
               {minutesPromptId === step.id && (
-                <div className="mt-4 rounded-xl border border-white/10 bg-white/4 p-4">
-                  <p className="mb-3 text-xs font-semibold text-white/55">
+                <div className="mt-4 rounded-xl border border-[color:var(--color-border)] fill-1 p-4">
+                  <p className="mb-3 text-xs font-semibold txt-soft">
                     {t('lifeCoach.actualMinutesDefault', {n: step.estimated_minutes})}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -624,8 +624,8 @@ export function DailyBabyStepsList({
                         aria-pressed={actualMinutes === String(mins)}
                         className={`focus-ring rounded-full border px-4 py-2 text-xs font-semibold transition ${
                           actualMinutes === String(mins)
-                            ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                            : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'
+                            ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                            : 'border-[color:var(--color-border)] txt-soft hover:border-[color:var(--color-border-strong)] hover:txt-strong'
                         }`}
                         onClick={() => setActualMinutes(String(mins))}
                       >
@@ -641,7 +641,7 @@ export function DailyBabyStepsList({
                       onChange={(e) => setActualMinutes(e.target.value)}
                       placeholder={t('lifeCoach.actualMinutesExact')}
                       aria-label={t('lifeCoach.actualMinutesExact')}
-                      className="focus-ring w-28 rounded-full border border-white/10 bg-white/4 px-3 py-2 text-xs text-white placeholder-white/30"
+                      className="focus-ring w-28 rounded-full border border-[color:var(--color-border)] fill-1 px-3 py-2 text-xs txt-strong placeholder-[color:var(--color-text-faint)]"
                     />
                   </div>
                   <div className="mt-3 flex gap-3">
@@ -665,7 +665,7 @@ export function DailyBabyStepsList({
                     </button>
                     <button
                       type="button"
-                      className="focus-ring text-xs text-white/40 hover:text-white/70"
+                      className="focus-ring text-xs txt-muted hover:txt-soft"
                       onClick={() => {
                         setMinutesPromptId(null);
                         setActualMinutes('');

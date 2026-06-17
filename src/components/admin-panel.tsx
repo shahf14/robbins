@@ -38,20 +38,20 @@ export function AdminPanel() {
         <p className="text-sm font-semibold text-amber-200/80">{t('admin.securityNotice')}</p>
       </div>
       <div>
-        <p className="eyebrow text-white/55">{t('admin.title')}</p>
+        <p className="eyebrow txt-soft">{t('admin.title')}</p>
         <h1 className="mt-4 text-3xl font-black sm:text-4xl">{t('admin.pageTitle')}</h1>
         <p className="mt-3 max-w-2xl leading-7 text-[var(--muted)]">{t('admin.subtitle')}</p>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2 border-b border-white/10 pb-3">
+      <div className="mt-6 flex flex-wrap gap-2 border-b border-[color:var(--color-border)] pb-3">
         {tabs.map((item) => (
           <button
             key={item.key}
             type="button"
             className={`focus-ring rounded-full px-4 py-2 text-sm font-semibold transition ${
               tab === item.key
-                ? 'bg-white/12 text-white'
-                : 'text-white/55 hover:text-white'
+                ? 'fill-3 txt-strong'
+                : 'txt-soft hover:txt-strong'
             }`}
             onClick={() => setTab(item.key)}
           >
@@ -284,7 +284,7 @@ function LogsTab() {
             <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--muted)]">
               {entry.timestamp && <span>{new Date(entry.timestamp).toLocaleTimeString()}</span>}
               {entry.type && (
-                <span className="rounded bg-white/8 px-2 py-0.5 font-mono">{entry.type}</span>
+                <span className="rounded fill-2 px-2 py-0.5 font-mono">{entry.type}</span>
               )}
             </div>
             <p className="mt-1 text-sm">{entry.message ?? entry.raw ?? '—'}</p>
@@ -352,7 +352,7 @@ function SettingsTab() {
       </form>
 
       <div className="mt-8">
-        <p className="field-label mb-0 text-white/50">{t('settings.languageTitle')}</p>
+        <p className="field-label mb-0 txt-muted">{t('settings.languageTitle')}</p>
         <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{t('settings.languageHelp')}</p>
         <div className="mt-4">
           <LanguageSwitcher />

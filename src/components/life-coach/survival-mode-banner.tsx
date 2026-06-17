@@ -137,8 +137,8 @@ export function SurvivalModeBanner({
               /* ── Done state ── */
               <div className="text-center">
                 <p className="text-4xl" aria-hidden="true">🙏</p>
-                <h2 className="mt-4 text-xl font-black text-white">{t('survivalMode.doneTitle')}</h2>
-                <p className="mt-3 text-sm leading-6 text-white/65">
+                <h2 className="mt-4 text-xl font-black txt-strong">{t('survivalMode.doneTitle')}</h2>
+                <p className="mt-3 text-sm leading-6 txt-soft">
                   {done === 'skip' && (doneMessages?.skip ?? t('survivalMode.doneSkip'))}
                   {done === 'pause' && (doneMessages?.pause ?? t('survivalMode.donePause'))}
                   {done === 'easy' && (doneMessages?.easy ?? t('survivalMode.doneEasy'))}
@@ -157,8 +157,8 @@ export function SurvivalModeBanner({
                 <p className="text-xs font-bold uppercase tracking-wide text-amber-300/80">
                   {t('survivalMode.positiveEmergencyLabel')}
                 </p>
-                <h2 id="survival-mode-title" className="mt-2 text-xl font-black text-white">{t(copy.title)}</h2>
-                <p className="mt-2 text-sm leading-6 text-white/55">{t(copy.subtitle)}</p>
+                <h2 id="survival-mode-title" className="mt-2 text-xl font-black txt-strong">{t(copy.title)}</h2>
+                <p className="mt-2 text-sm leading-6 txt-soft">{t(copy.subtitle)}</p>
                 <p className="mt-3 rounded-xl border border-amber-400/20 bg-amber-500/8 px-4 py-3 text-sm leading-6 text-amber-100/85">
                   {t((softExtras?.positiveExplainer ?? 'survivalMode.positiveExplainer') as Parameters<typeof t>[0])}
                 </p>
@@ -232,7 +232,7 @@ function OptionCard({icon, label, desc, selected, onSelect}: {
       className={`focus-ring w-full rounded-2xl border p-4 text-left transition ${
         selected
           ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.10)]'
-          : 'border-white/10 bg-white/2 hover:bg-white/4'
+          : 'border-[color:var(--color-border)] fill-1 hover:fill-1'
       }`}
       aria-pressed={selected}
       onClick={onSelect}
@@ -240,8 +240,8 @@ function OptionCard({icon, label, desc, selected, onSelect}: {
       <div className="flex items-start gap-3">
         <span className="text-xl leading-none" aria-hidden="true">{icon}</span>
         <div>
-          <p className="text-sm font-semibold text-white">{label}</p>
-          <p className="mt-1 text-xs leading-5 text-white/50">{desc}</p>
+          <p className="text-sm font-semibold txt-strong">{label}</p>
+          <p className="mt-1 text-xs leading-5 txt-muted">{desc}</p>
         </div>
         {selected && (
           <span className="ml-auto shrink-0 mt-0.5">

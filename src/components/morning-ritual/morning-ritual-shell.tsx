@@ -30,7 +30,7 @@ export function ProgressBar({current, total}: {current: number; total: number}) 
         <span>{t('common.step', {current: current + 1, total: total + 1})}</span>
         <span>{pct}%</span>
       </div>
-      <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/10">
+      <div className="mt-3 h-1 overflow-hidden rounded-full fill-3">
         <div
           className="h-full rounded-full bg-[var(--accent)] transition-all duration-500"
           style={{width: `${pct}%`}}
@@ -53,13 +53,13 @@ export function GoalFocusBanner({
 
   return (
     <div className="mt-4 rounded-xl border border-[var(--blue)]/25 bg-[rgba(26,109,255,0.08)] px-4 py-3 text-start">
-      <p className="text-xs font-bold uppercase tracking-wide text-white/45">
+      <p className="text-xs font-bold uppercase tracking-wide txt-muted">
         {t('goalFocus.eyebrow')}
       </p>
-      <p className="mt-1 text-sm font-semibold leading-snug text-white">
+      <p className="mt-1 text-sm font-semibold leading-snug txt-strong">
         {t(`${hintKey}.title` as Parameters<typeof t>[0])}
       </p>
-      <p className="mt-2 text-xs leading-relaxed text-white/65">
+      <p className="mt-2 text-xs leading-relaxed txt-soft">
         {t(`${hintKey}.body` as Parameters<typeof t>[0], dailyFocusHintParams(goalContext, locale))}
       </p>
     </div>
@@ -146,8 +146,8 @@ export function StartScreen({
           <StatBadge label={t('start.completed')} value={String(completedCount)} />
           {lastSession?.dailyMission && (
             <div className="panel-surface col-span-2 p-5 text-start">
-              <p className="field-label mb-0 text-white/50">{t('start.lastMission')}</p>
-              <p className="mt-3 text-base leading-7 text-white">{lastSession.dailyMission}</p>
+              <p className="field-label mb-0 txt-muted">{t('start.lastMission')}</p>
+              <p className="mt-3 text-base leading-7 txt-strong">{lastSession.dailyMission}</p>
             </div>
           )}
         </div>
@@ -155,18 +155,18 @@ export function StartScreen({
 
       {completedCount === 0 && (
         <div className="mt-6 panel-surface p-6 sm:p-8">
-          <p className="field-label mb-0 text-white/50">{t('start.previewTitle')}</p>
+          <p className="field-label mb-0 txt-muted">{t('start.previewTitle')}</p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 md:grid-cols-4">
             {standardSteps.map((step, i) => (
               <div
                 key={step.label}
-                className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 px-4 py-3"
+                className="flex items-center gap-3 rounded-2xl border border-[color:var(--color-border)] fill-1 px-4 py-3"
               >
                 <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--blue)]/12 text-sm font-bold text-[var(--blue)]">
                   {i + 1}
                 </span>
                 <div className="text-start">
-                  <span className="block text-sm font-semibold text-white/80">{step.label}</span>
+                  <span className="block text-sm font-semibold txt-strong">{step.label}</span>
                 </div>
               </div>
             ))}
@@ -181,8 +181,8 @@ export function StartScreen({
 export function StatBadge({label, value}: {label: string; value: string}) {
   return (
     <div className="panel-surface p-5 text-start">
-      <p className="field-label mb-0 text-white/50">{label}</p>
-      <p className="mt-3 text-4xl font-black text-white">{value}</p>
+      <p className="field-label mb-0 txt-muted">{label}</p>
+      <p className="mt-3 text-4xl font-black txt-strong">{value}</p>
     </div>
   );
 }
@@ -194,7 +194,7 @@ export function MoodPicker({value, onChange, label}: {value: number | null; onCh
   const t = useTranslations('morningRitual');
   return (
     <div>
-      <p className="field-label mb-3 text-white/60">{label}</p>
+      <p className="field-label mb-3 txt-soft">{label}</p>
       <div className="flex gap-2">
         {MOOD_EMOJI_SCORES.map((score) => (
           <button
@@ -206,7 +206,7 @@ export function MoodPicker({value, onChange, label}: {value: number | null; onCh
             className={`focus-ring flex h-12 w-12 items-center justify-center rounded-2xl border text-2xl transition ${
               value === score
                 ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.18)] scale-110'
-                : 'border-white/10 bg-white/4 hover:border-white/20 hover:scale-105'
+                : 'border-[color:var(--color-border)] fill-2 hover:border-[color:var(--color-border-strong)] hover:scale-105'
             }`}
           >
             {MOOD_EMOJIS_BY_SCORE[score]}

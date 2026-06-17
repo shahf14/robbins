@@ -32,7 +32,7 @@ export function DomainInsightsTabContent({
 
   return (
     <div className="grid gap-6">
-      <p className="text-sm leading-7 text-white/45">{t('lifeCoach.domainTabs.insightsIntro')}</p>
+      <p className="text-sm leading-7 txt-muted">{t('lifeCoach.domainTabs.insightsIntro')}</p>
 
       <EnhancedWeeklyReview
         domain={domain}
@@ -45,12 +45,12 @@ export function DomainInsightsTabContent({
       />
 
       <section className="panel-surface p-6" aria-label={t('lifeCoach.aiInsights')}>
-        <h2 className="text-lg font-bold text-white">{t('lifeCoach.patternsAndAdjustments')}</h2>
+        <h2 className="text-lg font-bold txt-strong">{t('lifeCoach.patternsAndAdjustments')}</h2>
         <div className="mt-5 grid gap-4 md:grid-cols-2" aria-live="polite">
           {insights.length > 0 ? (
             insights.map((insight) => <AIInsightCard key={insight.id} insight={insight} />)
           ) : (
-            <div className="col-span-2 flex flex-col gap-4 rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-5">
+            <div className="col-span-2 flex flex-col gap-4 rounded-2xl border border-dashed border-[color:var(--color-border)] fill-1 p-5">
               <p className="text-sm leading-7 text-[var(--muted)]">{t('lifeCoach.insightsEmptyDomain')}</p>
               <button
                 type="button"

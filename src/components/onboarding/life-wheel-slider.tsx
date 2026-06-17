@@ -32,7 +32,7 @@ export function LifeWheelSlider({domain, icon, label, score, onChange, hideLabel
     <div className="grid gap-3">
       {!hideLabel && (
         <div className="flex items-center justify-between gap-3">
-          <span className="flex items-center gap-2 text-sm font-semibold text-white/80">
+          <span className="flex items-center gap-2 text-sm font-semibold txt-strong">
             {icon ? <span aria-hidden="true">{icon}</span> : null}
             {label}
           </span>
@@ -59,7 +59,7 @@ export function LifeWheelSlider({domain, icon, label, score, onChange, hideLabel
               <span
                 key={`dot-${index}`}
                 className={`h-1.5 w-1.5 justify-self-center rounded-full transition-colors ${
-                  index + 1 <= rating.score ? 'bg-white/70' : 'bg-white/22'
+                  index + 1 <= rating.score ? 'bg-[var(--color-text)]' : 'fill-3'
                 }`}
               />
             ))}
@@ -92,14 +92,14 @@ export function LifeWheelSlider({domain, icon, label, score, onChange, hideLabel
 
       <div
         key={`${domain}-${rating.bandId}-${rating.score}`}
-        className="life-wheel-feedback min-h-[4.5rem] rounded-2xl border border-white/8 bg-white/[0.025] px-4 py-3 transition-colors duration-300"
+        className="life-wheel-feedback min-h-[4.5rem] rounded-2xl border border-[color:var(--color-border)] fill-1 px-4 py-3 transition-colors duration-300"
       >
-        <p className="text-sm font-semibold text-white/85">
+        <p className="text-sm font-semibold txt-strong">
           <span className="tabular-nums">{rating.score}/10</span>
-          <span className="text-white/35"> · </span>
+          <span className="txt-faint"> · </span>
           <span style={{color}}>{bandLabel}</span>
         </p>
-        <p className="mt-1 line-clamp-3 text-sm leading-6 text-white/50">{description}</p>
+        <p className="mt-1 line-clamp-3 text-sm leading-6 txt-muted">{description}</p>
       </div>
     </div>
   );

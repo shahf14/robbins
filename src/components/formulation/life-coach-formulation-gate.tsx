@@ -25,9 +25,9 @@ export function LifeCoachFormulationGate({children}: Props) {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-white/40" aria-live="polite" aria-busy="true">
+      <div className="flex items-center gap-2 text-sm txt-muted" aria-live="polite" aria-busy="true">
         <span
-          className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white/70"
+          className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[color:var(--color-border)] border-t-[color:var(--color-border-strong)]"
           aria-hidden
         />
         <span>{t('loading')}</span>
@@ -46,7 +46,7 @@ export function LifeCoachFormulationGate({children}: Props) {
       </div>
       <div className="absolute inset-0 z-10 flex items-start justify-center p-6">
         <div className="panel-surface max-w-lg p-6 shadow-2xl">
-          <h3 className="text-xl font-black text-white">{t('title')}</h3>
+          <h3 className="text-xl font-black txt-strong">{t('title')}</h3>
           <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{t('body')}</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link

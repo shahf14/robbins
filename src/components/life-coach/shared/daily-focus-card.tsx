@@ -41,7 +41,7 @@ export function DailyFocusCard({focus, domain, onCreateMissionStep, creating = f
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-200/80">
             {locale === 'he' ? 'פוקוס היום' : "Today's focus"}
           </p>
-          <h2 className="mt-2 text-xl font-black leading-7 text-white">
+          <h2 className="mt-2 text-xl font-black leading-7 txt-strong">
             {focus.morningMission
               ? locale === 'he'
                 ? 'משימת הבוקר מחוברת לתוכנית שלך'
@@ -52,21 +52,21 @@ export function DailyFocusCard({focus, domain, onCreateMissionStep, creating = f
           </h2>
         </div>
         {focus.activeDomainScore != null && (
-          <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-sm font-bold text-white/75">
+          <span className="rounded-full border border-[color:var(--color-border)] bg-black/20 px-3 py-1.5 text-sm font-bold txt-soft">
             {focus.activeDomainScore}/10
           </span>
         )}
       </div>
 
       {focus.morningMission && (
-        <blockquote className="mt-4 rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm font-semibold leading-7 text-white/85">
+        <blockquote className="mt-4 rounded-xl border border-[color:var(--color-border)] bg-black/20 px-4 py-3 text-sm font-semibold leading-7 txt-strong">
           “{focus.morningMission}”
         </blockquote>
       )}
 
       {suggested && (
-        <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/45">
+        <div className="mt-4 rounded-xl border border-[color:var(--color-border)] fill-2 px-4 py-3">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] txt-muted">
             {focus.linkedStepId
               ? locale === 'he'
                 ? 'הצעד המחובר'
@@ -75,9 +75,9 @@ export function DailyFocusCard({focus, domain, onCreateMissionStep, creating = f
                 ? 'הצעה לצעד קטן'
                 : 'Suggested small step'}
           </p>
-          <p className="mt-2 text-base font-bold leading-7 text-white">{suggested.title}</p>
+          <p className="mt-2 text-base font-bold leading-7 txt-strong">{suggested.title}</p>
           {suggested.description && (
-            <p className="mt-1 text-sm leading-6 text-white/58">{suggested.description}</p>
+            <p className="mt-1 text-sm leading-6 txt-soft">{suggested.description}</p>
           )}
         </div>
       )}

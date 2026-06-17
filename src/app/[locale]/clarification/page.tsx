@@ -3,7 +3,7 @@ import {FormulationSessionWizard} from '@/components/formulation/formulation-ses
 
 export default function ClarificationPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-white/50">...</div>}>
+    <Suspense fallback={<div className="p-8 txt-muted">...</div>}>
       <FormulationSessionWizard />
     </Suspense>
   );

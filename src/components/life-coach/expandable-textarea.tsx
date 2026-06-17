@@ -45,7 +45,7 @@ export function ExpandableTextarea({label, value, onChange, placeholder, context
       <div className="flex items-center gap-3">
         <button
           type="button"
-          className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/4 px-3 py-1.5 text-xs font-semibold text-white/60 transition hover:border-white/20 hover:text-white disabled:opacity-40"
+          className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] fill-1 px-3 py-1.5 text-xs font-semibold txt-soft transition hover:border-[color:var(--color-border-strong)] hover:txt-strong disabled:opacity-40"
           disabled={expanding || !value.trim()}
           aria-busy={expanding}
           onClick={handleExpand}

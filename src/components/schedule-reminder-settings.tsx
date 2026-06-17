@@ -37,7 +37,7 @@ export function ScheduleReminderSettings({compact = false}: {compact?: boolean})
   }
 
   const wrapperClass = compact
-    ? 'mt-8 rounded-[20px] border border-white/10 bg-white/3 p-5'
+    ? 'mt-8 rounded-[20px] border border-[color:var(--color-border)] fill-1 p-5'
     : '';
 
   return (
@@ -48,7 +48,7 @@ export function ScheduleReminderSettings({compact = false}: {compact?: boolean})
           <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{t('help')}</p>
         </>
       )}
-      {compact && <p className="field-label mb-0 text-white/52">{t('title')}</p>}
+      {compact && <p className="field-label mb-0 txt-muted">{t('title')}</p>}
 
       <div className="mt-4 space-y-4">
         <label className="flex items-start gap-3">
@@ -59,8 +59,8 @@ export function ScheduleReminderSettings({compact = false}: {compact?: boolean})
             onChange={(e) => setMorningEnabled(e.target.checked)}
           />
           <span>
-            <span className="block text-sm font-semibold text-white">{t('morningLabel')}</span>
-            <span className="mt-1 block text-xs text-white/45">{t('morningTime', {time: prefs.morningTime})}</span>
+            <span className="block text-sm font-semibold txt-strong">{t('morningLabel')}</span>
+            <span className="mt-1 block text-xs txt-muted">{t('morningTime', {time: prefs.morningTime})}</span>
           </span>
         </label>
 
@@ -72,8 +72,8 @@ export function ScheduleReminderSettings({compact = false}: {compact?: boolean})
             onChange={(e) => setEveningEnabled(e.target.checked)}
           />
           <span>
-            <span className="block text-sm font-semibold text-white">{t('eveningLabel')}</span>
-            <span className="mt-1 block text-xs text-white/45">{t('eveningTime', {time: prefs.eveningTime})}</span>
+            <span className="block text-sm font-semibold txt-strong">{t('eveningLabel')}</span>
+            <span className="mt-1 block text-xs txt-muted">{t('eveningTime', {time: prefs.eveningTime})}</span>
           </span>
         </label>
       </div>
@@ -87,7 +87,7 @@ export function ScheduleReminderSettings({compact = false}: {compact?: boolean})
       <div aria-live="polite">
         {status && <p className="mt-3 text-sm font-semibold text-[var(--blue)]">{status}</p>}
       </div>
-      <p className={`text-xs leading-6 text-white/35 ${compact ? 'mt-4' : 'mt-4'}`}>{t('note')}</p>
+      <p className={`text-xs leading-6 txt-faint ${compact ? 'mt-4' : 'mt-4'}`}>{t('note')}</p>
     </div>
   );
 }

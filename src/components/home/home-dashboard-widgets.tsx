@@ -41,18 +41,18 @@ export function HomeBadgesPanel({
   if (visible.length === 0) return null;
 
   return (
-    <div className="rounded-[20px] border border-white/8 bg-white/3 px-5 py-4">
+    <div className="rounded-[20px] border border-[color:var(--color-border)] fill-1 px-5 py-4">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-white/35">
+          <p className="text-xs font-bold uppercase tracking-widest txt-faint">
             {t('home.badgesTitle')}
           </p>
-          <p className="mt-1 text-sm font-semibold text-white/60">
+          <p className="mt-1 text-sm font-semibold txt-soft">
             {t('home.badgesSubtitle', {done: unlocked.length, total: badges.length})}
           </p>
         </div>
         {preview && unlocked.length > 0 && (
-          <span className="rounded-full border border-white/10 px-3 py-1 text-[11px] font-bold text-white/35">
+          <span className="rounded-full border border-[color:var(--color-border)] px-3 py-1 text-[11px] font-bold txt-faint">
             {t('home.nextBadge')}
           </span>
         )}
@@ -84,14 +84,14 @@ function HomeBadgeChip({
         : badge.tone === 'amber'
           ? 'border-amber-400/25 bg-amber-500/8 text-amber-300'
           : 'border-[var(--blue)]/25 bg-[var(--blue)]/8 text-blue-200'
-      : 'border-white/8 bg-white/[0.025] text-white/35';
+      : 'border-[color:var(--color-border)] fill-1 txt-faint';
 
   return (
     <div className={`min-w-[150px] rounded-2xl border px-4 py-3 ${toneClass}`}>
       <p className="text-sm font-black">{t(`home.badges.${badge.id}.title`)}</p>
       <p className="mt-1 text-xs leading-5 opacity-75">{t(`home.badges.${badge.id}.body`)}</p>
       {!badge.unlocked && (
-        <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-white/30">
+        <p className="mt-2 text-[10px] font-bold uppercase tracking-widest txt-faint">
           {t('home.lockedBadge')}
         </p>
       )}
@@ -131,7 +131,7 @@ export function HomeWeeklyChallenge({
     }`}>
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-xs font-bold uppercase tracking-widest text-white/35">
+          <p className="text-xs font-bold uppercase tracking-widest txt-faint">
             {t('home.weeklyChallengeEyebrow')}
           </p>
           {accountability?.home_weekly_commitment && (
@@ -139,14 +139,14 @@ export function HomeWeeklyChallenge({
               {accountability.home_weekly_commitment}
             </p>
           )}
-          <p className="mt-1 text-base font-black text-white">
+          <p className="mt-1 text-base font-black txt-strong">
             {complete
               ? t('home.weeklyChallengeComplete')
               : challenge
                 ? challenge.title
                 : t('home.weeklyChallengeTitle', {target})}
           </p>
-          <p className="mt-1 text-sm leading-6 text-white/50">
+          <p className="mt-1 text-sm leading-6 txt-muted">
             {challenge
               ? challenge.daily_minimum
               : total > 0
@@ -154,7 +154,7 @@ export function HomeWeeklyChallenge({
                 : t('home.weeklyChallengeEmpty')}
           </p>
           {challenge && !complete && (
-            <p className="mt-2 text-xs leading-5 text-white/40">{challenge.success_definition}</p>
+            <p className="mt-2 text-xs leading-5 txt-muted">{challenge.success_definition}</p>
           )}
           {weeklyMinutes > 0 && (
             <p className="mt-2 text-xs font-semibold text-[var(--blue)]/85">
@@ -162,16 +162,16 @@ export function HomeWeeklyChallenge({
             </p>
           )}
         </div>
-        <div className="shrink-0 rounded-2xl border border-white/10 bg-white/4 px-4 py-3 text-center">
+        <div className="shrink-0 rounded-2xl border border-[color:var(--color-border)] fill-2 px-4 py-3 text-center">
           <p className={`text-xl font-black tabular-nums ${complete ? 'text-emerald-300' : 'text-[var(--blue)]'}`}>
             {done}/{target}
           </p>
-          <p className="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-white/35">
+          <p className="mt-0.5 text-[10px] font-bold uppercase tracking-widest txt-faint">
             {t('home.weeklyChallengeProgress')}
           </p>
         </div>
       </div>
-      <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+      <div className="mt-4 h-2 overflow-hidden rounded-full fill-3">
         <div
           className={`h-full rounded-full transition-all duration-700 ${complete ? 'bg-emerald-400' : 'bg-[var(--blue)]'}`}
           style={{width: `${progress}%`}}
@@ -231,12 +231,12 @@ export function HomeSoftProgress({
       <p className="text-xs font-bold uppercase tracking-widest text-emerald-300/80">
         {t('home.softProgress.eyebrow')}
       </p>
-      <p className="mt-1 text-base font-black text-white">{t('home.softProgress.title')}</p>
+      <p className="mt-1 text-base font-black txt-strong">{t('home.softProgress.title')}</p>
       <div className="mt-4 grid gap-2 sm:grid-cols-3">
         {items.map((item) => (
-          <div key={item.label} className="rounded-2xl border border-white/8 bg-white/[0.025] px-4 py-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/35">{item.label}</p>
-            <p className="mt-1 text-sm font-semibold leading-6 text-white/75">{item.value}</p>
+          <div key={item.label} className="rounded-2xl border border-[color:var(--color-border)] fill-1 px-4 py-3">
+            <p className="text-[10px] font-bold uppercase tracking-widest txt-faint">{item.label}</p>
+            <p className="mt-1 text-sm font-semibold leading-6 txt-soft">{item.value}</p>
           </div>
         ))}
       </div>
@@ -280,13 +280,13 @@ export function HomeDomainAttention({
   ].slice(0, 4);
 
   return (
-    <section className="rounded-[20px] border border-white/8 bg-white/3 px-5 py-4" aria-label={t('home.domainAttention.eyebrow')}>
+    <section className="rounded-[20px] border border-[color:var(--color-border)] fill-1 px-5 py-4" aria-label={t('home.domainAttention.eyebrow')}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-white/35">
+          <p className="text-xs font-bold uppercase tracking-widest txt-faint">
             {t('home.domainAttention.eyebrow')}
           </p>
-          <p className="mt-1 text-base font-black text-white">
+          <p className="mt-1 text-base font-black txt-strong">
             {strongest
               ? t('home.domainAttention.titleWithDomain', {
                   domain: t(`lifeCoach.domains.${strongest[0]}.label`),
@@ -309,16 +309,16 @@ export function HomeDomainAttention({
             <Link
               key={domain}
               href={`/life-coach/${domain}`}
-              className={`focus-ring rounded-2xl border px-4 py-3 transition hover:bg-white/5 ${
+              className={`focus-ring rounded-2xl border px-4 py-3 transition hover:fill-2 ${
                 isNeglected
                   ? 'border-amber-400/25 bg-amber-500/7'
-                  : 'border-white/8 bg-white/[0.025]'
+                  : 'border-[color:var(--color-border)] fill-1'
               }`}
             >
-              <p className="text-sm font-black text-white">
+              <p className="text-sm font-black txt-strong">
                 {DOMAIN_ICONS[domain]} {t(`lifeCoach.domains.${domain}.short`)}
               </p>
-              <p className="mt-1 text-xs leading-5 text-white/50">
+              <p className="mt-1 text-xs leading-5 txt-muted">
                 {count > 0
                   ? t('home.domainAttention.stepsDone', {count})
                   : t('home.domainAttention.noSteps')}
@@ -329,7 +329,7 @@ export function HomeDomainAttention({
       </div>
 
       {neglected ? (
-        <p className="mt-3 text-sm leading-6 text-white/50">
+        <p className="mt-3 text-sm leading-6 txt-muted">
           {t('home.domainAttention.neglectedHint', {
             domain: t(`lifeCoach.domains.${neglected}.label`),
           })}

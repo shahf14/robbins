@@ -78,24 +78,24 @@ export function Step2DomainScores({
     <div className="flex flex-col gap-8">
       <header>
         <p className="eyebrow text-[var(--blue)]">{t('onboarding.step2Eyebrow')}</p>
-        <h1 className="text-[clamp(1.75rem,4.5vw,2.25rem)] font-bold leading-tight text-white">
+        <h1 className="text-[clamp(1.75rem,4.5vw,2.25rem)] font-bold leading-tight txt-strong">
           {t('onboarding.step2Title')}
         </h1>
       </header>
 
-      <div className="rounded-[20px] border border-white/10 bg-white/3 p-4">
+      <div className="rounded-[20px] border border-[color:var(--color-border)] fill-1 p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/35">
+            <p className="text-[10px] font-bold uppercase tracking-widest txt-faint">
               {t('onboarding.step2InnerProgress', {rated: ratedCount, total: LIFE_DOMAINS.length})}
             </p>
-            <p className="mt-1 text-sm font-semibold leading-6 text-white/62">
+            <p className="mt-1 text-sm font-semibold leading-6 txt-soft">
               {t('onboarding.step2GutHint')}
             </p>
           </div>
           <button
             type="button"
-            className="focus-ring rounded-full border border-white/10 px-4 py-2 text-xs font-bold text-white/55 transition hover:border-white/18 hover:text-white/75"
+            className="focus-ring rounded-full border border-[color:var(--color-border)] px-4 py-2 text-xs font-bold txt-soft transition hover:border-[color:var(--color-border-strong)] hover:txt-soft"
             onClick={() => setSelectionFirst((value) => !value)}
           >
             {selectionFirst ? t('onboarding.step2ShowRatings') : t('onboarding.step2SkipRatings')}
@@ -104,21 +104,21 @@ export function Step2DomainScores({
 
         <div className="mt-4 grid gap-4">
           {!selectionFirst && (
-            <div className="rounded-[22px] border border-white/10 bg-white/3 p-5">
+            <div className="rounded-[22px] border border-[color:var(--color-border)] fill-1 p-5">
               <div className="mb-4 flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-white/35">
+                  <p className="text-xs font-bold uppercase tracking-widest txt-faint">
                     {t('onboarding.step2CurrentDomain')}
                   </p>
-                  <p className="mt-1 text-xl font-black text-white">
+                  <p className="mt-1 text-xl font-black txt-strong">
                     {DOMAIN_ICONS[activeDomain]} {t(`lifeCoach.domains.${activeDomain}.label`)}
                   </p>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-white/55">
+                  <p className="mt-2 max-w-2xl text-sm leading-6 txt-soft">
                     {t(`lifeCoach.domains.${activeDomain}.wheelIntro`)}
                   </p>
                   <button
                     type="button"
-                    className="focus-ring mt-3 text-sm font-semibold text-[var(--blue)] underline decoration-[var(--blue)]/35 underline-offset-4 transition hover:text-white hover:decoration-white/40"
+                    className="focus-ring mt-3 text-sm font-semibold text-[var(--blue)] underline decoration-[var(--blue)]/35 underline-offset-4 transition hover:txt-strong hover:decoration-white/40"
                     onClick={() => setDeepDiveDomain(activeDomain)}
                   >
                     {t('onboarding.domainDeepDive.button')}
@@ -128,7 +128,7 @@ export function Step2DomainScores({
                   <p className="text-lg font-black tabular-nums" style={{color: activeColor}}>
                     {activeRating.score}/10
                   </p>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                  <p className="text-[10px] font-bold uppercase tracking-widest txt-muted">
                     {t(activeRating.bandLabelKey)}
                   </p>
                 </div>
@@ -152,12 +152,12 @@ export function Step2DomainScores({
                     {t('onboarding.step2MapEyebrow')}
                   </p>
                 </div>
-                <p className="mt-3 text-2xl font-black leading-tight text-white sm:text-3xl">
+                <p className="mt-3 text-2xl font-black leading-tight txt-strong sm:text-3xl">
                   {lowestDomain
                     ? t('onboarding.step2MapInsightTitle', {domain: lowestDomainLabel})
                     : t('onboarding.step2MapTitle')}
                 </p>
-                <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-white/68">
+                <p className="mt-2 max-w-2xl text-base font-semibold leading-7 txt-soft">
                   {lowestDomain
                     ? t('onboarding.step2MapInsightBody', {
                         low: lowestDomainLabel,
@@ -167,23 +167,23 @@ export function Step2DomainScores({
                 </p>
 
                 <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-[0.9fr_0.9fr_1.25fr]">
-                  <div className="rounded-2xl border border-white/8 bg-black/18 p-4">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">
+                  <div className="rounded-2xl border border-[color:var(--color-border)] bg-black/18 p-4">
+                    <p className="text-[11px] font-bold uppercase tracking-widest txt-muted">
                       {t('onboarding.step2MapStats.average')}
                     </p>
-                    <p className="mt-1 text-xl font-black text-white tabular-nums">{averageScore}/10</p>
+                    <p className="mt-1 text-xl font-black txt-strong tabular-nums">{averageScore}/10</p>
                   </div>
-                  <div className="rounded-2xl border border-white/8 bg-black/18 p-4">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">
+                  <div className="rounded-2xl border border-[color:var(--color-border)] bg-black/18 p-4">
+                    <p className="text-[11px] font-bold uppercase tracking-widest txt-muted">
                       {t('onboarding.step2MapStats.gap')}
                     </p>
-                    <p className="mt-1 text-xl font-black text-white tabular-nums">{scoreGap}</p>
+                    <p className="mt-1 text-xl font-black txt-strong tabular-nums">{scoreGap}</p>
                   </div>
-                  <div className="rounded-2xl border border-white/8 bg-black/18 p-4">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">
+                  <div className="rounded-2xl border border-[color:var(--color-border)] bg-black/18 p-4">
+                    <p className="text-[11px] font-bold uppercase tracking-widest txt-muted">
                       {t('onboarding.step2MapStats.strongest')}
                     </p>
-                    <p className="mt-1 break-words text-lg font-black leading-snug text-white">
+                    <p className="mt-1 break-words text-lg font-black leading-snug txt-strong">
                       {strongestDomain ? (
                         <>
                           <span aria-hidden="true">{DOMAIN_ICONS[strongestDomain]}</span>{' '}
@@ -195,7 +195,7 @@ export function Step2DomainScores({
                 </div>
 
                 {lowestDomain && strongestDomain && scoreGap > 0 && (
-                  <p className="mt-4 rounded-2xl border border-amber-400/22 bg-amber-500/8 px-4 py-3 text-base font-black leading-7 text-white/84">
+                  <p className="mt-4 rounded-2xl border border-amber-400/22 bg-amber-500/8 px-4 py-3 text-base font-black leading-7 txt-strong">
                     {t('onboarding.step2GapInsight', {
                       gap: scoreGap,
                       low: lowestDomainShortLabel,
@@ -204,21 +204,21 @@ export function Step2DomainScores({
                   </p>
                 )}
 
-                <div className="mt-5 rounded-[22px] border border-white/10 bg-black/18 p-4">
+                <div className="mt-5 rounded-[22px] border border-[color:var(--color-border)] bg-black/18 p-4">
                   <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                    <p className="text-sm font-black text-white">
+                    <p className="text-sm font-black txt-strong">
                       {t('onboarding.step2BarTitle')}
                     </p>
-                    <p className="text-xs font-bold text-white/50">
+                    <p className="text-xs font-bold txt-muted">
                       {t('onboarding.step2ScaleHint')}
                     </p>
                   </div>
-                  <div className="mb-5 rounded-2xl border border-white/8 bg-white/[0.025] px-3 py-3">
-                    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 text-[11px] font-black text-white/58">
+                  <div className="mb-5 rounded-2xl border border-[color:var(--color-border)] fill-1 px-3 py-3">
+                    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 text-[11px] font-black txt-soft">
                       <span className="whitespace-nowrap text-red-200/90">
                         1 · {t('onboarding.step2Scale.low')}
                       </span>
-                      <div className="relative h-px bg-white/16">
+                      <div className="relative h-px fill-3">
                         <span className="absolute start-0 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full border border-red-300/50 bg-red-400/80" />
                         <span className="absolute start-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-200/50 bg-amber-300/85" />
                         <span className="absolute end-0 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full border border-emerald-300/50 bg-emerald-400/80" />
@@ -251,21 +251,21 @@ export function Step2DomainScores({
                                 ? 'border-emerald-400/32 bg-emerald-500/8'
                             : isLowest
                               ? 'border-amber-400/24 bg-amber-500/7'
-                              : 'border-white/7 bg-white/[0.025] hover:border-white/14 hover:bg-white/[0.045]'
+                              : 'border-[color:var(--color-border)] fill-1 hover:border-[color:var(--color-border-strong)] hover:fill-1'
                           }`}
                         >
                           <div className="grid gap-3">
                             <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
-                              <span className="flex min-w-0 flex-1 items-center gap-2 text-sm font-black leading-6 text-white/86">
-                                <span className="text-[10px] font-black text-white/22 tabular-nums">{index + 1}</span>
+                              <span className="flex min-w-0 flex-1 items-center gap-2 text-sm font-black leading-6 txt-strong">
+                                <span className="text-[10px] font-black txt-faint tabular-nums">{index + 1}</span>
                                 <span className="shrink-0" aria-hidden="true">{DOMAIN_ICONS[domain]}</span>
                                 <span className="min-w-0 break-words">
                                   {t(`lifeCoach.domains.${domain}.label`)}
                                 </span>
                               </span>
-                              <span className="shrink-0 text-sm font-black leading-6 tabular-nums text-white">
+                              <span className="shrink-0 text-sm font-black leading-6 tabular-nums txt-strong">
                                 {score}/10
-                                <span className="text-white/35"> · </span>
+                                <span className="txt-faint"> · </span>
                                 <span style={{color}}>{t(ratingKeys.bandLabelKey)}</span>
                               </span>
                               {isLowest && (
@@ -274,7 +274,7 @@ export function Step2DomainScores({
                                 </span>
                               )}
                             </div>
-                            <span className="h-2.5 w-full overflow-hidden rounded-full bg-white/8">
+                            <span className="h-2.5 w-full overflow-hidden rounded-full fill-2">
                               <span
                                 className="block h-full rounded-full transition-all duration-300"
                                 style={{width, backgroundColor: color}}
@@ -288,12 +288,12 @@ export function Step2DomainScores({
                 </div>
               </div>
 
-              <div className="rounded-[24px] border border-white/10 bg-black/18 p-4">
+              <div className="rounded-[24px] border border-[color:var(--color-border)] bg-black/18 p-4">
                 <div className="mb-2 flex items-center justify-between gap-3">
-                  <p className="text-xs font-black uppercase tracking-widest text-white/45">
+                  <p className="text-xs font-black uppercase tracking-widest txt-muted">
                     {t('onboarding.step2RadarTitle')}
                   </p>
-                  <span className="text-[11px] font-bold text-white/40">
+                  <span className="text-[11px] font-bold txt-muted">
                     {t('onboarding.step2RadarHint')}
                   </span>
                 </div>
@@ -305,17 +305,17 @@ export function Step2DomainScores({
                   onScoreChange={(domain, val) => setScore(domain, val)}
                 />
                 <div className="mt-3 grid gap-2">
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-2">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-white/38">
+                  <div className="rounded-2xl border border-[color:var(--color-border)] fill-1 px-3 py-2">
+                    <p className="text-[10px] font-bold uppercase tracking-widest txt-faint">
                       {t('onboarding.step2RadarActive')}
                     </p>
-                    <p className="mt-1 truncate text-sm font-black text-white/86">
+                    <p className="mt-1 truncate text-sm font-black txt-strong">
                       {DOMAIN_ICONS[activeDomain]} {t(`lifeCoach.domains.${activeDomain}.label`)}
                     </p>
                   </div>
                 </div>
                 {lowestDomain && (
-                  <p className="mt-3 rounded-2xl border border-[var(--blue)]/18 bg-[var(--blue)]/[0.07] px-4 py-3 text-center text-base font-bold leading-7 text-white/82">
+                  <p className="mt-3 rounded-2xl border border-[var(--blue)]/18 bg-[var(--blue)]/[0.07] px-4 py-3 text-center text-base font-bold leading-7 txt-strong">
                     {t('onboarding.step2MapConclusion', {domain: lowestDomainLabel})}
                   </p>
                 )}
@@ -333,7 +333,7 @@ export function Step2DomainScores({
               <p className="text-xs font-bold uppercase tracking-widest text-amber-300">
                 {t('onboarding.step2LeverageTitle')}
               </p>
-              <p className="mt-2 text-sm font-semibold leading-6 text-white/72">
+              <p className="mt-2 text-sm font-semibold leading-6 txt-soft">
                 {t('onboarding.step2LeverageBody', {
                   domain: t(`lifeCoach.domains.${lowestDomain}.label`),
                 })}
@@ -349,12 +349,12 @@ export function Step2DomainScores({
           {t('onboarding.step2DecisionEyebrow')}
         </p>
         <div className="mt-2 flex items-center gap-2">
-          <p className="text-xl font-black leading-snug text-white">{t('onboarding.step2SelectTitle')}</p>
+          <p className="text-xl font-black leading-snug txt-strong">{t('onboarding.step2SelectTitle')}</p>
           <span className="group relative inline-flex">
             <button
               type="button"
               aria-label={t('onboarding.step2WhyOneTitle')}
-              className="focus-ring inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/12 bg-white/7 text-xs font-black text-white/62 transition hover:border-white/22 hover:text-white"
+              className="focus-ring inline-flex h-6 w-6 items-center justify-center rounded-full border border-[color:var(--color-border)] fill-2 text-xs font-black txt-soft transition hover:border-[color:var(--color-border-strong)] hover:txt-strong"
             >
               ?
             </button>
@@ -365,7 +365,7 @@ export function Step2DomainScores({
           </span>
         </div>
         {lowestDomain && step2Hint && (
-          <p className="mt-2 text-sm leading-6 text-white/55">
+          <p className="mt-2 text-sm leading-6 txt-soft">
             {t(step2Hint.key, {
               ...step2Hint.values,
               domain: t(step2Hint.values.domain),
@@ -382,7 +382,7 @@ export function Step2DomainScores({
               className={`focus-ring flex flex-col items-center gap-1.5 rounded-2xl border py-4 text-sm font-medium transition ${
                 s.selectedDomain === d
                   ? 'border-[var(--blue)] bg-[var(--blue)] text-white shadow-[0_12px_30px_rgba(26,109,255,0.2)]'
-                  : 'border-white/8 bg-white/6 text-white/70 hover:border-white/16 hover:bg-white/10'
+                  : 'border-[color:var(--color-border)] fill-2 txt-soft hover:border-[color:var(--color-border-strong)] hover:fill-3'
               }`}
             >
               <span className="text-xl leading-none" aria-hidden="true">{DOMAIN_ICONS[d]}</span>
@@ -395,10 +395,10 @@ export function Step2DomainScores({
             <p className="text-xs font-bold uppercase tracking-widest text-emerald-300">
               {t('onboarding.domainPreview.eyebrow')}
             </p>
-            <p className="mt-2 text-base font-black leading-snug text-white">
+            <p className="mt-2 text-base font-black leading-snug txt-strong">
               {t('onboarding.step2SelectedConfirm', {domain: selectedDomainLabel})}
             </p>
-            <p className="mt-2 text-sm font-semibold leading-6 text-white/74">
+            <p className="mt-2 text-sm font-semibold leading-6 txt-soft">
               {t('onboarding.domainPreview.body', {
                 domain: selectedDomainLabel,
                 mins: s.availableTime,
@@ -430,7 +430,7 @@ export function Step2DomainScores({
               : t('onboarding.next') + ' →'}
           </button>
           {!s.selectedDomain && (
-            <p className="text-center text-xs font-semibold text-white/38">
+            <p className="text-center text-xs font-semibold txt-faint">
               {t('onboarding.step2ChooseToContinue')}
             </p>
           )}

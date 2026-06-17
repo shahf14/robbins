@@ -80,8 +80,8 @@ export function DomainGoalTabContent({
         <p className="text-xs font-bold uppercase tracking-widest text-[var(--blue)]">
           {t('lifeCoach.assessmentGoalEyebrow')}
         </p>
-        <h2 className="mt-2 text-lg font-bold text-white">{t('lifeCoach.assessmentGoalTitle')}</h2>
-        <p className="mt-1 text-xs leading-6 text-white/45">{t('lifeCoach.assessmentGoalHorizonHint')}</p>
+        <h2 className="mt-2 text-lg font-bold txt-strong">{t('lifeCoach.assessmentGoalTitle')}</h2>
+        <p className="mt-1 text-xs leading-6 txt-muted">{t('lifeCoach.assessmentGoalHorizonHint')}</p>
         <div className="mt-5 grid gap-4">
           {domainGoals.map((goal) => (
             <GoalEditCard
@@ -96,14 +96,14 @@ export function DomainGoalTabContent({
       {!showNewGoalWizard ? (
         <button
           type="button"
-          className="focus-ring self-start text-sm font-semibold text-white/45 underline decoration-white/15 underline-offset-4 hover:text-white/70"
+          className="focus-ring self-start text-sm font-semibold txt-muted underline decoration-[color:var(--color-border)] underline-offset-4 hover:txt-soft"
           onClick={() => setShowNewGoalWizard(true)}
         >
           {t('lifeCoach.domainTabs.addAnotherGoal')}
         </button>
       ) : (
         <div className="grid gap-3">
-          <p className="text-sm text-white/50">{t('lifeCoach.domainTabs.newGoalHint')}</p>
+          <p className="text-sm txt-muted">{t('lifeCoach.domainTabs.newGoalHint')}</p>
           {goalWizard}
         </div>
       )}
