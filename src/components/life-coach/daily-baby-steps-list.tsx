@@ -4,6 +4,12 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 import type {DailyBabyStep, Goal} from '@/lib/life-coach/types';
+import {
+  curatedIdFromStepReasoning,
+  isCuratedStepReasoning,
+  type CuratedDailyTaskOption,
+} from '@/lib/life-coach/curated-daily-tasks';
+import {resolveCuratedErrorMessage} from '@/lib/life-coach/curated-api-errors';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
 import {isPlanBActive} from '@/lib/life-coach/plan-b';
 import {buildSkipRecoveryStep, buildSimplifiedStep} from '@/lib/life-coach/simplify-step';
@@ -94,11 +100,17 @@ type Props = {
   weekSteps?: DailyBabyStep[];
   identityTitle?: IdentityTitle | null;
   goals?: Goal[];
+  /** When true, render nothing instead of the empty-state panel (e.g. curated picker shown above). */
+  hideEmptyState?: boolean;
 };
 
 
 const localDateStr = dateToYMD;
 const QUICK_TIME_RATIO = 0.6;
+
+function curatedIdFromReasoning(reasoning?: string | null): string | null {
+  return curatedIdFromStepReasoning(reasoning);
+}
 
 function getTomorrow(): string {
   const d = new Date();
@@ -118,6 +130,7 @@ export function DailyBabyStepsList({
   weekSteps = [],
   identityTitle = null,
   goals = [],
+  hideEmptyState = false,
 }: Props) {
   const t = useTranslations();
   const tCommitment = useTranslations('behaviorScience.commitmentToday');
@@ -141,6 +154,10 @@ export function DailyBabyStepsList({
   const [skipRecoveryHighlightId, setSkipRecoveryHighlightId] = useState<string | null>(null);
   const skipRecoveryBlockersRef = useRef<Record<string, ReflectionBlockerReason | null>>({});
   const [frictionShrinkingId, setFrictionShrinkingId] = useState<string | null>(null);
+  const [replacementStepId, setReplacementStepId] = useState<string | null>(null);
+  const [replacementOptions, setReplacementOptions] = useState<CuratedDailyTaskOption[]>([]);
+  const [replacementLoadingId, setReplacementLoadingId] = useState<string | null>(null);
+  const [replacingId, setReplacingId] = useState<string | null>(null);
   const [identityFlash, setIdentityFlash] = useState<string | null>(null);
   const [comebackMessaging, setComebackMessaging] = useState<ComebackMessaging | null>(null);
   const [accountability, setAccountability] = useState<AccountabilityContext | null>(null);
@@ -294,6 +311,7 @@ export function DailyBabyStepsList({
   }, [prefs.behavioral_analytics_enabled, steps]);
 
   if (steps.length === 0) {
+    if (hideEmptyState) return null;
     return (
       <DailyStepsEmptyState
         hasGoals={hasGoals}
@@ -365,6 +383,54 @@ export function DailyBabyStepsList({
       toast.error(t('feedback.failed'));
     } finally {
       setMicroCreatingId(null);
+    }
+  }
+
+  async function openReplacementOptions(step: DailyBabyStep) {
+    setReplacementStepId(step.id);
+    setReplacementOptions([]);
+    setReplacementLoadingId(step.id);
+    try {
+      const currentCuratedId = curatedIdFromReasoning(step.reasoning);
+      const selectedCuratedIds = new Set(
+        steps
+          .filter((item) => item.id !== step.id)
+          .map((item) => curatedIdFromReasoning(item.reasoning))
+          .filter((taskId): taskId is string => Boolean(taskId))
+      );
+      const response = await lifeCoachApi.getCuratedDailyTasks({
+        domain: step.domain,
+        date: step.scheduled_date,
+        locale,
+      });
+      setReplacementOptions(
+        response.tasks
+          .filter((task) => task.id !== currentCuratedId && !selectedCuratedIds.has(task.id))
+          .slice(0, 5)
+      );
+    } catch (error) {
+      toast.error(resolveCuratedErrorMessage(error, t));
+      setReplacementStepId(null);
+    } finally {
+      setReplacementLoadingId(null);
+    }
+  }
+
+  async function replaceCuratedStep(step: DailyBabyStep, task: CuratedDailyTaskOption) {
+    setReplacingId(task.id);
+    try {
+      await lifeCoachApi.replaceCuratedDailyStep(step.id, {
+        replacement_task_id: task.id,
+        locale,
+      });
+      setReplacementStepId(null);
+      setReplacementOptions([]);
+      await onRefresh?.();
+      toast.success(t('lifeCoach.curatedReplace.saved'));
+    } catch (error) {
+      toast.error(resolveCuratedErrorMessage(error, t));
+    } finally {
+      setReplacingId(null);
     }
   }
 
@@ -476,6 +542,8 @@ export function DailyBabyStepsList({
           const isFinalBoss = finalBoss?.id === step.id;
           const questType = classifyQuestType(step);
           const habitAnchor = parseHabitTriggerFromTitle(step.title, locale);
+          const curatedTaskId = curatedIdFromReasoning(step.reasoning);
+          const canReplaceCurated = step.status === 'pending' && !!curatedTaskId;
           const timeLabel = beforeWake && index === 0
             ? t('schedule.stepSuggestedFromWake', {wakeTime: prefs.wake_time})
             : suggestedTime
@@ -570,7 +638,9 @@ export function DailyBabyStepsList({
                 )}
               </div>
 
-              <StepExplainability reasoning={step.reasoning} className="mt-3" />
+              {!isCuratedStepReasoning(step.reasoning) && (
+                <StepExplainability reasoning={step.reasoning} className="mt-3" />
+              )}
 
               <p className="mt-3 text-sm font-semibold txt-soft">
                 {step.estimated_minutes} {t('lifeCoach.minutes')} · {t(`lifeCoach.difficulty.${step.difficulty}`)}
@@ -585,6 +655,74 @@ export function DailyBabyStepsList({
                   sleepTime={prefs.sleep_time}
                   preferredActionWindow={prefs.preferred_action_window}
                 />
+              )}
+
+              {canReplaceCurated && (
+                <div className="mt-4 rounded-xl border border-[color:var(--color-border)] fill-1 p-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-xs leading-5 txt-muted">
+                      {t('lifeCoach.curatedReplace.hint')}
+                    </p>
+                    <BusyButton
+                      type="button"
+                      className="focus-ring btn-ghost text-xs"
+                      busy={replacementLoadingId === step.id}
+                      busyLabel={t('lifeCoach.curatedReplace.loading')}
+                      onClick={() => {
+                        if (replacementStepId === step.id) {
+                          setReplacementStepId(null);
+                          setReplacementOptions([]);
+                        } else {
+                          void openReplacementOptions(step);
+                        }
+                      }}
+                    >
+                      {replacementStepId === step.id
+                        ? t('lifeCoach.curatedReplace.close')
+                        : t('lifeCoach.curatedReplace.open')}
+                    </BusyButton>
+                  </div>
+                  {replacementStepId === step.id && (
+                    <div className="mt-3 grid gap-2">
+                      {replacementLoadingId === step.id ? (
+                        <p className="text-xs leading-5 txt-muted">
+                          {t('lifeCoach.curatedReplace.loading')}
+                        </p>
+                      ) : replacementOptions.length === 0 ? (
+                        <p className="text-xs leading-5 txt-muted">
+                          {t('lifeCoach.curatedReplace.empty')}
+                        </p>
+                      ) : (
+                        replacementOptions.map((task) => (
+                          <div
+                            key={task.id}
+                            className="rounded-xl border border-[color:var(--color-border)] bg-[rgba(255,255,255,0.02)] p-3"
+                          >
+                            <p className="text-sm font-black leading-5 txt-strong">{task.title}</p>
+                            <p className="mt-1 text-xs leading-5 txt-muted">{task.description}</p>
+                            <div className="mt-3 flex flex-wrap items-center gap-2">
+                              <span className="rounded-full border border-[color:var(--color-border)] px-2.5 py-1 text-xs font-semibold txt-muted">
+                                {task.durationMinutes} {t('lifeCoach.minutes')}
+                              </span>
+                              <span className="rounded-full border border-[color:var(--color-border)] px-2.5 py-1 text-xs font-semibold txt-muted">
+                                {t(`lifeCoach.difficulty.${task.difficulty}`)}
+                              </span>
+                              <BusyButton
+                                type="button"
+                                className="focus-ring btn-small ms-auto text-xs"
+                                busy={replacingId === task.id}
+                                busyLabel={t('lifeCoach.curatedReplace.saving')}
+                                onClick={() => void replaceCuratedStep(step, task)}
+                              >
+                                {t('lifeCoach.curatedReplace.choose')}
+                              </BusyButton>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
               )}
 
               {frictionDiagnosis && (

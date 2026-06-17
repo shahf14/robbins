@@ -53,7 +53,20 @@ export async function createDailyBabyStep(
     | 'scheduled_date'
     | 'status'
     | 'generated_by_ai'
-  >
+  > &
+    Partial<
+      Pick<
+        DailyBabyStep,
+        | 'reasoning'
+        | 'expected_resistance'
+        | 'pain_addressed'
+        | 'success_signal'
+        | 'fallback_title'
+        | 'fallback_description'
+        | 'fallback_estimated_minutes'
+        | 'validation_fallback_applied'
+      >
+    >
 ): Promise<DailyBabyStep> {
   const now = new Date().toISOString();
   const completedAt = input.status === 'completed' ? now : null;
@@ -62,8 +75,11 @@ export async function createDailyBabyStep(
   dbRun(
     `INSERT INTO daily_steps
       (id, user_id, goal_id, domain, title, description, estimated_minutes,
-       difficulty, scheduled_date, status, generated_by_ai, completed_at, created_at, updated_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+       difficulty, scheduled_date, status, generated_by_ai, completed_at,
+       fallback_title, fallback_description, fallback_estimated_minutes,
+       reasoning, expected_resistance, pain_addressed, success_signal,
+       validation_fallback_applied, created_at, updated_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
       id,
       userId,
@@ -77,6 +93,14 @@ export async function createDailyBabyStep(
       input.status,
       input.generated_by_ai ? 1 : 0,
       completedAt,
+      input.fallback_title ?? null,
+      input.fallback_description ?? null,
+      input.fallback_estimated_minutes ?? null,
+      clampStepReasoning(input.reasoning),
+      input.expected_resistance ?? null,
+      input.pain_addressed ?? null,
+      input.success_signal ?? null,
+      input.validation_fallback_applied ? 1 : 0,
       now,
       now,
     ]
@@ -267,6 +291,51 @@ export async function updateDailyBabyStepContent(
       input.description ?? '',
       input.estimated_minutes,
       input.difficulty,
+      now,
+      id,
+      ...(userId ? [userId] : []),
+    ]
+  );
+
+  const row = dbGet<Record<string, unknown>>(
+    userId ? `SELECT * FROM daily_steps WHERE id = ? AND user_id = ?` : `SELECT * FROM daily_steps WHERE id = ?`,
+    userId ? [id, userId] : [id]
+  );
+  if (!row) throw new Error(`Step ${id} not found`);
+  return rowToStep(row);
+}
+
+export async function replaceDailyBabyStepWithCuratedContent(
+  id: string,
+  input: Pick<
+    DailyBabyStep,
+    'title' | 'description' | 'estimated_minutes' | 'difficulty'
+  > &
+    Pick<DailyBabyStep, 'reasoning' | 'pain_addressed' | 'success_signal'>,
+  userId?: string
+): Promise<DailyBabyStep> {
+  const now = new Date().toISOString();
+
+  dbRun(
+    `UPDATE daily_steps
+     SET title = ?, description = ?, estimated_minutes = ?, difficulty = ?,
+         reasoning = ?, pain_addressed = ?, success_signal = ?,
+         expected_resistance = NULL,
+         fallback_title = NULL,
+         fallback_description = NULL,
+         fallback_estimated_minutes = NULL,
+         validation_fallback_applied = 0,
+         user_edited = 0,
+         updated_at = ?
+     WHERE id = ?${userId ? ' AND user_id = ?' : ''}`,
+    [
+      input.title,
+      input.description ?? '',
+      input.estimated_minutes,
+      input.difficulty,
+      clampStepReasoning(input.reasoning),
+      input.pain_addressed ?? null,
+      input.success_signal ?? null,
       now,
       id,
       ...(userId ? [userId] : []),

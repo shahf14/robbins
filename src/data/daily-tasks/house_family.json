@@ -1,0 +1,72 @@
+[
+  {
+    "id": "house_family_clear_corner",
+    "world": "house_family",
+    "title": {"he": "לסדר פינה אחת בבית", "en": "Tidy one corner at home"},
+    "description": {"he": "בחר פינה קטנה וסדר רק אותה. לא את כל הבית.", "en": "Choose one small corner and tidy only that. Not the whole home."},
+    "difficulty": 1,
+    "durationMinutes": 7,
+    "type": "home_order",
+    "energy": "medium",
+    "emotionalDepth": 1,
+    "tags": ["home", "order"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "house_family_family_touchpoint",
+    "world": "house_family",
+    "title": {"he": "ליצור רגע קצר עם בן משפחה", "en": "Create a short family touchpoint"},
+    "description": {"he": "שאל בן משפחה שאלה אחת או שב איתו לשתי דקות בלי מסך.", "en": "Ask a family member one question or sit together for two screen-free minutes."},
+    "difficulty": 1,
+    "durationMinutes": 3,
+    "type": "family_connection",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["family", "connection"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "house_family_prepare_tomorrow",
+    "world": "house_family",
+    "title": {"he": "להכין דבר אחד למחר", "en": "Prepare one thing for tomorrow"},
+    "description": {"he": "בחר תיק, בגדים, אוכל או מסמך אחד שיהפוך את מחר לקל יותר.", "en": "Choose one bag, outfit, meal item, or document that will make tomorrow easier."},
+    "difficulty": 1,
+    "durationMinutes": 5,
+    "type": "preparation",
+    "energy": "medium",
+    "emotionalDepth": 1,
+    "tags": ["tomorrow", "home"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "house_family_remove_friction",
+    "world": "house_family",
+    "title": {"he": "להוריד חיכוך אחד בבית", "en": "Remove one home friction"},
+    "description": {"he": "בחר דבר קטן שמעצבן שוב ושוב ותקן אותו או רשום מה צריך כדי לתקן.", "en": "Pick one small recurring annoyance and fix it or write what is needed to fix it."},
+    "difficulty": 2,
+    "durationMinutes": 10,
+    "type": "environment",
+    "energy": "medium",
+    "emotionalDepth": 1,
+    "tags": ["friction", "home"],
+    "repeatable": false,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "house_family_appreciate_home",
+    "world": "house_family",
+    "title": {"he": "להעריך דבר אחד בבית", "en": "Appreciate one thing at home"},
+    "description": {"he": "עצור ליד דבר אחד בבית שמשרת אותך ואמור לעצמך למה הוא חשוב.", "en": "Pause by one thing at home that serves you and name why it matters."},
+    "difficulty": 1,
+    "durationMinutes": 2,
+    "type": "gratitude",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["gratitude", "home"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  }
+]

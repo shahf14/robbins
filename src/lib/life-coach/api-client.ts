@@ -17,12 +17,24 @@ import type {
   ReflectionAnalysis,
   WeeklyReview,
 } from './types';
+import type {AppLocale} from '@/i18n/config';
+import type {CuratedDailyTaskOption} from './curated-daily-tasks';
 import type {DailyFocusContext} from '@/lib/daily-focus-context';
 import {parseGoalCreateResponse} from './schemas';
 import type {formulationSessionPatchSchema} from './schemas';
 import type {z} from 'zod';
 
 type GoalWithMilestones = Goal & {milestones?: Milestone[]};
+
+export class LifeCoachApiError extends Error {
+  readonly details?: unknown;
+
+  constructor(message: string, details?: unknown) {
+    super(message);
+    this.name = 'LifeCoachApiError';
+    this.details = details;
+  }
+}
 
 async function lifeCoachFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, {
@@ -36,15 +48,7 @@ async function lifeCoachFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const payload = (await response.json()) as T & {error?: string; details?: unknown};
 
   if (!response.ok) {
-    const details =
-      payload.details != null
-        ? typeof payload.details === 'string'
-          ? payload.details
-          : JSON.stringify(payload.details)
-        : '';
-    throw new Error(
-      [payload.error || 'Request failed.', details].filter(Boolean).join(' — ')
-    );
+    throw new LifeCoachApiError(payload.error || 'Request failed.', payload.details);
   }
 
   return payload;
@@ -164,6 +168,37 @@ export const lifeCoachApi = {
       body: JSON.stringify(input),
     });
   },
+  getCuratedDailyTasks(input: {
+    domain: LifeDomain;
+    date: string;
+    locale?: AppLocale;
+  }) {
+    const params = new URLSearchParams({
+      domain: input.domain,
+      date: input.date,
+    });
+    if (input.locale) params.set('locale', input.locale);
+    return lifeCoachFetch<{
+      domain: LifeDomain;
+      date: string;
+      tasks: CuratedDailyTaskOption[];
+    }>(`/api/life-coach/curated-daily-tasks?${params.toString()}`);
+  },
+  selectCuratedDailyTasks(input: {
+    domain: LifeDomain;
+    task_ids: string[];
+    date: string;
+    locale?: AppLocale;
+  }) {
+    return lifeCoachFetch<{
+      date: string;
+      steps: DailyBabyStep[];
+      inserted: DailyBabyStep[];
+    }>('/api/life-coach/curated-daily-tasks', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
   createDailyStep(input: {
     goal_id: string | null;
     domain: LifeDomain;
@@ -237,6 +272,15 @@ export const lifeCoachApi = {
         difficulty: 'easy' | 'medium' | 'hard';
       };
     }>(`/api/life-coach/daily-steps/${id}/simplify`, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+  replaceCuratedDailyStep(
+    id: string,
+    input: {replacement_task_id: string; locale?: AppLocale}
+  ) {
+    return lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}/replace-curated`, {
       method: 'POST',
       body: JSON.stringify(input),
     });

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "spirit_gratitude_one",
+    "world": "spirit",
+    "title": {"he": "לכתוב דבר אחד שאתה מודה עליו", "en": "Write one thing you are grateful for"},
+    "description": {"he": "בחר דבר קטן ואמיתי מהיום, לא משהו כללי מדי.", "en": "Choose one small and real thing from today, not something too generic."},
+    "difficulty": 1,
+    "durationMinutes": 2,
+    "type": "gratitude",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["gratitude", "meaning"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "spirit_values_check",
+    "world": "spirit",
+    "title": {"he": "לבחור ערך אחד להיום", "en": "Choose one value for today"},
+    "description": {"he": "בחר ערך כמו נוכחות, אומץ, חסד או אמת ושאל איך תבטא אותו היום.", "en": "Choose a value like presence, courage, kindness, or truth and ask how you will express it today."},
+    "difficulty": 2,
+    "durationMinutes": 4,
+    "type": "values",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["values", "identity"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "spirit_quiet_5",
+    "world": "spirit",
+    "title": {"he": "5 דקות שקט בלי קלט", "en": "5 quiet minutes with no input"},
+    "description": {"he": "בלי טלפון, בלי מוזיקה ובלי לעשות. רק שקט קצר.", "en": "No phone, no music, no doing. Just a short quiet pause."},
+    "difficulty": 2,
+    "durationMinutes": 5,
+    "type": "stillness",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["quiet", "presence"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "spirit_small_kindness",
+    "world": "spirit",
+    "title": {"he": "לעשות חסד קטן", "en": "Do one small act of kindness"},
+    "description": {"he": "בחר פעולה קטנה שמיטיבה עם מישהו בלי לצפות לתמורה.", "en": "Choose one small action that helps someone without expecting anything back."},
+    "difficulty": 2,
+    "durationMinutes": 5,
+    "type": "service",
+    "energy": "medium",
+    "emotionalDepth": 2,
+    "tags": ["kindness", "service"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "spirit_meaning_sentence",
+    "world": "spirit",
+    "title": {"he": "לכתוב למה היום הזה חשוב", "en": "Write why this day matters"},
+    "description": {"he": "משפט אחד: היום חשוב כי...", "en": "One sentence: today matters because..."},
+    "difficulty": 2,
+    "durationMinutes": 3,
+    "type": "reflection",
+    "energy": "low",
+    "emotionalDepth": 3,
+    "tags": ["meaning", "reflection"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  }
+]

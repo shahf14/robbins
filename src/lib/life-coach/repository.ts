@@ -91,6 +91,7 @@ export {
   listDailyBabyStepsForDate,
   listDailyBabyStepsForRange,
   listRecentDailyBabySteps,
+  replaceDailyBabyStepWithCuratedContent,
   rescheduleDailyBabyStep,
   updateDailyBabyStepContent,
   updateDailyBabyStepStatus,

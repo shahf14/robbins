@@ -2,7 +2,6 @@
 
 import {useTranslations} from 'next-intl';
 import {Link} from '@/i18n/navigation';
-import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microcopy';
 import {BusyButton} from '@/components/feedback/busy-button';
 
 type EmptyAction = {
@@ -40,24 +39,14 @@ export function DailyStepsEmptyState({
         {t('lifeCoach.noDailyStepsTitle')}
       </h3>
       <p className="text-sm leading-7 text-[var(--muted)]">{t('lifeCoach.noDailyStepsGuide')}</p>
-      <ol className="grid gap-2 text-sm leading-6 txt-soft">
-        <li className="flex gap-2">
-          <span className="font-black text-[var(--blue)]">1.</span>
-          <span>{t('lifeCoach.noDailyStepsStepGoal')}</span>
-        </li>
-        <li className="flex gap-2">
-          <span className="font-black text-[var(--blue)]">2.</span>
-          <span>{t('lifeCoach.noDailyStepsStepGenerate')}</span>
-        </li>
-      </ol>
 
       {!hasGoals ? (
         onSetupGoal ? (
-          <button type="button" className="focus-ring btn-primary self-start" onClick={onSetupGoal}>
+          <button type="button" className="focus-ring btn-ghost self-start" onClick={onSetupGoal}>
             {t('lifeCoach.noGoalsForStepsCta')}
           </button>
         ) : (
-          <Link href={goalSetupHref} className="focus-ring btn-primary self-start">
+          <Link href={goalSetupHref} className="focus-ring btn-ghost self-start">
             {t('lifeCoach.noGoalsForStepsCta')}
           </Link>
         )
@@ -72,7 +61,7 @@ export function DailyStepsEmptyState({
           >
             {emptyAction.label}
           </BusyButton>
-          <AiActionHelpMicrocopy kind="dailySteps" />
+          <p className="text-xs leading-5 txt-muted">{t('lifeCoach.noDailyStepsAiSecondary')}</p>
         </div>
       ) : null}
     </div>

@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 import {useTranslations} from 'next-intl';
 import {Link} from '@/i18n/navigation';
 import {useFeatureUnlock} from '@/hooks/use-feature-unlock';
-import {daysSinceOnboarding, isOnboardingComplete} from '@/lib/onboarding-state';
+import {daysSinceOnboarding, isOnboardingComplete, ONBOARDING_STATUS_CHANGED_EVENT} from '@/lib/onboarding-state';
 
 /**
  * Shows an inline progress strip on the Life Coach home page.
@@ -17,11 +17,16 @@ export function FeatureUnlockBanner() {
   const [done, setDone] = useState(() => isOnboardingComplete());
 
   useEffect(() => {
-    const id = window.setTimeout(() => {
+    function sync() {
       setDone(isOnboardingComplete());
       setDays(daysSinceOnboarding());
-    }, 0);
-    return () => window.clearTimeout(id);
+    }
+    const id = window.setTimeout(sync, 0);
+    window.addEventListener(ONBOARDING_STATUS_CHANGED_EVENT, sync);
+    return () => {
+      window.clearTimeout(id);
+      window.removeEventListener(ONBOARDING_STATUS_CHANGED_EVENT, sync);
+    };
   }, []);
 
   // Nothing to show if user hasn't done onboarding or all features are unlocked

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "wealth_check_balance",
+    "world": "wealth",
+    "title": {"he": "לבדוק יתרה בלי שיפוט", "en": "Check your balance without judgment"},
+    "description": {"he": "פתח את החשבון לדקה אחת. המטרה היא לראות מציאות, לא להלקות את עצמך.", "en": "Open your account for one minute. The goal is to see reality, not beat yourself up."},
+    "difficulty": 2,
+    "durationMinutes": 3,
+    "type": "awareness",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["money", "awareness"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "wealth_skip_purchase",
+    "world": "wealth",
+    "title": {"he": "לדחות קנייה אחת ב-24 שעות", "en": "Delay one purchase by 24 hours"},
+    "description": {"he": "אם יש משהו שרצית לקנות, שמור אותו למחר ובדוק אם עדיין תרצה.", "en": "If there is something you wanted to buy, save it for tomorrow and see if you still want it."},
+    "difficulty": 1,
+    "durationMinutes": 2,
+    "type": "spending",
+    "energy": "low",
+    "emotionalDepth": 1,
+    "tags": ["spending", "pause"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "wealth_transfer_small",
+    "world": "wealth",
+    "title": {"he": "להעביר סכום קטן לחיסכון", "en": "Move a small amount to savings"},
+    "description": {"he": "העבר סכום קטן שמרגיש אפשרי. המטרה היא לחזק זהות של אדם שחוסך.", "en": "Move a small amount that feels doable. The goal is to reinforce the identity of someone who saves."},
+    "difficulty": 2,
+    "durationMinutes": 5,
+    "type": "saving",
+    "energy": "low",
+    "emotionalDepth": 1,
+    "tags": ["saving", "identity"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "wealth_cancel_noise",
+    "world": "wealth",
+    "title": {"he": "לזהות חיוב אחד מיותר", "en": "Find one unnecessary charge"},
+    "description": {"he": "עבור על החיובים האחרונים וסמן מנוי או הוצאה אחת לבדיקה.", "en": "Scan recent charges and mark one subscription or expense to review."},
+    "difficulty": 2,
+    "durationMinutes": 10,
+    "type": "review",
+    "energy": "medium",
+    "emotionalDepth": 1,
+    "tags": ["review", "subscriptions"],
+    "repeatable": false,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "wealth_money_sentence",
+    "world": "wealth",
+    "title": {"he": "לכתוב משפט אחד על כסף", "en": "Write one sentence about money"},
+    "description": {"he": "השלם: היום אני רוצה שהכסף שלי יעזור לי ב...", "en": "Complete: Today I want my money to help me with..."},
+    "difficulty": 1,
+    "durationMinutes": 3,
+    "type": "reflection",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["reflection", "values"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  }
+]

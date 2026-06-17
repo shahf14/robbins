@@ -1,0 +1,72 @@
+[
+  {
+    "id": "mind_breathe_3",
+    "world": "mind",
+    "title": {"he": "3 דקות נשימה", "en": "3 minutes of breathing"},
+    "description": {"he": "שב בשקט ונשום לאט. אין צורך לבצע מושלם.", "en": "Sit quietly and breathe slowly. It does not need to be perfect."},
+    "difficulty": 1,
+    "durationMinutes": 3,
+    "type": "breathing",
+    "energy": "low",
+    "emotionalDepth": 1,
+    "tags": ["breathing", "calm"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "mind_name_emotion",
+    "world": "mind",
+    "title": {"he": "לתת שם לרגש המרכזי", "en": "Name the main emotion"},
+    "description": {"he": "כתוב מילה אחת שמתארת מה הכי נוכח אצלך עכשיו.", "en": "Write one word that describes what is most present in you right now."},
+    "difficulty": 1,
+    "durationMinutes": 2,
+    "type": "awareness",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["emotion", "awareness"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "mind_reframe",
+    "world": "mind",
+    "title": {"he": "להחליף מחשבה אחת במשפט מועיל", "en": "Replace one thought with a useful sentence"},
+    "description": {"he": "בחר מחשבה שמכבידה וכתוב לידה משפט יותר מדויק ופחות שיפוטי.", "en": "Choose one heavy thought and write a more accurate, less judgmental sentence next to it."},
+    "difficulty": 2,
+    "durationMinutes": 7,
+    "type": "self_talk",
+    "energy": "medium",
+    "emotionalDepth": 2,
+    "tags": ["self-talk", "reframe"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "mind_one_page",
+    "world": "mind",
+    "title": {"he": "לקרוא עמוד אחד", "en": "Read one page"},
+    "description": {"he": "קרא עמוד אחד מספר או מאמר שמחזק אותך.", "en": "Read one page from a book or article that strengthens you."},
+    "difficulty": 1,
+    "durationMinutes": 5,
+    "type": "learning",
+    "energy": "low",
+    "emotionalDepth": 1,
+    "tags": ["reading", "learning"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "mind_clear_surface",
+    "world": "mind",
+    "title": {"he": "לנקות משטח אחד", "en": "Clear one surface"},
+    "description": {"he": "בחר שולחן, כיור או פינה אחת ונקה רק אותה.", "en": "Choose one desk, sink, or corner and clear only that."},
+    "difficulty": 1,
+    "durationMinutes": 5,
+    "type": "environment",
+    "energy": "medium",
+    "emotionalDepth": 1,
+    "tags": ["environment", "clarity"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  }
+]

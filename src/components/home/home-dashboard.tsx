@@ -615,7 +615,7 @@ export function HomeDashboard() {
 
       {/* ── התראות קריטיות בלבד ─────────────────────────────────────────── */}
       {lifeContextMode.active && <LifeContextModeBanner mode={lifeContextMode} />}
-      <ContinueProcessBanner />
+      <ContinueProcessBanner includeOnboarding />
       {!howItWorksFirstUseComplete && <HomeHowItWorks firstUseComplete={howItWorksFirstUseComplete} />}
       {atRisk && pendingSteps.length > 0 && (
         <EarlyWarningBanner onTwoMinuteStep={() => void handleTwoMinuteStep()} />

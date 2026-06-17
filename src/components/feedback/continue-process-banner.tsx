@@ -1,14 +1,36 @@
 'use client';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslations} from 'next-intl';
 import {Link} from '@/i18n/navigation';
 import {listOpenProcessDrafts, type OpenProcessDraft} from '@/lib/open-process-drafts';
+import {ONBOARDING_STATUS_CHANGED_EVENT} from '@/lib/onboarding-state';
+
+function filterDrafts(includeOnboarding: boolean): OpenProcessDraft[] {
+  return listOpenProcessDrafts().filter(
+    (draft) => includeOnboarding || draft.kind !== 'onboarding'
+  );
+}
 
 /** Surfaces in-progress onboarding / goal / clarification drafts at the top of key pages. */
-export function ContinueProcessBanner() {
+export function ContinueProcessBanner({
+  includeOnboarding = false,
+}: {
+  includeOnboarding?: boolean;
+}) {
   const t = useTranslations('continueProcess');
-  const [drafts] = useState<OpenProcessDraft[]>(() => listOpenProcessDrafts());
+  const [drafts, setDrafts] = useState<OpenProcessDraft[]>(() =>
+    filterDrafts(includeOnboarding)
+  );
+
+  useEffect(() => {
+    function sync() {
+      setDrafts(filterDrafts(includeOnboarding));
+    }
+    sync();
+    window.addEventListener(ONBOARDING_STATUS_CHANGED_EVENT, sync);
+    return () => window.removeEventListener(ONBOARDING_STATUS_CHANGED_EVENT, sync);
+  }, [includeOnboarding]);
 
   if (drafts.length === 0) return null;
 

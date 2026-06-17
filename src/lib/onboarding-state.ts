@@ -8,6 +8,8 @@ import type {
 
 const KEY = 'onboarding_v2';
 
+export const ONBOARDING_STATUS_CHANGED_EVENT = 'onboarding-status-changed';
+
 export type OnboardingState = {
   completedAt: string | null;
   primaryDomain: LifeDomain | null;
@@ -36,6 +38,9 @@ export function saveOnboardingState(patch: Partial<OnboardingState>) {
   if (typeof window === 'undefined') return;
   const current = loadOnboardingState();
   window.localStorage.setItem(KEY, JSON.stringify({...current, ...patch}));
+  if (patch.completedAt) {
+    window.dispatchEvent(new Event(ONBOARDING_STATUS_CHANGED_EVENT));
+  }
 }
 
 export function isOnboardingComplete(): boolean {

@@ -8,6 +8,7 @@ import {loadUserPreferences} from '@/lib/user-preferences';
 import type {AiCoachingInsight, DailyBabyStep, DomainCardSummary, Goal, LifeDomainState} from '@/lib/life-coach/types';
 import {AIInsightCard} from './ai-insight-card';
 import {DailyBabyStepsList} from './daily-baby-steps-list';
+import {CuratedDailyTaskPicker} from './curated-daily-task-picker';
 import {LifeCoachAuthShell} from './life-coach-auth-shell';
 import {LifeDomainCard} from './life-domain-card';
 import {WeeklyReviewCard} from './weekly-review-card';
@@ -118,8 +119,8 @@ function LifeCoachHomeContent() {
         lifeCoachApi.listGoals().catch(() => ({goals: []})),
         lifeCoachApi.getDailySteps(todayYMD()),
         lifeCoachApi.getDailyStepsRange(start, end),
-        lifeCoachApi.getLatestWeeklyReview(),
-        lifeCoachApi.listInsights(),
+        lifeCoachApi.getLatestWeeklyReview().catch(() => ({review: null})),
+        lifeCoachApi.listInsights().catch(() => ({insights: []})),
         fetchSessions().catch(() => []),
         fetchFormulationCoachContext().catch(() => ({
           challenge: null,
@@ -296,7 +297,7 @@ function LifeCoachHomeContent() {
   return (
   <div className="pb-24 sm:pb-0">
     <>
-      <ContinueProcessBanner />
+      <ContinueProcessBanner includeOnboarding />
 
       <section className="panel-surface-strong mt-6 overflow-hidden px-6 py-8 sm:px-8 sm:py-10">
         <p className="eyebrow">{t('lifeCoach.homeEyebrow')}</p>
@@ -413,6 +414,25 @@ function LifeCoachHomeContent() {
                 <AiGeneratingProgress variant="dailySteps" />
               </div>
             )}
+            {todaySteps.length === 0 && (
+              <div className="mt-6">
+                <CuratedDailyTaskPicker onCreated={refresh} />
+                {hasAnyGoal && (
+                  <div className="mt-4 flex flex-col items-start gap-2">
+                    <BusyButton
+                      type="button"
+                      className="focus-ring btn-ghost"
+                      busy={generating}
+                      busyLabel={t('lifeCoach.generating')}
+                      onClick={() => void handleGenerateSteps()}
+                    >
+                      {t('lifeCoach.noDailyStepsCta')}
+                    </BusyButton>
+                    <p className="text-xs leading-5 txt-muted">{t('lifeCoach.noDailyStepsAiSecondary')}</p>
+                  </div>
+                )}
+              </div>
+            )}
 
           <section className="mt-6 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
             <section id="today-plan" className="panel-surface scroll-mt-24 p-6 sm:p-8" aria-label={t('lifeCoach.todayPlan')}>
@@ -515,6 +535,7 @@ function LifeCoachHomeContent() {
                   identityTitle={identityTitle}
                   hasGoals={hasAnyGoal}
                   goalSetupHref="#domains"
+                  hideEmptyState={todaySteps.length === 0}
                   emptyAction={{
                     label: t('lifeCoach.noDailyStepsCta'),
                     onClick: () => void handleGenerateSteps(),

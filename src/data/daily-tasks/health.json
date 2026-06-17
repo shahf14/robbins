@@ -1,0 +1,72 @@
+[
+  {
+    "id": "health_drink_water",
+    "world": "health",
+    "title": {"he": "לשתות כוס מים עכשיו", "en": "Drink one glass of water now"},
+    "description": {"he": "קח כוס מים אחת ושתה אותה בלי להפוך את זה לפרויקט.", "en": "Take one glass of water and drink it without turning it into a project."},
+    "difficulty": 1,
+    "durationMinutes": 1,
+    "type": "hydration",
+    "energy": "low",
+    "emotionalDepth": 1,
+    "tags": ["hydration", "quick"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "health_walk_5",
+    "world": "health",
+    "title": {"he": "לצאת להליכה של 5 דקות", "en": "Take a 5-minute walk"},
+    "description": {"he": "צא החוצה או הסתובב בבית. המטרה היא להזיז את הגוף, לא להתאמן חזק.", "en": "Step outside or walk indoors. The goal is to move your body, not to train hard."},
+    "difficulty": 1,
+    "durationMinutes": 5,
+    "type": "movement",
+    "energy": "medium",
+    "emotionalDepth": 1,
+    "tags": ["walking", "movement"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "health_protein_choice",
+    "world": "health",
+    "title": {"he": "להוסיף חלבון לארוחה הקרובה", "en": "Add protein to your next meal"},
+    "description": {"he": "בחר תוספת פשוטה כמו ביצה, יוגורט, טונה, קטניות או עוף.", "en": "Choose a simple addition like eggs, yogurt, tuna, legumes, or chicken."},
+    "difficulty": 2,
+    "durationMinutes": 5,
+    "type": "nutrition",
+    "energy": "medium",
+    "emotionalDepth": 1,
+    "tags": ["nutrition", "meal"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "health_sleep_boundary",
+    "world": "health",
+    "title": {"he": "לקבוע שעת כיבוי מסך להערב", "en": "Set a screen-off time for tonight"},
+    "description": {"he": "בחר שעה אחת שבה המסך יורד. גם 15 דקות לפני השינה נחשב.", "en": "Pick one time when screens go down. Even 15 minutes before sleep counts."},
+    "difficulty": 2,
+    "durationMinutes": 2,
+    "type": "sleep",
+    "energy": "low",
+    "emotionalDepth": 1,
+    "tags": ["sleep", "boundary"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "health_body_check",
+    "world": "health",
+    "title": {"he": "לעשות בדיקת גוף קצרה", "en": "Do a short body check"},
+    "description": {"he": "עצור לדקה ושאל: איפה הגוף שלי מבקש תשומת לב היום?", "en": "Pause for one minute and ask: where does my body need attention today?"},
+    "difficulty": 2,
+    "durationMinutes": 3,
+    "type": "awareness",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["body", "awareness"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  }
+]

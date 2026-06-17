@@ -1,20 +1,16 @@
 'use client';
 
 import {useEffect} from 'react';
-import {useRouter} from '@/i18n/navigation';
 import {
   applyServerOnboardingStatus,
   fetchServerOnboardingStatus,
-  isOnboardingComplete,
 } from '@/lib/onboarding-state';
 
 /**
- * Detects first-time visitors and redirects them to the onboarding wizard.
- * Renders nothing — the redirect itself is the UX.
+ * Keeps local onboarding state in sync with the server.
+ * First-time users now start inside the app and choose a small daily action there.
  */
 export function FirstVisitWelcome() {
-  const router = useRouter();
-
   useEffect(() => {
     let cancelled = false;
 
@@ -24,11 +20,6 @@ export function FirstVisitWelcome() {
 
       if (serverStatus?.complete && serverStatus.completedAt) {
         applyServerOnboardingStatus(serverStatus);
-        return;
-      }
-
-      if (!isOnboardingComplete() || (serverStatus && !serverStatus.complete)) {
-        router.replace('/onboarding');
       }
     }
 
@@ -36,7 +27,7 @@ export function FirstVisitWelcome() {
     return () => {
       cancelled = true;
     };
-  }, [router]);
+  }, []);
 
   return null;
 }

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "career_one_visible_move",
+    "world": "career",
+    "title": {"he": "לעשות מהלך מקצועי נראה לעין", "en": "Make one visible career move"},
+    "description": {"he": "שלח עדכון, בקשה, רעיון או תוצר קטן שמראה התקדמות.", "en": "Send an update, request, idea, or small deliverable that shows progress."},
+    "difficulty": 2,
+    "durationMinutes": 10,
+    "type": "visibility",
+    "energy": "medium",
+    "emotionalDepth": 1,
+    "tags": ["career", "visibility"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "career_learn_10",
+    "world": "career",
+    "title": {"he": "ללמוד 10 דקות מיומנות אחת", "en": "Learn one skill for 10 minutes"},
+    "description": {"he": "בחר סרטון, מאמר או תרגול קצר שקשור לכיוון המקצועי שלך.", "en": "Choose a video, article, or short exercise tied to your professional direction."},
+    "difficulty": 2,
+    "durationMinutes": 10,
+    "type": "learning",
+    "energy": "medium",
+    "emotionalDepth": 1,
+    "tags": ["learning", "skill"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "career_message_contact",
+    "world": "career",
+    "title": {"he": "לשלוח הודעה לאדם מקצועי אחד", "en": "Message one professional contact"},
+    "description": {"he": "שלח הודעה קצרה לאדם שיכול לפתוח שיחה, רעיון או הזדמנות.", "en": "Send a short message to someone who could open a conversation, idea, or opportunity."},
+    "difficulty": 3,
+    "durationMinutes": 8,
+    "type": "networking",
+    "energy": "medium",
+    "emotionalDepth": 2,
+    "tags": ["networking", "connection"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "career_clean_task",
+    "world": "career",
+    "title": {"he": "לסגור משימה מקצועית קטנה", "en": "Close one small work task"},
+    "description": {"he": "בחר משימה קטנה שנמרחת וסיים אותה עד הסוף.", "en": "Choose one small lingering task and finish it fully."},
+    "difficulty": 1,
+    "durationMinutes": 10,
+    "type": "execution",
+    "energy": "medium",
+    "emotionalDepth": 1,
+    "tags": ["execution", "completion"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "career_direction_note",
+    "world": "career",
+    "title": {"he": "לכתוב מה הצעד המקצועי הבא", "en": "Write your next professional step"},
+    "description": {"he": "כתוב במשפט אחד מה הצעד הבא שיקדם אותך, גם אם הוא קטן.", "en": "Write one sentence naming the next step that would move you forward, even if small."},
+    "difficulty": 1,
+    "durationMinutes": 4,
+    "type": "reflection",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["direction", "reflection"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  }
+]

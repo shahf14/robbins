@@ -1,0 +1,72 @@
+[
+  {
+    "id": "relationships_specific_thanks",
+    "world": "relationships",
+    "title": {"he": "להגיד תודה ספציפית לאדם קרוב", "en": "Give specific thanks to someone close"},
+    "description": {"he": "בחר דבר קטן שמישהו עשה ואמור תודה בצורה ישירה וספציפית.", "en": "Choose one small thing someone did and thank them directly and specifically."},
+    "difficulty": 1,
+    "durationMinutes": 2,
+    "type": "connection",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["gratitude", "connection"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "relationships_kind_message",
+    "world": "relationships",
+    "title": {"he": "לשלוח הודעה טובה אחת", "en": "Send one kind message"},
+    "description": {"he": "שלח הודעה קצרה שמראה שחשבת על האדם הזה.", "en": "Send a short message that shows you thought about that person."},
+    "difficulty": 1,
+    "durationMinutes": 2,
+    "type": "connection",
+    "energy": "low",
+    "emotionalDepth": 1,
+    "tags": ["message", "connection"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "relationships_help_one_thing",
+    "world": "relationships",
+    "title": {"he": "לעזור בדבר קטן בלי לבקש קרדיט", "en": "Help with one small thing without asking for credit"},
+    "description": {"he": "עשה פעולה קטנה שמורידה עומס ממישהו בבית או בעבודה.", "en": "Do one small action that lowers someone else's load at home or work."},
+    "difficulty": 2,
+    "durationMinutes": 10,
+    "type": "support",
+    "energy": "medium",
+    "emotionalDepth": 2,
+    "tags": ["support", "service"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "relationships_question",
+    "world": "relationships",
+    "title": {"he": "לשאול שאלה אמיתית אחת", "en": "Ask one real question"},
+    "description": {"he": "שאל אדם קרוב: מה היה לך הכי חשוב היום? ואז תקשיב בלי לתקן.", "en": "Ask someone close: what mattered most to you today? Then listen without fixing."},
+    "difficulty": 3,
+    "durationMinutes": 10,
+    "type": "conversation",
+    "energy": "medium",
+    "emotionalDepth": 3,
+    "tags": ["listening", "conversation"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "relationships_repair_small",
+    "world": "relationships",
+    "title": {"he": "לתקן חיכוך קטן", "en": "Repair one small tension"},
+    "description": {"he": "אם היה מתח קטן, אמור משפט פשוט: חשבתי על זה ואני רוצה לתקן.", "en": "If there was a small tension, say simply: I thought about it and I want to repair it."},
+    "difficulty": 3,
+    "durationMinutes": 5,
+    "type": "repair",
+    "energy": "medium",
+    "emotionalDepth": 3,
+    "tags": ["repair", "communication"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  }
+]

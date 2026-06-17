@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useState} from 'react';
-import {daysSinceOnboarding, isOnboardingComplete} from '@/lib/onboarding-state';
+import {daysSinceOnboarding, isOnboardingComplete, ONBOARDING_STATUS_CHANGED_EVENT} from '@/lib/onboarding-state';
 
 type FeatureKey =
   | 'life_coach'
@@ -39,8 +39,15 @@ export function useFeatureUnlock() {
   const [map, setMap] = useState<UnlockMap>(() => getCurrentUnlockMap());
 
   useEffect(() => {
-    const id = window.setTimeout(() => setMap(getCurrentUnlockMap()), 0);
-    return () => window.clearTimeout(id);
+    function sync() {
+      setMap(getCurrentUnlockMap());
+    }
+    const id = window.setTimeout(sync, 0);
+    window.addEventListener(ONBOARDING_STATUS_CHANGED_EVENT, sync);
+    return () => {
+      window.clearTimeout(id);
+      window.removeEventListener(ONBOARDING_STATUS_CHANGED_EVENT, sync);
+    };
   }, []);
 
   return map;

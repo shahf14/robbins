@@ -1,0 +1,72 @@
+[
+  {
+    "id": "time_top_one",
+    "world": "time",
+    "title": {"he": "לבחור משימה אחת חשובה להיום", "en": "Pick one important task for today"},
+    "description": {"he": "כתוב את הדבר היחיד שאם יקרה היום, היום ירגיש מתקדם יותר.", "en": "Write the one thing that would make today feel meaningfully better."},
+    "difficulty": 1,
+    "durationMinutes": 3,
+    "type": "prioritization",
+    "energy": "low",
+    "emotionalDepth": 1,
+    "tags": ["focus", "planning"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "time_timer_10",
+    "world": "time",
+    "title": {"he": "10 דקות בלי הסחות", "en": "10 minutes with no distractions"},
+    "description": {"he": "כוון טיימר ל-10 דקות ועבוד רק על דבר אחד.", "en": "Set a 10-minute timer and work on only one thing."},
+    "difficulty": 2,
+    "durationMinutes": 10,
+    "type": "deep_work",
+    "energy": "medium",
+    "emotionalDepth": 1,
+    "tags": ["focus", "timer"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "time_calendar_block",
+    "world": "time",
+    "title": {"he": "לחסום ביומן 15 דקות לעצמך", "en": "Block 15 minutes for yourself"},
+    "description": {"he": "שים ביומן חלון קטן שמוקדש לדבר שחשוב לך, גם אם הוא קצר.", "en": "Put a small calendar block for something that matters to you, even if it is short."},
+    "difficulty": 2,
+    "durationMinutes": 3,
+    "type": "planning",
+    "energy": "low",
+    "emotionalDepth": 1,
+    "tags": ["calendar", "planning"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "time_delete_one",
+    "world": "time",
+    "title": {"he": "להוריד דבר אחד מהרשימה", "en": "Remove one thing from the list"},
+    "description": {"he": "בחר משימה אחת שלא באמת חייבת לקרות היום והעבר אותה הצידה.", "en": "Choose one task that does not truly need to happen today and move it aside."},
+    "difficulty": 2,
+    "durationMinutes": 5,
+    "type": "decluttering",
+    "energy": "low",
+    "emotionalDepth": 2,
+    "tags": ["priorities", "relief"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  },
+  {
+    "id": "time_evening_reset",
+    "world": "time",
+    "title": {"he": "לתכנן את הבוקר הבא בשתי שורות", "en": "Plan tomorrow morning in two lines"},
+    "description": {"he": "כתוב מתי אתה מתחיל ומה הדבר הראשון שתעשה.", "en": "Write when you start and the first thing you will do."},
+    "difficulty": 2,
+    "durationMinutes": 4,
+    "type": "planning",
+    "energy": "low",
+    "emotionalDepth": 1,
+    "tags": ["tomorrow", "routine"],
+    "repeatable": true,
+    "origin": {"kind": "curated", "version": "1.0"}
+  }
+]
