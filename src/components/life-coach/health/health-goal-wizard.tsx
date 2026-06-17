@@ -283,9 +283,7 @@ export function HealthGoalWizard({assessment, onCreated}: Props) {
     const contextInput = wizardDataToContextInput(wizardData);
     const rawGoal = buildRawGoalFromWizard(wizardData, t);
     const motivation = [whyImportant, whyNow, whatLost].filter(Boolean).join('\n');
-    const constraints = assessment
-      ? `${t('healthWizard.availableTime')}: ${assessment.available_time_per_day} ${t('lifeCoach.minutes')}`
-      : '';
+    const constraints = '';
 
     try {
       const {coaching_style} = loadUserPreferences();

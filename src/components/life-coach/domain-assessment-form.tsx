@@ -5,13 +5,11 @@ import {useTranslations} from 'next-intl';
 import {assessmentContentHints} from '@/lib/life-context-content';
 import {getLifeWheelRatingKeys} from '@/lib/life-wheel';
 import {
-  AVAILABLE_TIME_OPTIONS,
   DOMAIN_BLOCKERS,
-  INTENSITY_PREFERENCES,
   type LifeDomain,
   type LifeDomainState,
 } from '@/lib/life-coach/types';
-import {loadUserPreferences} from '@/lib/user-preferences';
+import {defaultUserPreferences, loadUserPreferences} from '@/lib/user-preferences';
 import {useToast} from '@/components/feedback/toast-provider';
 import {DomainScoreExplainer} from './shared/domain-score-explainer';
 
@@ -28,13 +26,6 @@ type Props = {
 
 function getInitialLifeContexts() {
   return loadUserPreferences().life_context_statuses ?? [];
-}
-
-function getInitialAvailableTime(initialState: LifeDomainState | null) {
-  if (initialState?.available_time_per_day) {
-    return initialState.available_time_per_day;
-  }
-  return assessmentContentHints(getInitialLifeContexts()).defaultMinutes ?? 10;
 }
 
 function hasSavedAssessment(state: LifeDomainState | null): boolean {
@@ -57,10 +48,6 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
   const [desiredState, setDesiredState] = useState(initialState?.desired_state ?? '');
   const [mainBlockers, setMainBlockers] = useState<string[]>(initialState?.main_blockers ?? []);
   const [customBlocker, setCustomBlocker] = useState('');
-  const [availableTimePerDay, setAvailableTimePerDay] = useState(() => getInitialAvailableTime(initialState));
-  const [intensityPreference, setIntensityPreference] = useState(
-    initialState?.intensity_preference ?? 'balanced'
-  );
   const [saving, setSaving] = useState(false);
   const [lifeContexts, setLifeContexts] = useState(() => getInitialLifeContexts());
 
@@ -71,27 +58,16 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
       setCurrentState(initialState.current_state ?? '');
       setDesiredState(initialState.desired_state ?? '');
       setMainBlockers(initialState.main_blockers ?? []);
-      if (initialState.available_time_per_day) {
-        setAvailableTimePerDay(initialState.available_time_per_day);
-      }
-      if (initialState.intensity_preference) {
-        setIntensityPreference(initialState.intensity_preference);
-      }
     }, 0);
     return () => window.clearTimeout(timeout);
   }, [initialState]);
 
   useEffect(() => {
     const id = window.setTimeout(() => {
-      const contexts = getInitialLifeContexts();
-      setLifeContexts(contexts);
-      const hints = assessmentContentHints(contexts);
-      if (!initialState?.available_time_per_day && hints.defaultMinutes) {
-        setAvailableTimePerDay(hints.defaultMinutes);
-      }
+      setLifeContexts(getInitialLifeContexts());
     }, 0);
     return () => window.clearTimeout(id);
-  }, [initialState?.available_time_per_day]);
+  }, []);
 
   const hints = useMemo(() => assessmentContentHints(lifeContexts), [lifeContexts]);
   const suggestedBlockerSet = useMemo(() => new Set(hints.suggestedBlockers), [hints.suggestedBlockers]);
@@ -131,8 +107,8 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
         current_state: currentState,
         desired_state: desiredState,
         main_blockers: blockers.filter(Boolean),
-        available_time_per_day: availableTimePerDay as 5 | 10 | 20 | 30,
-        intensity_preference: intensityPreference as 'gentle' | 'balanced' | 'intense',
+        available_time_per_day: defaultUserPreferences.available_time_per_day,
+        intensity_preference: defaultUserPreferences.intensity_preference,
       });
       setViewMode('summary');
       toast.success(t('lifeCoach.assessmentSavedToast'));
@@ -162,18 +138,9 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
 
         <p className="mt-4 text-base leading-7 text-white/90">{bottomLine}</p>
 
-        {(blockerLabels.length > 0 || availableTimePerDay) && (
+        {(blockerLabels.length > 0) && (
           <p className="mt-3 text-sm leading-6 text-white/45">
-            {blockerLabels.length > 0 && (
-              <span>{t('lifeCoach.assessmentSummaryBlockers', {blockers: blockerLabels.join(' · ')})}</span>
-            )}
-            {blockerLabels.length > 0 && ' '}
-            <span>
-              {t('lifeCoach.assessmentSummaryMeta', {
-                minutes: availableTimePerDay === 30 ? '30+' : availableTimePerDay,
-                intensity: t(`lifeCoach.intensity.${intensityPreference}`),
-              })}
-            </span>
+            {t('lifeCoach.assessmentSummaryBlockers', {blockers: blockerLabels.join(' · ')})}
           </p>
         )}
 
@@ -308,52 +275,6 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
             onChange={(event) => setCustomBlocker(event.target.value)}
             placeholder={t('lifeCoach.customBlocker')}
           />
-        </div>
-
-        <div className="grid gap-3" role="group" aria-labelledby="assessment-time-label">
-          <span id="assessment-time-label" className="field-label mb-0">
-            {t('lifeCoach.availableTime')}
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {AVAILABLE_TIME_OPTIONS.map((minutes) => (
-              <button
-                key={minutes}
-                type="button"
-                aria-pressed={availableTimePerDay === minutes}
-                className={`focus-ring rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                  availableTimePerDay === minutes
-                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                    : 'border-white/10 bg-white/3 text-white/72'
-                }`}
-                onClick={() => setAvailableTimePerDay(minutes)}
-              >
-                {minutes === 30 ? t('lifeCoach.thirtyPlusMinutes') : `${minutes} ${t('lifeCoach.minutes')}`}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid gap-3" role="group" aria-labelledby="assessment-intensity-label">
-          <span id="assessment-intensity-label" className="field-label mb-0">
-            {t('lifeCoach.intensityPreference')}
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {INTENSITY_PREFERENCES.map((preference) => (
-              <button
-                key={preference}
-                type="button"
-                aria-pressed={intensityPreference === preference}
-                className={`focus-ring rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                  intensityPreference === preference
-                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] text-white'
-                    : 'border-white/10 bg-white/3 text-white/72'
-                }`}
-                onClick={() => setIntensityPreference(preference)}
-              >
-                {t(`lifeCoach.intensity.${preference}`)}
-              </button>
-            ))}
-          </div>
         </div>
 
         <button

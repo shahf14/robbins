@@ -1863,7 +1863,7 @@
     "step2SelectHint": "Your lowest score is in {domain}. That's often where the biggest leverage is.",
     "domainPreview": {
       "eyebrow": "Live preview",
-      "body": "If we choose {domain}, tomorrow gets a roughly {mins}-minute step that connects focus, mindset, and real progress."
+      "body": "If we choose {domain}, tomorrow gets a short step that connects focus, mindset, and real progress."
     },
     "step2SelectedConfirm": "Great choice. Let's go deep on {domain}.",
     "step2ChooseToContinue": "Choose an area to continue.",

@@ -89,7 +89,7 @@ function buildFitContext(
     now,
     wakeTime: prefs.wake_time,
     sleepTime: prefs.sleep_time,
-    preferredActionWindow: prefs.preferred_action_window,
+    preferredActionWindow: 'flexible',
     ...derived,
     ...fitOverrides,
   };
@@ -110,7 +110,7 @@ export function sortStepsForDisplay(
     steps.length,
     prefs.wake_time,
     prefs.sleep_time,
-    prefs.preferred_action_window
+    'flexible'
   );
   const indexById = new Map(steps.map((step, index) => [step.id, index]));
   const fitSorted = sortPendingByFit(

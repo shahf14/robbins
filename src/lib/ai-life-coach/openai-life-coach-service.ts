@@ -572,7 +572,7 @@ function normalizeStructuredGoalResult(
               deadline: input.deadline,
               motivation: input.motivation,
               wizard,
-              availableMinutes: input.assessment?.available_time_per_day ?? 15,
+              availableMinutes: 10,
             }).daily_baby_steps
           );
 
@@ -624,7 +624,7 @@ function buildStructuredGoalFallbackResponse(input: GoalStructuringInput): AiStr
         deadline: input.deadline,
         motivation: input.motivation,
         wizard: input.health_wizard_context,
-        availableMinutes: input.assessment?.available_time_per_day ?? 15,
+        availableMinutes: 10,
       })
     : buildGenericStructuredGoalFallbackResponse(input);
 
@@ -687,7 +687,7 @@ function buildGenericStructuredGoalFallbackResponse(
           : 'Keep it small enough to finish even on a busy day.',
         estimated_minutes: Math.min(
           input.known_blockers?.max_initial_step_minutes ?? 10,
-          input.assessment?.available_time_per_day ?? 10
+          10
         ),
         locale: input.locale,
         why: input.known_blockers?.has_no_time_signal
@@ -885,9 +885,8 @@ function fallbackStepTitle(domain: LifeDomain, goal: string, locale: AppLocale =
   return `${prefix[domain]} ${goal}`.trim();
 }
 
-function resolveMinutesForGoal(domain: LifeDomain, domainStates: LifeDomainState[]) {
-  const state = domainStates.find((item) => item.domain === domain);
-  return Math.min(state?.available_time_per_day ?? 10, 20);
+function resolveMinutesForGoal(_domain: LifeDomain, _domainStates: LifeDomainState[]) {
+  return 10;
 }
 
 function toTitleCase(value: string) {

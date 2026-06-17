@@ -18,6 +18,7 @@ import {goalIdSchema, requireGoalId} from '@/lib/life-coach/schemas';
 import {
   loadUserPreferences,
   saveUserPreferences,
+  defaultUserPreferences,
 } from '@/lib/user-preferences';
 import {
   isOnboardingComplete,
@@ -202,9 +203,9 @@ export function OnboardingWizard() {
       age_prefer_not: state.agePreferNot || undefined,
       wake_time: state.wakeTime,
       sleep_time: state.sleepTime,
-      preferred_action_window: state.preferredActionWindow,
-      available_time_per_day: state.availableTime,
-      intensity_preference: state.intensityPreference,
+      preferred_action_window: defaultUserPreferences.preferred_action_window,
+      available_time_per_day: defaultUserPreferences.available_time_per_day,
+      intensity_preference: defaultUserPreferences.intensity_preference,
       coaching_style: state.coachingStyle,
       physical_considerations: state.physicalConsiderations.length
         ? state.physicalConsiderations
@@ -313,8 +314,8 @@ export function OnboardingWizard() {
           current_state:          s.answers.whatBothersToday.slice(0, 400) || `Score: ${s.domainScores[s.selectedDomain]}/10`,
           desired_state:          s.answers.whatIfSucceeds.slice(0, 400)   || 'Consistent improvement over 90 days',
           main_blockers:          [],
-          available_time_per_day: s.availableTime,
-          intensity_preference:   s.intensityPreference,
+          available_time_per_day: defaultUserPreferences.available_time_per_day,
+          intensity_preference:   defaultUserPreferences.intensity_preference,
         });
 
         // 2. Create goal
@@ -416,9 +417,9 @@ export function OnboardingWizard() {
       preferred_language:      s.locale,
       wake_time:               s.wakeTime,
       sleep_time:              s.sleepTime,
-      preferred_action_window: s.preferredActionWindow,
-      available_time_per_day:  s.availableTime,
-      intensity_preference:    s.intensityPreference,
+      preferred_action_window: defaultUserPreferences.preferred_action_window,
+      available_time_per_day:  defaultUserPreferences.available_time_per_day,
+      intensity_preference:    defaultUserPreferences.intensity_preference,
       coaching_style:          s.coachingStyle,
       gender:                  s.gender ?? undefined,
       life_context_statuses:   contexts.length > 0 ? contexts : undefined,
@@ -465,8 +466,8 @@ export function OnboardingWizard() {
         locale: s.locale,
         life_context_note: s.lifeContextNote.trim() || undefined,
         life_context_statuses: contexts.length > 0 ? contexts : undefined,
-        available_time: s.availableTime,
-        intensity_preference: s.intensityPreference,
+        available_time: defaultUserPreferences.available_time_per_day,
+        intensity_preference: defaultUserPreferences.intensity_preference,
         coaching_style: s.coachingStyle,
         answers: s.answers,
         insight: s.insight,

@@ -527,7 +527,7 @@ export async function generateDailyStepsForUser(
   const baseWindow =
     behaviorProfile.sample_size_7d >= 5
       ? behaviorProfile.best_action_window
-      : preferredActionWindow;
+      : 'flexible';
   const skipAwareWindow = resolveSchedulingActionWindow(behaviorProfile, baseWindow);
   const effectiveWindow = resolveSkipCoachTimeWindow(skipAwareWindow, skipCoachAdjustment);
   const planSteps: StructuredDailyBabyStep[] = [];

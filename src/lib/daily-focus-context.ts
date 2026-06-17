@@ -177,7 +177,7 @@ function buildSuggestedAction(input: {
           : 'Use the morning mission as today’s first small step.',
       source: 'morning_ritual',
       domainId: domain,
-      estimatedMinutes: Math.min(input.activeState?.available_time_per_day ?? 10, 15),
+      estimatedMinutes: 10,
     };
   }
 
@@ -188,7 +188,7 @@ function buildSuggestedAction(input: {
       description: 'Keep it small enough to finish today.',
       source: 'domain_assessment',
       domainId: input.activeState.domain,
-      estimatedMinutes: Math.min(input.activeState.available_time_per_day, 15),
+      estimatedMinutes: 10,
     };
   }
 

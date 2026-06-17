@@ -89,11 +89,10 @@ function isLifeDomain(value: string): value is LifeDomain {
 }
 
 function domainBudget(
-  domain: LifeDomain,
+  _domain: LifeDomain,
   profile: StepValidationProfile
 ): number {
-  const state = profile.domainStates.find((d) => d.domain === domain);
-  return state?.available_time_per_day ?? profile.calibration.max_minutes;
+  return profile.calibration.max_minutes;
 }
 
 function hasVagueLanguage(title: string, description = ''): boolean {

@@ -153,10 +153,6 @@ export function buildKnownBlockersProfile(input: {
     if (kind) addEntry(entries, kind, blocker, 'assessment', 3);
   }
 
-  if ((input.assessment?.available_time_per_day ?? 20) <= 10) {
-    addEntry(entries, 'time', 'limited_time_budget', 'assessment', 2);
-  }
-
   scanUserText(
     [
       input.assessment?.current_state,
