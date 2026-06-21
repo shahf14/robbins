@@ -1,5 +1,6 @@
 'use client';
 
+import {ChevronDown} from '@/components/directional-arrow';
 import {useEffect, useRef, useState} from 'react';
 import {useTranslations} from 'next-intl';
 
@@ -83,7 +84,7 @@ export function CoachMomentCard({
             aria-expanded={open}
             aria-label={open ? t('coach.collapseLabel') : t('coach.expandLabel')}
           >
-            {open ? '▲' : '▼'}
+            <ChevronDown open={open} />
           </button>
         </div>
       </div>

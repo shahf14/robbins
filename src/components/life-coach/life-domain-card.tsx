@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useTranslations} from 'next-intl';
 import {Link} from '@/i18n/navigation';
 import type {DomainCardSummary, LifeDomain} from '@/lib/life-coach/types';
@@ -85,9 +86,7 @@ export function LifeDomainCard({summary}: {summary: DomainCardSummary}) {
                 <p className="mt-0.5 text-xs txt-muted">{t('lifeCoach.cardSetupTime')}</p>
               </div>
             </div>
-            <span className="shrink-0 text-lg font-bold text-[var(--blue)] transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" aria-hidden="true">
-              →
-            </span>
+            <NavArrow className="shrink-0 text-lg font-bold text-[var(--blue)] transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
           </div>
         </>
       ) : (

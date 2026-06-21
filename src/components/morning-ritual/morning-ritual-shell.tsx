@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useState} from 'react';
 import {useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
@@ -127,7 +128,7 @@ export function StartScreen({
                 {t(`mode.${key}BestFor`)}
               </p>
               <p className="mt-3 text-xs font-bold text-[var(--blue)]/70 transition group-hover:text-[var(--blue)]">
-                {t('start.startMode')} →
+                {t('start.startMode')} <NavArrow />
               </p>
             </button>
           ))}

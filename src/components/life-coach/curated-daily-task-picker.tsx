@@ -5,25 +5,39 @@ import {useLocale, useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 import {LIFE_DOMAINS, type LifeDomain} from '@/lib/life-coach/types';
 import type {CuratedDailyTaskOption} from '@/lib/life-coach/curated-daily-tasks';
-import {lifeCoachApi} from '@/lib/life-coach/api-client';
+import {formulationApi, lifeCoachApi} from '@/lib/life-coach/api-client';
 import {todayYMD} from '@/lib/date-utils';
 import {applyServerOnboardingStatus, fetchServerOnboardingStatus} from '@/lib/onboarding-state';
 import {clearDraft as clearOnboardingWizardDraft} from '@/lib/onboarding-wizard-state';
 import {resolveCuratedErrorMessage} from '@/lib/life-coach/curated-api-errors';
 import {useToast} from '@/components/feedback/toast-provider';
 import {BusyButton} from '@/components/feedback/busy-button';
+import {
+  PHYSICAL_CONSIDERATIONS,
+  loadUserPreferences,
+  saveUserPreferences,
+  type PhysicalConsideration,
+} from '@/lib/user-preferences';
+import {
+  dismissProfilePrompt,
+  isProfilePromptAvailable,
+  markProfilePromptAnswered,
+} from '@/lib/profile-completion';
 
 type Props = {
   onCreated: () => Promise<void>;
+  initialDomain?: LifeDomain;
 };
 
-export function CuratedDailyTaskPicker({onCreated}: Props) {
+export function CuratedDailyTaskPicker({onCreated, initialDomain}: Props) {
   const t = useTranslations();
   const locale = useLocale() as AppLocale;
   const toast = useToast();
-  const [domain, setDomain] = useState<LifeDomain>('health');
+  const [domain, setDomain] = useState<LifeDomain>(initialDomain ?? 'health');
   const [tasks, setTasks] = useState<CuratedDailyTaskOption[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedPhysical, setSelectedPhysical] = useState<PhysicalConsideration[]>([]);
+  const [showPhysicalPrompt, setShowPhysicalPrompt] = useState(false);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const selectedCount = selectedIds.size;
@@ -71,10 +85,44 @@ export function CuratedDailyTaskPicker({onCreated}: Props) {
     if (nextDomain === domain) return;
     setDomain(nextDomain);
     setSelectedIds(new Set());
+    setShowPhysicalPrompt(false);
   }
 
-  async function saveSelection() {
+  function shouldAskPhysicalConsiderations() {
+    if (domain !== 'health') return false;
+    const prefs = loadUserPreferences();
+    if ((prefs.physical_considerations?.length ?? 0) > 0) return false;
+    return isProfilePromptAvailable('physical_considerations');
+  }
+
+  function togglePhysical(item: PhysicalConsideration) {
+    setSelectedPhysical((current) =>
+      current.includes(item)
+        ? current.filter((value) => value !== item)
+        : [...current, item]
+    );
+  }
+
+  async function persistPhysicalConsiderations(physical: PhysicalConsideration[]) {
+    saveUserPreferences({
+      physical_considerations: physical.length ? physical : undefined,
+    });
+    try {
+      await formulationApi.updateParticipantProfile({
+        physical_considerations: physical.length ? physical : null,
+      });
+    } catch {
+      // Local preference is enough to keep the next step safe in this session.
+    }
+    markProfilePromptAnswered('physical_considerations');
+  }
+
+  async function saveSelection(skipPhysicalPrompt = false) {
     if (selectedCount < 1) return;
+    if (!skipPhysicalPrompt && shouldAskPhysicalConsiderations()) {
+      setShowPhysicalPrompt(true);
+      return;
+    }
     setSaving(true);
     try {
       const response = await lifeCoachApi.selectCuratedDailyTasks({
@@ -99,6 +147,23 @@ export function CuratedDailyTaskPicker({onCreated}: Props) {
     } finally {
       setSaving(false);
     }
+  }
+
+  async function savePhysicalAndContinue(physical: PhysicalConsideration[]) {
+    setSaving(true);
+    try {
+      await persistPhysicalConsiderations(physical);
+      setShowPhysicalPrompt(false);
+      await saveSelection(true);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function dismissPhysicalAndContinue() {
+    dismissProfilePrompt('physical_considerations', 7);
+    setShowPhysicalPrompt(false);
+    await saveSelection(true);
   }
 
   return (
@@ -194,6 +259,51 @@ export function CuratedDailyTaskPicker({onCreated}: Props) {
           </div>
         )}
       </div>
+
+      {showPhysicalPrompt && (
+        <div className="mt-5 rounded-[16px] border border-amber-400/25 bg-amber-400/8 px-4 py-4">
+          <p className="text-sm font-black txt-strong">{t('lifeCoach.curatedPicker.physicalTitle')}</p>
+          <p className="mt-1 text-sm leading-6 txt-muted">{t('lifeCoach.curatedPicker.physicalBody')}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {PHYSICAL_CONSIDERATIONS.map((item) => (
+              <button
+                key={item}
+                type="button"
+                aria-pressed={selectedPhysical.includes(item)}
+                className={`focus-ring rounded-full border px-3 py-2 text-xs font-bold transition ${
+                  selectedPhysical.includes(item)
+                    ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.16)] txt-strong'
+                    : 'border-[color:var(--color-border)] fill-1 txt-soft hover:txt-strong'
+                }`}
+                onClick={() => togglePhysical(item)}
+              >
+                {t(`onboarding.physical.${item}`)}
+              </button>
+            ))}
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <BusyButton
+              type="button"
+              className="focus-ring btn-primary"
+              busy={saving}
+              busyLabel={t('lifeCoach.curatedPicker.saving')}
+              onClick={() => void savePhysicalAndContinue(selectedPhysical)}
+            >
+              {selectedPhysical.length > 0
+                ? t('lifeCoach.curatedPicker.physicalSave')
+                : t('lifeCoach.curatedPicker.physicalNone')}
+            </BusyButton>
+            <button
+              type="button"
+              className="focus-ring btn-ghost"
+              disabled={saving}
+              onClick={() => void dismissPhysicalAndContinue()}
+            >
+              {t('lifeCoach.curatedPicker.physicalLater')}
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
         <BusyButton

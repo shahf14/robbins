@@ -3,10 +3,15 @@ import {NextResponse} from 'next/server';
 const LOCAL_USER_ID = process.env.LOCAL_USER_ID ?? 'local-user';
 const LOCAL_USER_EMAIL = process.env.LOCAL_USER_EMAIL ?? '';
 const LOCAL_AUTH_TOKEN = process.env.LOCAL_AUTH_TOKEN ?? '';
-const LOCAL_AUTH_ENABLED =
-  process.env.NODE_ENV !== 'production' || process.env.ALLOW_LOCAL_AUTH === 'true';
-/** When no token is configured, this is a single-user local app — allow API access. */
-const LOCAL_AUTH_OPEN = LOCAL_AUTH_ENABLED || !LOCAL_AUTH_TOKEN;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const LOCAL_AUTH_ENABLED = !IS_PRODUCTION || process.env.ALLOW_LOCAL_AUTH === 'true';
+/**
+ * Outside production (or with ALLOW_LOCAL_AUTH=true) this is a single-user local
+ * app, so open API access is intentional. In production we fail closed: access
+ * requires a configured LOCAL_AUTH_TOKEN and a matching request token. A missing
+ * token must never silently grant access.
+ */
+const LOCAL_AUTH_OPEN = LOCAL_AUTH_ENABLED;
 
 type LocalUser = {id: string; email: string};
 

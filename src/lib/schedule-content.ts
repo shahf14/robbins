@@ -56,10 +56,6 @@ export function getPersonalDayPhase(
   return 'night';
 }
 
-export function personalGreetingKey(phase: PersonalDayPhase): string {
-  return `schedule.dashboard.greeting.${phase === 'pre_wake' ? 'preWake' : phase}`;
-}
-
 export function personalDashboardSubtitleKey(phase: PersonalDayPhase, beforeWake: boolean): string {
   if (beforeWake) {
     return 'schedule.dashboard.subtitle.beforeWake';

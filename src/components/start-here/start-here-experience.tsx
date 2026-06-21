@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useMemo, useState} from 'react';
 import {useLocale} from 'next-intl';
 import {Link} from '@/i18n/navigation';
@@ -276,7 +277,7 @@ export function StartHereExperience() {
                   <h3 className="mt-1 text-xl font-black">{item.title}</h3>
                   <p className="mt-2 text-sm leading-7 txt-soft">{item.body}</p>
                 </div>
-                <span className="text-sm font-black txt-faint transition group-hover:text-[var(--blue)]" aria-hidden="true">→</span>
+                <NavArrow className="text-sm font-black txt-faint transition group-hover:text-[var(--blue)]" />
               </Link>
             ))}
           </div>

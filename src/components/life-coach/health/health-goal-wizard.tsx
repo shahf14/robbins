@@ -1,5 +1,6 @@
 'use client';
 
+import {FlowArrow} from '@/components/directional-arrow';
 import {useEffect, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {Link} from '@/i18n/navigation';
@@ -726,9 +727,7 @@ function StepMetrics({
               </p>
             </div>
             <div className="flex flex-1 flex-col items-center">
-              <span className="text-xl text-[var(--blue)]" aria-hidden>
-                →
-              </span>
+              <FlowArrow className="h-5 w-5 text-[var(--blue)]" />
               <span className="mt-1 rounded-full bg-[rgba(26,109,255,0.16)] px-3 py-1 text-xs font-bold text-[var(--blue)]">
                 {t('healthWizard.metricGap')}: {Math.abs(targetValue - baselineValue)}
               </span>
@@ -1133,7 +1132,7 @@ function buildRawGoalFromWizard(data: HealthGoalWizardData, t: ReturnType<typeof
 
 function buildSuccessMetric(data: HealthGoalWizardData, t: ReturnType<typeof useTranslations>): string {
   const cat = t(`healthWizard.categories.${data.category}`);
-  return `${cat}: ${data.metrics.baseline_value} → ${data.metrics.target_value} (${t('healthWizard.in90days')})`;
+  return `${cat}: ${data.metrics.baseline_value} – ${data.metrics.target_value} (${t('healthWizard.in90days')})`;
 }
 
 function buildDeadline(days: number): string {

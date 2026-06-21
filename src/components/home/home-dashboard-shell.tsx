@@ -1,10 +1,10 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {Link} from '@/i18n/navigation';
 import type {useTranslations} from 'next-intl';
 import type {Goal, LifeContextStatus, Milestone} from '@/lib/life-coach/types';
 import {LifeContextChip} from '@/components/life-context-chip';
-import {getPersonalDayPhase, personalGreetingKey} from '@/lib/schedule-content';
 
 type GoalWithMilestones = Goal & {milestones?: Milestone[]};
 
@@ -57,43 +57,36 @@ export function HomeSkeleton() {
 
 export function HomeCompactHeader({
   streak,
-  displayName,
   lifeContexts,
-  wakeTime,
-  sleepTime,
   weeklyDone,
   weeklyTotal,
   t,
 }: {
   streak: number;
-  displayName: string;
   lifeContexts?: LifeContextStatus[];
-  wakeTime: string;
-  sleepTime: string;
   weeklyDone: number;
   weeklyTotal: number;
   t: ReturnType<typeof useTranslations>;
 }) {
-  const name = displayName || t('dashboard.personalFallbackName');
-  const phase = getPersonalDayPhase(wakeTime, sleepTime);
-  const greeting = t(personalGreetingKey(phase), {name});
+  const hasWeekLine = weeklyTotal > 0;
+  const hasLifeContexts = (lifeContexts?.length ?? 0) > 0;
+  const hasStreak = streak > 0;
+
+  if (!hasWeekLine && !hasLifeContexts && !hasStreak) return null;
 
   return (
     <div className="flex flex-wrap items-start justify-between gap-3 px-1">
       <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-[clamp(1.5rem,4.5vw,2.25rem)] font-black leading-tight txt-strong">
-            {greeting}
-          </h1>
-        </div>
-        {weeklyTotal > 0 && (
-          <p className="mt-1.5 text-sm font-medium txt-soft">
+        {hasWeekLine && (
+          <p className="text-sm font-medium txt-soft">
             {t('home.compact.weekLine', {done: weeklyDone, total: weeklyTotal})}
           </p>
         )}
-        <LifeContextChip statuses={lifeContexts} className="mt-2" />
+        {hasLifeContexts ? (
+          <LifeContextChip statuses={lifeContexts} className={hasWeekLine ? 'mt-2' : undefined} />
+        ) : null}
       </div>
-      {streak > 0 && (
+      {hasStreak && (
         <span className="shrink-0 rounded-full border border-[color:var(--color-border)] fill-2 px-3 py-1.5 text-sm font-bold txt-soft">
           {t('home.streakDays', {count: streak})}
         </span>
@@ -138,11 +131,11 @@ export function HomeCompactProgress({
           href={`/life-coach/${primaryGoal.domain}`}
           className="focus-ring ms-auto truncate text-sm font-semibold text-[var(--blue)]"
         >
-          {t('home.compact.viewGoal')} →
+          {t('home.compact.viewGoal')} <NavArrow />
         </Link>
       ) : hasGoals ? (
         <Link href="/life-coach" className="focus-ring ms-auto text-sm font-semibold text-[var(--blue)]">
-          {t('home.compact.viewDomains')} →
+          {t('home.compact.viewDomains')} <NavArrow />
         </Link>
       ) : null}
     </div>

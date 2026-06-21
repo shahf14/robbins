@@ -1,34 +1,19 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useState, type ReactNode} from 'react';
 import {useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 import {normalizeLifeContextSelection} from '@/lib/formulation/life-context';
-import {PARTICIPANT_GENDERS, type ParticipantGender} from '@/lib/formulation/participant-profile';
-import {LIFE_CONTEXT_STATUSES} from '@/lib/life-coach/types';
-import type {LifeContextStatus} from '@/lib/life-coach/types';
-import {
-  COACHING_STYLES,
-  FAMILY_STATUSES,
-  PHYSICAL_CONSIDERATIONS,
-  type CoachingStyle,
-  type FamilyStatus,
-  type PhysicalConsideration,
-} from '@/lib/user-preferences';
+import {LIFE_CONTEXT_STATUSES, LIFE_DOMAINS} from '@/lib/life-coach/types';
+import type {LifeContextStatus, LifeDomain} from '@/lib/life-coach/types';
 
 type Step1ProfileState = {
-  name: string;
   locale: AppLocale;
-  gender: ParticipantGender | null;
   lifeContextStatuses: LifeContextStatus[];
   lifeContextNote: string;
-  wakeTime: string;
-  sleepTime: string;
-  coachingStyle: CoachingStyle;
-  familyStatus: FamilyStatus | '';
-  age: string;
-  agePreferNot: boolean;
-  physicalConsiderations: PhysicalConsideration[];
+  selectedDomain: LifeDomain | null;
+  saving: boolean;
 };
 
 type Props = {
@@ -37,28 +22,16 @@ type Props = {
   onNext: () => void;
 };
 
-function Question({
-  label,
-  hint,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  children: ReactNode;
-}) {
+function ZoneHeading({title}: {title: string}) {
   return (
-    <div className="grid gap-3">
-      <div>
-        <p className="text-base font-semibold txt-strong">{label}</p>
-        {hint && <p className="mt-1 text-sm txt-muted">{hint}</p>}
-      </div>
-      {children}
-    </div>
+    <p className="text-[11px] font-bold uppercase tracking-[0.14em] txt-muted">{title}</p>
   );
 }
 
-function ChipButton({
-  active, onClick, children,
+function SmallChip({
+  active,
+  onClick,
+  children,
 }: {
   active: boolean;
   onClick: () => void;
@@ -69,10 +42,10 @@ function ChipButton({
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`focus-ring rounded-full px-4 py-2.5 text-sm font-medium transition ${
+      className={`focus-ring inline-flex min-h-9 items-center rounded-full px-3 py-1 text-xs font-medium transition ${
         active
-          ? 'bg-[var(--blue)] text-white'
-          : 'fill-2 txt-soft hover:fill-3 hover:txt-strong'
+          ? 'bg-[var(--blue)] text-white shadow-[0_0_0_1px_rgba(26,109,255,0.35)]'
+          : 'border border-[color:var(--color-border)]/60 fill-2 txt-muted hover:border-[color:var(--color-border)] hover:txt-soft'
       }`}
     >
       {children}
@@ -82,13 +55,12 @@ function ChipButton({
 
 export function Step1BasicInfo({s, set, onNext}: Props) {
   const t = useTranslations();
-  const [showMore, setShowMore] = useState(false);
-  const [nameTouched, setNameTouched] = useState(false);
-  const nameValid = s.name.trim().length > 0;
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const domainValid = s.selectedDomain !== null;
 
   function handleNext() {
-    setNameTouched(true);
-    if (!nameValid) return;
+    setSubmitAttempted(true);
+    if (!domainValid || s.saving) return;
     onNext();
   }
 
@@ -106,227 +78,79 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
     });
   }
 
-  function togglePhysical(item: PhysicalConsideration) {
-    set({
-      physicalConsiderations: s.physicalConsiderations.includes(item)
-        ? s.physicalConsiderations.filter((x) => x !== item)
-        : [...s.physicalConsiderations, item],
-    });
-  }
-
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-[clamp(1.75rem,4.5vw,2.25rem)] font-bold leading-tight txt-strong">
+        <h1 className="text-[clamp(1.65rem,4vw,2rem)] font-bold leading-tight txt-strong">
           {t('onboarding.step1Title')}
         </h1>
         <p className="mt-2 text-sm leading-6 txt-soft">{t('onboarding.step1Body')}</p>
-        <p className="mt-1 text-xs txt-faint">{t('onboarding.step1TimeHint')}</p>
       </header>
 
-      <div className="flex flex-col gap-8">
-        <Question label={t('onboarding.nameLabel')}>
-          <input
-            className="focus-ring input-base border-0 fill-2"
-            autoFocus
-            autoComplete="given-name"
-            value={s.name}
-            onChange={(e) => set({name: e.target.value})}
-            onBlur={() => setNameTouched(true)}
-            placeholder={t('onboarding.namePlaceholder')}
-            maxLength={60}
-            aria-invalid={nameTouched && !nameValid}
-            aria-describedby={nameTouched && !nameValid ? 'name-error' : undefined}
-          />
-          {nameTouched && !nameValid && (
-            <p id="name-error" className="text-sm text-red-300" role="alert">
-              {t('onboarding.nameRequired')}
-            </p>
-          )}
-        </Question>
+      <section className="grid gap-3">
+        <ZoneHeading title={t('onboarding.step2Eyebrow')} />
+        <div className="grid gap-2 sm:grid-cols-2">
+          {LIFE_DOMAINS.map((domain) => (
+            <button
+              key={domain}
+              type="button"
+              aria-pressed={s.selectedDomain === domain}
+              className={`focus-ring rounded-[14px] border px-4 py-3 text-start text-sm font-bold transition ${
+                s.selectedDomain === domain
+                  ? 'border-[var(--blue)] bg-[rgba(26,109,255,0.14)] txt-strong'
+                  : 'border-[color:var(--color-border)] fill-1 txt-soft hover:border-[color:var(--color-border-strong)] hover:txt-strong'
+              }`}
+              onClick={() => set({selectedDomain: domain})}
+            >
+              {t(`lifeCoach.domains.${domain}.short`)}
+            </button>
+          ))}
+        </div>
+        {submitAttempted && !domainValid ? (
+          <p className="text-xs text-red-400/80" role="alert">
+            {t('onboarding.quickStartDomainRequired')}
+          </p>
+        ) : null}
+      </section>
 
-        <Question label={t('onboarding.lifeContextQuestion')}>
-          <div className="flex flex-wrap gap-2">
+      <section className="grid gap-2.5">
+        <ZoneHeading title={t('onboarding.step1ZoneNow')} />
+        <div className="rounded-xl border border-[var(--blue)]/18 bg-[var(--blue)]/[0.06] p-3.5 sm:p-4">
+          <p className="text-base font-semibold leading-snug txt-strong">
+            {t('onboarding.lifeContextQuestion')}
+          </p>
+          <p className="mt-1 text-xs leading-5 txt-muted">{t('onboarding.step1LifeContextHint')}</p>
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {LIFE_CONTEXT_STATUSES.map((status) => (
-              <ChipButton
+              <SmallChip
                 key={status}
                 active={s.lifeContextStatuses.includes(status)}
                 onClick={() => toggleLifeContext(status)}
               >
                 {t(`formulation.consent.contexts.${status}`)}
-              </ChipButton>
+              </SmallChip>
             ))}
           </div>
-          {s.lifeContextStatuses.some((c) => c !== 'prefer_not') && (
+          {s.lifeContextStatuses.some((c) => c !== 'prefer_not') ? (
             <textarea
-              className="focus-ring textarea-base min-h-20 border-0 fill-2"
+              className="focus-ring textarea-base mt-3 min-h-14 w-full rounded-lg border border-[color:var(--color-border)]/70 fill-2 px-3 py-2 text-sm"
               value={s.lifeContextNote}
               maxLength={200}
               aria-label={t('lifeContext.notePlaceholder')}
               placeholder={t('onboarding.lifeContextNotePlaceholder')}
               onChange={(e) => set({lifeContextNote: e.target.value})}
             />
-          )}
-        </Question>
-
-        <Question label={t('onboarding.scheduleQuestion')}>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <label className="grid gap-2">
-              <span className="text-sm txt-muted">{t('onboarding.wakeLabel')}</span>
-              <input
-                className="focus-ring input-base border-0 fill-2"
-                type="time"
-                value={s.wakeTime}
-                onChange={(e) => set({wakeTime: e.target.value})}
-              />
-            </label>
-            <label className="grid gap-2">
-              <span className="text-sm txt-muted">{t('onboarding.sleepLabel')}</span>
-              <input
-                className="focus-ring input-base border-0 fill-2"
-                type="time"
-                value={s.sleepTime}
-                onChange={(e) => set({sleepTime: e.target.value})}
-              />
-            </label>
-          </div>
-        </Question>
-
-        <Question label={t('onboarding.languageLabel')}>
-          <div className="flex gap-2">
-            {(['en', 'he'] as AppLocale[]).map((l) => (
-              <button
-                key={l}
-                type="button"
-                aria-pressed={s.locale === l}
-                onClick={() => set({locale: l})}
-                className={`focus-ring flex-1 rounded-full py-2.5 text-sm font-medium transition ${
-                  s.locale === l
-                    ? 'bg-[var(--blue)] text-white'
-                    : 'fill-2 txt-soft hover:fill-3'
-                }`}
-              >
-                {l === 'en' ? 'English' : 'עברית'}
-              </button>
-            ))}
-          </div>
-        </Question>
-
-        <button
-          type="button"
-          className="focus-ring self-start text-sm font-medium txt-muted hover:txt-soft"
-          aria-expanded={showMore}
-          onClick={() => setShowMore((v) => !v)}
-        >
-          {showMore ? t('onboarding.lessOptions') : t('onboarding.moreOptions')}
-        </button>
-
-        {showMore && (
-          <div className="flex flex-col gap-8 border-t border-[color:var(--color-border)] pt-8">
-            <Question label={t('settings.gender')} hint={t('onboarding.genderHelpShort')}>
-              <div className="flex flex-wrap gap-2">
-                {PARTICIPANT_GENDERS.map((g) => (
-                  <ChipButton
-                    key={g}
-                    active={s.gender === g}
-                    onClick={() => set({gender: s.gender === g ? null : g})}
-                  >
-                    {t(`formulation.consent.genderOptions.${g}`)}
-                  </ChipButton>
-                ))}
-              </div>
-            </Question>
-
-            <Question label={t('settings.coachingStyle')}>
-              <div className="flex flex-wrap gap-2">
-                {COACHING_STYLES.map((style) => (
-                  <ChipButton
-                    key={style}
-                    active={s.coachingStyle === style}
-                    onClick={() => set({coachingStyle: style})}
-                  >
-                    {t(`settings.coachingStyleOption.${style}`)}
-                  </ChipButton>
-                ))}
-              </div>
-            </Question>
-
-            <Question
-              label={`${t('onboarding.familyLabel')} (${t('onboarding.optional')})`}
-            >
-              <div className="flex flex-wrap gap-2">
-                {FAMILY_STATUSES.map((fs) => (
-                  <ChipButton
-                    key={fs}
-                    active={s.familyStatus === fs}
-                    onClick={() => set({familyStatus: s.familyStatus === fs ? '' : fs})}
-                  >
-                    {t(`onboarding.family.${fs}`)}
-                  </ChipButton>
-                ))}
-              </div>
-            </Question>
-
-            <Question label={`${t('settings.age')} (${t('onboarding.optional')})`}>
-              {s.agePreferNot ? (
-                <button
-                  type="button"
-                  className="focus-ring self-start rounded-full fill-2 px-4 py-2 text-sm txt-soft"
-                  onClick={() => set({agePreferNot: false})}
-                >
-                  {t('settings.agePreferNot')} ✕
-                </button>
-              ) : (
-                <div className="flex gap-2">
-                  <input
-                    className="focus-ring input-base flex-1 border-0 fill-2"
-                    type="number"
-                    inputMode="numeric"
-                    min={16}
-                    max={120}
-                    value={s.age}
-                    aria-label={t('settings.age')}
-                    onChange={(e) => set({age: e.target.value})}
-                    placeholder={t('settings.agePlaceholder')}
-                  />
-                  <button
-                    type="button"
-                    className="focus-ring shrink-0 rounded-full fill-2 px-4 text-sm txt-muted"
-                    onClick={() => set({agePreferNot: true, age: ''})}
-                  >
-                    {t('settings.agePreferNot')}
-                  </button>
-                </div>
-              )}
-            </Question>
-
-            <Question
-              label={`${t('onboarding.physicalLabel')} (${t('onboarding.optional')})`}
-              hint={t('onboarding.physicalHelpShort')}
-            >
-              <div className="flex flex-wrap gap-2">
-                {PHYSICAL_CONSIDERATIONS.map((item) => (
-                  <ChipButton
-                    key={item}
-                    active={s.physicalConsiderations.includes(item)}
-                    onClick={() => togglePhysical(item)}
-                  >
-                    {t(`onboarding.physical.${item}`)}
-                  </ChipButton>
-                ))}
-              </div>
-            </Question>
-          </div>
-        )}
-      </div>
+          ) : null}
+        </div>
+      </section>
 
       <button
         type="button"
-        className="focus-ring btn-primary mt-2 w-full justify-center disabled:opacity-50"
+        className="focus-ring mt-1 flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--blue)] px-6 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+        disabled={s.saving}
         onClick={handleNext}
-        disabled={!nameValid}
       >
-        {t('onboarding.next')} →
+        {s.saving ? t('onboarding.saving') : t('onboarding.next')} {!s.saving && <NavArrow className="ms-1" />}
       </button>
     </div>
   );

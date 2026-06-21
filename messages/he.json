@@ -324,6 +324,11 @@
       "saved": "מעולה. היום שלך מוכן.",
       "alreadySelected": "הפעולות האלה כבר נמצאות בתוכנית של היום.",
       "reassurance": "משימה אחת מספיקה. המטרה היא להתחיל בלי לחץ.",
+      "physicalTitle": "לפני משימות גוף: יש משהו שחשוב לקחת בחשבון?",
+      "physicalBody": "לא אבחון ולא שאלון בריאות. רק כדי שלא נציע פעולה פיזית שלא מתאימה להיום.",
+      "physicalNone": "אין משהו מיוחד",
+      "physicalSave": "שמור והמשך",
+      "physicalLater": "לא עכשיו",
       "energy": {
         "low": "אנרגיה נמוכה",
         "medium": "אנרגיה בינונית",
@@ -1344,7 +1349,7 @@
       "stepsError": "לא הצלחנו לייצר צעדים — תוכל לעשות זאת מה-Life Coach",
       "firstWinLabel": "הניצחון הראשון שלך — עכשיו",
       "firstWinMinutes": "{minutes} דק׳",
-      "toCoachDomain": "עבור אל {domain} ←"
+      "toCoachDomain": "עבור אל {domain}"
     },
     "export": {
       "hint": "ייצוא לצ'אט אחר (ChatGPT, Claude וכו') — כולל כל מה שמילאת עד עכשיו",
@@ -1816,11 +1821,28 @@
   },
   "onboarding": {
     "stepCounter": "שלב {step} מתוך {total}",
-    "step1Title": "בוא נבנה את התוכנית הראשונה שלך",
-    "step1Body": "נענה על כמה שאלות קצרות כדי להתאים את האימון עבורך.",
+    "stepCounterWithLabel": "שלב {step} מתוך {total} · {label}",
+    "step1ProgressLabel": "התחלה מהירה",
+    "step1Title": "באיזה עולם נתחיל היום?",
+    "step1Body": "בחר עולם אחד, ואם יש משהו שמאפיין את התקופה שלך אפשר לסמן. אחר כך נבחר 1-3 משימות קטנות להיום.",
     "step1TimeHint": "פחות מדקה.",
-    "lifeContextQuestion": "מה קורה בחיים שלך כרגע?",
+    "step1ZoneIdentity": "מי אתה",
+    "step1ZoneNow": "איפה אתה עכשיו",
+    "step1ZoneFit": "איך להתאים לך",
+    "step1LifeContextHint": "עוזר לנו להתאים עומס, זמן פנוי וסוגי המלצות.",
+    "step1DetailsToggle": "פרטים נוספים להתאמה מדויקת יותר",
+    "step1BackgroundTitle": "פרטים להתאמה",
+    "step1BackgroundBody": "נשתמש בזה רק כדי לדייק את ההמלצות.",
+    "step1BackgroundHint": "משמש להתאמת עומס, זמן פנוי וסוגי המלצות.",
+    "step1SummaryAge": "גיל {age}",
+    "agePlaceholder": "34",
+    "genderPlaceholder": "בחר/י",
+    "familyPlaceholder": "בחר/י",
+    "sleepRoutineLabel": "שגרת שינה",
+    "skipFamily": "אפשר לדלג",
+    "lifeContextQuestion": "יש משהו שמאפיין את התקופה שלך?",
     "lifeContextNotePlaceholder": "משפט קצר — אם תרצה/י",
+    "quickStartDomainRequired": "בחר/י עולם אחד כדי להמשיך",
     "scheduleQuestion": "מתי בדרך כלל קם/ה ומתי הולך/ת לישון?",
     "genderHelpShort": "אופציונלי — משפיע על ניסוח בעברית",
     "physicalHelpShort": "רק כדי לא להציע משהו לא מתאים",
@@ -2930,6 +2952,18 @@
       "setGoal": "עכשיו: הגדר מטרה ראשונה",
       "backDashboard": "עכשיו: חזור לדשבורד"
     },
+    "profileCompletion": {
+      "aria": "השלמת התאמה אישית",
+      "title": "שפר את ההתאמה האישית",
+      "later": "אחר כך",
+      "hideWeek": "אל תציג השבוע",
+      "prompts": {
+        "preferred_action_window": "מתי הכי נוח לך לבצע משימות קצרות?",
+        "coaching_style": "איך תרצה שהמאמן ידבר איתך?",
+        "available_time_per_day": "כמה זמן ריאלי יש לך ביום לצעדים?",
+        "intensity_preference": "באיזה קצב נוח לך להתקדם?"
+      }
+    },
     "weeklyChallengeEyebrow": "אתגר שבועי",
     "weeklyChallengeTitle": "השלם {target} צעדים השבוע",
     "weeklyChallengeComplete": "האתגר השבועי הושלם",
@@ -3007,6 +3041,7 @@
     "howItWorks": {
       "eyebrow": "איך זה עובד",
       "title": "איך זה עובד?",
+      "collapsedPrefix": "איך זה עובד?",
       "collapsedLabel": "איך זה עובד? · טקס בוקר → צעדים → סיכום",
       "collapse": "קפל",
       "steps": {
@@ -3161,7 +3196,7 @@
     "toolsBar": {
       "tomorrowAt": "מחר ב-{wakeTime} — הצעדים מחכים לך.",
       "nightRest": "עכשיו זמן מנוחה. בלי לחץ לביצוע.",
-      "eveningOptional": "רוצה איפוס ערב קצר? →",
+      "eveningOptional": "רוצה איפוס ערב קצר?",
       "eveningBadge": "מומלץ עכשיו"
     },
     "evening": {
@@ -3175,7 +3210,9 @@
     "stepsPlannedFrom": "תוכננו {count} צעדים מ-{wakeTime}",
     "reminders": {
       "title": "תזכורות לפי לוח הזמנים שלך",
-      "help": "השעות נגזרות משעת הקימה והשינה בהגדרות — לא צריך לבחור ידנית.",
+      "help": "עדכן כאן שעת קימה ושינה, והתזכורות יסתדרו סביב היום שלך.",
+      "wakeTimeLabel": "שעת קימה",
+      "sleepTimeLabel": "שעת שינה",
       "morningLabel": "תזכורת בוקר — צעדים יומיים",
       "eveningLabel": "תזכורת ערב — איפוס לפני שינה",
       "morningTime": "בשעה {time} (קימה + 15 דק׳)",

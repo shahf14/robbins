@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
@@ -257,7 +258,7 @@ function DomainDetailContent({domain}: {domain: LifeDomain}) {
                     className="focus-ring mt-3 text-sm font-semibold text-[var(--blue)]"
                     onClick={() => setActiveTab('goal')}
                   >
-                    {t('lifeCoach.domainTabs.goToGoal')} →
+                    {t('lifeCoach.domainTabs.goToGoal')} <NavArrow />
                   </button>
                 </div>
               )}

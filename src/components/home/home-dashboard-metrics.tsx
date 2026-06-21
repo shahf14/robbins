@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {Link} from '@/i18n/navigation';
 import type {useTranslations} from 'next-intl';
 import type {DailyBabyStep, LifeDomain, LifeDomainState} from '@/lib/life-coach/types';
@@ -99,7 +100,7 @@ export function HomeGoalProgress({
         {daysLeft > 0 && (
           <span>{t('home.goalDaysLeft', {days: daysLeft})}</span>
         )}
-        <span className="ms-auto txt-faint transition group-hover:txt-muted">→</span>
+        <NavArrow className="ms-auto txt-faint transition group-hover:txt-muted" />
       </div>
     </Link>
   );
@@ -118,7 +119,7 @@ export function HomeKpiStrip({
   t: ReturnType<typeof useTranslations>;
 }) {
   const completionRate = weeklyTotal > 0 ? Math.round((weeklyDone / weeklyTotal) * 100) : 0;
-  const trendIcon = trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→';
+  const trendIcon = trend === 'up' ? '↑' : trend === 'down' ? '↓' : '—';
   const trendColor = trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-red-400' : 'txt-muted';
   const aligned = behaviorChangeAnalysis?.goal_aligned_count ?? 0;
   const showUps = behaviorChangeAnalysis?.show_up_count ?? weeklyDone;

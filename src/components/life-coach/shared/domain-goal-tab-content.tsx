@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useState, type ReactNode} from 'react';
 import {useTranslations} from 'next-intl';
 import type {DailyBabyStep, Goal, LifeDomain, LifeDomainState, Milestone} from '@/lib/life-coach/types';
@@ -59,9 +60,13 @@ export function DomainGoalTabContent({
               )
             }
           >
-            {activeBlockerDeepDive
-              ? t('blockerDeepDive.save')
-              : `${t('healthWizard.step4Title')} →`}
+            {activeBlockerDeepDive ? (
+              t('blockerDeepDive.save')
+            ) : (
+              <>
+                {t('healthWizard.step4Title')} <NavArrow />
+              </>
+            )}
           </button>
           {activeBlockerDeepDive && (
             <BlockerDeepDive

@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useTranslations} from 'next-intl';
 
 type Props = {
@@ -26,9 +27,7 @@ export function GoalWizardAiBuildPreview({className = ''}: Props) {
       <ul className="mt-4 grid gap-2.5">
         {ITEM_KEYS.map((key) => (
           <li key={key} className="flex items-start gap-2.5 text-sm leading-6 txt-soft">
-            <span className="mt-0.5 shrink-0 font-bold text-[var(--blue)]" aria-hidden>
-              →
-            </span>
+            <NavArrow className="mt-0.5 shrink-0 text-[var(--blue)]" />
             <span>{t(key)}</span>
           </li>
         ))}

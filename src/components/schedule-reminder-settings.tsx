@@ -2,31 +2,40 @@
 
 import {useTranslations} from 'next-intl';
 import {useEffect, useState} from 'react';
+import {formulationApi} from '@/lib/life-coach/api-client';
 import {
-  type ScheduleReminderPrefs,
   loadScheduleReminderPrefs,
   requestScheduleReminderPermission,
   saveScheduleReminderPrefs,
 } from '@/lib/schedule-reminders';
+import {addMinutesToTime} from '@/lib/schedule-content';
+import {loadUserPreferences, saveUserPreferences} from '@/lib/user-preferences';
 
 export function ScheduleReminderSettings({compact = false}: {compact?: boolean}) {
   const t = useTranslations('schedule.reminders');
-  const [prefs, setPrefs] = useState<ScheduleReminderPrefs>(() => loadScheduleReminderPrefs());
-  const [morningEnabled, setMorningEnabled] = useState(() => prefs.morningEnabled);
-  const [eveningEnabled, setEveningEnabled] = useState(() => prefs.eveningEnabled);
+  const [morningEnabled, setMorningEnabled] = useState(() => loadScheduleReminderPrefs().morningEnabled);
+  const [eveningEnabled, setEveningEnabled] = useState(() => loadScheduleReminderPrefs().eveningEnabled);
+  const [wakeTime, setWakeTime] = useState(() => loadUserPreferences().wake_time);
+  const [sleepTime, setSleepTime] = useState(() => loadUserPreferences().sleep_time);
   const [status, setStatus] = useState('');
 
   useEffect(() => {
     const id = window.setTimeout(() => {
       const nextPrefs = loadScheduleReminderPrefs();
-      setPrefs(nextPrefs);
       setMorningEnabled(nextPrefs.morningEnabled);
       setEveningEnabled(nextPrefs.eveningEnabled);
+      const userPrefs = loadUserPreferences();
+      setWakeTime(userPrefs.wake_time);
+      setSleepTime(userPrefs.sleep_time);
     }, 0);
     return () => window.clearTimeout(id);
   }, []);
 
   async function enableReminders() {
+    saveUserPreferences({wake_time: wakeTime, sleep_time: sleepTime});
+    formulationApi
+      .updateParticipantProfile({wake_time: wakeTime, sleep_time: sleepTime})
+      .catch(() => {});
     const permission = await requestScheduleReminderPermission();
     if (permission === 'unsupported') {
       setStatus(t('unsupported'));
@@ -40,6 +49,9 @@ export function ScheduleReminderSettings({compact = false}: {compact?: boolean})
     ? 'mt-8 rounded-[20px] border border-[color:var(--color-border)] fill-1 p-5'
     : '';
 
+  const morningTime = addMinutesToTime(wakeTime, 15);
+  const eveningTime = addMinutesToTime(sleepTime, -45);
+
   return (
     <div className={wrapperClass}>
       {!compact && (
@@ -51,6 +63,27 @@ export function ScheduleReminderSettings({compact = false}: {compact?: boolean})
       {compact && <p className="field-label mb-0 txt-muted">{t('title')}</p>}
 
       <div className="mt-4 space-y-4">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="grid gap-1.5">
+            <span className="text-xs font-semibold txt-muted">{t('wakeTimeLabel')}</span>
+            <input
+              type="time"
+              className="focus-ring input-base"
+              value={wakeTime}
+              onChange={(e) => setWakeTime(e.target.value)}
+            />
+          </label>
+          <label className="grid gap-1.5">
+            <span className="text-xs font-semibold txt-muted">{t('sleepTimeLabel')}</span>
+            <input
+              type="time"
+              className="focus-ring input-base"
+              value={sleepTime}
+              onChange={(e) => setSleepTime(e.target.value)}
+            />
+          </label>
+        </div>
+
         <label className="flex items-start gap-3">
           <input
             type="checkbox"
@@ -60,7 +93,7 @@ export function ScheduleReminderSettings({compact = false}: {compact?: boolean})
           />
           <span>
             <span className="block text-sm font-semibold txt-strong">{t('morningLabel')}</span>
-            <span className="mt-1 block text-xs txt-muted">{t('morningTime', {time: prefs.morningTime})}</span>
+            <span className="mt-1 block text-xs txt-muted">{t('morningTime', {time: morningTime})}</span>
           </span>
         </label>
 
@@ -73,7 +106,7 @@ export function ScheduleReminderSettings({compact = false}: {compact?: boolean})
           />
           <span>
             <span className="block text-sm font-semibold txt-strong">{t('eveningLabel')}</span>
-            <span className="mt-1 block text-xs txt-muted">{t('eveningTime', {time: prefs.eveningTime})}</span>
+            <span className="mt-1 block text-xs txt-muted">{t('eveningTime', {time: eveningTime})}</span>
           </span>
         </label>
       </div>

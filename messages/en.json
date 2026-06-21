@@ -324,6 +324,11 @@
       "saved": "Great. Your day is ready.",
       "alreadySelected": "These actions are already in today's plan.",
       "reassurance": "One task is enough. The goal is to begin without pressure.",
+      "physicalTitle": "Before body tasks: anything we should respect?",
+      "physicalBody": "Not a diagnosis or a health questionnaire. This only helps avoid suggesting a physical action that does not fit today.",
+      "physicalNone": "Nothing special",
+      "physicalSave": "Save and continue",
+      "physicalLater": "Not now",
       "energy": {
         "low": "Low energy",
         "medium": "Medium energy",
@@ -1344,7 +1349,7 @@
       "stepsError": "Could not generate steps — you can do this from Life Coach",
       "firstWinLabel": "Your first win — start here",
       "firstWinMinutes": "{minutes} min",
-      "toCoachDomain": "Go to {domain} →"
+      "toCoachDomain": "Go to {domain}"
     },
     "export": {
       "hint": "Export for another chat (ChatGPT, Claude, etc.) — includes everything you've entered so far",
@@ -1816,11 +1821,28 @@
   },
   "onboarding": {
     "stepCounter": "Step {step} of {total}",
-    "step1Title": "Let's build your first plan",
-    "step1Body": "A few short questions so we can tailor coaching for you.",
+    "stepCounterWithLabel": "Step {step} of {total} · {label}",
+    "step1ProgressLabel": "Quick start",
+    "step1Title": "Which area should we start with today?",
+    "step1Body": "Choose one area, and optionally mark anything that describes this season of life. Then you'll choose 1-3 small tasks for today.",
     "step1TimeHint": "Less than a minute.",
-    "lifeContextQuestion": "What's going on in your life right now?",
+    "step1ZoneIdentity": "Who you are",
+    "step1ZoneNow": "Where you are now",
+    "step1ZoneFit": "How to tailor for you",
+    "step1LifeContextHint": "Helps us match load, free time, and recommendation types.",
+    "step1DetailsToggle": "More details for finer tailoring",
+    "step1BackgroundTitle": "Details for tailoring",
+    "step1BackgroundBody": "We'll only use this to fine-tune recommendations.",
+    "step1BackgroundHint": "Used for load, free time, and recommendation types.",
+    "step1SummaryAge": "Age {age}",
+    "agePlaceholder": "34",
+    "genderPlaceholder": "Choose",
+    "familyPlaceholder": "Choose",
+    "sleepRoutineLabel": "Sleep routine",
+    "skipFamily": "Skip for now",
+    "lifeContextQuestion": "Is anything shaping this season of life?",
     "lifeContextNotePlaceholder": "A short note — if you'd like",
+    "quickStartDomainRequired": "Choose one area to continue",
     "scheduleQuestion": "When do you usually wake up and go to sleep?",
     "genderHelpShort": "Optional — affects Hebrew phrasing",
     "physicalHelpShort": "So we don't suggest something that doesn't fit",
@@ -2930,6 +2952,18 @@
       "setGoal": "Now: set your first goal",
       "backDashboard": "Now: back to dashboard"
     },
+    "profileCompletion": {
+      "aria": "Personalization completion",
+      "title": "Improve personalization",
+      "later": "Later",
+      "hideWeek": "Hide this week",
+      "prompts": {
+        "preferred_action_window": "When is it easiest for you to do short tasks?",
+        "coaching_style": "How would you like the coach to speak to you?",
+        "available_time_per_day": "How much realistic time do you have for steps each day?",
+        "intensity_preference": "What pace feels right for progress?"
+      }
+    },
     "weeklyChallengeEyebrow": "Weekly Challenge",
     "weeklyChallengeTitle": "Beat {target} steps this week",
     "weeklyChallengeComplete": "Weekly challenge complete",
@@ -3007,6 +3041,7 @@
     "howItWorks": {
       "eyebrow": "How it works",
       "title": "How does it work?",
+      "collapsedPrefix": "How does it work?",
       "collapsedLabel": "How does it work? · morning ritual → steps → wrap-up",
       "collapse": "Collapse",
       "steps": {
@@ -3161,7 +3196,7 @@
     "toolsBar": {
       "tomorrowAt": "Tomorrow at {wakeTime} — your steps will be waiting.",
       "nightRest": "Rest time now. No pressure to perform.",
-      "eveningOptional": "Want a short evening reset? →",
+      "eveningOptional": "Want a short evening reset?",
       "eveningBadge": "Suggested now"
     },
     "evening": {
@@ -3175,7 +3210,9 @@
     "stepsPlannedFrom": "{count} steps planned from {wakeTime}",
     "reminders": {
       "title": "Reminders on your schedule",
-      "help": "Times are derived from your wake and sleep settings — no manual pick needed.",
+      "help": "Update wake and sleep times here, and reminders will fit around your day.",
+      "wakeTimeLabel": "Wake time",
+      "sleepTimeLabel": "Sleep time",
       "morningLabel": "Morning reminder — daily steps",
       "eveningLabel": "Evening reminder — wind-down before sleep",
       "morningTime": "At {time} (wake + 15 min)",

@@ -9,10 +9,12 @@ type Props = {
   className?: string;
 };
 
+import {NavArrow} from '@/components/directional-arrow';
+
 /** Clear “what to do next” at the bottom of a flow. */
 export function NextActionBar({label, href, onClick, className = ''}: Props) {
   const inner = (
-    <span className="text-sm font-bold text-[var(--blue)]">{label} <span aria-hidden="true">→</span></span>
+    <span className="text-sm font-bold text-[var(--blue)]">{label} <NavArrow /></span>
   );
 
   return (

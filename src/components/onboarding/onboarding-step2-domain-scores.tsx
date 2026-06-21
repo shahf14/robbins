@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useState} from 'react';
 import {useTranslations} from 'next-intl';
 import type {LifeDomain} from '@/lib/life-coach/types';
@@ -424,9 +425,15 @@ export function Step2DomainScores({
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" aria-hidden="true" />
                 {t('onboarding.analyzing')}
               </span>
-            ) : s.selectedDomain
-              ? t('onboarding.step2DynamicCta', {domain: selectedDomainLabel}) + ' →'
-              : t('onboarding.next') + ' →'}
+            ) : s.selectedDomain ? (
+              <>
+                {t('onboarding.step2DynamicCta', {domain: selectedDomainLabel})} <NavArrow />
+              </>
+            ) : (
+              <>
+                {t('onboarding.next')} <NavArrow />
+              </>
+            )}
           </button>
           {!s.selectedDomain && (
             <p className="text-center text-xs font-semibold txt-faint">

@@ -40,6 +40,7 @@ import {
   HomePersonalBests,
 } from '@/components/home/home-dashboard-metrics';
 import {HomeToolsBar} from '@/components/home/home-tools-bar';
+import {ProfileCompletionPrompt} from '@/components/home/profile-completion-prompt';
 import {
   computeMomentumScore,
   deriveCelebration,
@@ -565,10 +566,7 @@ export function HomeDashboard() {
       <div className="flex flex-col gap-3">
         <HomeCompactHeader
           streak={data.ritualStreak}
-          displayName={data.displayName}
           lifeContexts={prefs.life_context_statuses}
-          wakeTime={prefs.wake_time}
-          sleepTime={prefs.sleep_time}
           weeklyDone={data.weeklyDone}
           weeklyTotal={data.weeklyTotal}
           t={t}
@@ -614,6 +612,7 @@ export function HomeDashboard() {
       </div>
 
       {/* ── התראות קריטיות בלבד ─────────────────────────────────────────── */}
+      <ProfileCompletionPrompt />
       {lifeContextMode.active && <LifeContextModeBanner mode={lifeContextMode} />}
       <ContinueProcessBanner includeOnboarding />
       {!howItWorksFirstUseComplete && <HomeHowItWorks firstUseComplete={howItWorksFirstUseComplete} />}

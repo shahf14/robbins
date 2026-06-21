@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useEffect, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {Link, useRouter} from '@/i18n/navigation';
@@ -167,7 +168,8 @@ export function CompleteStep({session}: Props) {
           >
             {t('complete.toCoachDomain', {
               domain: tc(`lifeCoach.domains.${suggestedDomain}.label`),
-            })}
+            })}{' '}
+            <NavArrow />
           </Link>
         ) : (
           <Link

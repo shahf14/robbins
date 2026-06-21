@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {Link} from '@/i18n/navigation';
 import type {useTranslations} from 'next-intl';
 import type {LifeContextStatus} from '@/lib/life-coach/types';
@@ -42,7 +43,7 @@ export function HomeToolsBar({
           href="/evening-reset"
           className="focus-ring mt-4 inline-flex text-xs font-semibold text-[var(--blue)]/90 hover:text-[var(--blue)]"
         >
-          {t('schedule.toolsBar.eveningOptional')}
+          {t('schedule.toolsBar.eveningOptional')} <NavArrow />
         </Link>
       </div>
     );

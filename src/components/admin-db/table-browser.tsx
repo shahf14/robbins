@@ -1,5 +1,6 @@
 'use client';
 
+import {BackArrow, NavArrow} from '@/components/directional-arrow';
 import {useEffect, useState, useCallback} from 'react';
 import {dbApi, type TableSummary, type TableData} from './use-db-api';
 
@@ -177,7 +178,7 @@ export function TableBrowser({tables, onRefresh}: Props) {
                     disabled={page <= 1}
                     onClick={() => setPage((p) => p - 1)}
                   >
-                    ← Prev
+                    <BackArrow /> Prev
                   </button>
                   <button
                     type="button"
@@ -185,7 +186,7 @@ export function TableBrowser({tables, onRefresh}: Props) {
                     disabled={page >= data.total_pages}
                     onClick={() => setPage((p) => p + 1)}
                   >
-                    Next →
+                    Next <NavArrow />
                   </button>
                 </div>
               </div>

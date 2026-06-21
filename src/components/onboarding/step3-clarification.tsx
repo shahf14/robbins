@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useMemo, useState} from 'react';
 import {useTranslations} from 'next-intl';
 import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microcopy';
@@ -277,7 +278,7 @@ export function Step3Clarification({
             aria-busy={busy}
             onClick={onNext}
           >
-            {busy ? t('onboarding.generating') : <>{t('onboarding.continueToGoal')} <span aria-hidden="true">→</span></>}
+            {busy ? t('onboarding.generating') : <>{t('onboarding.continueToGoal')} <NavArrow /></>}
           </button>
         ) : (
           <button
@@ -287,7 +288,7 @@ export function Step3Clarification({
             aria-busy={busy}
             onClick={handleGenerateInsight}
           >
-            {busy ? t('onboarding.generating') : <>{t('onboarding.step3Quick.buildInsight')} <span aria-hidden="true">→</span></>}
+            {busy ? t('onboarding.generating') : <>{t('onboarding.step3Quick.buildInsight')} <NavArrow /></>}
           </button>
         )}
       </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useTranslations} from 'next-intl';
 import type {LifeDomain} from '@/lib/life-coach/types';
 import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microcopy';
@@ -95,7 +96,11 @@ export function Step4GoalProposal({
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" aria-hidden="true" />
               {t('onboarding.savingGoal')}
             </span>
-          ) : t('onboarding.confirmGoal') + ' →'}
+          ) : (
+            <>
+              {t('onboarding.confirmGoal')} <NavArrow />
+            </>
+          )}
         </button>
       </div>
       <AiActionHelpMicrocopy kind="onboardingFirstStep" className="mt-3" />
@@ -326,7 +331,7 @@ export function Step6Celebration({
         className="focus-ring btn-primary w-full justify-center text-lg"
         onClick={onEnter}
       >
-        {t('onboarding.enterApp')} →
+        {t('onboarding.enterApp')} <NavArrow />
       </button>
     </div>
   );

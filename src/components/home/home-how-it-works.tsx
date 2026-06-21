@@ -2,6 +2,7 @@
 
 import {useEffect, useState} from 'react';
 import {useTranslations} from 'next-intl';
+import {ChevronDown, FlowArrow} from '@/components/directional-arrow';
 import {
   collapseHomeHowItWorks,
   isHomeHowItWorksCollapsed,
@@ -44,10 +45,16 @@ export function HomeHowItWorks({firstUseComplete}: Props) {
         onClick={() => setExpanded(true)}
         aria-expanded={false}
       >
-        <span className="text-sm font-medium txt-soft">{t('collapsedLabel')}</span>
-        <span className="txt-faint" aria-hidden>
-          ◀
+        <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm font-medium txt-soft">
+          <span>{t('collapsedPrefix')}</span>
+          <FlowArrow className="txt-faint" />
+          <span>{t('steps.checkin.title')}</span>
+          <FlowArrow className="txt-faint" />
+          <span>{t('steps.steps.title')}</span>
+          <FlowArrow className="txt-faint" />
+          <span>{t('steps.learn.title')}</span>
         </span>
+        <ChevronDown className="txt-faint" />
       </button>
     );
   }
@@ -74,29 +81,36 @@ export function HomeHowItWorks({firstUseComplete}: Props) {
         </button>
       </div>
 
-      <ol className="mt-4 grid gap-3 sm:grid-cols-3 sm:gap-2">
-        {STEP_KEYS.map((key, index) => (
-          <li
-            key={key}
-            className="relative flex items-start gap-3 rounded-xl fill-1 px-3 py-3 sm:flex-col sm:items-stretch sm:gap-2 sm:px-3 sm:py-3"
-          >
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--blue)]/30 bg-[var(--blue)]/10 text-xs font-black text-[var(--blue)]">
-              {index + 1}
-            </span>
-            <div className="min-w-0">
-              <p className="text-sm font-bold txt-strong">{t(`steps.${key}.title`)}</p>
-              <p className="mt-1 text-sm leading-5 txt-soft">{t(`steps.${key}.body`)}</p>
-            </div>
-            {index < STEP_KEYS.length - 1 ? (
-              <span
-                className="pointer-events-none absolute -right-2 top-1/2 hidden -translate-y-1/2 txt-faint sm:block"
-                aria-hidden
-              >
-                →
+      <ol className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-0">
+        {STEP_KEYS.flatMap((key, index) => {
+          const card = (
+            <li
+              key={key}
+              className="flex flex-1 items-start gap-3 rounded-xl fill-1 px-3 py-3 sm:flex-col sm:items-stretch sm:gap-2 sm:px-3 sm:py-3"
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--blue)]/30 bg-[var(--blue)]/10 text-xs font-black text-[var(--blue)]">
+                {index + 1}
               </span>
-            ) : null}
-          </li>
-        ))}
+              <div className="min-w-0">
+                <p className="text-sm font-bold txt-strong">{t(`steps.${key}.title`)}</p>
+                <p className="mt-1 text-sm leading-5 txt-soft">{t(`steps.${key}.body`)}</p>
+              </div>
+            </li>
+          );
+
+          if (index >= STEP_KEYS.length - 1) return [card];
+
+          return [
+            card,
+            <li
+              key={`${key}-arrow`}
+              aria-hidden
+              className="hidden list-none sm:flex sm:w-5 sm:shrink-0 sm:items-center sm:justify-center sm:self-center"
+            >
+              <FlowArrow className="txt-faint" />
+            </li>,
+          ];
+        })}
       </ol>
     </section>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+import {NavArrow} from '@/components/directional-arrow';
 import {useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 import type {EveningMode} from '@/lib/evening-reset-types';
@@ -177,7 +178,7 @@ export function StartScreen({
                 {t(`mode.${key}Outcome`)}
               </p>
               <p className="mt-3 text-[11px] font-bold text-violet-400/70 transition group-hover:text-violet-400">
-                {t('start.startMode')} →
+                {t('start.startMode')} <NavArrow />
               </p>
             </button>
           ))}
@@ -213,7 +214,7 @@ export function StartScreen({
           {(['previewWin', 'previewCompletion', 'previewGratitude', 'previewTomorrow'] as const).map(
             (key) => (
               <div key={key} className="flex items-center gap-2 text-sm txt-soft">
-                <span className="txt-faint">→</span>
+                <NavArrow className="txt-faint" />
                 <span>{t(`start.${key}`)}</span>
               </div>
             )

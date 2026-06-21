@@ -57,7 +57,74 @@ export async function PATCH(
       value_feedback: parsed.data.value_feedback,
     }, current.user.id);
 
-    if (parsed.data.blocker_reason || parsed.data.reflection_text) {
+    const isTerminalStatus =
+      parsed.data.status === 'completed' ||
+      parsed.data.status === 'skipped' ||
+      parsed.data.status === 'partial';
+    const hasReflection = Boolean(
+      parsed.data.blocker_reason || parsed.data.reflection_text
+    );
+
+    // Profile is needed by tone refresh and skip adaptation; fetch once.
+    const profile =
+      isTerminalStatus || hasReflection
+        ? await getUserParticipantProfile(current.user.id)
+        : null;
+    const locale = profile?.preferred_language ?? 'he';
+
+    if (profile) {
+      refreshToneEffectiveness(
+        current.user.id,
+        (profile.coaching_style ?? 'supportive') as CoachingStyle,
+        locale
+      );
+    }
+
+    // Skip-coach adaptation loop. This must run even when the user also supplied
+    // a blocker reason / reflection text — that is precisely the signal it
+    // consumes, so it cannot be short-circuited by the reflection branch below.
+    if (
+      profile &&
+      (parsed.data.status === 'skipped' || parsed.data.status === 'partial')
+    ) {
+      const formulation = await getLatestCompletedFormulation(current.user.id).catch(() => null);
+      const skipCtx = formulation ? buildSkipAdaptationContext(formulation, locale) : null;
+      if (skipCtx) {
+        const skipInput: SkipEventInput = {
+          status: parsed.data.status,
+          blocker_reason: parsed.data.blocker_reason,
+          reflection_text: parsed.data.reflection_text,
+          actual_minutes: parsed.data.actual_minutes,
+          value_feedback: parsed.data.value_feedback,
+          step_title: step.title,
+          step_estimated_minutes: step.estimated_minutes,
+          scheduled_date: step.scheduled_date,
+        };
+        const outcome = buildAutoSkipCoachOutcome(
+          skipCtx,
+          skipInput,
+          locale,
+          (profile.preferred_action_window ?? 'flexible') as PreferredActionWindow
+        );
+        saveSkipCoachAdjustment(current.user.id, {
+          skip_date: step.scheduled_date,
+          step_id: step.id,
+          goal_id: step.goal_id,
+          blocker_reason: parsed.data.blocker_reason,
+          coach_action: outcome.coach_action,
+          adjustment: outcome.adjustment,
+        });
+        if (outcome.classification === 'new_barrier') {
+          recordNewSkipBarrier(
+            current.user.id,
+            skipInput,
+            (profile.preferred_action_window ?? 'flexible') as PreferredActionWindow
+          );
+        }
+      }
+    }
+
+    if (hasReflection) {
       const today = step.scheduled_date || startOfToday();
       const existingSteps = await listDailyBabyStepsForDate(today, current.user.id);
       const completedSteps = existingSteps.filter((item) => item.status === 'completed').length;
@@ -73,13 +140,6 @@ export async function PATCH(
         self_blame_language: parsed.data.self_blame_language,
       });
 
-      const profile = await getUserParticipantProfile(current.user.id);
-      refreshToneEffectiveness(
-        current.user.id,
-        (profile.coaching_style ?? 'supportive') as CoachingStyle,
-        profile.preferred_language ?? 'he'
-      );
-
       return jsonOk({
         step,
         reflection,
@@ -90,53 +150,6 @@ export async function PATCH(
       });
     }
 
-    if (parsed.data.status === 'completed' || parsed.data.status === 'skipped' || parsed.data.status === 'partial') {
-      const profile = await getUserParticipantProfile(current.user.id);
-      const locale = profile.preferred_language ?? 'he';
-      refreshToneEffectiveness(
-        current.user.id,
-        (profile.coaching_style ?? 'supportive') as CoachingStyle,
-        locale
-      );
-
-      if (parsed.data.status === 'skipped' || parsed.data.status === 'partial') {
-        const formulation = await getLatestCompletedFormulation(current.user.id).catch(() => null);
-        const skipCtx = formulation ? buildSkipAdaptationContext(formulation, locale) : null;
-        if (skipCtx) {
-          const skipInput: SkipEventInput = {
-            status: parsed.data.status,
-            blocker_reason: parsed.data.blocker_reason,
-            reflection_text: parsed.data.reflection_text,
-            actual_minutes: parsed.data.actual_minutes,
-            value_feedback: parsed.data.value_feedback,
-            step_title: step.title,
-            step_estimated_minutes: step.estimated_minutes,
-            scheduled_date: step.scheduled_date,
-          };
-          const outcome = buildAutoSkipCoachOutcome(
-            skipCtx,
-            skipInput,
-            locale,
-            (profile.preferred_action_window ?? 'flexible') as PreferredActionWindow
-          );
-          saveSkipCoachAdjustment(current.user.id, {
-            skip_date: step.scheduled_date,
-            step_id: step.id,
-            goal_id: step.goal_id,
-            blocker_reason: parsed.data.blocker_reason,
-            coach_action: outcome.coach_action,
-            adjustment: outcome.adjustment,
-          });
-          if (outcome.classification === 'new_barrier') {
-            recordNewSkipBarrier(
-              current.user.id,
-              skipInput,
-              (profile.preferred_action_window ?? 'flexible') as PreferredActionWindow
-            );
-          }
-        }
-      }
-    }
     return jsonOk({step});
   } catch (error) {
     if (String(error).includes('not found')) return jsonError('Daily step not found.', 404);
