@@ -45,10 +45,25 @@ async function lifeCoachFetch<T>(path: string, init?: RequestInit): Promise<T> {
     },
   });
 
-  const payload = (await response.json()) as T & {error?: string; details?: unknown};
+  // The body may not be JSON (e.g. an unhandled 500 HTML page, an infra-level
+  // 413/429, or an empty response). Parse defensively so we always surface a
+  // LifeCoachApiError with a useful message instead of a raw SyntaxError.
+  let payload: (T & {error?: string; details?: unknown}) | null = null;
+  try {
+    const text = await response.text();
+    payload = text ? (JSON.parse(text) as T & {error?: string; details?: unknown}) : null;
+  } catch {
+    payload = null;
+  }
 
   if (!response.ok) {
-    throw new LifeCoachApiError(payload.error || 'Request failed.', payload.details);
+    const message =
+      payload?.error || response.statusText || `Request failed (${response.status}).`;
+    throw new LifeCoachApiError(message, payload?.details);
+  }
+
+  if (payload === null) {
+    throw new LifeCoachApiError('Received an invalid response from the server.');
   }
 
   return payload;

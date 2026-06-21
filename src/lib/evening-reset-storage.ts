@@ -45,9 +45,9 @@ export async function fetchEveningSessions(): Promise<EveningResetSession[]> {
     const data = (await res.json()) as {sessions?: EveningResetSession[]};
     if (pending.length > 0) {
       await Promise.all(pending.map(persistEveningSession));
-      window.localStorage.removeItem(SESSIONS_KEY);
     }
-    return mergeSessions(data.sessions ?? [], pending);
+    const remainingPending = readLegacyItems<EveningResetSession>(SESSIONS_KEY) ?? [];
+    return mergeSessions(data.sessions ?? [], remainingPending);
   } catch {
     return pending;
   }

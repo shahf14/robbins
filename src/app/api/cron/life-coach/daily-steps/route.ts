@@ -13,45 +13,53 @@ export async function POST(request: Request) {
   try {
     const userIds = await listActiveGoalUsers();
     let generatedCount = 0;
+    let failedCount = 0;
+    const errors: {userId: string; error: string}[] = [];
 
     for (const userId of userIds) {
-      const context = await getUserGenerationContext(userId);
+      try {
+        const context = await getUserGenerationContext(userId);
 
-      if (context.goals.length === 0) {
-        continue;
+        if (context.goals.length === 0) {
+          continue;
+        }
+
+        const existing = context.dailySteps.filter((step) => step.scheduled_date === startOfToday());
+
+        if (existing.some((step) => step.generated_by_ai)) {
+          continue;
+        }
+
+        const profile = await getUserParticipantProfile(userId);
+        const wakeTime = profile.wake_time ?? '07:00';
+        const sleepTime = profile.sleep_time ?? '22:30';
+        const locale = profile.preferred_language ?? 'he';
+        const actionWindow = profile.preferred_action_window ?? 'flexible';
+
+        if (!isPastWakeTimeInTimezone(wakeTime, profile.timezone ?? 'UTC')) {
+          continue;
+        }
+
+        const today = startOfToday();
+        await generateDailyStepsForUser(
+          userId,
+          today,
+          locale,
+          wakeTime,
+          'supportive',
+          [],
+          actionWindow,
+          sleepTime
+        );
+        generatedCount += 1;
+      } catch (error) {
+        failedCount += 1;
+        errors.push({userId, error: String(error)});
+        console.error(`daily-steps cron failed for user ${userId}:`, error);
       }
-
-      const existing = context.dailySteps.filter((step) => step.scheduled_date === startOfToday());
-
-      if (existing.some((step) => step.generated_by_ai)) {
-        continue;
-      }
-
-      const profile = await getUserParticipantProfile(userId);
-      const wakeTime = profile.wake_time ?? '07:00';
-      const sleepTime = profile.sleep_time ?? '22:30';
-      const locale = profile.preferred_language ?? 'he';
-      const actionWindow = profile.preferred_action_window ?? 'flexible';
-
-      if (!isPastWakeTimeInTimezone(wakeTime, profile.timezone ?? 'UTC')) {
-        continue;
-      }
-
-      const today = startOfToday();
-      await generateDailyStepsForUser(
-        userId,
-        today,
-        locale,
-        wakeTime,
-        'supportive',
-        [],
-        actionWindow,
-        sleepTime
-      );
-      generatedCount += 1;
     }
 
-    return jsonOk({ok: true, generatedCount});
+    return jsonOk({ok: true, generatedCount, failedCount, errors});
   } catch (error) {
     return jsonError('Could not run daily life coach cron.', 500, String(error));
   }

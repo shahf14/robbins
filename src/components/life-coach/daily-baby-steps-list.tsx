@@ -1016,6 +1016,7 @@ export function DailyBabyStepsList({
       </div>
 
       <DailyReflectionModal
+        key={activeStep?.id ?? 'closed'}
         open={!!activeStep}
         context="skip"
         skipAction={activeAction}

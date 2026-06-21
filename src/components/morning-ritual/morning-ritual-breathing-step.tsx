@@ -73,6 +73,8 @@ export function BreathingStep({
   const guidanceKey = `${phase}-${round}`;
 
   function startBreathing() {
+    // Guard against a stale interval if start is triggered twice without a stop.
+    if (intervalRef.current) window.clearInterval(intervalRef.current);
     setIsRunning(true);
     setPhase('inhale');
     setRound(1);

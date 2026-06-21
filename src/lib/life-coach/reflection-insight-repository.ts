@@ -10,32 +10,50 @@ export async function upsertDailyReflection(
   input: Omit<DailyReflection, 'id' | 'user_id' | 'created_at'>
 ): Promise<DailyReflection> {
   const now = new Date().toISOString();
-  const existing = dbGet<Record<string, unknown>>(
-    `SELECT * FROM daily_reflections WHERE user_id = ? AND date = ?`,
-    [userId, input.date]
-  );
-  const id = (existing?.id as string) ?? randomUUID();
-  const created_at = (existing?.created_at as string) ?? now;
-  const reflectionText = mergeReflectionText(
-    (existing?.reflection_text as string) ?? null,
-    input.reflection_text
-  );
+  let rowId: string = randomUUID();
 
-  dbRun(
-    `INSERT OR REPLACE INTO daily_reflections
-      (id, user_id, date, mood_score, energy_score, reflection_text, blocker_reason,
-       writing_duration_sec, reflection_word_count, self_blame_language, created_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
-    [id, userId, input.date, input.mood_score ?? existing?.mood_score ?? null,
-     input.energy_score ?? existing?.energy_score ?? null,
-     reflectionText, input.blocker_reason ?? existing?.blocker_reason ?? null,
-     input.writing_duration_sec ?? existing?.writing_duration_sec ?? null,
-     countWords(reflectionText),
-     (input.self_blame_language || !!existing?.self_blame_language) ? 1 : 0,
-     created_at]
-  );
+  getDb().transaction(() => {
+    const existing = dbGet<Record<string, unknown>>(
+      `SELECT * FROM daily_reflections WHERE user_id = ? AND date = ?`,
+      [userId, input.date]
+    );
+    rowId = (existing?.id as string) ?? rowId;
+    const created_at = (existing?.created_at as string) ?? now;
+    const reflectionText = mergeReflectionText(
+      (existing?.reflection_text as string) ?? null,
+      input.reflection_text
+    );
 
-  const row = dbGet<Record<string, unknown>>(`SELECT * FROM daily_reflections WHERE id = ?`, [id]);
+    dbRun(
+      `INSERT INTO daily_reflections
+        (id, user_id, date, mood_score, energy_score, reflection_text, blocker_reason,
+         writing_duration_sec, reflection_word_count, self_blame_language, created_at)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?)
+       ON CONFLICT(user_id, date) DO UPDATE SET
+         mood_score=excluded.mood_score,
+         energy_score=excluded.energy_score,
+         reflection_text=excluded.reflection_text,
+         blocker_reason=excluded.blocker_reason,
+         writing_duration_sec=excluded.writing_duration_sec,
+         reflection_word_count=excluded.reflection_word_count,
+         self_blame_language=excluded.self_blame_language`,
+      [
+        rowId,
+        userId,
+        input.date,
+        input.mood_score ?? existing?.mood_score ?? null,
+        input.energy_score ?? existing?.energy_score ?? null,
+        reflectionText,
+        input.blocker_reason ?? existing?.blocker_reason ?? null,
+        input.writing_duration_sec ?? existing?.writing_duration_sec ?? null,
+        countWords(reflectionText),
+        input.self_blame_language || !!existing?.self_blame_language ? 1 : 0,
+        created_at,
+      ]
+    );
+  })();
+
+  const row = dbGet<Record<string, unknown>>(`SELECT * FROM daily_reflections WHERE id = ?`, [rowId]);
   try {
     refreshUserBehaviorProfile(userId);
   } catch {

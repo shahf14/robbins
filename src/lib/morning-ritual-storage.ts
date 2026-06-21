@@ -51,9 +51,9 @@ export async function fetchSessions(): Promise<MorningRitualSession[]> {
     const data = (await res.json()) as {sessions?: MorningRitualSession[]};
     if (pending.length > 0) {
       await Promise.all(pending.map(persistSession));
-      window.localStorage.removeItem(SESSIONS_KEY);
     }
-    return mergeSessions(data.sessions ?? [], pending);
+    const remainingPending = readLegacyItems<MorningRitualSession>(SESSIONS_KEY) ?? [];
+    return mergeSessions(data.sessions ?? [], remainingPending);
   } catch {
     return pending;
   }
@@ -81,13 +81,25 @@ export function persistSessionWithFallback(session: MorningRitualSession): void 
 export function saveAffirmations(items: AffirmationItem[]) {
   void persistRitualContent({affirmations: items})
     .then(() => window.localStorage.removeItem(AFFIRMATIONS_KEY))
-    .catch(() => window.localStorage.setItem(AFFIRMATIONS_KEY, JSON.stringify(items)));
+    .catch(() => {
+      const existing = readLegacyItems<AffirmationItem>(AFFIRMATIONS_KEY) ?? [];
+      window.localStorage.setItem(
+        AFFIRMATIONS_KEY,
+        JSON.stringify(mergeItemsById(items, existing))
+      );
+    });
 }
 
 export function saveIdentities(items: IdentityOption[]) {
   void persistRitualContent({identities: items})
     .then(() => window.localStorage.removeItem(IDENTITIES_KEY))
-    .catch(() => window.localStorage.setItem(IDENTITIES_KEY, JSON.stringify(items)));
+    .catch(() => {
+      const existing = readLegacyItems<IdentityOption>(IDENTITIES_KEY) ?? [];
+      window.localStorage.setItem(
+        IDENTITIES_KEY,
+        JSON.stringify(mergeItemsById(items, existing))
+      );
+    });
 }
 
 export async function fetchRitualContent() {
@@ -167,4 +179,8 @@ async function persistRitualContent(body: {
   if (!response.ok) {
     throw new Error('Could not save ritual content.');
   }
+}
+
+function mergeItemsById<T extends {id: string}>(incoming: T[], existing: T[]): T[] {
+  return [...new Map([...incoming, ...existing].map((item) => [item.id, item])).values()];
 }

@@ -110,8 +110,12 @@ function upsertCheckin(input: CheckinInput): void {
 }
 
 export function bulkUpsertCheckins(rows: CheckinInput[]): void {
+  // Mirror upsertCheckin's ON CONFLICT update so re-syncing an existing check-in
+  // preserves created_at (not in the update list) and keeps the prior entry_json
+  // when none is supplied. INSERT OR REPLACE would delete+reinsert the row,
+  // resetting created_at and dropping entry_json.
   const stmt = getDb().prepare(
-    `INSERT OR REPLACE INTO checkins
+    `INSERT INTO checkins
       (id, user_id, date, focus_score, energy_score, state_score, momentum,
        primary_tag, selected_tags, priority_action, recommendation_type,
        insight_key, coach_support, challenge_done, follow_ups, session_duration_sec,
@@ -119,7 +123,32 @@ export function bulkUpsertCheckins(rows: CheckinInput[]): void {
        rewrote_priority_action_count, tag_valence_shift, energy_focus_divergence,
        physical_complaint_mentioned, help_engagement_depth, stated_action_completed,
        entry_json)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET
+       date=excluded.date,
+       focus_score=excluded.focus_score,
+       energy_score=excluded.energy_score,
+       state_score=excluded.state_score,
+       momentum=excluded.momentum,
+       primary_tag=excluded.primary_tag,
+       selected_tags=excluded.selected_tags,
+       priority_action=excluded.priority_action,
+       recommendation_type=excluded.recommendation_type,
+       insight_key=excluded.insight_key,
+       coach_support=excluded.coach_support,
+       challenge_done=excluded.challenge_done,
+       follow_ups=excluded.follow_ups,
+       session_duration_sec=excluded.session_duration_sec,
+       slider_adjustments=excluded.slider_adjustments,
+       opened_coach_support=excluded.opened_coach_support,
+       priority_action_word_count=excluded.priority_action_word_count,
+       rewrote_priority_action_count=excluded.rewrote_priority_action_count,
+       tag_valence_shift=excluded.tag_valence_shift,
+       energy_focus_divergence=excluded.energy_focus_divergence,
+       physical_complaint_mentioned=excluded.physical_complaint_mentioned,
+       help_engagement_depth=excluded.help_engagement_depth,
+       stated_action_completed=excluded.stated_action_completed,
+       entry_json=COALESCE(excluded.entry_json, checkins.entry_json)`
   );
   const run = getDb().transaction((items: CheckinInput[]) => {
     for (const row of items) {

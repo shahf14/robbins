@@ -17,9 +17,18 @@ export type MorningRitualInput = {
 export function bulkUpsertMorningRituals(rows: MorningRitualInput[]): void {
   const db = getDb();
   const ritualStmt = db.prepare(
-    `INSERT OR REPLACE INTO morning_rituals
+    `INSERT INTO morning_rituals
       (id, user_id, date, mood_before, mood_after, triggers, duration_sec, completed, session_json)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET
+       user_id=excluded.user_id,
+       date=excluded.date,
+       mood_before=excluded.mood_before,
+       mood_after=excluded.mood_after,
+       triggers=excluded.triggers,
+       duration_sec=excluded.duration_sec,
+       completed=excluded.completed,
+       session_json=COALESCE(excluded.session_json, morning_rituals.session_json)`
   );
   const gratitudeStmt = db.prepare(
     `INSERT OR REPLACE INTO gratitude_entries

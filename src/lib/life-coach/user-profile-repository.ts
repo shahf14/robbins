@@ -148,7 +148,7 @@ export async function markUserOnboardingComplete(
   if (aiPersonalizationSummary) {
     dbRun(
       `UPDATE users SET
-        onboarding_completed_at = ?,
+        onboarding_completed_at = COALESCE(onboarding_completed_at, ?),
         onboarding_primary_domain = COALESCE(?, onboarding_primary_domain),
         ai_personalization_summary = ?,
         updated_at = ?
@@ -166,7 +166,7 @@ export async function markUserOnboardingComplete(
 
   dbRun(
     `UPDATE users SET
-      onboarding_completed_at = ?,
+      onboarding_completed_at = COALESCE(onboarding_completed_at, ?),
       onboarding_primary_domain = COALESCE(?, onboarding_primary_domain),
       updated_at = ?
     WHERE id = ?`,

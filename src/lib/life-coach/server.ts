@@ -4,10 +4,11 @@ import {isLocale, type AppLocale} from '@/i18n/config';
 import {getLifeCoachCronSecret} from '@/lib/life-coach/env';
 
 export function jsonError(message: string, status = 400, details?: unknown) {
-  return NextResponse.json(
-    details ? {error: message, details} : {error: message},
-    {status}
-  );
+  const payload: {error: string; details?: unknown} = {error: message};
+  if (details !== undefined && process.env.NODE_ENV !== 'production') {
+    payload.details = details;
+  }
+  return NextResponse.json(payload, {status});
 }
 
 export function jsonOk(data: Record<string, unknown>, status = 200) {

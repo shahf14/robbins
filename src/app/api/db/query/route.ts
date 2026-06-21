@@ -30,8 +30,13 @@ export async function POST(request: Request) {
     let rows: unknown[] = [];
     let columns: string[] = [];
     if (stmt.reader) {
-      rows = (stmt.all() as unknown[]).slice(0, MAX_QUERY_ROWS);
-      columns = rows.length > 0 ? Object.keys(rows[0] as object) : [];
+      for (const row of stmt.iterate()) {
+        if (columns.length === 0 && row && typeof row === 'object') {
+          columns = Object.keys(row as object);
+        }
+        rows.push(row);
+        if (rows.length >= MAX_QUERY_ROWS) break;
+      }
     } else {
       stmt.run();
     }
