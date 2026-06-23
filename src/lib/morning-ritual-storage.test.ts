@@ -164,7 +164,6 @@ test('settings save awaits server profile sync', () => {
 test('save_goal CTA is disabled while goal preview is saving', () => {
   for (const relativePath of [
     'components/life-coach/ai-goal-preview.tsx',
-    'components/life-coach/health/health-goal-preview.tsx',
   ]) {
     const source = readFileSync(join(here, '..', relativePath), 'utf8');
     assert.match(source, /if \(savingRef\.current\) return/);
@@ -275,7 +274,6 @@ test('curated task picker surfaces load failures with retry', () => {
 test('domain detail pages classify API access failures for recovery UI', () => {
   for (const relativePath of [
     'components/life-coach/domain-detail-page.tsx',
-    'components/life-coach/health/health-domain-detail.tsx',
   ]) {
     const source = readFileSync(join(here, '..', relativePath), 'utf8');
     assert.match(source, /classifyLoadFailure\(error\)/);

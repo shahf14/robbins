@@ -12,7 +12,6 @@ import type {
   ReflectionBlockerReason,
 } from '@/lib/life-coach/types';
 import type { PhysicalConsideration, PreferredActionWindow } from '@/lib/user-preferences';
-import { findPhaseForDay, goalDayIndex } from '@/lib/ai-life-coach/resolve-daily-step';
 import {
   pickWeeklyThemeForDate,
   resolveActiveMilestone,
@@ -491,7 +490,7 @@ function buildToneInstruction(
 
 export function buildGoalStructuringSystemPrompt(
   locale: AppLocale,
-  hasHealthWizard = false,
+  _hasHealthWizard = false,
   lifeContextStatuses: LifeContextStatus[] = [],
   coachingStyle = 'supportive',
   preferredTone?: string,
@@ -532,32 +531,13 @@ export function buildGoalStructuringSystemPrompt(
     'Return only valid JSON.',
   ].filter(Boolean);
 
-  if (hasHealthWizard) {
-    return [
-      ...base,
-      '',
-      '## Health wizard (structured input provided)',
-      '- Use health_wizard_context as the source of truth: category, metrics, timeline, anchor, weight_direction.',
-      '- daily_baby_steps[0] must match category: nutrition/weight_gain → meal planning or eating; sleep → wind-down; fitness → movement.',
-      '- Do NOT default to walking unless category is fitness.',
-      '- Prefix today\'s baby step with the user anchor: "After [anchor] at [time], ...".',
-      '- weight_direction "gain" or secondary_focus "weight_gain": encourage additional meals/calories, never weight-loss advice.',
-      '- execution_plan: 4 to 13 phases covering days 1-90. Each phase has start_day, end_day, focus, task_templates (1-7 items), optional weigh_in near milestones.',
-      '- Phases should progress: weeks 1-2 base habit, weeks 3-8 consistency, weeks 9-13 stabilization.',
-      '- plan_source in output is not required; include execution_plan always.',
-    ].join('\n');
-  }
-
   return [
     ...base,
     '',
-    '## Health Domain Specialization',
-    'When the domain is "health":',
-    '- Focus on one of these subcategories: fitness, sleep, nutrition, weight, energy, or specific illness management.',
-    '- Success metrics must be numeric and measurable.',
-    '- Milestones at 30, 60, and 90 day intervals.',
-    '- Baby steps anchored to existing habits when possible.',
-    '- Avoid shame-based motivation.',
+    '## Domain Standardization',
+    '- Treat every life domain, including health, with the same goal → milestone → daily step structure.',
+    '- Do not create domain-specific hidden plans or parallel objects.',
+    '- Success metrics should be concrete and measurable when possible.',
   ].join('\n');
 }
 
@@ -615,7 +595,7 @@ const coachingStyleInstruction: Record<string, string> = {
 
 export function buildDailyStepsSystemPrompt(
   locale: AppLocale,
-  focusedHealthPlan = false,
+  _focusedHealthPlan = false,
   wakeTime = '07:00',
   coachingStyle = 'supportive',
   preferredTone?: string,
@@ -719,12 +699,6 @@ export function buildDailyStepsSystemPrompt(
     '- If morning_mission is present, at least one step should directly support it or clearly explain why a smaller substitute is safer today.',
     '- Treat morning_mission as today’s explicit user intention, unless latest_morning_ritual/evening_briefing indicates low energy or a conflict.',
     '',
-    '## Health-specific rules:',
-    '- If the user has been skipping health tasks, shrink the next task to 2-5 minutes.',
-    '- Anchor health tasks using health_context.anchor when present.',
-    '- If energy score is low (1-4), suggest restorative tasks aligned with their health category.',
-    '- Never suggest more than 20 minutes for a single health task.',
-    '',
     '## Behavior profile adaptation:',
     BEHAVIOR_PROFILE_SYSTEM_HINT,
     '',
@@ -735,14 +709,6 @@ export function buildDailyStepsSystemPrompt(
     SHORT_TERM_MEMORY_HINT,
     LONG_TERM_MEMORY_HINT,
   ];
-
-  if (focusedHealthPlan) {
-    lines.push(
-      '- The user has an execution_plan: stay within current_phase focus and category. Do NOT suggest unrelated movement if their goal is nutrition or weight gain.'
-    );
-  } else {
-    lines.push('- Vary tasks only when multiple unrelated health goals exist.');
-  }
 
   lines.push('', '- Return only valid JSON.');
   return lines.filter(Boolean).join('\n');
@@ -800,15 +766,6 @@ export function buildDailyStepsUserPrompt(input: {
   const lifeContext = lifeContextForPrompt(input.life_context_statuses, input.locale);
   const contextNote = input.life_context_note?.trim() || null;
   const goalsEnriched = input.activeGoals.map((goal) => {
-    const dayIndex =
-      goal.domain === 'health' && goal.health_context?.execution_plan
-        ? goalDayIndex(goal.created_at, input.date)
-        : null;
-    const phase =
-      goal.health_context?.execution_plan && dayIndex
-        ? findPhaseForDay(goal.health_context.execution_plan, dayIndex)
-        : null;
-
     const milestones = input.milestonesByGoalId?.[goal.id] ?? [];
     const weeklyFocus = input.weeklyFocusByGoalId?.[goal.id] ?? null;
     const milestoneCtx = resolveActiveMilestone(goal, milestones, input.date);
@@ -819,10 +776,6 @@ export function buildDailyStepsUserPrompt(input: {
     return {
       ...goal,
       milestones,
-      plan_day_index: dayIndex,
-      current_phase: phase
-        ? { focus: phase.focus, start_day: phase.start_day, end_day: phase.end_day }
-        : null,
       decomposition: {
         day_index: milestoneCtx.day_index,
         active_milestone: milestoneCtx.milestone_title,
@@ -839,10 +792,6 @@ export function buildDailyStepsUserPrompt(input: {
       },
     };
   });
-
-  const focusedHealthPlan = input.activeGoals.some(
-    (g) => g.domain === 'health' && g.health_context?.execution_plan
-  );
 
   const actionPatternToolbox = buildActionPatternToolbox({
     locale: input.locale,
@@ -909,7 +858,7 @@ export function buildDailyStepsUserPrompt(input: {
       avoid_tone: input.avoid_tone ?? null,
       tone_personalization: input.tone_personalization ?? null,
       _meta: {
-        focused_health_plan: focusedHealthPlan,
+        focused_health_plan: false,
         wake_time: input.wake_time ?? '07:00',
         sleep_time: input.sleep_time ?? '22:30',
         coaching_style: input.coaching_style ?? 'supportive',
@@ -920,10 +869,6 @@ export function buildDailyStepsUserPrompt(input: {
     null,
     2
   );
-}
-
-export function hasFocusedHealthPlan(goals: Goal[]): boolean {
-  return goals.some((g) => g.domain === 'health' && g.health_context?.execution_plan);
 }
 
 export function buildReflectionAnalysisSystemPrompt(

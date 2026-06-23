@@ -35,10 +35,6 @@ import {buildReflectionAnalysisFallback} from '@/lib/reflection-analysis/fallbac
 import type {ReflectionAnalysis} from '@/lib/reflection-analysis/types';
 import {getLifeCoachModelConfig} from '@/lib/life-coach/env';
 import {
-  buildDefaultExecutionPlan,
-  buildHealthStructuredGoalFallback,
-  buildHealthStructuredGoalFallbackResponse,
-  healthFallbackStepTitle,
   type HealthWizardContextInput,
 } from './health-goal-fallback';
 import {
@@ -46,7 +42,6 @@ import {
   buildDailyStepsUserPrompt,
   buildGoalStructuringSystemPrompt,
   buildGoalStructuringUserPrompt,
-  hasFocusedHealthPlan,
   buildReflectionAnalysisSystemPrompt,
   buildReflectionAnalysisUserPrompt,
   buildWeeklyReviewSystemPrompt,
@@ -210,14 +205,13 @@ const modelConfig = getLifeCoachModelConfig();
 
 export const openaiLifeCoachService = {
   async structureGoal(input: GoalStructuringInput): Promise<StructuredGoalPlan> {
-    const hasHealthWizard = !!input.health_wizard_context;
     const usedFallback = !process.env.OPENAI_API_KEY;
 
     const { data } = await requestStructuredJson({
       model: modelConfig.structuring,
       systemPrompt: buildGoalStructuringSystemPrompt(
         input.locale,
-        hasHealthWizard,
+        false,
         input.life_context_statuses,
         input.coaching_style,
         input.preferred_tone,
@@ -229,7 +223,7 @@ export const openaiLifeCoachService = {
       userPrompt: buildGoalStructuringUserPrompt(input),
       schema: aiStructuredGoalResponseSchema,
       fallback: buildStructuredGoalFallbackResponse(input),
-      maxOutputTokens: hasHealthWizard ? 2800 : 1400,
+      maxOutputTokens: 1400,
     });
 
     const plan = normalizeStructuredGoalResult(
@@ -249,13 +243,12 @@ export const openaiLifeCoachService = {
   },
 
   async generateDailySteps(input: DailyStepGenerationInput) {
-    const focused = hasFocusedHealthPlan(input.activeGoals);
     const maxSteps = Math.max(1, Math.min(3, input.max_steps ?? 2));
     const { data } = await requestStructuredJson({
       model: modelConfig.dailySteps,
       systemPrompt: buildDailyStepsSystemPrompt(
         input.locale,
-        focused,
+        false,
         input.wake_time,
         input.coaching_style,
         input.preferred_tone,
@@ -511,51 +504,20 @@ function mapAiStructuredGoalResponse(response: AiStructuredGoalResponse): Struct
 function normalizeStructuredGoalResult(
   result: StructuredGoalPlan,
   input: GoalStructuringInput,
-  apiMissing: boolean
+  _apiMissing: boolean
 ): StructuredGoalPlan {
   const enforcedSteps = enforceKnownBlockersOnGoalSteps(
     result.daily_baby_steps,
     input.known_blockers
   );
 
-  const wizard = input.health_wizard_context;
-  let normalized: StructuredGoalPlan;
-
-  if (!wizard) {
-    normalized = {
-      ...result,
-      success_metric: capSuccessMetric(result.success_metric),
-      daily_baby_steps: enforcedSteps,
-    };
-  } else {
-    const planSource =
-      apiMissing || !result.execution_plan || result.plan_source === 'fallback'
-        ? 'fallback'
-        : 'ai';
-    const execution_plan =
-      result.execution_plan ?? buildDefaultExecutionPlan(wizard, input.locale);
-    const daily_baby_steps =
-      enforcedSteps.length > 0
-        ? enforcedSteps
-        : goalBabyStepsFromContracts(
-            buildHealthStructuredGoalFallbackResponse({
-              locale: input.locale,
-              raw_goal: input.raw_goal,
-              deadline: input.deadline,
-              motivation: input.motivation,
-              wizard,
-              availableMinutes: 10,
-            }).daily_baby_steps
-          );
-
-    normalized = {
-      ...result,
-      success_metric: capSuccessMetric(result.success_metric),
-      execution_plan,
-      plan_source: planSource,
-      daily_baby_steps,
-    };
-  }
+  const normalized: StructuredGoalPlan = {
+    ...result,
+    success_metric: capSuccessMetric(result.success_metric),
+    execution_plan: null,
+    plan_source: undefined,
+    daily_baby_steps: enforcedSteps,
+  };
 
   const {plan, realism_check} = applyGoalRealismToPlan(
     normalized,
@@ -589,16 +551,7 @@ function capSuccessMetric(metric: string | null | undefined): string {
 }
 
 function buildStructuredGoalFallbackResponse(input: GoalStructuringInput): AiStructuredGoalResponse {
-  const response = input.health_wizard_context
-    ? buildHealthStructuredGoalFallbackResponse({
-        locale: input.locale,
-        raw_goal: input.raw_goal,
-        deadline: input.deadline,
-        motivation: input.motivation,
-        wizard: input.health_wizard_context,
-        availableMinutes: 10,
-      })
-    : buildGenericStructuredGoalFallbackResponse(input);
+  const response = buildGenericStructuredGoalFallbackResponse(input);
 
   const planForCheck: StructuredGoalPlan = {
     goal_title: response.goal_title,
@@ -607,8 +560,8 @@ function buildStructuredGoalFallbackResponse(input: GoalStructuringInput): AiStr
     deadline: response.deadline,
     milestones: response.milestones,
     daily_baby_steps: goalBabyStepsFromContracts(response.daily_baby_steps),
-    execution_plan: response.execution_plan ?? null,
-    plan_source: response.plan_source,
+    execution_plan: null,
+    plan_source: undefined,
   };
 
   const firstStep = response.daily_baby_steps[0];
@@ -709,18 +662,10 @@ function buildDailyStepsFallbackResponse(input: DailyStepGenerationInput): {
 
   const contracts: AiDailyStepContract[] = input.activeGoals.slice(0, maxSteps).map((goal) => {
     const contract = buildFallbackStepContract({
-      title:
-        goal.domain === 'health'
-          ? healthFallbackStepTitle('health', goal.title, goal.health_context, input.locale)
-          : fallbackStepTitle(goal.domain, goal.title, input.locale),
-      description:
-        goal.health_context?.execution_plan
-          ? he
-            ? 'צעד מהתוכנית שלך — קטן וברור.'
-            : 'A step from your plan — small and clear.'
-          : he
-            ? 'נשארים עם צעד אחד קטן ונראה לעין היום.'
-            : 'Stay with one small, visible move today.',
+      title: fallbackStepTitle(goal.domain, goal.title, input.locale),
+      description: he
+        ? 'נשארים עם צעד אחד קטן ונראה לעין היום.'
+        : 'Stay with one small, visible move today.',
       estimated_minutes: Math.min(
         resolveMinutesForGoal(goal.domain, input.domainStates),
         cal?.max_minutes ?? 20

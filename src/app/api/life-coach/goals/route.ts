@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     const today = startOfToday();
     const goal = await createGoalBundle(
       current.user.id,
-      {...bundle.goal, health_context: bundle.goal.health_context ?? null},
+      {...bundle.goal, health_context: null},
       bundle.milestones,
       bundle.initial_steps.map((step) => ({...step, goal_id: null})),
       today,

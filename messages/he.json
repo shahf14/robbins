@@ -3074,6 +3074,15 @@
     "generating": "מייצר...",
     "createError": "לא ניתן היה לבנות את התוכנית. נסה שוב.",
     "categories": {
+      "health": {
+        "fitness": "כושר",
+        "sleep": "שינה",
+        "nutrition": "תזונה",
+        "energy": "אנרגיה",
+        "weight": "משקל",
+        "recovery": "התאוששות",
+        "medical_routine": "שגרה רפואית"
+      },
       "time": {
         "morning_routine": "שגרת בוקר",
         "deep_work": "עבודה עמוקה",

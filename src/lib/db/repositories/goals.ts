@@ -99,7 +99,9 @@ export function upsertGoal(
   createIdempotencyKey: string | null = null
 ): void {
   const db = getDb();
-  const hf = extractHealthFields(goal);
+  const hf = goal.domain === 'health' ? {} : extractHealthFields(goal);
+  const healthContextJson =
+    goal.domain === 'health' ? null : goal.health_context ? JSON.stringify(goal.health_context) : null;
   const insertGoal = db.prepare(
     `INSERT INTO goals
       (id, user_id, domain, domain_category, title, description, success_metric,
@@ -152,18 +154,12 @@ export function upsertGoal(
     hf.health_anchor_time ?? null, hf.health_why_important ?? null,
     hf.health_why_now ?? null, hf.health_what_lost ?? null,
     hf.plan_source ?? null,
-    goal.health_context ? JSON.stringify(goal.health_context) : null,
+    healthContextJson,
     createIdempotencyKey,
     goal.created_at, goal.updated_at
   );
 
   ensureDomainAssessmentForGoal(goal.user_id, goal.domain);
-
-  // Upsert health phases from execution_plan
-  const plan = goal.health_context?.execution_plan;
-  if (plan?.phases?.length) {
-    upsertHealthPhases(goal.id, goal.user_id, plan.phases);
-  }
 }
 
 export function upsertMilestone(milestone: Milestone, userId: string): void {

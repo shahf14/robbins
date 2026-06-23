@@ -305,6 +305,31 @@ const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    version: 5,
+    name: 'standardize_health_goal_storage',
+    up: (db) => {
+      db.exec(`
+        UPDATE goals
+        SET
+          health_category = NULL,
+          health_baseline = NULL,
+          health_target = NULL,
+          health_unit = NULL,
+          health_weight_dir = NULL,
+          health_anchor_habit = NULL,
+          health_anchor_time = NULL,
+          health_why_important = NULL,
+          health_why_now = NULL,
+          health_what_lost = NULL,
+          plan_source = NULL,
+          health_context_json = NULL
+        WHERE domain = 'health';
+
+        DELETE FROM health_phases;
+      `);
+    },
+  },
 ];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS[MIGRATIONS.length - 1]?.version ?? 0;

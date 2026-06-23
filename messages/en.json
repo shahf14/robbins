@@ -3074,6 +3074,15 @@
     "generating": "Generating...",
     "createError": "Could not build your plan. Please try again.",
     "categories": {
+      "health": {
+        "fitness": "Fitness",
+        "sleep": "Sleep",
+        "nutrition": "Nutrition",
+        "energy": "Energy",
+        "weight": "Weight",
+        "recovery": "Recovery",
+        "medical_routine": "Medical Routine"
+      },
       "time": {
         "morning_routine": "Morning Routine",
         "deep_work": "Deep Work",

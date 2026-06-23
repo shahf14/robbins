@@ -1,6 +1,5 @@
 import type {AppLocale} from '@/i18n/config';
 import {openaiLifeCoachService} from '@/lib/ai-life-coach/openai-life-coach-service';
-import {resolveDailyStepFromPlan} from '@/lib/ai-life-coach/resolve-daily-step';
 import {
   enforceEasyOnlySteps,
   resolveAdaptiveTaskCount,
@@ -583,32 +582,6 @@ export async function generateDailyStepsForUser(
     skipAdaptation,
     skipCoachAdjustment,
   };
-
-  for (const goal of scopedGoals) {
-    if (goal.domain !== 'health' || !goal.health_context?.execution_plan) {
-      continue;
-    }
-
-    const milestones = context.milestonesByGoalId[goal.id] ?? [];
-    const resolved = resolveDailyStepFromPlan({
-      goal,
-      milestones,
-      scheduledDate: date,
-      recentSteps: context.dailySteps,
-      recentReflections: context.reflections,
-      locale,
-    });
-
-    if (resolved) {
-      const planStep = {...resolved, goal_id: goal.id};
-      planSteps.push(planStep);
-      planStepKeys.add(stepKey(planStep));
-      const index = goalsForAi.findIndex((g) => g.id === goal.id);
-      if (index >= 0) {
-        goalsForAi.splice(index, 1);
-      }
-    }
-  }
 
   let aiSteps: StructuredDailyBabyStep[] = [];
 

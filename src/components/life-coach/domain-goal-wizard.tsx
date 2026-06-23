@@ -11,7 +11,7 @@ import {useLocale, useTranslations} from 'next-intl';
 import {useSearchParams} from 'next/navigation';
 import {usePathname, useRouter, Link} from '@/i18n/navigation';
 import type {AppLocale} from '@/i18n/config';
-import type {LifeDomain, LifeDomainState, NonHealthDomain} from '@/lib/life-coach/types';
+import type {LifeDomain, LifeDomainState} from '@/lib/life-coach/types';
 import {goalInspirationStarterKeys, orderDomainCategories} from '@/lib/life-context-content';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
 import {resolveWeeklyReviewErrorMessage} from '@/lib/life-coach/api-error';
@@ -26,7 +26,7 @@ import {GoalWizardAiBuildPreview} from './shared/goal-wizard-ai-build-preview';
 import {MilestonesWhyExplainer} from './shared/milestones-why-explainer';
 
 type Props = {
-  domain: NonHealthDomain;
+  domain: LifeDomain;
   assessment: LifeDomainState | null;
   onCreated: () => Promise<void>;
 };

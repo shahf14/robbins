@@ -14,7 +14,6 @@ import type {
   LifeDomain,
   LifeDomainState,
   Milestone,
-  NonHealthDomain,
 } from '@/lib/life-coach/types';
 import {DailyBabyStepsList} from './daily-baby-steps-list';
 import {DomainGoalWizard} from './domain-goal-wizard';
@@ -348,7 +347,7 @@ function DomainDetailContent({domain}: {domain: LifeDomain}) {
               onRefresh={refresh}
               goalWizard={
                 <DomainGoalWizard
-                  domain={domain as NonHealthDomain}
+                  domain={domain}
                   assessment={state}
                   onCreated={refresh}
                 />

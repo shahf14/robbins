@@ -102,6 +102,35 @@ const checks = [
       WHERE g.id IS NULL
     `,
   },
+  {
+    name: 'health_goals_with_legacy_health_context',
+    sql: `
+      SELECT id, user_id, title, health_context_json, plan_source
+      FROM goals
+      WHERE domain = 'health'
+        AND (
+          health_context_json IS NOT NULL
+          OR plan_source IS NOT NULL
+          OR health_category IS NOT NULL
+          OR health_baseline IS NOT NULL
+          OR health_target IS NOT NULL
+          OR health_unit IS NOT NULL
+          OR health_weight_dir IS NOT NULL
+          OR health_anchor_habit IS NOT NULL
+          OR health_anchor_time IS NOT NULL
+          OR health_why_important IS NOT NULL
+          OR health_why_now IS NOT NULL
+          OR health_what_lost IS NOT NULL
+        )
+    `,
+  },
+  {
+    name: 'health_phases_remaining',
+    sql: `
+      SELECT id, user_id, goal_id, phase_index
+      FROM health_phases
+    `,
+  },
 ];
 
 let failures = 0;

@@ -62,19 +62,6 @@ function buildWeeklyThemes(
   he: boolean,
   marker: 30 | 60 | 90 | null
 ): string[] {
-  if (goal.health_context?.execution_plan) {
-    const phase = goal.health_context.execution_plan.phases.find(
-      (p) => marker && p.end_day >= marker - 7 && p.start_day <= marker
-    );
-    if (phase?.focus) {
-      return [
-        phase.focus,
-        he ? 'המשך עקביות' : 'maintain consistency',
-        he ? 'צעד קטן יומי' : 'daily micro-step',
-      ];
-    }
-  }
-
   if (milestone) {
     const base = milestone.title.replace(/\b(30|60|90)\b/g, '').trim() || goal.title;
     return he

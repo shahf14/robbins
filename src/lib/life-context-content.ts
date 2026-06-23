@@ -10,7 +10,6 @@ import type {
   DomainBlocker,
   LifeContextStatus,
   LifeDomain,
-  NonHealthDomain,
 } from '@/lib/life-coach/types';
 import {DOMAIN_CATEGORIES} from '@/lib/life-coach/types';
 
@@ -166,30 +165,35 @@ export function onboardingStep2Hint(
 }
 
 const CATEGORY_BOOST: Partial<
-  Record<LifeContextStatus, Partial<Record<NonHealthDomain, string[]>>>
+  Record<LifeContextStatus, Partial<Record<LifeDomain, string[]>>>
 > = {
   student: {
+    health: ['sleep', 'energy', 'nutrition'],
     career: ['skill_development', 'learning', 'networking'],
     mind: ['focus', 'stress_management', 'learning'],
     time: ['priorities', 'procrastination', 'weekly_planning'],
   },
   new_parent: {
+    health: ['sleep', 'energy', 'recovery'],
     relationships: ['partnership', 'family_time', 'communication'],
     time: ['work_life_balance', 'priorities', 'morning_routine'],
     house_family: ['family_routines', 'home_order', 'chores'],
     mind: ['stress_management', 'emotional_regulation'],
   },
   manager: {
+    health: ['energy', 'sleep', 'fitness'],
     time: ['delegation', 'work_life_balance', 'priorities'],
     career: ['leadership', 'visibility', 'work_quality'],
     mind: ['stress_management', 'emotional_regulation'],
   },
   caregiver: {
+    health: ['energy', 'recovery', 'medical_routine'],
     relationships: ['boundaries', 'communication', 'family_time'],
     mind: ['stress_management', 'emotional_regulation'],
     spirit: ['inner_peace', 'gratitude'],
   },
   between_jobs: {
+    health: ['energy', 'sleep', 'fitness'],
     career: ['skill_development', 'side_project', 'networking'],
     wealth: ['emergency_fund', 'spending_habits', 'financial_education'],
     mind: ['self_talk', 'stress_management'],
@@ -198,7 +202,7 @@ const CATEGORY_BOOST: Partial<
 };
 
 export function orderDomainCategories(
-  domain: NonHealthDomain,
+  domain: LifeDomain,
   statuses: LifeContextStatus[] | null | undefined
 ): {ordered: string[]; recommended: Set<string>} {
   const base = DOMAIN_CATEGORIES[domain];

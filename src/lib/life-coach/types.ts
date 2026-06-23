@@ -438,7 +438,8 @@ export type {
 
 export type NonHealthDomain = Exclude<LifeDomain, 'health'>;
 
-export const DOMAIN_CATEGORIES: Record<NonHealthDomain, string[]> = {
+export const DOMAIN_CATEGORIES: Record<LifeDomain, string[]> = {
+  health: ['fitness', 'sleep', 'nutrition', 'energy', 'weight', 'recovery', 'medical_routine'],
   time: ['morning_routine', 'deep_work', 'priorities', 'delegation', 'digital_detox', 'weekly_planning', 'procrastination', 'work_life_balance'],
   wealth: ['savings', 'income_growth', 'debt_reduction', 'investment', 'spending_habits', 'emergency_fund', 'financial_education'],
   career: ['skill_development', 'visibility', 'promotion', 'side_project', 'networking', 'leadership', 'work_quality'],
@@ -446,36 +447,6 @@ export const DOMAIN_CATEGORIES: Record<NonHealthDomain, string[]> = {
   mind: ['focus', 'emotional_regulation', 'self_talk', 'stress_management', 'learning', 'creativity', 'mindfulness'],
   spirit: ['purpose', 'values', 'gratitude', 'spiritual_practice', 'inner_peace', 'meaning', 'community'],
   house_family: ['home_order', 'family_routines', 'chores', 'home_improvement', 'family_goals', 'environment'],
-};
-
-// ---------------------------------------------------------------------------
-// Health goal wizard input type (pre-context-build)
-// ---------------------------------------------------------------------------
-
-export type HealthGoalWizardData = {
-  category: HealthCategory;
-  metrics: {
-    category: HealthCategory;
-    baseline_value: number;
-    target_value: number;
-  };
-  weight_direction?: WeightDirection;
-  secondary_focus?: HealthSecondaryFocus;
-  current_kg?: number;
-  target_kg?: number;
-  timeline: {
-    days_30: string;
-    days_60: string;
-    days_90: string;
-  };
-  why_deep: {
-    why_important: string;
-    why_now: string;
-    what_lost: string;
-  };
-  anchor_habit: HealthAnchorHabit;
-  anchor_time?: string;
-  anchor_custom_label?: string;
 };
 
 // ---------------------------------------------------------------------------

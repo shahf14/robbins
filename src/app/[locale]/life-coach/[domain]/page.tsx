@@ -1,7 +1,6 @@
 import {notFound} from 'next/navigation';
 import {setRequestLocale} from 'next-intl/server';
 import {DomainDetailPage} from '@/components/life-coach/domain-detail-page';
-import {HealthDomainDetailPage} from '@/components/life-coach/health/health-domain-detail';
 import {isLocale, type AppLocale} from '@/i18n/config';
 import {LIFE_DOMAINS, type LifeDomain} from '@/lib/life-coach/types';
 
@@ -19,11 +18,6 @@ export default async function LifeCoachDomainPage({params}: Props) {
   }
 
   setRequestLocale(locale);
-
-  // Health domain gets an enhanced experience with wizard, pulse, dashboard, and deep-dive
-  if (domain === 'health') {
-    return <HealthDomainDetailPage />;
-  }
 
   return <DomainDetailPage domain={domain} />;
 }
