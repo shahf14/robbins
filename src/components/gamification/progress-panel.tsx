@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 import {useTranslations} from 'next-intl';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
 import type {GamificationUnlock} from '@/lib/db/repositories/gamification-unlocks';
-import {LifeCoachAuthShell} from '@/components/life-coach/life-coach-auth-shell';
+import {LifeCoachPageShell} from '@/components/life-coach/life-coach-page-shell';
 
 function formatDate(iso: string, locale: string): string {
   try {
@@ -135,7 +135,9 @@ export function ProgressPanel() {
         <h1 className="text-xl font-black txt-strong">{t('title')}</h1>
         <p className="text-sm txt-soft">{t('subtitle')}</p>
       </div>
-      <LifeCoachAuthShell>{() => <ProgressPanelContent />}</LifeCoachAuthShell>
+      <LifeCoachPageShell>
+        <ProgressPanelContent />
+      </LifeCoachPageShell>
     </div>
   );
 }

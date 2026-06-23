@@ -1,7 +1,13 @@
 'use client';
 
 import {useLocale, useTranslations} from 'next-intl';
+import {usePathname, useRouter} from '@/i18n/navigation';
 import {locales, localeNames, type AppLocale} from '@/i18n/config';
+import {useConfirm} from '@/components/feedback/confirm-provider';
+import {
+  hasUnsavedJourneyDraft,
+  localizedPathWithQuery,
+} from '@/lib/journey-unsaved-draft';
 import {saveUserPreferences} from '@/lib/user-preferences';
 
 const storageKey = 'preferred_language';
@@ -13,13 +19,27 @@ function setLocaleCookie(locale: AppLocale) {
 export function LanguageSwitcher({compact = false}: {compact?: boolean}) {
   const locale = useLocale() as AppLocale;
   const t = useTranslations();
+  const pathname = usePathname();
+  const router = useRouter();
+  const {confirm} = useConfirm();
 
-  function changeLanguage(nextLocale: AppLocale) {
+  async function changeLanguage(nextLocale: AppLocale) {
     if (nextLocale === locale) return;
+
+    if (hasUnsavedJourneyDraft()) {
+      const proceed = await confirm({
+        title: t('language.switchConfirmTitle'),
+        message: t('language.switchConfirmMessage'),
+        confirmLabel: t('language.switchConfirmAction'),
+        cancelLabel: t('language.switchConfirmCancel'),
+      });
+      if (!proceed) return;
+    }
+
     window.localStorage.setItem(storageKey, nextLocale);
     saveUserPreferences({preferred_language: nextLocale});
     setLocaleCookie(nextLocale);
-    window.location.assign(`/${nextLocale}`);
+    router.replace(localizedPathWithQuery(pathname), {locale: nextLocale});
   }
 
   if (compact) {
@@ -33,7 +53,7 @@ export function LanguageSwitcher({compact = false}: {compact?: boolean}) {
           <button
             key={option}
             type="button"
-            onClick={() => changeLanguage(option)}
+            onClick={() => void changeLanguage(option)}
             aria-pressed={locale === option}
             className={`focus-ring rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] transition-all duration-200 ${
               locale === option
@@ -48,7 +68,6 @@ export function LanguageSwitcher({compact = false}: {compact?: boolean}) {
     );
   }
 
-  // Full (settings page) variant
   return (
     <div className="grid gap-2">
       <span className="field-label mb-0 text-sm font-bold text-[var(--muted)]">{t('language.label')}</span>
@@ -61,7 +80,7 @@ export function LanguageSwitcher({compact = false}: {compact?: boolean}) {
           <button
             key={option}
             type="button"
-            onClick={() => changeLanguage(option)}
+            onClick={() => void changeLanguage(option)}
             aria-pressed={locale === option}
             className={`focus-ring rounded-xl px-5 py-2 text-sm font-semibold transition-all duration-200 ${
               locale === option

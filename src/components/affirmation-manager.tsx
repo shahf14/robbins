@@ -1,6 +1,7 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
+import {useConfirm} from '@/components/feedback/confirm-provider';
 import type {AffirmationItem, AffirmationType} from '@/lib/morning-ritual-types';
 
 export function formatAffirmationTag(tag: string) {
@@ -47,6 +48,18 @@ export function AffirmationManager({
   onClose: () => void;
 }) {
   const t = useTranslations('morningRitual');
+  const {confirm} = useConfirm();
+
+  async function handleDelete(id: string) {
+    const ok = await confirm({
+      title: t('affirmation.deleteConfirmTitle'),
+      message: t('affirmation.deleteConfirmMessage'),
+      confirmLabel: t('affirmation.delete'),
+      cancelLabel: t('affirmation.cancel'),
+      destructive: true,
+    });
+    if (ok) onDelete(id);
+  }
 
   return (
     <div>
@@ -167,7 +180,7 @@ export function AffirmationManager({
               <button
                 className="focus-ring btn-small shrink-0"
                 type="button"
-                onClick={() => onDelete(aff.id)}
+                onClick={() => void handleDelete(aff.id)}
               >
                 {t('affirmation.delete')}
               </button>

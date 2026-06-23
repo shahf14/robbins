@@ -32,6 +32,7 @@ export function recordNewSkipBarrier(
     scheduled_date: input.scheduled_date,
     status: input.status,
     generated_by_ai: true,
+    is_general: true,
     created_at: `${input.scheduled_date}T18:00:00.000Z`,
     updated_at: `${input.scheduled_date}T18:00:00.000Z`,
     blocker_reason: input.blocker_reason,

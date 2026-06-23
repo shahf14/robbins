@@ -17,12 +17,15 @@ type ToastItem = {
   id: string;
   message: string;
   tone: ToastTone;
+  actionLabel?: string;
+  onAction?: () => void;
 };
 
 type ToastContextValue = {
   success: (message: string) => void;
   error: (message: string) => void;
   info: (message: string) => void;
+  action: (message: string, actionLabel: string, onAction: () => void, durationMs?: number) => void;
 };
 
 const ToastContext = createContext<ToastContextValue | null>(null);
@@ -44,23 +47,44 @@ export function ToastProvider({children}: {children: ReactNode}) {
     };
   }, []);
 
+  const dismiss = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
   const push = useCallback((message: string, tone: ToastTone, durationMs = 4200) => {
     const id = crypto.randomUUID();
     setToasts((prev) => [...prev, {id, message, tone}]);
     const timeoutId = window.setTimeout(() => {
-      setToasts((prev) => prev.filter((item) => item.id !== id));
+      dismiss(id);
       timeoutIdsRef.current = timeoutIdsRef.current.filter((item) => item !== timeoutId);
     }, durationMs);
     timeoutIdsRef.current.push(timeoutId);
-  }, []);
+  }, [dismiss]);
+
+  const action = useCallback(
+    (message: string, actionLabel: string, onAction: () => void, durationMs = 5000) => {
+      const id = crypto.randomUUID();
+      setToasts((prev) => [
+        ...prev,
+        {id, message, tone: 'info', actionLabel, onAction},
+      ]);
+      const timeoutId = window.setTimeout(() => {
+        dismiss(id);
+        timeoutIdsRef.current = timeoutIdsRef.current.filter((item) => item !== timeoutId);
+      }, durationMs);
+      timeoutIdsRef.current.push(timeoutId);
+    },
+    [dismiss]
+  );
 
   const value = useMemo<ToastContextValue>(
     () => ({
       success: (message) => push(message, 'success'),
       error: (message) => push(message, 'error', 5200),
       info: (message) => push(message, 'info'),
+      action,
     }),
-    [push]
+    [push, action]
   );
 
   return (
@@ -74,9 +98,21 @@ export function ToastProvider({children}: {children: ReactNode}) {
           <div
             key={toast.id}
             role={toast.tone === 'error' ? 'alert' : 'status'}
-            className={`animate-fade-in rounded-2xl border px-4 py-3 text-sm font-semibold shadow-lg backdrop-blur-md ${TONE_STYLES[toast.tone]}`}
+            className={`pointer-events-auto flex items-center justify-between gap-3 animate-fade-in rounded-2xl border px-4 py-3 text-sm font-semibold shadow-lg backdrop-blur-md ${TONE_STYLES[toast.tone]}`}
           >
-            {toast.message}
+            <span>{toast.message}</span>
+            {toast.actionLabel && toast.onAction ? (
+              <button
+                type="button"
+                className="focus-ring shrink-0 rounded-lg border border-current/25 px-2.5 py-1 text-xs font-bold uppercase tracking-wide"
+                onClick={() => {
+                  toast.onAction?.();
+                  dismiss(toast.id);
+                }}
+              >
+                {toast.actionLabel}
+              </button>
+            ) : null}
           </div>
         ))}
       </div>

@@ -1,6 +1,8 @@
+import {ClerkProvider} from '@clerk/nextjs';
 import {Heebo, Inter} from 'next/font/google';
 import {headers} from 'next/headers';
 import type {CSSProperties, ReactNode} from 'react';
+import {isClerkConfigured} from '@/lib/auth/clerk-config';
 import {defaultLocale, isLocale, localeDirections, type AppLocale} from '@/i18n/config';
 import {themeBootstrapScript} from '@/lib/theme';
 import './globals.css';
@@ -26,6 +28,7 @@ export default async function RootLayout({children}: Props) {
     requestHeaders.get('x-robbins-locale') ?? requestHeaders.get('x-next-intl-locale') ?? defaultLocale;
   const locale: AppLocale = isLocale(rawLocale) ? rawLocale : defaultLocale;
   const dir = localeDirections[locale];
+  const clerkEnabled = isClerkConfigured();
   const fontStack =
     locale === 'he'
       ? 'var(--font-heebo), var(--font-inter), Arial, sans-serif'
@@ -44,8 +47,17 @@ export default async function RootLayout({children}: Props) {
           } as CSSProperties
         }
       >
-        <ErrorLogBootstrap />
-        {children}
+        {clerkEnabled ? (
+          <ClerkProvider>
+            <ErrorLogBootstrap />
+            {children}
+          </ClerkProvider>
+        ) : (
+          <>
+            <ErrorLogBootstrap />
+            {children}
+          </>
+        )}
       </body>
     </html>
   );

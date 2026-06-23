@@ -1,7 +1,8 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
-import {jsonError, jsonOk, openAiRequestSignal, resolveLocale} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
 import {getLifeCoachModelConfig} from '@/lib/life-coach/env';
+import {callOpenAiResponses} from '@/lib/llm/client';
 import type {AppLocale} from '@/i18n/config';
 
 const languageInstruction: Record<AppLocale, string> = {
@@ -10,7 +11,6 @@ const languageInstruction: Record<AppLocale, string> = {
 };
 
 async function expandText(text: string, context: string, locale: AppLocale): Promise<string> {
-  const apiKey = process.env.OPENAI_API_KEY;
   const modelConfig = getLifeCoachModelConfig();
 
   const systemPrompt = [
@@ -26,48 +26,14 @@ async function expandText(text: string, context: string, locale: AppLocale): Pro
 
   const userPrompt = `Context: ${context}\n\nWhat I wrote: ${text}`;
 
-  if (!apiKey) {
-    return fallbackExpand(text, locale);
-  }
+  const result = await callOpenAiResponses({
+    model: modelConfig.structuring,
+    instructions: systemPrompt,
+    input: userPrompt,
+    maxOutputTokens: 300,
+  });
 
-  try {
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      signal: openAiRequestSignal(),
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: modelConfig.structuring,
-        instructions: systemPrompt,
-        input: userPrompt,
-        max_output_tokens: 300,
-      }),
-    });
-
-    if (!response.ok) {
-      return fallbackExpand(text, locale);
-    }
-
-    const body = (await response.json()) as {
-      output_text?: string;
-      output?: Array<{content?: Array<{text?: string}>}>;
-    };
-
-    const result =
-      body.output_text?.trim() ||
-      body.output
-        ?.flatMap((item) => item.content ?? [])
-        .map((c) => c.text)
-        .filter(Boolean)
-        .join('')
-        .trim();
-
-    return result || fallbackExpand(text, locale);
-  } catch {
-    return fallbackExpand(text, locale);
-  }
+  return result?.text || fallbackExpand(text, locale);
 }
 
 function fallbackExpand(text: string, locale: AppLocale): string {
@@ -84,13 +50,9 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  let body: Record<string, unknown>;
-
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
+  const bodyResult = await parseLifeCoachJsonBody<Record<string, unknown>>(request);
+  if (!bodyResult.ok) return bodyResult.response;
+  const body = (bodyResult.data ?? {}) as Record<string, unknown>;
 
   const text = typeof body.text === 'string' ? body.text.trim() : '';
   const context = typeof body.context === 'string' ? body.context : '';

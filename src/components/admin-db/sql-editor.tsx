@@ -1,5 +1,6 @@
 'use client';
 
+import {downloadCsv, rowsToCsv} from '@/lib/csv-export';
 import {useState} from 'react';
 import {dbApi, type QueryResult} from './use-db-api';
 
@@ -113,21 +114,10 @@ export function SqlEditor() {
 
   function exportCsv() {
     if (!result?.rows?.length) return;
-    const header = result.columns.join(',');
-    const body = (result.rows as Record<string, unknown>[]).map((row) =>
-      result.columns.map((col) => {
-        const val = row[col];
-        const str = cellStr(val);
-        return str.includes(',') || str.includes('"') || str.includes('\n') ? `"${str.replace(/"/g, '""')}"` : str;
-      }).join(',')
-    ).join('\n');
-    const blob = new Blob([`${header}\n${body}`], {type: 'text/csv'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'query-result.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv(
+      'query-result.csv',
+      rowsToCsv(result.columns, result.rows as Record<string, unknown>[])
+    );
   }
 
   return (

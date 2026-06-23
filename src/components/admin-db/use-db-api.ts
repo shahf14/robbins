@@ -1,6 +1,10 @@
 'use client';
 
-import {LOCAL_AUTH_TOKEN_STORAGE_KEY} from '@/lib/auth-storage-keys';
+import {
+  getStoredLocalAuthToken,
+  mergeLocalAuthHeaders,
+  setStoredLocalAuthToken,
+} from '@/lib/auth/client-headers';
 
 const ADMIN_TOKEN_STORAGE_KEY = 'robbins_admin_api_token';
 
@@ -19,27 +23,38 @@ function setStorageToken(key: string, token: string): void {
   }
 }
 
-export function getStoredAdminApiToken() { return getStorageToken(ADMIN_TOKEN_STORAGE_KEY); }
-export function setStoredAdminApiToken(token: string) { setStorageToken(ADMIN_TOKEN_STORAGE_KEY, token); }
-export function getStoredLocalAuthToken() { return getStorageToken(LOCAL_AUTH_TOKEN_STORAGE_KEY); }
-export function setStoredLocalAuthToken(token: string) { setStorageToken(LOCAL_AUTH_TOKEN_STORAGE_KEY, token); }
+export {getStoredLocalAuthToken, setStoredLocalAuthToken};
+
+export class DbApiError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'DbApiError';
+    this.status = status;
+  }
+}
+
+export function getStoredAdminApiToken() {
+  return getStorageToken(ADMIN_TOKEN_STORAGE_KEY);
+}
+export function setStoredAdminApiToken(token: string) {
+  setStorageToken(ADMIN_TOKEN_STORAGE_KEY, token);
+}
 
 async function dbFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const localAuthToken = getStoredLocalAuthToken();
   const adminApiToken = getStoredAdminApiToken();
 
   const res = await fetch(path, {
     ...init,
     headers: {
-      'Content-Type': 'application/json',
-      ...(localAuthToken ? {Authorization: `Bearer ${localAuthToken}`} : {}),
+      ...mergeLocalAuthHeaders(init),
       ...(adminApiToken ? {'x-admin-api-token': adminApiToken} : {}),
-      ...(init?.headers ?? {}),
     },
   });
 
-  const payload = await res.json() as T & {error?: string};
-  if (!res.ok) throw new Error(payload.error ?? 'Request failed');
+  const payload = (await res.json()) as T & {error?: string};
+  if (!res.ok) throw new DbApiError(payload.error ?? 'Request failed', res.status);
   return payload;
 }
 
@@ -60,6 +75,12 @@ export type QueryResult = {
   duration_ms: number;
   error?: string;
 };
+export type LogLine = {
+  timestamp?: string;
+  type?: string;
+  message?: string;
+  raw?: string;
+};
 
 export const dbApi = {
   listTables: () => dbFetch<{tables: TableSummary[]}>('/api/db/tables'),
@@ -74,4 +95,7 @@ export const dbApi = {
     dbFetch<{ok: boolean; synced: Record<string, number>}>(
       '/api/db/sync', {method: 'POST', body: JSON.stringify(payload)}
     ),
+
+  listLogs: (date: string, limit = 200) =>
+    dbFetch<{lines: LogLine[]}>(`/api/logs?date=${encodeURIComponent(date)}&limit=${limit}`),
 };

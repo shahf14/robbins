@@ -3,6 +3,7 @@
 import {useLocale, useTranslations} from 'next-intl';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import type {AppLocale} from '@/i18n/config';
+import {mergeAffirmationLibrary, persistableAffirmations} from '@/lib/morning-ritual/affirmation-library';
 import {DEFAULT_AFFIRMATIONS} from '@/lib/default-affirmations';
 import type {GratitudeTriggerKey} from '@/lib/gratitude-data';
 import type {
@@ -75,10 +76,13 @@ import {
 import {AffirmationStep} from '@/components/morning-ritual/morning-ritual-affirmation-step';
 import {BreathingStep} from '@/components/morning-ritual/morning-ritual-breathing-step';
 import {GratitudeStep} from '@/components/morning-ritual/morning-ritual-gratitude-step';
+import {useToast} from '@/components/feedback/toast-provider';
+import {scheduleDeferredRitualCommit} from '@/lib/morning-ritual/deferred-ritual-persist';
 
 export function MorningRitual() {
   const t = useTranslations('morningRitual');
   const locale = useLocale() as AppLocale;
+  const toast = useToast();
   useFeatureVisit('morning_ritual');
 
   const [step, setStep] = useState<RitualStep>('start');
@@ -155,10 +159,8 @@ export function MorningRitual() {
         .catch(() => {});
       void fetchRitualContent().then(({affirmations: userAff, identities: savedIdentities}) => {
         if (cancelled) return;
-        const merged = [...userAff, ...DEFAULT_AFFIRMATIONS.filter(
-          (d) => !userAff.some((u) => u.id === d.id)
-        )];
-        setAffirmations(merged);
+        const merged = mergeAffirmationLibrary(userAff);
+        setAffirmations(merged.length > 0 ? merged : DEFAULT_AFFIRMATIONS);
         setIdentities(savedIdentities);
       }).catch(() => {});
     }, 0);
@@ -374,7 +376,7 @@ export function MorningRitual() {
         a.id === selectedAffirmation.id ? {...a, lastUsedAt: new Date().toISOString()} : a
       );
       setAffirmations(updated);
-      saveAffirmations(updated.filter((a) => !a.isDefault));
+      saveAffirmations(persistableAffirmations(updated));
     }
 
     setStep('complete');
@@ -500,9 +502,21 @@ export function MorningRitual() {
               onPickAffirmation={setSelectedAffirmation}
               onNext={goNext}
               onBack={goBack}
-              onAffirmationsChange={(items) => {
+              onAffirmationsChange={(items, options) => {
+                const previous = affirmations;
                 setAffirmations(items);
-                saveAffirmations(items.filter((a) => !a.isDefault));
+                if (options?.persist === 'deferred') {
+                  scheduleDeferredRitualCommit({
+                    key: 'ritual-affirmations',
+                    commit: () => saveAffirmations(persistableAffirmations(items)),
+                    undo: () => setAffirmations(previous),
+                    toast,
+                    message: t('affirmation.deletedUndo'),
+                    undoLabel: t('common.undo'),
+                  });
+                  return;
+                }
+                saveAffirmations(persistableAffirmations(items));
               }}
             />
           )}
@@ -533,8 +547,20 @@ export function MorningRitual() {
               text={identityText}
               onChange={setIdentityText}
               identities={identities}
-              onIdentitiesChange={(items) => {
+              onIdentitiesChange={(items, options) => {
+                const previous = identities;
                 setIdentities(items);
+                if (options?.persist === 'deferred') {
+                  scheduleDeferredRitualCommit({
+                    key: 'ritual-identities',
+                    commit: () => saveIdentities(items),
+                    undo: () => setIdentities(previous),
+                    toast,
+                    message: t('identity.deletedUndo'),
+                    undoLabel: t('common.undo'),
+                  });
+                  return;
+                }
                 saveIdentities(items);
               }}
               onNext={goNext}

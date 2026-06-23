@@ -14,7 +14,7 @@ import {
 } from '@/lib/life-coach/curated-daily-tasks';
 import type {CuratedDailyTaskOption} from '@/lib/life-coach/curated-daily-tasks';
 import {lifeDomainSchema} from '@/lib/life-coach/schemas';
-import {isIsoDate, jsonError, jsonOk, resolveLocale, startOfToday} from '@/lib/life-coach/server';
+import {isIsoDate, jsonError, jsonOk, resolveLocale, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 const curatedSelectionSchema = z.object({
   domain: lifeDomainSchema,
@@ -81,16 +81,9 @@ export async function POST(request: Request) {
   const current = await requireLifeCoachAccess(request, {allowDuringOnboarding: true});
   if (!current.ok) return current.response;
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = curatedSelectionSchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError('Invalid curated task selection.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, curatedSelectionSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const locale = parsed.data.locale ?? 'he';
@@ -137,6 +130,7 @@ export async function POST(request: Request) {
         inserted.push(
           await createDailyBabyStep(current.user.id, {
             goal_id: null,
+            is_general: true,
             domain: step.domain,
             title: step.title,
             description: step.description,
@@ -153,9 +147,7 @@ export async function POST(request: Request) {
         existingCuratedIds.add(task.id);
       }
 
-      if (inserted.length > 0) {
-        await markUserOnboardingComplete(current.user.id, parsed.data.domain, null);
-      }
+      await markUserOnboardingComplete(current.user.id, parsed.data.domain, null);
       const steps = await listDailyBabyStepsForDate(date, current.user.id);
       return jsonOk({date, steps, inserted}, 201);
     });

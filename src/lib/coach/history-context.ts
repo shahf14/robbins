@@ -45,10 +45,8 @@ export type CoachHistoryContext = {
   anchors: string[];
 };
 
-function localDateStr(d = new Date()): string { return dateToYMD(d); }
-
 export function coachLocalDateStr(): string {
-  return localDateStr();
+  return dateToYMD(new Date());
 }
 
 const GENERIC_ANCHORS = new Set([
@@ -90,11 +88,11 @@ function buildAnchors(input: {
     addAnchor(anchors, step.title);
   }
   if (input.morningRitual?.completed) {
-    const ritualDate = localDateStr(new Date(input.morningRitual.completedAt ?? input.morningRitual.startedAt));
+    const ritualDate = dateToYMD(new Date(input.morningRitual.completedAt ?? input.morningRitual.startedAt));
     const adapted = mapMorningRitualToAdaptation(
       input.morningRitual,
       ritualDate,
-      ritualDate === localDateStr() ? 'today' : 'latest'
+      ritualDate === dateToYMD(new Date()) ? 'today' : 'latest'
     );
     addAnchor(anchors, adapted.primary_tag);
     addAnchor(anchors, adapted.priority_action);
@@ -133,8 +131,8 @@ export function gatherCoachHistoryContext(input: {
     input.morningRitual?.completed
       ? mapMorningRitualToAdaptation(
           input.morningRitual,
-          localDateStr(new Date(input.morningRitual.completedAt ?? input.morningRitual.startedAt)),
-          dateToYMD(new Date(input.morningRitual.completedAt ?? input.morningRitual.startedAt)) === localDateStr()
+          dateToYMD(new Date(input.morningRitual.completedAt ?? input.morningRitual.startedAt)),
+          dateToYMD(new Date(input.morningRitual.completedAt ?? input.morningRitual.startedAt)) === dateToYMD(new Date())
             ? 'today'
             : 'latest'
         )

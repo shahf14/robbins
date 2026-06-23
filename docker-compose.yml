@@ -3,10 +3,13 @@ services:
     build: .
     image: robbins-app:latest
     container_name: robbins-app
+    # Do not expose publicly without a reverse proxy, TLS, and LOCAL_AUTH_TOKEN.
     ports:
       - "3000:3000"
     env_file:
       - .env.local
+    environment:
+      STRICT_AUTH_BOOT: "true"
     volumes:
       # Named volume: SQLite + WAL do not behave reliably on Windows bind mounts
       - robbins_data:/app/data

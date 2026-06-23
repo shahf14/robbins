@@ -1,6 +1,6 @@
 'use client';
 
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {useSearchParams} from 'next/navigation';
 import type {AppLocale} from '@/i18n/config';
@@ -17,9 +17,14 @@ import {FormulationLiveSummary} from '@/components/formulation/formulation-live-
 import {WizardBusyOverlay} from '@/components/formulation/wizard-busy-overlay';
 import {WizardStepNav} from '@/components/formulation/wizard-step-nav';
 import type {WizardLiveDraft} from '@/lib/formulation/wizard-live-draft';
+import {wizardLiveDraftHasContent} from '@/lib/formulation/wizard-live-draft';
 import {
   clearFormulationDraftPointer,
+  clearFormulationLiveDraft,
+  clearFormulationLiveDraftsForSession,
+  loadFormulationLiveDraft,
   saveFormulationDraftPointer,
+  saveFormulationLiveDraft,
 } from '@/lib/formulation/draft-storage';
 import {
   getRelevantGuidedQuestions,
@@ -35,9 +40,16 @@ import {
 } from '@/lib/user-preferences';
 import {previousWizardPhase, wizardPhaseNumber} from '@/lib/formulation/phase-nav';
 import {formulationApi} from '@/lib/life-coach/api-client';
+import {classifyLoadFailure, type ApiLoadFailureKind} from '@/lib/life-coach/api-error';
 import type {FormulationSession} from '@/lib/life-coach/types';
 import {FeatureHint} from '@/components/feedback/feature-hint';
+import {LoadingErrorPanel} from '@/components/feedback/loading-error-panel';
+import {useConfirm} from '@/components/feedback/confirm-provider';
 import {useFeatureVisit} from '@/hooks/use-feature-visit';
+
+function resolveWizardPhase(session: FormulationSession): string {
+  return session.status === 'crisis_stopped' ? 'risk' : session.current_phase;
+}
 
 export function FormulationSessionWizard() {
   const t = useTranslations('formulation');
@@ -45,9 +57,11 @@ export function FormulationSessionWizard() {
   const searchParams = useSearchParams();
   const resumeId = searchParams.get('resume');
   useFeatureVisit('formulation');
+  const {confirm} = useConfirm();
 
   const [session, setSession] = useState<FormulationSession | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadFailure, setLoadFailure] = useState<ApiLoadFailureKind | null>(null);
   const [saving, setSaving] = useState(false);
   const [riskNeedsFollowUp, setRiskNeedsFollowUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,28 +75,38 @@ export function FormulationSessionWizard() {
   const [busy, setBusy] = useState<'saving' | 'generating_questions' | 'draft_formulation' | null>(
     null
   );
+  const hydratedPhaseRef = useRef<string | null>(null);
 
   const loadSession = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setLoadFailure(null);
     try {
       if (resumeId) {
         const {session: s} = await formulationApi.get(resumeId);
+        const phase = resolveWizardPhase(s);
+        hydratedPhaseRef.current = `${s.id}:${phase}`;
+        setLiveDraft(loadFormulationLiveDraft(s.id, phase) ?? {});
         setSession(s);
         saveFormulationDraftPointer({sessionId: s.id, phase: s.current_phase});
         return;
       }
       const {draft} = await formulationApi.getLatest();
       if (draft) {
+        const phase = resolveWizardPhase(draft);
+        hydratedPhaseRef.current = `${draft.id}:${phase}`;
+        setLiveDraft(loadFormulationLiveDraft(draft.id, phase) ?? {});
         setSession(draft);
         saveFormulationDraftPointer({sessionId: draft.id, phase: draft.current_phase});
         return;
       }
       const {session: created} = await formulationApi.create(locale);
+      const phase = resolveWizardPhase(created);
+      hydratedPhaseRef.current = `${created.id}:${phase}`;
+      setLiveDraft(loadFormulationLiveDraft(created.id, phase) ?? {});
       setSession(created);
       saveFormulationDraftPointer({sessionId: created.id, phase: created.current_phase});
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load');
+      setLoadFailure(classifyLoadFailure(e));
     } finally {
       setLoading(false);
     }
@@ -92,6 +116,35 @@ export function FormulationSessionWizard() {
     const timeout = window.setTimeout(() => void loadSession(), 0);
     return () => window.clearTimeout(timeout);
   }, [loadSession]);
+
+  useEffect(() => {
+    if (!session) return;
+    const phase = resolveWizardPhase(session);
+    const token = `${session.id}:${phase}`;
+    if (hydratedPhaseRef.current === token) return;
+    hydratedPhaseRef.current = token;
+    setLiveDraft(loadFormulationLiveDraft(session.id, phase) ?? {});
+  }, [session]);
+
+  useEffect(() => {
+    if (!session) return;
+    const phase = resolveWizardPhase(session);
+    saveFormulationLiveDraft(session.id, phase, liveDraft);
+  }, [session, liveDraft]);
+
+  useEffect(() => {
+    if (!session) return;
+    const phase = resolveWizardPhase(session);
+    if (!wizardLiveDraftHasContent(liveDraft, phase)) return;
+
+    function onBeforeUnload(event: BeforeUnloadEvent) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [session, liveDraft]);
 
   useEffect(() => {
     formulationApi
@@ -156,13 +209,21 @@ export function FormulationSessionWizard() {
       if (risk_needs_follow_up) setRiskNeedsFollowUp(true);
       setLiveDraft((d) => {
         const next = {...d};
-        if (body.phase === 'consent') delete next.consent;
-        if (body.phase === 'open' && 'passive_ratings' in body) delete next.passive_ratings;
+        if (body.phase === 'consent') {
+          delete next.consent;
+          clearFormulationLiveDraft(id, 'consent');
+        }
+        if (body.phase === 'open' && 'passive_ratings' in body) {
+          delete next.passive_ratings;
+          clearFormulationLiveDraft(id, 'open');
+        }
         if (body.phase === 'dimensions' && 'prior_question_answers' in body) {
           delete next.follow_up_answers;
+          clearFormulationLiveDraft(id, 'dimensions');
         }
         if (body.phase === 'exploration' && 'llm_exploration_answers' in body) {
           delete next.llm_exploration_answers;
+          clearFormulationLiveDraft(id, 'exploration');
         }
         return next;
       });
@@ -197,12 +258,20 @@ export function FormulationSessionWizard() {
     }
   }
 
-  if (loading) {
-    return <p className="text-sm txt-muted">{t('loading')}</p>;
+  if (loading || loadFailure) {
+    return (
+      <LoadingErrorPanel
+        loading={loading}
+        failure={loadFailure}
+        onRetry={() => void loadSession()}
+        loadingLabel={t('loading')}
+        className="panel-surface p-6 sm:p-8"
+      />
+    );
   }
 
-  if (error || !session) {
-    return <p className="text-sm text-red-300" role="alert">{error ?? t('loading')}</p>;
+  if (!session) {
+    return null;
   }
 
   const sessionId = session.id;
@@ -210,11 +279,31 @@ export function FormulationSessionWizard() {
   const prevPhase = previousWizardPhase(phase);
   const showWizardNav = phase !== 'complete' && session.status !== 'completed';
 
+  async function confirmDiscardLiveAnswers(action: 'back' | 'restart') {
+    if (!wizardLiveDraftHasContent(liveDraft, phase)) return true;
+    return confirm({
+      title: action === 'restart' ? t('nav.discardRestartTitle') : t('nav.discardBackTitle'),
+      message: action === 'restart' ? t('nav.discardRestartMessage') : t('nav.discardBackMessage'),
+      confirmLabel: action === 'restart' ? t('nav.discardRestartConfirm') : t('nav.discardBackConfirm'),
+      destructive: true,
+    });
+  }
+
   async function navigate(action: 'back' | 'restart') {
+    const confirmed = await confirmDiscardLiveAnswers(action);
+    if (!confirmed) return;
+
+    saveFormulationLiveDraft(sessionId, phase, liveDraft);
+
+    if (action === 'restart') {
+      clearFormulationLiveDraftsForSession(sessionId);
+    }
+
     const result = await patchAndSet(sessionId, {phase: 'navigate', action});
     if (action === 'restart' && result) {
       setRiskNeedsFollowUp(false);
       setLiveDraft({});
+      hydratedPhaseRef.current = `${sessionId}:consent`;
       setError(null);
       setWizardStepKey((k) => k + 1);
     }
@@ -270,7 +359,7 @@ export function FormulationSessionWizard() {
           <WizardBusyOverlay label={busyOverlay.label} hint={busyOverlay.hint} />
         </div>
       )}
-      <div key={wizardStepKey} className={busyOverlay ? 'pointer-events-none opacity-40' : undefined}>
+      <div key={`${wizardStepKey}-${phase}`} className={busyOverlay ? 'pointer-events-none opacity-40' : undefined}>
         {phase === 'consent' && serverProfile && (
           <ConsentStep
             loading={saving}
@@ -300,12 +389,20 @@ export function FormulationSessionWizard() {
                     : serverProfile.life_context_statuses.length > 0
                       ? serverProfile.life_context_statuses
                       : (prefs.life_context_statuses ?? []);
-              return {
+              const base = {
                 life_context_statuses: contexts,
                 life_context_status_note: session.life_context_status_note ?? undefined,
                 gender,
                 age: agePreferNot && locks.age ? null : age,
                 age_prefer_not: agePreferNot,
+              };
+              if (!liveDraft.consent) return base;
+              return {
+                life_context_statuses: liveDraft.consent.life_context_statuses,
+                life_context_status_note: liveDraft.consent.life_context_status_note,
+                gender: liveDraft.consent.gender,
+                age: liveDraft.consent.age,
+                age_prefer_not: liveDraft.consent.age_prefer_not ?? base.age_prefer_not,
               };
             })()}
             onDraftChange={onConsentDraft}
@@ -346,7 +443,7 @@ export function FormulationSessionWizard() {
           <PassiveRatingsStep
             loading={saving}
             questions={guidedQuestions}
-            initialRatings={session.passive_ratings}
+            initialRatings={liveDraft.passive_ratings ?? session.passive_ratings}
             onDraftChange={onRatingsDraft}
             onSubmit={async (ratings) => {
               await patchAndSet(session.id, {
@@ -362,6 +459,7 @@ export function FormulationSessionWizard() {
           <FollowUpStep
             loading={saving}
             followUps={session.rating_follow_ups}
+            initialAnswers={liveDraft.follow_up_answers}
             onDraftChange={onFollowUpDraft}
             onSubmit={async (answers) => {
               await patchAndSet(session.id, {
@@ -386,7 +484,7 @@ export function FormulationSessionWizard() {
             session={session}
             locale={locale}
             questions={session.llm_exploration_questions}
-            initialAnswers={session.llm_exploration_answers}
+            initialAnswers={liveDraft.llm_exploration_answers ?? session.llm_exploration_answers}
             generating={busy === 'generating_questions'}
             loadError={error}
             onDraftChange={onExplorationDraft}
@@ -409,6 +507,8 @@ export function FormulationSessionWizard() {
             dimensions={session.dimensions}
             riskLevel={session.risk_level ?? 'none'}
             riskAction={session.risk_action ?? 'continue'}
+            drafting={busy === 'draft_formulation'}
+            loadError={error}
             onLoadDraft={async () => {
               setBusy('draft_formulation');
               setError(null);
@@ -471,6 +571,7 @@ export function FormulationSessionWizard() {
                 const {session: completed} = await formulationApi.complete(session.id);
                 setSession(completed);
                 clearFormulationDraftPointer();
+                clearFormulationLiveDraftsForSession(session.id);
               } catch (e) {
                 const message = e instanceof Error ? e.message : t('progressState.errorGeneric');
                 setError(message);

@@ -96,7 +96,7 @@ export function migrateFormulationSessionsExplorationPhase(db: Database.Database
         user_edited_formulation, formulation_approved_at, coach_handoff_json,
         checkin_prefill_json, phases_skipped_json,
         prior_question_key, prior_question_answer, prior_question_answers_json,
-        NULL, NULL,
+        llm_exploration_questions_json, llm_exploration_answers_json,
         last_ai_action, last_ai_tokens, last_ai_model, last_ai_duration_ms,
         started_at, completed_at, updated_at, duration_sec
       FROM formulation_sessions

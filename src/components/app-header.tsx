@@ -268,8 +268,11 @@ export function AppHeader() {
 
       <aside
         id="mobile-nav"
+        inert={!isMenuOpen ? true : undefined}
         className={`fixed inset-y-0 start-0 z-[60] flex w-[min(22rem,88vw)] flex-col overflow-y-auto border-e border-white/10 bg-[#09090b] px-5 py-5 shadow-[0_30px_80px_rgba(0,0,0,0.7)] transition-transform duration-300 lg:hidden ${
-          isMenuOpen ? 'translate-x-0' : 'rtl:translate-x-full ltr:-translate-x-full'
+          isMenuOpen
+            ? 'translate-x-0'
+            : 'pointer-events-none rtl:translate-x-full ltr:-translate-x-full'
         }`}
         aria-hidden={!isMenuOpen}
         aria-label={t('nav.primary')}

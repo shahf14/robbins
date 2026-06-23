@@ -18,8 +18,9 @@ export function bulkUpsertMorningRituals(rows: MorningRitualInput[]): void {
   const db = getDb();
   const ritualStmt = db.prepare(
     `INSERT INTO morning_rituals
-      (id, user_id, date, mood_before, mood_after, triggers, duration_sec, completed, session_json)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, user_id, date, mood_before, mood_after, triggers, duration_sec, completed, session_json, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,
+       COALESCE((SELECT created_at FROM morning_rituals WHERE id = ?), datetime('now')))
      ON CONFLICT(id) DO UPDATE SET
        user_id=excluded.user_id,
        date=excluded.date,
@@ -57,7 +58,8 @@ export function bulkUpsertMorningRituals(rows: MorningRitualInput[]): void {
         typeof row.triggers === 'string' ? row.triggers : JSON.stringify(row.triggers ?? []),
         row.duration_sec,
         row.completed ? 1 : 0,
-        row.session_json ?? null
+        row.session_json ?? null,
+        ritualId
       );
 
       const entries = row.gratitude_entries ?? [];

@@ -1,10 +1,13 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
+import type {ApiLoadFailureKind} from '@/lib/life-coach/api-error';
+import {ApiAccessPanel} from '@/components/feedback/api-access-panel';
 
 type Props = {
   loading?: boolean;
   error?: string | null;
+  failure?: ApiLoadFailureKind | null;
   onRetry?: () => void;
   loadingLabel?: string;
   className?: string;
@@ -13,6 +16,7 @@ type Props = {
 export function LoadingErrorPanel({
   loading,
   error,
+  failure,
   onRetry,
   loadingLabel,
   className = 'panel-surface p-6 sm:p-8',
@@ -32,6 +36,16 @@ export function LoadingErrorPanel({
           </p>
         </div>
       </section>
+    );
+  }
+
+  if (failure) {
+    return (
+      <ApiAccessPanel
+        failure={failure}
+        onRetry={onRetry ?? (() => {})}
+        className={className}
+      />
     );
   }
 

@@ -1,7 +1,8 @@
 'use client';
 
 import {useMemo} from 'react';
-import {useTranslations} from 'next-intl';import {weeklyReviewEmptyKey} from '@/lib/life-context-content';
+import {useTranslations} from 'next-intl';
+import {weeklyReviewEmptyKey} from '@/lib/life-context-content';
 import type {AiCoachingInsight, WeeklyReview} from '@/lib/life-coach/types';
 import {loadUserPreferences} from '@/lib/user-preferences';
 import {WeeklyReviewEmotionalLayer} from '@/components/life-coach/shared/weekly-review-emotional-layer';

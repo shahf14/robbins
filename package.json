@@ -2,18 +2,31 @@
   "name": "robbins-app",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20 <27"
+  },
   "scripts": {
-    "dev": "next dev --hostname 0.0.0.0 --port 3000",
-    "dev:3002": "next dev --hostname 0.0.0.0 --port 3002",
+    "dev": "next dev --hostname 127.0.0.1 --port 3000",
+    "dev:lan": "next dev --hostname 0.0.0.0 --port 3000",
+    "dev:3002": "next dev --hostname 127.0.0.1 --port 3002",
     "dev:logs": "node scripts/dev-with-logs.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
-    "knip": "knip"
+    "test:formulation-migration": "node --experimental-strip-types --test src/lib/db/migrations/formulation-sessions-exploration.test.ts",
+    "test:content-studio-db": "node --experimental-strip-types --test src/lib/db/migrations/content-studio.test.ts",
+    "test:frontend-audit": "node --experimental-strip-types --test src/lib/morning-ritual-storage.test.ts",
+    "test:api-error": "node --experimental-strip-types --test src/lib/life-coach/api-error.test.ts",
+    "test:generate-daily-steps-scope": "node --experimental-strip-types --test src/lib/life-coach/generate-daily-steps-scope.test.ts",
+    "audit:objects": "node scripts/audit-object-relations.mjs",
+    "knip": "knip",
+    "knip:ci": "knip --dependencies",
+    "audit:ci": "npm audit --audit-level=high",
+    "audit:ci:prod": "npm audit --omit=dev --audit-level=high"
   },
   "dependencies": {
-    "@types/better-sqlite3": "^7.6.13",
+    "@clerk/nextjs": "^7.5.7",
     "better-sqlite3": "^12.10.0",
     "next": "^16.2.6",
     "next-intl": "^4.1.0",
@@ -23,6 +36,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.0",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.15.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

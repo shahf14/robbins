@@ -4,7 +4,7 @@ import {
   type GamificationUnlockKind,
 } from '@/lib/db/repositories/gamification-unlocks';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
-import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 const VALID_KINDS: GamificationUnlockKind[] = ['mystery_unlock', 'reflection_loot', 'identity_title'];
 
@@ -24,14 +24,9 @@ export async function POST(request: Request) {
   const current = await requireLifeCoachAccess(request);
   if (!current.ok) return current.response;
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const input = body as {
+  const bodyResult = await parseLifeCoachJsonBody<Record<string, unknown>>(request);
+  if (!bodyResult.ok) return bodyResult.response;
+  const input = (bodyResult.data ?? {}) as {
     kind?: string;
     reward_key?: string;
     week_start?: string | null;

@@ -13,8 +13,9 @@ import {
   listDailyBabyStepsForDate,
   updateDailyBabyStepStatus,
   upsertDailyReflection,
-} from '@/lib/life-coach/repository';import type {CoachingStyle, PreferredActionWindow} from '@/lib/user-preferences';
-import {jsonError, jsonOk, startOfToday} from '@/lib/life-coach/server';
+} from '@/lib/life-coach/repository';
+import type {CoachingStyle, PreferredActionWindow} from '@/lib/user-preferences';
+import {jsonError, jsonOk, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {dailyStepStatusUpdateSchema} from '@/lib/life-coach/schemas';
 
 export async function PATCH(
@@ -27,18 +28,9 @@ export async function PATCH(
     return current.response;
   }
 
-  let body: unknown;
-
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = dailyStepStatusUpdateSchema.safeParse(body);
-
-  if (!parsed.success) {
-    return jsonError('Invalid daily step status payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, dailyStepStatusUpdateSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const {id} = await params;

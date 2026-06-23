@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -47,12 +48,26 @@ export function ConfirmProvider({children}: {children: ReactNode}) {
 
   const value = useMemo(() => ({confirm}), [confirm]);
 
+  useEffect(() => {
+    if (!pending?.open) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close(false);
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [pending?.open, close]);
+
   return (
     <ConfirmContext.Provider value={value}>
       {children}
       {pending?.open && (
         <div
-          className="fixed inset-0 z-[110] flex items-end justify-center bg-black/70 p-4 sm:items-center"
+          className="fixed inset-0 z-[110] flex items-end justify-center bg-black/70 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center sm:p-4"
           role="presentation"
           onClick={() => close(false)}
         >

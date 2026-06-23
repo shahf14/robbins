@@ -4,7 +4,7 @@ import {
   patchFormulationSession,
 } from '@/lib/life-coach/repository';
 import {formulationSessionPatchSchema} from '@/lib/life-coach/schemas';
-import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 export async function GET(
   request: Request,
@@ -33,16 +33,9 @@ export async function PATCH(
   if (!current.ok) return current.response;
 
   const {id} = await params;
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = formulationSessionPatchSchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError('Invalid patch payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, formulationSessionPatchSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   try {

@@ -1,6 +1,6 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {deleteGoal, getGoalById, listMilestonesForGoal, updateGoal} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {goalUpdateInputSchema} from '@/lib/life-coach/schemas';
 
 export async function GET(
@@ -39,18 +39,9 @@ export async function PATCH(
     return current.response;
   }
 
-  let body: unknown;
-
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = goalUpdateInputSchema.safeParse(body);
-
-  if (!parsed.success) {
-    return jsonError('Invalid goal update payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, goalUpdateInputSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const {id} = await params;

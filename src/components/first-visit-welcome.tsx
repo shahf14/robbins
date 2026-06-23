@@ -18,7 +18,9 @@ export function FirstVisitWelcome() {
       const serverStatus = await fetchServerOnboardingStatus();
       if (cancelled) return;
 
-      if (serverStatus?.complete && serverStatus.completedAt) {
+      // A non-null result means the server answered authoritatively — reconcile
+      // local state in both directions (complete → set, incomplete → clear).
+      if (serverStatus) {
         applyServerOnboardingStatus(serverStatus);
       }
     }

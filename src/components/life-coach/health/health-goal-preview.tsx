@@ -1,9 +1,10 @@
 'use client';
 
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 import type {GoalRealismCheck, HealthExecutionPlan, HealthPlanSource, NextBestAction} from '@/lib/life-coach/types';
+import {createGoalCreateIdempotencyKey} from '@/lib/goal-create-idempotency';
 import {GoalRealismBanner} from '../goal-realism-banner';
 import {GoalHierarchyExplainer} from '../shared/goal-hierarchy-explainer';
 import {NextBestActionCta} from '@/components/next-best-action/next-best-action-cta';
@@ -45,6 +46,7 @@ type Props = {
   successMetric: string;
   onCancel: () => void;
   onSave: (input: {
+    idempotency_key: string;
     goal: {
       domain: 'health';
       title: string;
@@ -70,6 +72,8 @@ export function HealthGoalPreview({preview, wizardContext, successMetric, onCanc
   const [milestones, setMilestones] = useState(preview.milestones);
   const [steps, setSteps] = useState(preview.suggested_baby_steps);
   const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
+  const idempotencyKeyRef = useRef(createGoalCreateIdempotencyKey());
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const earlyPhases = preview.execution_plan?.phases?.slice(0, 2) ?? [];
@@ -79,11 +83,14 @@ export function HealthGoalPreview({preview, wizardContext, successMetric, onCanc
       : t('healthWizard.planSourceFallback');
 
   async function handleSave() {
+    if (savingRef.current) return;
+    savingRef.current = true;
     setSaving(true);
     setSaveError(null);
 
     if (!goalTitle.trim() || !metric.trim()) {
       setSaveError(t('healthWizard.saveValidation'));
+      savingRef.current = false;
       setSaving(false);
       return;
     }
@@ -96,6 +103,7 @@ export function HealthGoalPreview({preview, wizardContext, successMetric, onCanc
         preview.execution_plan ?? buildDefaultExecutionPlan(wizardContext, locale);
 
       await onSave({
+        idempotency_key: idempotencyKeyRef.current,
         goal: {
           domain: 'health',
           title: goalTitle.trim(),
@@ -119,9 +127,9 @@ export function HealthGoalPreview({preview, wizardContext, successMetric, onCanc
         })),
       });
     } catch (error) {
-      setSaveError(error instanceof Error ? error.message : t('healthWizard.createError'));
-    } finally {
+      savingRef.current = false;
       setSaving(false);
+      setSaveError(error instanceof Error ? error.message : t('healthWizard.createError'));
     }
   }
 
@@ -228,6 +236,7 @@ export function HealthGoalPreview({preview, wizardContext, successMetric, onCanc
         <div className="mt-6">
           <NextBestActionCta
             action={preview.next_best_action}
+            disabled={saving}
             onCustomAction={(action) => {
               if (action.action_type === 'save_goal') void handleSave();
             }}
@@ -245,7 +254,7 @@ export function HealthGoalPreview({preview, wizardContext, successMetric, onCanc
         >
           {saving ? t('lifeCoach.saving') : t('healthWizard.confirmCreate')}
         </button>
-        <button className="focus-ring btn-ghost" type="button" onClick={onCancel}>
+        <button className="focus-ring btn-ghost" type="button" onClick={onCancel} disabled={saving}>
           {t('lifeCoach.cancel')}
         </button>
       </div>

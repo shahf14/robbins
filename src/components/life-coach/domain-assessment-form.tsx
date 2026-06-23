@@ -11,6 +11,7 @@ import {
 } from '@/lib/life-coach/types';
 import {defaultUserPreferences, loadUserPreferences} from '@/lib/user-preferences';
 import {useToast} from '@/components/feedback/toast-provider';
+import {resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
 import {DomainScoreExplainer} from './shared/domain-score-explainer';
 
 type AssessmentInput = Omit<
@@ -80,6 +81,8 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
     return [...mainBlockers.filter((item) => item !== customBlocker.trim()), customBlocker.trim()];
   }, [customBlocker, mainBlockers]);
 
+  const canSave = currentState.trim().length > 0 && desiredState.trim().length > 0;
+
   const bottomLine =
     desiredState.trim() ||
     currentState.trim() ||
@@ -100,20 +103,21 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
   }
 
   async function handleSave() {
+    if (!canSave) return;
     setSaving(true);
     try {
       await onSave({
         current_score: currentScore,
-        current_state: currentState,
-        desired_state: desiredState,
+        current_state: currentState.trim(),
+        desired_state: desiredState.trim(),
         main_blockers: blockers.filter(Boolean),
         available_time_per_day: defaultUserPreferences.available_time_per_day,
         intensity_preference: defaultUserPreferences.intensity_preference,
       });
       setViewMode('summary');
       toast.success(t('lifeCoach.assessmentSavedToast'));
-    } catch {
-      toast.error(t('feedback.failed'));
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
     } finally {
       setSaving(false);
     }
@@ -280,12 +284,17 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
         <button
           className="focus-ring btn-primary"
           type="button"
-          disabled={saving}
+          disabled={saving || !canSave}
           aria-busy={saving}
           onClick={() => void handleSave()}
         >
           {saving ? t('lifeCoach.saving') : t('lifeCoach.saveAssessment')}
         </button>
+        {!canSave && (
+          <p className="text-sm text-amber-300/90" role="status">
+            {t('lifeCoach.assessmentRequiredFields')}
+          </p>
+        )}
       </div>
     </section>
   );

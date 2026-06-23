@@ -1,7 +1,7 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {updateMilestoneStatus} from '@/lib/life-coach/repository';
 import {milestoneStatusUpdateSchema} from '@/lib/life-coach/schemas';
-import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 export async function PATCH(
   request: Request,
@@ -10,16 +10,9 @@ export async function PATCH(
   const current = await requireLifeCoachAccess(request);
   if (!current.ok) return current.response;
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = milestoneStatusUpdateSchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError('Invalid milestone status payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, milestoneStatusUpdateSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const {id} = await params;

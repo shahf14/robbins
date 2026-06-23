@@ -1,6 +1,7 @@
 'use client';
 
 import {BackArrow, NavArrow} from '@/components/directional-arrow';
+import {downloadCsv, rowsToCsv} from '@/lib/csv-export';
 import {useEffect, useState, useCallback} from 'react';
 import {dbApi, type TableSummary, type TableData} from './use-db-api';
 
@@ -52,23 +53,8 @@ export function TableBrowser({tables, onRefresh}: Props) {
 
   function exportCsv() {
     if (!data) return;
-    const header = data.columns.map((c) => c.name).join(',');
-    const body = data.rows.map((row) =>
-      data.columns.map((c) => {
-        const val = (row as Record<string, unknown>)[c.name];
-        const str = cellStr(val);
-        return str.includes(',') || str.includes('"') || str.includes('\n')
-          ? `"${str.replace(/"/g, '""')}"`
-          : str;
-      }).join(',')
-    ).join('\n');
-    const blob = new Blob([`${header}\n${body}`], {type: 'text/csv'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${data.table}-page${page}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const columns = data.columns.map((c) => c.name);
+    downloadCsv(`${data.table}-page${page}.csv`, rowsToCsv(columns, data.rows as Record<string, unknown>[]));
   }
 
   return (

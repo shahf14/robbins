@@ -4,12 +4,17 @@ import {useCallback, useEffect, useMemo, useRef, useState, type ReactNode} from 
 import {useLocale, useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
+import {classifyLoadFailure, type ApiLoadFailureKind, resolveLifeCoachErrorMessage, resolveWeeklyReviewErrorMessage} from '@/lib/life-coach/api-error';
+import {
+  runStepReflectionFollowUp,
+  shouldRunReflectionFollowUp,
+} from '@/lib/life-coach/step-reflection-follow-up';
 import {loadUserPreferences} from '@/lib/user-preferences';
 import type {AiCoachingInsight, DailyBabyStep, DomainCardSummary, Goal, LifeDomainState} from '@/lib/life-coach/types';
 import {AIInsightCard} from './ai-insight-card';
 import {DailyBabyStepsList} from './daily-baby-steps-list';
 import {CuratedDailyTaskPicker} from './curated-daily-task-picker';
-import {LifeCoachAuthShell} from './life-coach-auth-shell';
+import {LifeCoachPageShell} from './life-coach-page-shell';
 import {LifeDomainCard} from './life-domain-card';
 import {WeeklyReviewCard} from './weekly-review-card';
 import {AiInsightsVsWeeklyReviewExplainer} from './shared/ai-insights-vs-weekly-review-explainer';
@@ -17,6 +22,7 @@ import {CoachHandoffCard} from '@/components/formulation/coach-handoff-card';
 import {FeatureUnlockBanner} from './feature-unlock-banner';
 import {SurvivalModeBanner} from './survival-mode-banner';
 import {shouldHighlightSurvivalMode} from '@/lib/life-context-content';
+import {useOnLocalAuthReady} from '@/lib/auth/use-on-local-auth-ready';
 import {fetchFormulationCoachContext} from '@/lib/formulation/personalized-challenge-storage';
 import {
   shouldEmphasizeSurvivalMode,
@@ -28,6 +34,7 @@ import {fetchSessions, getStreak} from '@/lib/morning-ritual-storage';
 import type {MorningRitualSession} from '@/lib/morning-ritual-types';
 import {useToast} from '@/components/feedback/toast-provider';
 import {LoadingErrorPanel} from '@/components/feedback/loading-error-panel';
+import {ApiAccessPanel} from '@/components/feedback/api-access-panel';
 import {MobileQuickAction} from '@/components/feedback/mobile-quick-action';
 import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microcopy';
 import {BusyButton} from '@/components/feedback/busy-button';
@@ -68,7 +75,9 @@ export function LifeCoachHome() {
   return (
     <main className="section-block border-t-0">
       <div className="page-shell">
-        <LifeCoachAuthShell>{() => <LifeCoachHomeContent />}</LifeCoachAuthShell>
+        <LifeCoachPageShell>
+          <LifeCoachHomeContent />
+        </LifeCoachPageShell>
       </div>
     </main>
   );
@@ -85,8 +94,9 @@ function LifeCoachHomeContent() {
   const [weeklyReview, setWeeklyReview] = useState<AiCoachingInsight | null>(null);
   const [insights, setInsights] = useState<AiCoachingInsight[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadFailure, setLoadFailure] = useState<ApiLoadFailureKind | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [generatingReview, setGeneratingReview] = useState(false);
   const toast = useToast();
   const [ritualSessions, setRitualSessions] = useState<MorningRitualSession[]>([]);
   const [weekSteps, setWeekSteps] = useState<DailyBabyStep[]>([]);
@@ -97,6 +107,7 @@ function LifeCoachHomeContent() {
   const [comebackMessaging, setComebackMessaging] = useState<ComebackMessaging | null>(null);
   const mountedRef = useRef(true);
   const scrollTimeoutRef = useRef<number | null>(null);
+  const generatingReviewRef = useRef(false);
 
   useEffect(() => () => {
     mountedRef.current = false;
@@ -110,13 +121,13 @@ function LifeCoachHomeContent() {
   const totalDomains = domainCards.length || 8;
   const refresh = useCallback(async () => {
     setLoading(true);
-    setLoadError(null);
+    setLoadFailure(null);
     try {
       const {start, end} = currentWeekRange();
       const [domains, goalsRes, dailySteps, weekStepsRes, latestReview, recentInsights, sessions, coachContext] =
         await Promise.all([
         lifeCoachApi.listDomains(),
-        lifeCoachApi.listGoals().catch(() => ({goals: []})),
+        lifeCoachApi.listGoals(),
         lifeCoachApi.getDailySteps(todayYMD()),
         lifeCoachApi.getDailyStepsRange(start, end),
         lifeCoachApi.getLatestWeeklyReview().catch(() => ({review: null})),
@@ -143,14 +154,14 @@ function LifeCoachHomeContent() {
       setRitualStreak(getStreak(sessions));
       setLoadAdaptation(coachContext.load_adaptation);
       setComebackMessaging(coachContext.comeback_messaging);
-    } catch {
+    } catch (error) {
       if (!mountedRef.current) return;
-      setLoadError(t('lifeCoach.loadError'));
+      setLoadFailure(classifyLoadFailure(error));
     }
     if (mountedRef.current) {
       setLoading(false);
     }
-  }, [t]);
+  }, []);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -159,6 +170,8 @@ function LifeCoachHomeContent() {
 
     return () => window.clearTimeout(timeout);
   }, [refresh]);
+
+  useOnLocalAuthReady(useCallback(() => void refresh(), [refresh]));
 
   const prefs = loadUserPreferences();
   const schedulePrefs = {
@@ -172,7 +185,7 @@ function LifeCoachHomeContent() {
   const pendingStep =
     pickStartHereStep(todaySteps, latestRitualEnergy, schedulePrefs, weekSteps) ?? null;
   const generateLabel =
-    todaySteps.length > 0 ? t('lifeCoach.regenerateTodaySteps') : t('lifeCoach.generateTodaySteps');
+    todaySteps.length > 0 ? t('lifeCoach.regenerateTodayStepsAllDomains') : t('lifeCoach.generateTodayStepsAllDomains');
   const stepFilterCounts = useMemo(
     () => ({
       pending: todaySteps.filter((s) => s.status === 'pending').length,
@@ -273,10 +286,27 @@ function LifeCoachHomeContent() {
         document.getElementById('today-plan')?.scrollIntoView({behavior: 'smooth', block: 'start'});
         scrollTimeoutRef.current = null;
       }, 50);
-    } catch {
-      toast.error(t('feedback.failed'));
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
     } finally {
       setGenerating(false);
+    }
+  }
+
+  async function handleGenerateWeeklyReview() {
+    if (generatingReviewRef.current) return;
+    generatingReviewRef.current = true;
+    setGeneratingReview(true);
+    try {
+      markFeatureSeen('weekly_review');
+      await lifeCoachApi.generateWeeklyReview({locale});
+      await refresh();
+      toast.success(t('lifeCoach.weeklyReviewGenerated'));
+    } catch (error) {
+      toast.error(resolveWeeklyReviewErrorMessage(error, t));
+    } finally {
+      generatingReviewRef.current = false;
+      setGeneratingReview(false);
     }
   }
 
@@ -286,8 +316,8 @@ function LifeCoachHomeContent() {
         await lifeCoachApi.updateDailyStepStatus(pendingStep.id, {status: 'completed'});
         await refresh();
         toast.success(t('feedback.completed'));
-      } catch {
-        toast.error(t('feedback.failed'));
+      } catch (error) {
+        toast.error(resolveLifeCoachErrorMessage(error, t));
       }
       return;
     }
@@ -307,14 +337,17 @@ function LifeCoachHomeContent() {
         <p className="mt-4 max-w-3xl text-lg leading-8 text-[var(--muted)]">{t('lifeCoach.homeBody')}</p>
       </section>
 
-      <LoadingErrorPanel
-        loading={loading}
-        error={loadError}
-        onRetry={() => void refresh()}
-        className="panel-surface mt-6 p-6 sm:p-8"
-      />
+      <LoadingErrorPanel loading={loading} className="panel-surface mt-6 p-6 sm:p-8" />
 
-      {!loading && !loadError && (
+      {loadFailure && (
+        <ApiAccessPanel
+          failure={loadFailure}
+          onRetry={() => void refresh()}
+          className="panel-surface mt-6 p-6 sm:p-8"
+        />
+      )}
+
+      {!loading && !loadFailure && (
         <>
           <LifeCoachHomeSection
             id="setup"
@@ -382,21 +415,15 @@ function LifeCoachHomeContent() {
                 <AiActionHelpMicrocopy kind="dailySteps" />
               </div>
               <div className="flex flex-col items-start gap-2">
-                <button
+                <BusyButton
                   className="focus-ring btn-ghost"
                   type="button"
-                  onClick={async () => {
-                    try {
-                      markFeatureSeen('weekly_review');
-                      await lifeCoachApi.generateWeeklyReview({locale});
-                      await refresh();
-                    } catch {
-                      /* network error — silent */
-                    }
-                  }}
+                  busy={generatingReview}
+                  busyLabel={t('lifeCoach.generatingInsight')}
+                  onClick={() => void handleGenerateWeeklyReview()}
                 >
                   {t('lifeCoach.generateWeeklyReview')}
-                </button>
+                </BusyButton>
                 <AiActionHelpMicrocopy kind="weeklyReview" />
               </div>
             </div>
@@ -412,6 +439,11 @@ function LifeCoachHomeContent() {
             {generating && (
               <div className="mt-4">
                 <AiGeneratingProgress variant="dailySteps" />
+              </div>
+            )}
+            {generatingReview && (
+              <div className="mt-4">
+                <AiGeneratingProgress variant="weeklyReview" />
               </div>
             )}
             {todaySteps.length === 0 && (
@@ -547,20 +579,12 @@ function LifeCoachHomeContent() {
                       status,
                       ...detail,
                     });
-                    if (detail?.reflection_text || detail?.blocker_reason) {
-                      const date = todayYMD();
-                      await lifeCoachApi.saveReflection({
-                        date,
-                        mood_score: null,
-                        energy_score: null,
-                        reflection_text: detail?.reflection_text || '',
-                        blocker_reason: detail?.blocker_reason ?? null,
-                      });
-                      await lifeCoachApi.analyzeReflection({
-                        locale,
-                        date,
-                        reflection_text: detail?.reflection_text || '',
-                        blocker_reason: detail?.blocker_reason ?? null,
+                    await refresh();
+                    if (shouldRunReflectionFollowUp(detail)) {
+                      runStepReflectionFollowUp(locale, detail!, {
+                        onError: (error) => toast.error(t('lifeCoach.reflectionFollowUpFailed', {
+                          detail: resolveLifeCoachErrorMessage(error, t),
+                        })),
                       });
                     }
                   }}
@@ -613,8 +637,8 @@ function LifeCoachHomeContent() {
                     await lifeCoachApi.updateDailyStepContent(pendingStep.id, planB);
                     await refresh();
                     document.getElementById('today-plan')?.scrollIntoView({behavior: 'smooth', block: 'start'});
-                  } catch {
-                    toast.error(t('feedback.failed'));
+                  } catch (error) {
+                    toast.error(resolveLifeCoachErrorMessage(error, t));
                   }
                 }}
               />
@@ -648,7 +672,7 @@ function LifeCoachHomeContent() {
         </>
       )}
 
-      {!loading && !loadError && (
+      {!loading && !loadFailure && (
         <>
           <NextActionBar
             className="mt-6 hidden sm:block"
@@ -732,6 +756,7 @@ function LifeCoachHomeSection({
 
 function HomeInsightGenerateButton({locale, onGenerated}: {locale: AppLocale; onGenerated: () => Promise<void>}) {
   const t = useTranslations();
+  const toast = useToast();
   const [busy, setBusy] = useState(false);
 
   return (
@@ -747,6 +772,8 @@ function HomeInsightGenerateButton({locale, onGenerated}: {locale: AppLocale; on
             const date = todayYMD();
             await lifeCoachApi.analyzeReflection({locale, date, reflection_text: '', blocker_reason: null});
             await onGenerated();
+          } catch (error) {
+            toast.error(resolveLifeCoachErrorMessage(error, t));
           } finally {
             setBusy(false);
           }

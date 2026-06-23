@@ -1,6 +1,6 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {updateDailyBabyStepContent} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {z} from 'zod';
 
 const schema = z.object({
@@ -20,18 +20,9 @@ export async function PATCH(
     return current.response;
   }
 
-  let body: unknown;
-
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = schema.safeParse(body);
-
-  if (!parsed.success) {
-    return jsonError('Invalid daily step content payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, schema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const {id} = await params;

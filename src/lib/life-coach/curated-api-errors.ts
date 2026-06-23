@@ -1,5 +1,6 @@
 import type {useTranslations} from 'next-intl';
 import {LifeCoachApiError} from './api-client';
+import {resolveLifeCoachErrorMessage} from './api-error';
 
 type Translator = ReturnType<typeof useTranslations>;
 
@@ -37,6 +38,6 @@ export function resolveCuratedErrorMessage(error: unknown, t: Translator): strin
     case 'curated_already_in_plan':
       return t('lifeCoach.curatedErrors.alreadyInPlan');
     default:
-      return t('feedback.failed');
+      return resolveLifeCoachErrorMessage(error, t);
   }
 }

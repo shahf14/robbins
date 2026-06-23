@@ -54,7 +54,7 @@ import {
   buildSkipRecoverySystemPrompt,
   buildSkipRecoveryUserPrompt,
 } from './prompts';
-import {openAiRequestSignal} from '@/lib/life-coach/server';
+import {callOpenAiResponses} from '@/lib/llm/client';
 import {
   buildEmotionalReflectionFallback,
   buildProgressEvidenceFallback,
@@ -465,54 +465,26 @@ async function requestStructuredJson<T>({
   fallback: T;
   maxOutputTokens: number;
 }): Promise<{ data: T; metrics: AiCallMetrics }> {
-  const apiKey = process.env.OPENAI_API_KEY;
   const nullMetrics: AiCallMetrics = { tokens_used: null, generation_duration_ms: null, model_used: null };
 
-  if (!apiKey) {
+  const result = await callOpenAiResponses({
+    model,
+    instructions: systemPrompt,
+    input: userPrompt,
+    maxOutputTokens,
+  });
+
+  if (!result || !result.text) {
     return { data: fallback, metrics: nullMetrics };
   }
 
-  const startMs = Date.now();
-
-  try {
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      signal: openAiRequestSignal(),
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model,
-        instructions: systemPrompt,
-        input: userPrompt,
-        max_output_tokens: maxOutputTokens,
-      }),
-    });
-
-    const durationMs = Date.now() - startMs;
-
-    if (!response.ok) {
-      return { data: fallback, metrics: nullMetrics };
-    }
-
-    const body = (await response.json()) as OpenAiResponse;
-    const text = extractOpenAiText(body);
-
-    if (!text) {
-      return { data: fallback, metrics: nullMetrics };
-    }
-
-    const parsed = schema.safeParse(parseJsonOr<unknown>(text, null));
-    const metrics: AiCallMetrics = {
-      tokens_used: body.usage?.total_tokens ?? null,
-      generation_duration_ms: durationMs,
-      model_used: body.model ?? model,
-    };
-    return { data: parsed.success ? parsed.data : fallback, metrics };
-  } catch {
-    return { data: fallback, metrics: nullMetrics };
-  }
+  const parsed = schema.safeParse(parseJsonOr<unknown>(result.text, null));
+  const metrics: AiCallMetrics = {
+    tokens_used: result.tokensUsed,
+    generation_duration_ms: result.durationMs,
+    model_used: result.model,
+  };
+  return { data: parsed.success ? parsed.data : fallback, metrics };
 }
 
 function mapAiStructuredGoalResponse(response: AiStructuredGoalResponse): StructuredGoalPlan {
@@ -898,31 +870,3 @@ function toTitleCase(value: string) {
     .join(' ');
 }
 
-type OpenAiResponse = {
-  output_text?: string;
-  output?: Array<{
-    content?: Array<{
-      text?: string;
-      type?: string;
-    }>;
-  }>;
-  usage?: {
-    input_tokens?: number;
-    output_tokens?: number;
-    total_tokens?: number;
-  };
-  model?: string;
-};
-
-function extractOpenAiText(response: OpenAiResponse) {
-  if (response.output_text) {
-    return response.output_text.trim();
-  }
-
-  return response.output
-    ?.flatMap((item) => item.content ?? [])
-    .map((content) => content.text)
-    .filter(Boolean)
-    .join('\n')
-    .trim();
-}

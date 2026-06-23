@@ -1,6 +1,8 @@
+import {badRequest} from '@/lib/api-response';
 import {requireAdmin} from '@/lib/db/admin-guard';
 import {getDb} from '@/lib/db/sqlite';
-import {badRequest} from '@/lib/api-response';
+import {JSON_BODY_LIMITS, readJsonBody} from '@/lib/read-json-body';
+import {z} from 'zod';
 
 const MAX_QUERY_ROWS = 500;
 
@@ -8,14 +10,13 @@ export async function POST(request: Request) {
   const guard = await requireAdmin(request);
   if (!guard.ok) return guard.response;
 
-  let body: {sql?: string};
-  try {
-    body = (await request.json()) as {sql?: string};
-  } catch {
-    return badRequest('Invalid JSON');
-  }
+  const parsed = await readJsonBody(request, {
+    maxBytes: JSON_BODY_LIMITS.defaultApi,
+    schema: z.object({sql: z.string().max(16_384)}),
+  });
+  if (!parsed.ok) return parsed.response;
 
-  const sql = (body.sql ?? '').trim();
+  const sql = parsed.data.sql.trim();
   if (!sql) return badRequest('sql is required');
 
   const start = Date.now();

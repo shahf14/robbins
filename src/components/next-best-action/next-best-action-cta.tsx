@@ -6,6 +6,7 @@ import type {NextBestAction, NextBestActionType} from '@/lib/next-best-action';
 type Props = {
   action: NextBestAction;
   className?: string;
+  disabled?: boolean;
   onCustomAction?: (action: NextBestAction) => void;
 };
 
@@ -23,7 +24,7 @@ function resolveHref(action: NextBestAction): string | null {
   return ROUTE_ACTIONS[action.action_type] ?? null;
 }
 
-export function NextBestActionCta({action, className = '', onCustomAction}: Props) {
+export function NextBestActionCta({action, className = '', disabled = false, onCustomAction}: Props) {
   const minuteHint =
     action.estimated_minutes != null ? ` · ${action.estimated_minutes}m` : '';
 
@@ -34,7 +35,12 @@ export function NextBestActionCta({action, className = '', onCustomAction}: Prop
       <button
         type="button"
         className={`focus-ring btn-small ${className}`.trim()}
-        onClick={() => onCustomAction(action)}
+        disabled={disabled}
+        aria-busy={disabled}
+        onClick={() => {
+          if (disabled) return;
+          onCustomAction(action);
+        }}
       >
         {action.label}
         {minuteHint}
@@ -47,7 +53,12 @@ export function NextBestActionCta({action, className = '', onCustomAction}: Prop
       <button
         type="button"
         className={`focus-ring btn-small ${className}`.trim()}
-        onClick={() => onCustomAction(action)}
+        disabled={disabled}
+        aria-busy={disabled}
+        onClick={() => {
+          if (disabled) return;
+          onCustomAction(action);
+        }}
       >
         {action.label}
         {minuteHint}

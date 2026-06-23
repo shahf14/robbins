@@ -1,10 +1,14 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
 import {generateDailyStepsForUser} from '@/lib/life-coach/generate-daily-steps-for-user';
-import {listDailyBabyStepsForDate} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, resolveLocale, startOfToday} from '@/lib/life-coach/server';
+import {getUserParticipantProfile, listDailyBabyStepsForDate} from '@/lib/life-coach/repository';
+import {jsonError, jsonOk, resolveLocale, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {aiGenerateDailyStepsRequestSchema} from '@/lib/life-coach/schemas';
 import {isFirstWinStep} from '@/lib/formulation/first-win-routing';
+import {
+  filterStepsForDomain,
+  hasReusablePendingAiSteps,
+} from '@/lib/life-coach/generate-daily-steps-scope';
 
 export async function POST(request: Request) {
   const current = await requireLifeCoachAccess(request);
@@ -13,31 +17,25 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  let body: Record<string, unknown>;
-
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    body = {};
-  }
-
-  const parsed = aiGenerateDailyStepsRequestSchema.safeParse(body);
-
-  if (!parsed.success) {
-    return jsonError('Invalid daily step generation payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, aiGenerateDailyStepsRequestSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const date = parsed.data.date ?? startOfToday();
   const force = parsed.data.force === true;
+  const domain = parsed.data.domain;
   const includeFirstWin = parsed.data.include_first_win === true;
 
   try {
     const existing = await listDailyBabyStepsForDate(date, current.user.id);
+    const scopedExisting = filterStepsForDomain(existing, domain);
 
-    if (existing.some((step) => step.generated_by_ai) && !force) {
-      const needsFirstWin = includeFirstWin && !existing.some(isFirstWinStep);
+    if (hasReusablePendingAiSteps(existing, domain) && !force) {
+      const needsFirstWin =
+        !domain && includeFirstWin && !existing.some(isFirstWinStep);
       if (!needsFirstWin) {
-        return jsonOk({date, steps: existing});
+        return jsonOk({date, steps: scopedExisting});
       }
     }
 
@@ -48,22 +46,17 @@ export async function POST(request: Request) {
     });
     if (limited) return limited;
 
-    const locale = resolveLocale(typeof body.locale === 'string' ? body.locale : null);
-    const wakeTime = typeof body.wake_time === 'string' && /^\d{2}:\d{2}$/.test(body.wake_time) ? body.wake_time : '07:00';
-    const sleepTime = typeof body.sleep_time === 'string' && /^\d{2}:\d{2}$/.test(body.sleep_time) ? body.sleep_time : '22:30';
-    const coachingStyle = typeof body.coaching_style === 'string' ? body.coaching_style : 'supportive';
-    const physicalConsiderations = Array.isArray(body.physical_considerations)
-      ? (body.physical_considerations as string[]).filter((v): v is import('@/lib/user-preferences').PhysicalConsideration =>
-          v === 'low_intensity' || v === 'physical_limitation' || v === 'pregnancy_postpartum'
-        )
+    const profile = await getUserParticipantProfile(current.user.id);
+    const locale = resolveLocale(profile.preferred_language ?? null);
+    const wakeTime =
+      profile.wake_time && /^\d{2}:\d{2}$/.test(profile.wake_time) ? profile.wake_time : '07:00';
+    const sleepTime =
+      profile.sleep_time && /^\d{2}:\d{2}$/.test(profile.sleep_time) ? profile.sleep_time : '22:30';
+    const coachingStyle = profile.coaching_style ?? 'supportive';
+    const physicalConsiderations = Array.isArray(profile.physical_considerations)
+      ? profile.physical_considerations
       : [];
-    const preferredActionWindow = (
-      body.preferred_action_window === 'morning' ||
-      body.preferred_action_window === 'midday' ||
-      body.preferred_action_window === 'evening'
-        ? body.preferred_action_window
-        : 'flexible'
-    ) as import('@/lib/user-preferences').PreferredActionWindow;
+    const preferredActionWindow = (profile.preferred_action_window ?? 'flexible') as import('@/lib/user-preferences').PreferredActionWindow;
     const steps = await generateDailyStepsForUser(
       current.user.id,
       date,
@@ -73,9 +66,10 @@ export async function POST(request: Request) {
       physicalConsiderations,
       preferredActionWindow,
       sleepTime,
-      includeFirstWin
+      includeFirstWin,
+      domain
     );
-    return jsonOk({date, steps});
+    return jsonOk({date, steps: filterStepsForDomain(steps, domain)});
   } catch (error) {
     return jsonError('Could not generate daily steps.', 500, String(error));
   }

@@ -1,6 +1,6 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {deleteDailyBabyStep, rescheduleDailyBabyStep} from '@/lib/life-coach/repository';
-import {isIsoDate, jsonError, jsonOk} from '@/lib/life-coach/server';
+import {isIsoDate, jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 export async function PATCH(
   request: Request,
@@ -12,13 +12,9 @@ export async function PATCH(
     return current.response;
   }
 
-  let body: unknown;
-
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
+  const bodyResult = await parseLifeCoachJsonBody<Record<string, unknown>>(request);
+  if (!bodyResult.ok) return bodyResult.response;
+  const body = bodyResult.data ?? {};
 
   const scheduledDate = (body as {scheduled_date?: unknown})?.scheduled_date;
   const rescheduledFrom = (body as {rescheduled_from?: unknown})?.rescheduled_from;

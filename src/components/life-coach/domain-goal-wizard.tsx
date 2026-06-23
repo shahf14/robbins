@@ -1,13 +1,20 @@
 'use client';
 
-import {useEffect, useMemo, useState} from 'react';
-import {clearDomainGoalWizardDraft, DOMAIN_GOAL_DRAFT_KEY} from '@/lib/open-process-drafts';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {
+  clearDomainGoalWizardDraft,
+  getDomainGoalDraftForDomain,
+  hasDomainGoalDraftForDomain,
+  saveDomainGoalWizardDraft,
+} from '@/lib/open-process-drafts';
 import {useLocale, useTranslations} from 'next-intl';
-import {Link} from '@/i18n/navigation';
+import {useSearchParams} from 'next/navigation';
+import {usePathname, useRouter, Link} from '@/i18n/navigation';
 import type {AppLocale} from '@/i18n/config';
 import type {LifeDomain, LifeDomainState, NonHealthDomain} from '@/lib/life-coach/types';
 import {goalInspirationStarterKeys, orderDomainCategories} from '@/lib/life-context-content';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
+import {resolveWeeklyReviewErrorMessage} from '@/lib/life-coach/api-error';
 import {loadUserPreferences} from '@/lib/user-preferences';
 import {AIGoalPreview} from './ai-goal-preview';
 import {ExpandableTextarea} from './expandable-textarea';
@@ -31,6 +38,11 @@ const GOAL_EXAMPLE_KEYS = ['domainWizard.goalExample1', 'domainWizard.goalExampl
 export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
   const t = useTranslations();
   const locale = useLocale() as AppLocale;
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const resumeGoal = searchParams.get('resumeGoal') === '1';
+  const autoRestoreAttempted = useRef(false);
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState('');
   const [customCategory, setCustomCategory] = useState('');
@@ -44,6 +56,8 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [preview, setPreview] = useState<Awaited<ReturnType<typeof lifeCoachApi.structureGoal>> | null>(null);
   const [celebrating, setCelebrating] = useState(false);
+  const [hasDraft, setHasDraft] = useState(() => hasDomainGoalDraftForDomain(domain));
+  const [draftRestored, setDraftRestored] = useState(false);
 
   const prefs = useMemo(() => loadUserPreferences(), []);
   const {ordered: categories, recommended} = useMemo(
@@ -57,26 +71,31 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
   const effectiveCategory = category === OTHER_CATEGORY ? customCategory.trim() : category;
 
   useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setHasDraft(hasDomainGoalDraftForDomain(domain));
+      setDraftRestored(false);
+      autoRestoreAttempted.current = false;
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [domain]);
+
+  useEffect(() => {
+    if (hasDraft && !draftRestored) return;
     if (preview || celebrating) return;
     if (step === 1 && !category) return;
-    try {
-      window.localStorage.setItem(
-        DOMAIN_GOAL_DRAFT_KEY,
-        JSON.stringify({
-          domain,
-          step,
-          category,
-          customCategory,
-          goalText,
-          milestone30,
-          milestone60,
-          milestone90,
-        })
-      );
-    } catch {
-      /* ignore */
-    }
+    saveDomainGoalWizardDraft({
+      domain,
+      step,
+      category,
+      customCategory,
+      goalText,
+      milestone30,
+      milestone60,
+      milestone90,
+    });
   }, [
+    hasDraft,
+    draftRestored,
     preview,
     celebrating,
     domain,
@@ -88,6 +107,37 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
     milestone60,
     milestone90,
   ]);
+
+  function discardDraft() {
+    clearDomainGoalWizardDraft();
+    setHasDraft(false);
+    setDraftRestored(true);
+  }
+
+  const restoreDraft = useCallback(() => {
+    const draft = getDomainGoalDraftForDomain(domain);
+    if (!draft) return;
+    setStep(draft.step);
+    setCategory(draft.category);
+    setCustomCategory(draft.customCategory);
+    setGoalText(draft.goalText);
+    setMilestone30(draft.milestone30);
+    setMilestone60(draft.milestone60);
+    setMilestone90(draft.milestone90);
+    setDraftRestored(true);
+    setHasDraft(false);
+  }, [domain]);
+
+  useEffect(() => {
+    if (!resumeGoal || autoRestoreAttempted.current || !hasDraft || draftRestored) return;
+    autoRestoreAttempted.current = true;
+    restoreDraft();
+  }, [resumeGoal, hasDraft, draftRestored, restoreDraft]);
+
+  useEffect(() => {
+    if (!resumeGoal || !draftRestored) return;
+    router.replace(pathname);
+  }, [resumeGoal, draftRestored, router, pathname]);
 
   function canProceed() {
     if (step === 1) return effectiveCategory.length > 0;
@@ -102,10 +152,11 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
     try {
       const result = await lifeCoachApi.inspireGoal({locale, domain, category: effectiveCategory});
       setGoalText(result.inspiration);
-    } catch {
-      setErrorMessage(t('domainWizard.inspireError'));
+    } catch (error) {
+      setErrorMessage(resolveWeeklyReviewErrorMessage(error, t));
+    } finally {
+      setInspiring(false);
     }
-    setInspiring(false);
   }
 
   async function handleInspireMilestones() {
@@ -116,10 +167,11 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
       setMilestone30(result.days_30);
       setMilestone60(result.days_60);
       setMilestone90(result.days_90);
-    } catch {
-      setErrorMessage(t('domainWizard.inspireError'));
+    } catch (error) {
+      setErrorMessage(resolveWeeklyReviewErrorMessage(error, t));
+    } finally {
+      setInspiringMilestones(false);
     }
-    setInspiringMilestones(false);
   }
 
   async function handleCreateWithAi() {
@@ -140,10 +192,11 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
         coaching_style,
       });
       setPreview(result);
-    } catch {
-      setErrorMessage(t('domainWizard.createError'));
+    } catch (error) {
+      setErrorMessage(resolveWeeklyReviewErrorMessage(error, t));
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   if (celebrating) {
@@ -157,6 +210,7 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
           className="focus-ring btn-ghost w-full justify-center"
           onClick={() => {
             setCelebrating(false);
+            clearDomainGoalWizardDraft();
             setStep(1);
             setCategory('');
             setCustomCategory('');
@@ -164,6 +218,8 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
             setMilestone30('');
             setMilestone60('');
             setMilestone90('');
+            setHasDraft(false);
+            setDraftRestored(true);
           }}
         >
           {t('healthWizard.celebrateAnotherDomain')}
@@ -203,6 +259,25 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
       <p className="eyebrow">{t('domainWizard.eyebrow')}</p>
       <h3 className="mt-4 text-2xl font-black txt-strong">{t('domainWizard.title')}</h3>
       <GoalHierarchyExplainer className="mt-4" />
+
+      {hasDraft && !draftRestored && (
+        <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-[var(--blue)]/25 bg-[rgba(26,109,255,0.08)] p-4">
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold txt-strong">{t('healthWizard.resumeTitle')}</p>
+            <p className="mt-1 text-xs txt-soft">{t('healthWizard.resumeBody')}</p>
+          </div>
+          <button type="button" className="focus-ring btn-small" onClick={restoreDraft}>
+            {t('healthWizard.resumeContinue')}
+          </button>
+          <button
+            type="button"
+            className="focus-ring text-xs font-semibold txt-muted hover:txt-strong"
+            onClick={discardDraft}
+          >
+            {t('healthWizard.resumeDiscard')}
+          </button>
+        </div>
+      )}
 
       <div
         className="mt-4 flex gap-1"

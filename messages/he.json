@@ -64,7 +64,11 @@
   "language": {
     "label": "שפה",
     "english": "English",
-    "hebrew": "עברית"
+    "hebrew": "עברית",
+    "switchConfirmTitle": "לעבור שפה?",
+    "switchConfirmMessage": "יש התקדמות שלא נשמרה באשף או בטיוטה. העבודה נשארת במכשיר, אבל מעבר שפה טוען מחדש את הדף.",
+    "switchConfirmAction": "עבור בכל זאת",
+    "switchConfirmCancel": "הישאר כאן"
   },
   "theme": {
     "toggle": "החלף מצב כהה",
@@ -79,7 +83,11 @@
     "displayName": "שם תצוגה",
     "displayNamePlaceholder": "איך תרצה שהאפליקציה תפנה אליך?",
     "save": "שמור שינויים",
+    "saving": "שומר…",
     "saved": "נשמר על המכשיר הזה.",
+    "savedSynced": "נשמר וסונכרן לשרת.",
+    "syncFailed": "נשמר מקומית, אבל הסנכרון לשרת נכשל: {detail}",
+    "retrySync": "נסה שוב לסנכרן",
     "localOnly": "נשמר מקומית בלבד.",
     "themeTitle": "מצב תצוגה",
     "themeHelp": "בחר מצב בהיר או כהה. ההעדפה נשמרת על המכשיר הזה.",
@@ -116,6 +124,19 @@
     "reminderTitle": "תזכורת יומית",
     "reminderHelp": "קבל תזכורת בשעה קבועה לעשות צ׳ק-אין. הגדרה זו נשמרת על המכשיר הזה.",
     "privacyControlsTitle": "בקרות פרטיות",
+    "localAuth": {
+      "title": "אימות API מקומי",
+      "body": "הדבק את LOCAL_AUTH_TOKEN מ-.env.local (openssl rand -hex 32). נשמר רק בטאב הזה.",
+      "placeholder": "LOCAL_AUTH_TOKEN",
+      "save": "שמור",
+      "saved": "נשמר",
+      "cleared": "נמחק",
+      "clearedBody": "הטוקן הוסר מטאב הדפדפן הזה. בקשות API ייכשלו עד שתשמור טוקן תקין.",
+      "verifying": "בודק…",
+      "invalidToken": "הטוקן נדחה. העתק את LOCAL_AUTH_TOKEN מ-.env.local בדיוק.",
+      "offlineError": "לא ניתן להגיע לשרת לאימות הטוקן. ודא שהאפליקציה פועלת.",
+      "serverError": "לא ניתן לאמת את הטוקן כרגע. נסה שוב בעוד רגע."
+    },
     "behavioralAnalytics": "השתמש בתובנות התנהגותיות נוספות",
     "behavioralAnalyticsHelp": "אפשר אותות פסיביים אופציונליים כמו משך כתיבה, עריכות, צפייה בפרטי משימה ודפוסים שמוסקים מקומית מהטקסט. ניתן לכבות ולהמשיך להשתמש באימון הבסיסי ללא האנליטיקה הנוספת.",
     "coachingStyleOption": {
@@ -160,7 +181,14 @@
     "energy": "אנרגיה",
     "focus": "פוקוס",
     "momentum": "מומנטום",
-    "prompt": "מה האמת שאתה נמנע ממנה עכשיו?"
+    "prompt": "מה האמת שאתה נמנע ממנה עכשיו?",
+    "loadStatus": {
+      "staleTitle": "מוצגת התצוגה האחרונה שנטענה",
+      "staleBody": "טעינה מחדש נכשלה, כך שייתכן שמטרות וצעדים למטה אינם מעודכנים עד שתנסה שוב.",
+      "partialTitle": "חלק ממדדי הבית לא נטענו",
+      "partialBody": "מטרות וצעדים מרכזיים מעודכנים, אך תוספות כמו טקס או מאמן עשויות להיות חסרות.",
+      "retry": "נסה שוב"
+    }
   },
   "simpleTasks": {
     "sectionTitle": "משימות יומיות פשוטות",
@@ -318,6 +346,8 @@
       "domainLabel": "באיזה עולם בא לך להתקדם היום?",
       "taskLabel": "בחר 1-3 פעולות להיום",
       "loading": "טוען רעיונות קטנים...",
+      "loadErrorTitle": "לא הצלחנו לטעון משימות",
+      "retry": "נסה שוב",
       "selectedCount": "{count}/3 נבחרו",
       "cta": "זה היום שלי",
       "saving": "שומר את היום...",
@@ -354,6 +384,12 @@
       "wrongDomain": "החלופה חייבת להיות מאותו עולם.",
       "sameTask": "בחר פעולה שונה מהנוכחית.",
       "alreadyInPlan": "הפעולה הזו כבר בתוכנית של היום."
+    },
+    "weeklyReviewErrors": {
+      "duplicatePeriod": "כבר יש לך סקירה שבועית לתקופה הזו. גלול למטה כדי לקרוא אותה.",
+      "rateLimited": "יצירת סקירה שבועית מוגבלת זמנית. נסה שוב מאוחר יותר.",
+      "rateLimitedMinutes": "יצירת סקירה שבועית מוגבלת כרגע. נסה שוב בעוד כ-{count} דקות.",
+      "rateLimitedHours": "יצירת סקירה שבועית מוגבלת כרגע. נסה שוב בעוד כ-{count} שעות."
     },
     "goals": "מטרות",
     "activeGoals": "מטרות",
@@ -421,6 +457,7 @@
     "intensityPreference": "העדפת אינטנסיביות",
     "saveAssessment": "שמור אבחון",
     "assessmentSavedToast": "האבחון נשמר",
+    "assessmentRequiredFields": "תאר/י איפה את/ה עכשיו ולאן את/ה רוצה להגיע לפני השמירה.",
     "assessmentSummaryEyebrow": "אבחון שמור",
     "assessmentSummaryTitle": "הכיוון שלך",
     "assessmentGoalEyebrow": "יעד פעיל",
@@ -515,8 +552,15 @@
     "stepSkipCoachHint": "דילוג מלמד את המאמן להתאים טוב יותר את הצעד הבא.",
     "generateTodaySteps": "צור את צעדי היום",
     "regenerateTodaySteps": "צור צעדים מחדש",
+    "generateTodayStepsForDomain": "צור צעדי היום עבור {domain}",
+    "regenerateTodayStepsForDomain": "צור צעדים מחדש עבור {domain}",
+    "generateTodayStepsAllDomains": "צור את צעדי היום (כל התחומים)",
+    "regenerateTodayStepsAllDomains": "צור צעדים מחדש (כל התחומים)",
+    "noStepsGeneratedForDomain": "לא נוצרו צעדים לתחום הזה. הוסיפו מטרה בתחום ואז נסו שוב.",
+    "reflectionFollowUpFailed": "הצעד נשמר, אבל ניתוח הרפלקציה לא הושלם ({detail}). אפשר לנסות שוב בלשונית תובנות.",
     "energyAdapted": "מותאם לרמת האנרגיה שלך",
     "generateWeeklyReview": "צור סקירה שבועית",
+    "weeklyReviewGenerated": "הסקירה השבועית מוכנה — גלול מטה לקרוא אותה.",
     "aiInsights": "תובנות AI",
     "patternsAndAdjustments": "דפוסים והתאמות",
     "aiInsightsVsReviewTitle": "מה ההבדל מהסקירה השבועית?",
@@ -742,6 +786,12 @@
       "stage2": "בונה את צעדי היום...",
       "stage3": "מתאים לאנרגיה וללוח הזמנים...",
       "stage4": "מסיים את התוכנית..."
+    },
+    "weeklyReview": {
+      "stage1": "אוסף את השבוע שלך...",
+      "stage2": "מזהה דפוסים וחסמים...",
+      "stage3": "מנסח המלצות...",
+      "stage4": "מסיים את הסקירה..."
     }
   },
   "continueProcess": {
@@ -766,6 +816,7 @@
   "feedback": {
     "saved": "נשמר",
     "failed": "משהו השתבש — נסה שוב",
+    "offline": "לא הצלחנו להגיע לשרת. בדוק את החיבור ונסה שוב.",
     "completed": "הושלם",
     "draftAutoSaved": "נשמר אוטומטית",
     "confirmCancel": "ביטול",
@@ -1065,7 +1116,13 @@
     "nav": {
       "ariaLabel": "ניווט בשלבים",
       "backOne": "חזור אחורה",
-      "restart": "חזור להתחלה"
+      "restart": "חזור להתחלה",
+      "discardBackTitle": "לעזוב את השלב הזה?",
+      "discardBackMessage": "יש לך תשובות בשלב שלא נשמרו בשרת. הן יישארו במכשיר הזה אם תחזור אחורה. להמשיך?",
+      "discardBackConfirm": "חזור אחורה",
+      "discardRestartTitle": "להתחיל את ההבהרה מחדש?",
+      "discardRestartMessage": "פעולה זו מוחקת תשובות בתהליך במכשיר הזה ומחזירה להתחלה. שלבים שכבר נשמרו בשרת עשויים עדיין לחול עד שתשלח שוב.",
+      "discardRestartConfirm": "התחיל מההתחלה"
     },
     "back": "חזרה",
     "next": "המשך",
@@ -1312,7 +1369,11 @@
       "uncertaintyFallback": "עדיין לא ברור מה הכי מחזיק את הקושי.",
       "diagnosticWarning": "שים לב: הניסוח כולל מונחים שנשמעים כמו אבחנה רפואית. כלי זה לא מיועד לאבחון — מומלץ לנסח בשפה של קושי או חוויה.",
       "submitAnyway": "הבנתי, שלח בכל זאת",
-      "approve": "זה נשמע נכון"
+      "approve": "זה נשמע נכון",
+      "loadFailed": "לא הצלחנו לנסח את סיכום ההגדרה.",
+      "retry": "נסה שוב",
+      "fillManually": "מלא/י ידנית",
+      "retryDraft": "נסה שוב ניסוח AI"
     },
     "microGoal": {
       "title": "צעד קטן לשבוע הקרוב",
@@ -1366,7 +1427,10 @@
       "body": "הבהרה קצרה (כ-5 דקות) עוזרת לבנות יעד בטוח ומדויק — לא אבחון.",
       "cta": "התחל הבהרה",
       "resume": "המשך טיוטה",
-      "loading": "טוען…"
+      "loading": "טוען…",
+      "errorTitle": "לא ניתן לבדוק סטטוס הבהרה",
+      "errorBody": "סביבת האימון נשארת נעולה עד שנוכל לאשר אם נדרשת הבהרה. בדוק את החיבור ונסה שוב.",
+      "retry": "נסה שוב"
     },
     "handoff": {
       "title": "מה המאמן יודע",
@@ -1628,7 +1692,15 @@
   "auth": {
     "signIn": "כניסה",
     "email": "אימייל",
-    "password": "סיסמה"
+    "password": "סיסמה",
+    "clerkDisabled": {
+      "signInTitle": "כניסה לחשבון לא מופעלת",
+      "signInBody": "בפריסה הזו משתמשים באימות API מקומי במקום Clerk. הדביקו את אסימון הגישה למטה או פתחו הגדרות כדי לשמור אותו בדפדפן.",
+      "signUpTitle": "הרשמה לחשבון לא מופעלת",
+      "signUpBody": "בפריסה הזו משתמשים באימות API מקומי במקום Clerk. אין כאן תהליך הרשמה — הדביקו את אסימון הגישה למטה או פתחו הגדרות.",
+      "settingsCta": "פתיחת הגדרות",
+      "homeCta": "חזרה לאפליקציה"
+    }
   },
   "analytics": {
     "weeklyProgress": "התקדמות שבועית",
@@ -1816,7 +1888,10 @@
       "confirmTitle": "לאפס את כל המידע?",
       "confirmMessage": "כל הנתונים שלך במכשיר הזה יימחקו — פרופיל, מטרות, היסטוריה והעדפות. תועבר/י לכניסה הראשונה. פעולה זו בלתי הפיכה.",
       "confirmButton": "כן, אפס הכל",
-      "error": "לא הצלחנו לאפס את המידע. נסה שוב."
+      "error": "לא הצלחנו לאפס את המידע. נסה שוב.",
+      "authFailed": "לא נמחק כלום. היכנס עם טוקן הגישה המקומי בהגדרות ונסה שוב.",
+      "offlineFailed": "לא נמחק כלום. לא ניתן להגיע לשרת — נסה שוב כשיש חיבור.",
+      "serverFailed": "לא נמחק כלום. השרת לא הצליח לאפס את החשבון, ולכן המטרות וההיסטוריה עדיין שמורים. נסה שוב בעוד רגע."
     }
   },
   "onboarding": {
@@ -2113,7 +2188,33 @@
     "runtimeEyebrow": "משהו נשבר",
     "runtimeTitle": "האפליקציה נתקלה בשגיאת ריצה",
     "runtimeBody": "נסה שוב. אם זה חוזר, הפעל מחדש את שרת הפיתוח כדי לנקות chunks ישנים של Next.",
-    "tryAgain": "נסה שוב"
+    "tryAgain": "נסה שוב",
+    "apiAccess": {
+      "authEyebrow": "נדרש אימות",
+      "checking": "בודק גישה…",
+      "authTitle": "הדבק את אסימון הגישה המקומי כדי לטעון את הנתונים",
+      "authBody": "המטרות וההיסטוריה שלך עדיין בשרת — לטאב הזה רק חסר LOCAL_AUTH_TOKEN מהפריסה. הוא נשמר רק בטאב הדפדפן הזה.",
+      "authTokenPlaceholder": "LOCAL_AUTH_TOKEN",
+      "authSaveAndRetry": "שמור וטען מחדש",
+      "authSaved": "נשמר",
+      "authVerifying": "בודק…",
+      "authInvalidToken": "הטוקן נדחה. הדבק את LOCAL_AUTH_TOKEN מ-.env.local בדיוק.",
+      "authOffline": "לא ניתן להגיע לשרת לאימות הטוקן.",
+      "authServerError": "לא ניתן לאמת את הטוקן כרגע. נסה שוב.",
+      "authSettingsLink": "פתח הגדרות להוראות מלאות",
+      "onboardingEyebrow": "נדרשת הגדרה",
+      "onboardingTitle": "סיים את ההתחלה כדי לפתוח את סביבת המאמן",
+      "onboardingBody": "השרת עדיין לא סימן את החשבון כמוכן. השלם את תהליך ההתחלה הקצר — הנתונים הקיימים יישארו שם.",
+      "onboardingCta": "המשך בהתחלה",
+      "offlineShell": "אתה לא מחובר — נתוני אימון שמורים במטמון עשויים להיות זמינים.",
+      "offlineEyebrow": "לא מחובר",
+      "offlineTitle": "התחבר מחדש כדי לרענן את נתוני האימון",
+      "offlineBody": "מעטפת האפליקציה עובדת גם בלי רשת, אבל מטרות וצעדים נטענים מהשרת. בדוק את החיבור ונסה שוב.",
+      "transientEyebrow": "בעיית חיבור",
+      "transientTitle": "לא הצלחנו להגיע לשרת כרגע",
+      "transientBody": "בדוק שה-backend של האפליקציה פועל ושיש חיבור רשת, ואז נסה שוב. הנתונים לא נמחקו.",
+      "retry": "נסה שוב"
+    }
   },
   "morningRitual": {
     "nav": "טקס בוקר",
@@ -2270,6 +2371,9 @@
       "save": "שמור",
       "cancel": "ביטול",
       "delete": "מחק",
+      "deleteConfirmTitle": "למחוק את האמירה הזו?",
+      "deleteConfirmMessage": "היא תוסר מספריית הטקס. אפשר לבטל תוך כמה שניות.",
+      "deletedUndo": "האמירה הוסרה.",
       "noAffirmations": "אין אמירות עדיין. הוסף את הראשונה!"
     },
     "visualization": {
@@ -2295,6 +2399,11 @@
       "declaration": "היום אני פועל כמו אדם ש...",
       "placeholder": "...לא מנהל משא ומתן עם הסחות דעת.",
       "addNew": "הוסף זהות חדשה",
+      "savedTitle": "הזהויות השמורות שלך",
+      "delete": "מחק",
+      "deleteConfirmTitle": "למחוק את הזהות הזו?",
+      "deleteConfirmMessage": "היא תוסר מספריית הטקס. אפשר לבטל תוך כמה שניות.",
+      "deletedUndo": "הזהות הוסרה.",
       "defaultIdentities": {
         "finisher": "אני אדם שמסיים דברים.",
         "calm_pressure": "אני אדם שנשאר רגוע תחת לחץ.",
@@ -2335,6 +2444,7 @@
       "back": "חזרה",
       "skip": "דלג",
       "done": "סיום",
+      "undo": "בטל",
       "step": "שלב {current} מתוך {total}"
     },
     "dashboard": {
@@ -2542,9 +2652,167 @@
     "securityNotice": "דף זה מיועד לשימוש פנימי בלבד. שינויים כאן משפיעים על כל הנתונים של האפליקציה.",
     "tabs": {
       "content": "תוכן",
+      "contentStudio": "Content Studio",
+      "database": "מסד נתונים",
       "data": "נתונים",
       "logs": "לוגים",
       "settings": "הגדרות"
+    },
+    "shell": {
+      "breadcrumbRoot": "אדמין",
+      "tabs": {
+        "content-studio": "Content Studio",
+        "content": "תוכן",
+        "logs": "לוגים",
+        "settings": "הגדרות",
+        "database": "מסד נתונים"
+      },
+      "tabHint": {
+        "content-studio": "כאן רואים ומסנכרנים את כל מקורות התוכן באפליקציה.",
+        "content": "כאן עורכים אמירות וזהויות לטקס הבוקר.",
+        "logs": "כאן בודקים שגיאות מהלקוח/שרת לפי תאריך.",
+        "settings": "שם תצוגה ושפה — נשמרים על המכשיר הזה.",
+        "database": "כאן מריצים שאילתות ובודקים טוקנים — כתיבה מסוכנת."
+      },
+      "overview": {
+        "title": "מה אפשר לעשות כאן?",
+        "subtitle": "בחרו אזור. לכל אחד מצוין רמת סיכון ומה נדרש כדי להשתמש בו.",
+        "actions": {
+          "content": {
+            "title": "תוכן",
+            "hint": "עריכת אמירות וזהויות לטקס הבוקר.",
+            "access": "משנה טקס · מקומי/שרת"
+          },
+          "database": {
+            "title": "מסד נתונים",
+            "hint": "דפדוף בטבלאות, SQL, ושמירת טוקני אדמין.",
+            "access": "סיכון גבוה · דורש טוקנים"
+          },
+          "logs": {
+            "title": "לוגים",
+            "hint": "בדיקת שגיאות שנרשמו באפליקציה.",
+            "access": "צפייה בלבד · דורש טוקנים"
+          },
+          "settings": {
+            "title": "הגדרות",
+            "hint": "שם תצוגה ושפה — מקומי למכשיר.",
+            "access": "בטוח · מקומי בלבד"
+          }
+        }
+      },
+      "setup": {
+        "title": "הגדרה ראשונה",
+        "subtitle": "השלימו את השלבים לפני שמסתמכים על כלי האדמין.",
+        "go": "עבור",
+        "steps": {
+          "localToken": "שמור LOCAL_AUTH_TOKEN",
+          "adminToken": "שמור ADMIN_API_TOKEN",
+          "dbConnection": "בדוק חיבור ל־DB",
+          "contentStudioSync": "סנכרן Content Studio ל־DB"
+        }
+      },
+      "activity": {
+        "never": "מעולם לא",
+        "contentStudioSync": "סנכרון Content Studio אחרון",
+        "dbSync": "ייבוא DB אחרון",
+        "export": "ייצוא אחרון",
+        "settingsSave": "שמירת הגדרה אחרונה"
+      },
+      "buttons": {
+        "view": "צפייה",
+        "viewHint": "רענון, בדיקה, ייצוא",
+        "action": "פעולה",
+        "actionHint": "שמירה, סנכרון, מחיקה, ייבוא"
+      },
+      "help": {
+        "open": "פתח עזרה לטאב",
+        "close": "סגור",
+        "sections": {
+          "what": "מה הטאב עושה",
+          "when": "מתי להשתמש",
+          "avoid": "מה לא לעשות",
+          "buttons": "כפתורים מרכזיים"
+        },
+        "content-studio": {
+          "title": "עזרה — Content Studio",
+          "what": "מלאי חי של תרגומים, JSON, פרומפטים ותוכן מ־DB עם תוויות סיכון.",
+          "when": "לפני שינוי טקסטים, פרומפטים או תכנון מיגרציית תוכן.",
+          "avoid": "סנכרון ל־DB לא משנה טקסט בזמן ריצה — רק מעתיק את ה־registry.",
+          "buttons": "בדוק DB = צפייה. סנכרן ל־DB = כתיבה. presets מבוססי משימה, לא שמות שדות."
+        },
+        "content": {
+          "title": "עזרה — תוכן",
+          "what": "ניהול אמירות והצהרות זהות לטקס הבוקר.",
+          "when": "כשמארגנים תוכן טקס לעצמכם או למשתמשי בדיקה.",
+          "avoid": "מחיקה ניתנת לביטול לזמן קצר אבל משפיעה מיד על הספרייה.",
+          "buttons": "הוסף = יוצר תוכן. מחק = מסיר אחרי אישור."
+        },
+        "logs": {
+          "title": "עזרה — לוגים",
+          "what": "שורות שגיאה לתאריך שנבחר.",
+          "when": "כשמאתרים תקלות בלקוח או מאמתים תיקון.",
+          "avoid": "אין לוגים היום בדרך כלל אומר שאין שגיאות — לא תקלה בחיבור.",
+          "buttons": "רענן = טוען מחדש. דורש טוקנים תקינים בטאב מסד נתונים."
+        },
+        "settings": {
+          "title": "עזרה — הגדרות",
+          "what": "שם תצוגה והעדפת שפה מקומית.",
+          "when": "להתאים איך האפליקציה פונה אליכם במכשיר.",
+          "avoid": "כאן לא שומרים טוקני API — זה בטאב מסד נתונים.",
+          "buttons": "שמור שינויים = כתיבה לאחסון מקומי בלבד."
+        },
+        "database": {
+          "title": "עזרה — מסד נתונים",
+          "what": "דפדפן SQLite, עורך SQL, טוקנים וייבוא localStorage ישן.",
+          "when": "לבדיקת נתונים, מיגרציות או ייבוא ממכשיר ישן.",
+          "avoid": "ייבוא localStorage דורס שורות תואמות. SQL יכול לשנות נתונים.",
+          "buttons": "שמור טוקנים = session. ייבוא = upsert הרסני. רענון בטבלאות = צפייה."
+        }
+      },
+      "risk": {
+        "content-studio": {"label": "בטוח"},
+        "content": {"label": "משנה טקס"},
+        "logs": {"label": "צפייה"},
+        "settings": {"label": "מקומי"},
+        "database": {"label": "סיכון גבוה"}
+      },
+      "subCrumbs": {
+        "content-studio": "רישום מקומי",
+        "content": "תוכן טקס"
+      }
+    },
+    "tooltips": {
+      "tabs": {
+        "contentStudio": "מפת כל מקורות התוכן באפליקציה: תרגומים, JSON, פרומפטים, חוקים ותוכן DB.",
+        "database": "כלי אדמין רגיש לצפייה ושאילתות DB. דורש ADMIN_API_TOKEN. מיועד לבדיקה ותיקון זהיר."
+      },
+      "risk": {
+        "high": "רמת סיכון לפי השפעה על משתמשים, פרסונליזציה, AI, ומורכבות rollback.",
+        "medium": "רמת סיכון לפי השפעה על משתמשים, פרסונליזציה, AI, ומורכבות rollback.",
+        "low": "רמת סיכון לפי השפעה על משתמשים, פרסונליזציה, AI, ומורכבות rollback."
+      },
+      "p1Priority": "P1 אומר שכדאי להעביר את הנכס לניהול גרסאות/אישור לפני נכסים אחרים.",
+      "migrationPriority": {
+        "p1": "P1 — עדיפות מיגרציה הגבוהה ביותר. לסקור ולהעביר לניהול תוכן גרסתי/מאושר לפני נכסים אחרים.",
+        "p2": "P2 — עדיפות בינונית. חשוב להעביר, אבל אחרי שכל נכסי P1 טופלו.",
+        "p3": "P3 — עדיפות נמוכה יותר. אפשר לדחות עד שעבודת המיגרציה של P1 ו־P2 בעיצומה."
+      },
+      "editableNow": "האם אפשר לערוך את התוכן דרך האפליקציה היום, בלי שינוי קוד.",
+      "promptOwned": "תוכן שמוטמע בקוד או בפרומפטים. שינוי שלו דורש deploy ולא רק עריכת DB.",
+      "syncDb": "מסנכרן את ה־registry הנוכחי לטבלאות Content Studio: assets, versions, governance checks ו־audit.",
+      "checkDb": "בודק כמה נכסי Content Studio, גרסאות, בדיקות ואירועי audit קיימים כרגע ב־DB.",
+      "exportSelected": "מייצא רק את הנכסים שסימנת, כדי לשלוח לבדיקה או לעבודת מיגרציה.",
+      "selectHighP1": "מסמן את כל הנכסים בעלי סיכון גבוה או עדיפות מיגרציה ראשונה בתוצאות הנוכחיות.",
+      "localeDelta": "פער במספר יחידות התוכן בין אנגלית לעברית. לא תמיד בעיה, אבל דורש בדיקת parity.",
+      "runtimeUse": "איפה הנכס מופעל בפועל באפליקציה או במסע המשתמש.",
+      "governance": "מה צריך לקרות לפני שינוי או פרסום בטוח: review, evals, rollback, telemetry.",
+      "evalSignals": "מדדים שיעזרו לדעת אם התוכן עובד: השלמה, דילוג, fallback, איכות פלט, locale purity.",
+      "simulatorInputs": "הפרמטרים שצריך לבחור בסימולטור כדי לבדוק איך התוכן מתנהג עבור משתמשים שונים.",
+      "dbLocalMode": "המסך משתמש כרגע ב־registry המקומי בקוד. DB sync זמין רק עם טוקן אדמין.",
+      "needsAttention": "נכס שסומן High risk או P1 ולכן כדאי לבדוק אותו ראשון.",
+      "stable": "לא זוהה כנכס High/P1, אבל עדיין ייתכן שיידרש review לפי שינוי ספציפי.",
+      "copyLink": "מעתיק קישור ישיר לנכס הזה בתוך Content Studio.",
+      "viewMode": "Compact מתאים לסריקה מהירה; Detailed מתאים להבנת ההקשר בלי לפתוח כל נכס."
     },
     "content": {
       "affirmationsTitle": "ניהול אמירות",
@@ -2553,10 +2821,147 @@
       "identitiesDescription": "צפה ונהל הצהרות זהות שמורות.",
       "addIdentity": "הוסף זהות",
       "deleteIdentity": "מחק",
+      "deleteIdentityConfirmTitle": "למחוק את הזהות הזו?",
+      "deleteIdentityConfirmMessage": "היא תוסר מספריית הטקס. אפשר לבטל תוך כמה שניות.",
       "noIdentities": "אין עדיין זהויות מותאמות אישית.",
+      "emptyIdentitiesTitle": "אין עדיין זהויות מותאמות",
+      "emptyIdentitiesDetail": "הוסיפו הצהרת זהות למעלה. היא תופיע בבוחר הטקס.",
       "identityPlaceholder": "אני אדם ש...",
       "gratitudeTitle": "טריגרים להכרת תודה",
       "gratitudeDescription": "צפה בטריגרים ברירת המחדל. עריכה תהיה זמינה בעדכון עתידי."
+    },
+    "affirmations": {
+      "title": "ניהול אמירות",
+      "description": "חיפוש, סינון, עריכה וניהול ספריית האמירות לטקס הבוקר.",
+      "add": "הוסף אמירה",
+      "addDraft": "טיוטה חדשה",
+      "manageTags": "ניהול תגיות",
+      "export": "ייצוא JSON",
+      "import": "ייבוא",
+      "searchPlaceholder": "חיפוש לפי טקסט, כותרת, תגית, שפה או סוג",
+      "all": "הכל",
+      "active": "פעיל",
+      "inactive": "לא פעיל",
+      "draft": "טיוטה",
+      "hidden": "מוסתר",
+      "yes": "כן",
+      "no": "לא",
+      "never": "מעולם לא",
+      "untitled": "ללא כותרת",
+      "untagged": "ללא תגיות",
+      "edit": "עריכה",
+      "delete": "מחק",
+      "hide": "הסתר",
+      "unhide": "הצג שוב",
+      "save": "שמור",
+      "cancel": "ביטול",
+      "saved": "נשמר",
+      "exported": "הקובץ יורד",
+      "imported": "יובאו {count} אמירות",
+      "importEmpty": "לא נמצאו אמירות בקובץ",
+      "importError": "ייבוא נכשל — בדוק את הפורמט",
+      "hiddenToast": "האמירה הוסתרה מהספרייה",
+      "deletedUndo": "האמירה נמחקה",
+      "undo": "בטל",
+      "selectItem": "בחרו אמירה מהרשימה כדי לראות פרטים",
+      "detailTitle": "פרטי אמירה",
+      "createTitle": "אמירה חדשה",
+      "editTitle": "עריכת אמירה",
+      "previewTitle": "תצוגה מקדימה בטקס",
+      "qualityTitle": "אזהרות איכות",
+      "tagManagerTitle": "ניהול תגיות",
+      "renameTag": "שינוי שם תגית",
+      "mergeTags": "איחוד תגיות",
+      "fromTag": "מתגית",
+      "toTag": "לתגית",
+      "mergeFrom": "תגיות למיזוג (מופרדות בפסיק)",
+      "mergeTo": "תגית יעד",
+      "applyRename": "שנה שם",
+      "applyMerge": "אחד תגיות",
+      "tagsUpdated": "התגיות עודכנו",
+      "groupByTag": "קיבוץ לפי תגית",
+      "resetFilters": "איפוס פילטרים",
+      "showing": "מציג {shown} מתוך {total}",
+      "selected": "{count} נבחרו",
+      "selectVisible": "בחר תוצאות",
+      "clearSelection": "נקה בחירה",
+      "bulkActivate": "הפעל",
+      "bulkDeactivate": "השבת",
+      "bulkAddTag": "הוסף תגית",
+      "bulkDelete": "מחק נבחרים",
+      "bulkExport": "ייצוא CSV",
+      "bulkTagPlaceholder": "תגית חדשה",
+      "bulkDeleteTitle": "למחוק אמירות נבחרות?",
+      "bulkDeleteMessage": "פעולה זו תמחק {count} אמירות מותאמות. לא תשפיע על ברירות המחדל.",
+      "deleteConfirmTitle": "למחוק את האמירה?",
+      "deleteConfirmMessage": "האמירה תוסר מהספרייה שלך. פעולה זו לא משפיעה על ברירות המחדל הגלובליות.",
+      "emptyTitle": "אין אמירות שתואמות",
+      "emptyDetail": "נסו לשנות טאב, לנקות פילטרים או להוסיף אמירה חדשה.",
+      "prevPage": "הקודם",
+      "nextPage": "הבא",
+      "loadMore": "טען עוד",
+      "page": "עמוד {page} מתוך {total}",
+      "usageShort": "נבחרה {count} פעמים בטקס",
+      "tabs": {
+        "active": "פעילות",
+        "drafts": "טיוטות",
+        "hidden": "מוסתרות",
+        "default": "ברירת מחדל",
+        "custom": "מותאמות"
+      },
+      "filters": {
+        "language": "שפה",
+        "type": "סוג",
+        "active": "מצב",
+        "origin": "מקור",
+        "tag": "תגית"
+      },
+      "sort": {
+        "label": "מיון",
+        "createdAt": "תאריך יצירה",
+        "lastUsedAt": "שימוש אחרון",
+        "title": "שם",
+        "type": "סוג",
+        "language": "שפה",
+        "weight": "משקל"
+      },
+      "type": {
+        "text": "טקסט",
+        "youtube": "יוטיוב"
+      },
+      "origin": {
+        "default": "ברירת מחדל",
+        "custom": "משתמש",
+        "admin": "אדמין"
+      },
+      "originHelp": {
+        "default": "אמירת ספרייה גלובלית. אפשר להסתיר, לא למחוק.",
+        "custom": "נוצרה על ידי המשתמש בטקס או בממשק אחר.",
+        "admin": "נוצרה או נערכה דרך מסך הניהול."
+      },
+      "fields": {
+        "title": "כותרת",
+        "text": "טקסט",
+        "youtubeUrl": "קישור יוטיוב",
+        "tags": "תגיות",
+        "language": "שפה",
+        "type": "סוג",
+        "weight": "משקל",
+        "active": "פעיל",
+        "draft": "שמור כטיוטה",
+        "createdAt": "נוצר",
+        "lastUsedAt": "שימוש אחרון",
+        "selectedCount": "נבחרה בטקס",
+        "lastSelectedAt": "בחירה אחרונה בטקס"
+      },
+      "quality": {
+        "too_short": "טקסט קצר מדי",
+        "duplicate": "כפילות אפשרית",
+        "no_tags": "ללא תגיות",
+        "no_language": "ללא שפה",
+        "bad_youtube_url": "קישור יוטיוב לא תקין",
+        "missing_title": "ללא כותרת"
+      }
     },
     "data": {
       "title": "ניהול נתונים",
@@ -2584,8 +2989,36 @@
       "type": "סוג",
       "message": "הודעה",
       "noLogs": "לא נמצאו לוגים לתאריך הזה.",
+      "noLogsDetail": "אין לוגים לתאריך הזה. זה תקין אם לא היו שגיאות היום.",
+      "emptyTitle": "אין לוגים להצגה",
+      "loadErrorTitle": "לא ניתן לטעון לוגים",
+      "authError": "האימות נכשל. פתחו את טאב מסד הנתונים, הזינו LOCAL_AUTH_TOKEN ו־ADMIN_API_TOKEN, ולחצו שמור טוקנים.",
+      "serverError": "ממשק האדמין לא מוגדר בשרת (חסר ADMIN_API_TOKEN).",
+      "genericError": "לא ניתן לטעון לוגים.",
+      "loading": "טוען…",
+      "retry": "נסה שוב",
       "refresh": "רענן",
       "count": "{count} רשומות"
+    },
+    "database": {
+      "eyebrow": "מסד נתונים",
+      "title": "SQLite מקומי — life-coach.db",
+      "loading": "טוען…",
+      "tableSummary": "{tables} טבלאות · {rows} שורות בסך הכל",
+      "import": "ייבוא localStorage ישן",
+      "importing": "מייבא…",
+      "tokenTitle": "טוקני גישת אדמין",
+      "tokenHelp": "נשמר רק בטא הדפדפן הזה. נתיבי DB בפרודקשן דורשים ADMIN_API_TOKEN.",
+      "saveTokens": "שמור טוקנים",
+      "checking": "בודק…",
+      "syncComplete": "הסנכרון הושלם",
+      "tablesView": "טבלאות",
+      "queryView": "עורך SQL",
+      "noTablesTitle": "לא נמצאו טבלאות",
+      "noTablesDetail": "השתמשו בייבוא localStorage או הריצו מיגרציות כדי לאכלס את המסד.",
+      "loadErrorTitle": "לא ניתן לטעון טבלאות",
+      "retry": "נסה שוב",
+      "loadingTables": "טוען טבלאות…"
     },
     "settings": {
       "title": "הגדרות אפליקציה",
@@ -3218,6 +3651,8 @@
       "morningTime": "בשעה {time} (קימה + 15 דק׳)",
       "eveningTime": "בשעה {time} (שינה − 45 דק׳)",
       "enable": "הפעל תזכורות",
+      "saving": "שומר לוח זמנים…",
+      "syncFailed": "לא ניתן לסנכרן שעות קימה/שינה: {detail}",
       "enabled": "התזכורות הופעלו במכשיר הזה.",
       "denied": "התראות חסומות בדפדפן הזה.",
       "unsupported": "הדפדפן הזה לא תומך בהתראות.",

@@ -8,8 +8,31 @@ function requireEnv(name: string) {
   return value;
 }
 
+const WEAK_CRON_SECRETS = new Set([
+  'changeme',
+  'change-me',
+  'secret',
+  'password',
+  'test',
+  'dev',
+  'local',
+  'cron',
+  'life-coach-cron',
+]);
+
 export function getLifeCoachCronSecret() {
-  return requireEnv('LIFE_COACH_CRON_SECRET');
+  const secret = requireEnv('LIFE_COACH_CRON_SECRET').trim();
+  const normalized = secret.toLowerCase();
+
+  if (secret.length < 32) {
+    throw new Error('LIFE_COACH_CRON_SECRET must be at least 32 characters. Generate with: openssl rand -hex 32');
+  }
+
+  if (WEAK_CRON_SECRETS.has(normalized)) {
+    throw new Error('LIFE_COACH_CRON_SECRET is too weak. Generate with: openssl rand -hex 32');
+  }
+
+  return secret;
 }
 
 export function getLifeCoachModelConfig() {

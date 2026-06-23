@@ -1,13 +1,12 @@
-import {saveReflectionAnalysis} from '@/lib/reflection-analysis';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
 import {openaiLifeCoachService} from '@/lib/ai-life-coach/openai-life-coach-service';
 import {
-  createAiInsight,
+  saveReflectionAnalysisWithInsights,
   getUserGenerationContext,
   getUserParticipantProfile,
 } from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, resolveLocale, startOfToday} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, resolveLocale, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {reflectionCreateInputSchema} from '@/lib/life-coach/schemas';
 
 export async function POST(request: Request) {
@@ -17,18 +16,9 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  let body: Record<string, unknown>;
-
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = reflectionCreateInputSchema.safeParse(body);
-
-  if (!parsed.success) {
-    return jsonError('Invalid reflection payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, reflectionCreateInputSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const limited = enforceAiRateLimit({
@@ -39,11 +29,11 @@ export async function POST(request: Request) {
   if (limited) return limited;
 
   try {
-    const locale = resolveLocale(typeof body.locale === 'string' ? body.locale : null);
     const [context, profile] = await Promise.all([
       getUserGenerationContext(current.user.id),
       getUserParticipantProfile(current.user.id),
     ]);
+    const locale = resolveLocale(profile.preferred_language ?? null);
     const analysis = await openaiLifeCoachService.analyzeReflection({
       locale,
       date: parsed.data.date ?? startOfToday(),
@@ -60,24 +50,12 @@ export async function POST(request: Request) {
 
     const reflectionDate = parsed.data.date ?? startOfToday();
     const { _metrics, ...analysisData } = analysis;
-    await Promise.all([
-      Promise.resolve(
-        saveReflectionAnalysis(current.user.id, reflectionDate, analysisData)
-      ),
-      createAiInsight(current.user.id, {
-        insight_type: 'pattern',
-        content: analysisData.patterns.join('\n'),
-        metadata: analysisData,
-        tokens_used: _metrics.tokens_used,
-        generation_duration_ms: _metrics.generation_duration_ms,
-        model_used: _metrics.model_used,
-      }),
-      createAiInsight(current.user.id, {
-        insight_type: 'recommendation',
-        content: analysisData.recommendations.join('\n'),
-        metadata: analysisData,
-      }),
-    ]);
+    // Persist the analysis + derived insights atomically (see helper docs).
+    saveReflectionAnalysisWithInsights(current.user.id, reflectionDate, analysisData, {
+      tokens_used: _metrics.tokens_used,
+      generation_duration_ms: _metrics.generation_duration_ms,
+      model_used: _metrics.model_used,
+    });
 
     return jsonOk({analysis: analysisData});
   } catch (error) {

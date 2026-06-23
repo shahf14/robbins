@@ -3,6 +3,7 @@
 import {useRef, useState} from 'react';
 import {useTranslations} from 'next-intl';
 import type {GoalRealismCheck, LifeDomain, NextBestAction} from '@/lib/life-coach/types';
+import {createGoalCreateIdempotencyKey} from '@/lib/goal-create-idempotency';
 import {GoalRealismBanner} from './goal-realism-banner';
 import {NextBestActionCta} from '@/components/next-best-action/next-best-action-cta';
 import {GoalHierarchyExplainer} from './shared/goal-hierarchy-explainer';
@@ -40,6 +41,7 @@ type Props = {
   };
   onCancel: () => void;
   onSave: (input: {
+    idempotency_key: string;
     goal: {
       domain: LifeDomain;
       domain_category?: string | null;
@@ -70,13 +72,18 @@ export function AIGoalPreview({domain, preview, onCancel, onSave}: Props) {
     preview.suggested_baby_steps.map((s, index) => ({...s, _key: index}))
   );
   const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
+  const idempotencyKeyRef = useRef(createGoalCreateIdempotencyKey());
   const firstMilestone = milestones[0] ?? null;
   const firstSteps = steps.slice(0, 3);
 
   async function handleSave() {
+    if (savingRef.current) return;
+    savingRef.current = true;
     setSaving(true);
     try {
       await onSave({
+        idempotency_key: idempotencyKeyRef.current,
         goal: {
           domain,
           domain_category: preview.goal.domain_category ?? null,
@@ -90,8 +97,10 @@ export function AIGoalPreview({domain, preview, onCancel, onSave}: Props) {
         milestones: milestones.map(({_key, ...m}) => m),
         initial_steps: steps.map(({_key, ...s}) => s),
       });
-    } finally {
+    } catch (error) {
+      savingRef.current = false;
       setSaving(false);
+      throw error;
     }
   }
 
@@ -256,6 +265,7 @@ export function AIGoalPreview({domain, preview, onCancel, onSave}: Props) {
         <div className="mt-6">
           <NextBestActionCta
             action={preview.next_best_action}
+            disabled={saving}
             onCustomAction={(action) => {
               if (action.action_type === 'save_goal') void handleSave();
             }}
@@ -273,7 +283,7 @@ export function AIGoalPreview({domain, preview, onCancel, onSave}: Props) {
         >
           {saving ? t('lifeCoach.saving') : t('lifeCoach.saveGoal')}
         </button>
-        <button className="focus-ring btn-ghost" type="button" onClick={onCancel}>
+        <button className="focus-ring btn-ghost" type="button" onClick={onCancel} disabled={saving}>
           {t('lifeCoach.cancel')}
         </button>
       </div>

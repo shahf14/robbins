@@ -17,7 +17,8 @@ import {buildLongTermProfile, buildShortTermContext} from '@/lib/coach-memory';
 import {dateDaysAgo} from '@/lib/coach-memory/data';
 import {computeExecutionHistorySummary} from '@/lib/execution-history/summarize';
 import {randomUUID} from 'crypto';
-import {rowToGoal, rowToMilestone, upsertGoal, upsertMilestone} from '@/lib/db/repositories/goals';
+import {rowToGoal, rowToMilestone, upsertGoal, upsertMilestone, findGoalByCreateIdempotencyKey} from '@/lib/db/repositories/goals';
+import {isSqliteUniqueConstraintError} from '@/lib/goal-create-idempotency';
 import {upsertWeeklyReviewProjection} from '@/lib/db/repositories/insights';
 import {
   insertFormulationSession,
@@ -80,11 +81,12 @@ import {
 import {listRecentReflections} from './reflection-insight-repository';
 import {
   getOnboardingServerStatus,
-  updateUserParticipantProfile,
+  updateUserParticipantProfileSync,
 } from './user-profile-repository';
 
 export {
   createDailyBabyStep,
+  DailyStepRelationError,
   deleteDailyBabyStep,
   getDailyBabyStepById,
   insertDailyBabySteps,
@@ -99,6 +101,7 @@ export {
 
 export {
   createAiInsight,
+  saveReflectionAnalysisWithInsights,
   getDailyReflectionForDate,
   getLatestWeeklyReview,
   hasWeeklyReviewForPeriod,
@@ -246,8 +249,14 @@ export async function createGoalBundle(
   input: Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at'>,
   milestones: StructuredGoalMilestone[],
   initialSteps: StructuredDailyBabyStep[],
-  scheduledDate: string
+  scheduledDate: string,
+  options?: {idempotencyKey?: string}
 ): Promise<Goal> {
+  if (options?.idempotencyKey) {
+    const existing = findGoalByCreateIdempotencyKey(userId, options.idempotencyKey);
+    if (existing) return existing;
+  }
+
   const now = new Date().toISOString();
   const goalId = randomUUID();
   const today = dateToYMD(new Date());
@@ -262,58 +271,70 @@ export async function createGoalBundle(
   };
 
   const db = getDb();
-  db.transaction(() => {
-    upsertGoal(goal);
+  try {
+    db.transaction(() => {
+      upsertGoal(goal, undefined, options?.idempotencyKey ?? null);
 
-    if (milestones.length > 0) {
-    const stmt = db.prepare(
-      `INSERT OR REPLACE INTO milestones
-        (id, goal_id, user_id, title, description, target_date, day_marker, status, created_at)
-       VALUES (?,?,?,?,?,?,?,?,?)`
-    );
-      for (const m of milestones) {
-        stmt.run(
-          randomUUID(), goalId, userId, m.title, m.description ?? '',
-          m.target_date ?? null, inferDayMarker(m.title), 'pending', now
-        );
-      }
-    }
-
-    if (initialSteps.length > 0) {
+      if (milestones.length > 0) {
       const stmt = db.prepare(
-      `INSERT OR REPLACE INTO daily_steps
-        (id, user_id, goal_id, domain, title, description, estimated_minutes,
-         difficulty, scheduled_date, status, generated_by_ai,
-         fallback_title, fallback_description, fallback_estimated_minutes,
-         reasoning, expected_resistance, pain_addressed, success_signal,
-         created_at, updated_at)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
-    );
-      for (const raw of initialSteps) {
-        const s = ensurePlanBFields(raw, 'he');
-        stmt.run(
-          randomUUID(), userId, goalId, s.domain,
-          s.title, s.description ?? '', s.estimated_minutes,
-          s.difficulty, scheduledDate, 'pending', 1,
-          s.fallback_title ?? null,
-          s.fallback_description ?? null,
-          s.fallback_estimated_minutes ?? 2,
-          clampStepReasoning(s.reasoning),
-          s.expected_resistance ?? null,
-          s.pain_addressed ?? null,
-          s.success_signal ?? null,
-          now, now
-        );
+        `INSERT OR REPLACE INTO milestones
+          (id, goal_id, user_id, title, description, target_date, day_marker, status, created_at)
+         VALUES (?,?,?,?,?,?,?,?,?)`
+      );
+        for (const m of milestones) {
+          stmt.run(
+            randomUUID(), goalId, userId, m.title, m.description ?? '',
+            m.target_date ?? null, inferDayMarker(m.title), 'pending', now
+          );
+        }
       }
+
+      if (initialSteps.length > 0) {
+        const stmt = db.prepare(
+        `INSERT OR REPLACE INTO daily_steps
+          (id, user_id, goal_id, domain, title, description, estimated_minutes,
+           difficulty, scheduled_date, status, generated_by_ai, is_general,
+           fallback_title, fallback_description, fallback_estimated_minutes,
+           reasoning, expected_resistance, pain_addressed, success_signal,
+           created_at, updated_at)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+      );
+        for (const raw of initialSteps) {
+          const s = ensurePlanBFields(raw, 'he');
+          stmt.run(
+            randomUUID(), userId, goalId, s.domain,
+            s.title, s.description ?? '', s.estimated_minutes,
+            s.difficulty, scheduledDate, 'pending', 1, 0,
+            s.fallback_title ?? null,
+            s.fallback_description ?? null,
+            s.fallback_estimated_minutes ?? 2,
+            clampStepReasoning(s.reasoning),
+            s.expected_resistance ?? null,
+            s.pain_addressed ?? null,
+            s.success_signal ?? null,
+            now, now
+          );
+        }
+      }
+    })();
+  } catch (error) {
+    if (options?.idempotencyKey && isSqliteUniqueConstraintError(error)) {
+      const existing = findGoalByCreateIdempotencyKey(userId, options.idempotencyKey);
+      if (existing) return existing;
     }
-  })();
+    throw error;
+  }
 
   await ensureCommitmentDailySteps(userId, goal);
   return goal;
 }
 
-/** Ensures one pending step per day in the active commitment window through today. */
-export async function ensureCommitmentDailySteps(userId: string, goal: Goal): Promise<number> {
+/**
+ * Synchronous core of {@link ensureCommitmentDailySteps}. Use this when the
+ * step generation must participate in a caller's transaction (better-sqlite3
+ * transactions must be synchronous). Safe to nest inside another transaction.
+ */
+export function ensureCommitmentDailyStepsSync(userId: string, goal: Goal): number {
   if (goal.status !== 'active') return 0;
 
   const start = resolveCommitmentStart(goal);
@@ -359,6 +380,11 @@ export async function ensureCommitmentDailySteps(userId: string, goal: Goal): Pr
   }
 
   return created;
+}
+
+/** Ensures one pending step per day in the active commitment window through today. */
+export async function ensureCommitmentDailySteps(userId: string, goal: Goal): Promise<number> {
+  return ensureCommitmentDailyStepsSync(userId, goal);
 }
 
 function inferDayMarker(title: string): number | null {
@@ -427,15 +453,20 @@ export async function updateGoal(
     abandoned_before_first_step: abandonedBeforeFirstStep,
     updated_at: now,
   };
-  upsertGoal(updated);
-
   const commitmentTouched =
     renewCommitment === true ||
     goalPatch.commitment_days !== undefined ||
     goalPatch.commitment_started_at !== undefined;
-  if (commitmentTouched && updated.status === 'active' && options?.userId) {
-    await ensureCommitmentDailySteps(options.userId, updated);
-  }
+  const userIdForSteps = options?.userId;
+
+  // Atomic: persist the goal AND (re)generate its commitment steps together, so
+  // a step-generation failure can't leave an active goal with no scheduled steps.
+  getDb().transaction(() => {
+    upsertGoal(updated);
+    if (commitmentTouched && updated.status === 'active' && userIdForSteps) {
+      ensureCommitmentDailyStepsSync(userIdForSteps, updated);
+    }
+  })();
 
   return updated;
 }
@@ -739,6 +770,11 @@ export async function patchFormulationSession(
 
   const now = new Date().toISOString();
   let riskNeedsFollowUp = false;
+  // Profile write is deferred so it commits in the same transaction as the
+  // session update at the end (consent writes both the user profile and session).
+  let pendingProfileUpdate:
+    | Parameters<typeof updateUserParticipantProfileSync>[1]
+    | null = null;
 
   switch (patch.phase) {
     case 'consent': {
@@ -752,11 +788,11 @@ export async function patchFormulationSession(
       session.consent_version = patch.consent_version;
       session.consent_accepted_at = now;
       session.current_phase = patch.next_phase;
-      await updateUserParticipantProfile(userId, {
+      pendingProfileUpdate = {
         gender: session.participant_gender,
         age: session.participant_age,
         life_context_statuses: session.life_context_statuses,
-      });
+      };
       break;
     }
 
@@ -903,7 +939,12 @@ export async function patchFormulationSession(
   }
 
   session.updated_at = now;
-  updateFormulationSession(session);
+  getDb().transaction(() => {
+    if (pendingProfileUpdate) {
+      updateUserParticipantProfileSync(userId, pendingProfileUpdate);
+    }
+    updateFormulationSession(session);
+  })();
   return {session, risk_needs_follow_up: riskNeedsFollowUp};
 }
 
@@ -924,24 +965,29 @@ export async function completeFormulationSession(
   session.updated_at = now;
   session.duration_sec = Math.max(0, Math.round((Date.now() - started) / 1000));
 
-  updateFormulationSession(session);
+  // Atomic: mark the session completed AND stamp the user's
+  // last_completed_formulation_at together, so the formulation gate can never
+  // observe a completed session without the matching user record (or vice versa).
+  getDb().transaction(() => {
+    updateFormulationSession(session);
 
-  if (session.life_context_statuses.length > 0) {
-    dbRun(
-      `UPDATE users SET life_context_status = ?, last_completed_formulation_at = ?, updated_at = ? WHERE id = ?`,
-      [serializeLifeContextStatuses(session.life_context_statuses), now, now, userId]
-    );
-  } else if (session.life_context_status) {
-    dbRun(
-      `UPDATE users SET life_context_status = ?, last_completed_formulation_at = ?, updated_at = ? WHERE id = ?`,
-      [session.life_context_status, now, now, userId]
-    );
-  } else {
-    dbRun(
-      `UPDATE users SET last_completed_formulation_at = ?, updated_at = ? WHERE id = ?`,
-      [now, now, userId]
-    );
-  }
+    if (session.life_context_statuses.length > 0) {
+      dbRun(
+        `UPDATE users SET life_context_status = ?, last_completed_formulation_at = ?, updated_at = ? WHERE id = ?`,
+        [serializeLifeContextStatuses(session.life_context_statuses), now, now, userId]
+      );
+    } else if (session.life_context_status) {
+      dbRun(
+        `UPDATE users SET life_context_status = ?, last_completed_formulation_at = ?, updated_at = ? WHERE id = ?`,
+        [session.life_context_status, now, now, userId]
+      );
+    } else {
+      dbRun(
+        `UPDATE users SET last_completed_formulation_at = ?, updated_at = ? WHERE id = ?`,
+        [now, now, userId]
+      );
+    }
+  })();
 
   return session;
 }

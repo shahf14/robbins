@@ -1,6 +1,6 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {createGoalBundle, ensureCommitmentDailySteps, listGoals, listMilestonesForGoal} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, startOfToday} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {goalBundleCreateInputSchema} from '@/lib/life-coach/schemas';
 import {formatGoalCreateError, sanitizeGoalBundleInput} from '@/lib/life-coach/sanitize-goal-bundle';
 
@@ -38,18 +38,9 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  let body: unknown;
-
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = goalBundleCreateInputSchema.safeParse(body);
-
-  if (!parsed.success) {
-    return jsonError('Invalid goal payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, goalBundleCreateInputSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const bundle = sanitizeGoalBundleInput(parsed.data);
@@ -61,7 +52,8 @@ export async function POST(request: Request) {
       {...bundle.goal, health_context: bundle.goal.health_context ?? null},
       bundle.milestones,
       bundle.initial_steps.map((step) => ({...step, goal_id: null})),
-      today
+      today,
+      {idempotencyKey: parsed.data.idempotency_key}
     );
 
     return jsonOk({goal}, 201);

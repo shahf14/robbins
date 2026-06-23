@@ -1,3 +1,6 @@
+import {mergeLocalAuthHeaders} from '@/lib/auth/client-headers';
+import {observeAuthResponse} from '@/lib/auth/observe-auth-response';
+import {throwIfNotOk} from '@/lib/http/api-response-error';
 import type {AccountabilityContext} from '@/lib/formulation/accountability-routing';
 import type {BehaviorChangeContext} from '@/lib/formulation/behavior-change-tracking';
 import type {SkipAdaptationContext} from '@/lib/formulation/skip-adaptation-routing';
@@ -14,13 +17,27 @@ export type FormulationCoachContext = {
   skip_adaptation: SkipAdaptationContext | null;
 };
 
-export async function fetchFormulationCoachContext(): Promise<FormulationCoachContext> {
+export async function fetchFormulationCoachContext(
+  options?: {strict?: boolean}
+): Promise<FormulationCoachContext> {
+  const empty: FormulationCoachContext = {
+    challenge: null,
+    load_adaptation: null,
+    comeback_messaging: null,
+    accountability: null,
+    behavior_change: null,
+    skip_adaptation: null,
+  };
+
   try {
     const response = await fetch('/api/formulation/personalized-challenge', {
-      headers: {'Content-Type': 'application/json'},
+      headers: mergeLocalAuthHeaders(),
     });
-    if (!response.ok) {
-      return {challenge: null, load_adaptation: null, comeback_messaging: null, accountability: null, behavior_change: null, skip_adaptation: null};
+    if (options?.strict) {
+      await throwIfNotOk(response);
+    } else {
+      observeAuthResponse(response);
+      if (!response.ok) return empty;
     }
     const data = (await response.json()) as FormulationCoachContext;
     return {
@@ -31,7 +48,8 @@ export async function fetchFormulationCoachContext(): Promise<FormulationCoachCo
       behavior_change: data.behavior_change ?? null,
       skip_adaptation: data.skip_adaptation ?? null,
     };
-  } catch {
-    return {challenge: null, load_adaptation: null, comeback_messaging: null, accountability: null, behavior_change: null, skip_adaptation: null};
+  } catch (error) {
+    if (options?.strict) throw error;
+    return empty;
   }
 }

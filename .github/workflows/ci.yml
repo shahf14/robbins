@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-fund
+
+      - name: Security audit (production dependencies)
+        run: npm run audit:ci:prod
+
+      - name: Security audit (all dependencies)
+        run: npm run audit:ci
+
+      - name: Unused dependencies
+        run: npm run knip:ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Frontend audit tests
+        run: npm run test:frontend-audit
+
+      - name: API error tests
+        run: npm run test:api-error
+
+      - name: Generate daily steps scope tests
+        run: npm run test:generate-daily-steps-scope
+
+      - name: Formulation migration tests
+        run: npm run test:formulation-migration
+
+      - name: Content studio DB tests
+        run: npm run test:content-studio-db

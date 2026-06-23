@@ -210,6 +210,8 @@ export type DailyBabyStep = {
   scheduled_date: string;
   status: DailyStepStatus;
   generated_by_ai: boolean;
+  /** Domain-level action without a specific goal. Non-general steps require goal_id. */
+  is_general: boolean;
   created_at: string;
   updated_at: string;
   /** Human-readable explanation of why this step was chosen (shown in UI) */
@@ -289,6 +291,7 @@ export type StructuredGoalMilestone = {
 export type StructuredDailyBabyStep = {
   domain: LifeDomain;
   goal_id: string | null;
+  is_general?: boolean;
   title: string;
   description: string;
   estimated_minutes: number;

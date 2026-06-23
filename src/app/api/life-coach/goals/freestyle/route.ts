@@ -9,25 +9,22 @@
  */
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {createFreestyleGoal} from '@/lib/db/repositories/goals';
-import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {LIFE_DOMAINS} from '@/lib/life-coach/types';
 
 export async function POST(request: Request) {
   const current = await requireLifeCoachAccess(request);
   if (!current.ok) return current.response;
 
-  let body: {
+  const bodyResult = await parseLifeCoachJsonBody<{
     domain?: string;
     title?: string;
     times_per_day?: number;
     target_days?: number;
     success_metric?: string;
-  };
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
+  }>(request);
+  if (!bodyResult.ok) return bodyResult.response;
+  const body = bodyResult.data ?? {};
 
   const title = body.title?.trim();
   if (!title) return jsonError('Missing task title.', 400);

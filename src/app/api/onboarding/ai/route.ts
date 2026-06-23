@@ -1,9 +1,9 @@
 import {NextResponse} from 'next/server';
 import {badRequest, serverError} from '@/lib/api-response';
 import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
-import {requireCurrentUser} from '@/lib/auth/get-current-user';
+import {readAuthenticatedJsonBody} from '@/lib/read-authenticated-json-body';
 import {getLifeCoachModelConfig} from '@/lib/life-coach/env';
-import {openAiRequestSignal} from '@/lib/life-coach/server';
+import {callOpenAiResponses} from '@/lib/llm/client';
 import type {AppLocale} from '@/i18n/config';
 import {formatLifeContextLabels, normalizeLifeContextStatuses} from '@/lib/life-context-labels';
 import {parseJsonObjectOr} from '@/lib/safe-json';
@@ -36,11 +36,6 @@ type UserContext = {
   physicalConsiderations?: string[];
 };
 
-type OpenAiRawResponse = {
-  output_text?: string;
-  output?: Array<{content?: Array<{text?: string}>}>;
-};
-
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 async function callOpenAi(
@@ -48,43 +43,13 @@ async function callOpenAi(
   userPrompt: string,
   maxTokens: number
 ): Promise<string | null> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return null;
-
-  const model = getLifeCoachModelConfig().structuring;
-
-  try {
-    const res = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      signal: openAiRequestSignal(),
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model,
-        instructions: systemPrompt,
-        input: userPrompt,
-        max_output_tokens: maxTokens,
-      }),
-    });
-
-    if (!res.ok) return null;
-
-    const body = (await res.json()) as OpenAiRawResponse;
-    return (
-      body.output_text?.trim() ||
-      body.output
-        ?.flatMap((i) => i.content ?? [])
-        .map((c) => c.text)
-        .filter(Boolean)
-        .join('')
-        .trim() ||
-      null
-    );
-  } catch {
-    return null;
-  }
+  const result = await callOpenAiResponses({
+    model: getLifeCoachModelConfig().structuring,
+    instructions: systemPrompt,
+    input: userPrompt,
+    maxOutputTokens: maxTokens,
+  });
+  return result?.text || null;
 }
 
 const LANG: Record<AppLocale, string> = {
@@ -412,28 +377,15 @@ function userContextFromRequest(body: OnboardingUserContext & {locale: AppLocale
 }
 
 export async function POST(request: Request) {
-  const current = await requireCurrentUser(request);
-  if (!current.ok) return current.response;
+  const bodyResult = await readAuthenticatedJsonBody(request, {
+    schema: onboardingAiRequestSchema,
+  });
+  if (!bodyResult.ok) return bodyResult.response;
 
-  let raw: unknown;
-  try {
-    raw = await request.json();
-  } catch {
-    return badRequest('Invalid JSON body.');
-  }
-
-  const parsed = onboardingAiRequestSchema.safeParse(raw);
-  if (!parsed.success) {
-    return NextResponse.json(
-      {error: 'Invalid request payload.', details: parsed.error.flatten()},
-      {status: 400}
-    );
-  }
-
-  const body = parsed.data;
+  const body = bodyResult.data;
   const limited = enforceAiRateLimit({
     action: `onboarding:${body.mode}`,
-    userId: current.user.id,
+    userId: bodyResult.user.id,
     limit: 20,
   });
   if (limited) return limited;

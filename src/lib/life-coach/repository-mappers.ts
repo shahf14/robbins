@@ -40,6 +40,7 @@ export function rowToStep(row: Record<string, unknown>): DailyBabyStep {
     scheduled_date: row.scheduled_date as string,
     status: row.status as DailyBabyStep['status'],
     generated_by_ai: !!row.generated_by_ai,
+    is_general: !!row.is_general,
     completed_at: (row.completed_at as string) ?? null,
     actual_minutes: (row.actual_minutes as number) ?? null,
     rescheduled_from: (row.rescheduled_from as string) ?? null,

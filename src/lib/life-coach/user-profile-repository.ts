@@ -46,7 +46,11 @@ export async function getUserParticipantProfile(userId: string): Promise<UserPro
   return rowToUserProfile(userId, row, new Date().toISOString());
 }
 
-export async function updateUserParticipantProfile(
+/**
+ * Synchronous core of {@link updateUserParticipantProfile} — use this when the
+ * profile write must participate in a caller's better-sqlite3 transaction.
+ */
+export function updateUserParticipantProfileSync(
   userId: string,
   input: {
     gender?: string | null;
@@ -60,7 +64,7 @@ export async function updateUserParticipantProfile(
     family_status?: import('@/lib/user-preferences').FamilyStatus | null;
     physical_considerations?: import('@/lib/user-preferences').PhysicalConsideration[] | null;
   }
-): Promise<void> {
+): void {
   const now = new Date().toISOString();
   const sets: string[] = ['updated_at = ?'];
   const params: unknown[] = [now];
@@ -115,6 +119,13 @@ export async function updateUserParticipantProfile(
 
   params.push(userId);
   dbRun(`UPDATE users SET ${sets.join(', ')} WHERE id = ?`, params);
+}
+
+export async function updateUserParticipantProfile(
+  userId: string,
+  input: Parameters<typeof updateUserParticipantProfileSync>[1]
+): Promise<void> {
+  updateUserParticipantProfileSync(userId, input);
 }
 
 export type OnboardingServerStatus = {

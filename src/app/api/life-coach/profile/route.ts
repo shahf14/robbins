@@ -6,7 +6,7 @@ import {
   updateUserParticipantProfile,
 } from '@/lib/life-coach/repository';
 import {formulationProfilePatchSchema} from '@/lib/life-coach/schemas';
-import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 export async function GET(request: Request) {
   const current = await requireLifeCoachAccess(request, {allowDuringOnboarding: true});
@@ -33,16 +33,9 @@ export async function PATCH(request: Request) {
   const current = await requireLifeCoachAccess(request, {allowDuringOnboarding: true});
   if (!current.ok) return current.response;
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = formulationProfilePatchSchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError('Invalid profile payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, formulationProfilePatchSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   try {

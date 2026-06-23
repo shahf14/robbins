@@ -11,6 +11,8 @@ import {
 } from '@/lib/morning-ritual/goal-context';
 import type {PersonalizedVisualization} from '@/lib/formulation/visualization-context';
 import {StepNavigation} from '@/components/morning-ritual/morning-ritual-navigation';
+import {useConfirm} from '@/components/feedback/confirm-provider';
+import type {RitualListPersistMode} from '@/lib/morning-ritual/deferred-ritual-persist';
 
 export function VisualizationStep({
   text,
@@ -138,11 +140,12 @@ export function IdentityStep({
   text: string;
   onChange: (text: string) => void;
   identities: IdentityOption[];
-  onIdentitiesChange: (items: IdentityOption[]) => void;
+  onIdentitiesChange: (items: IdentityOption[], options?: {persist?: RitualListPersistMode}) => void;
   onNext: () => void;
   onBack: () => void;
 }) {
   const t = useTranslations('morningRitual');
+  const {confirm} = useConfirm();
   const [showAddNew, setShowAddNew] = useState(false);
   const [newIdentity, setNewIdentity] = useState('');
 
@@ -164,6 +167,24 @@ export function IdentityStep({
     onChange(newIdentity.trim());
     setNewIdentity('');
     setShowAddNew(false);
+  }
+
+  async function deleteCustomIdentity(id: string) {
+    const ok = await confirm({
+      title: t('identity.deleteConfirmTitle'),
+      message: t('identity.deleteConfirmMessage'),
+      confirmLabel: t('identity.delete'),
+      cancelLabel: t('affirmation.cancel'),
+      destructive: true,
+    });
+    if (!ok) return;
+    onIdentitiesChange(
+      identities.filter((identity) => identity.id !== id),
+      {persist: 'deferred'}
+    );
+    if (identities.find((identity) => identity.id === id)?.text === text) {
+      onChange('');
+    }
   }
 
   const allOptions = [
@@ -222,6 +243,29 @@ export function IdentityStep({
         >
           + {t('identity.addNew')}
         </button>
+      )}
+
+      {identities.length > 0 && (
+        <div className="mt-6">
+          <p className="field-label mb-0 txt-muted">{t('identity.savedTitle')}</p>
+          <div className="mt-3 grid gap-2">
+            {identities.map((identity) => (
+              <div
+                key={identity.id}
+                className="flex items-center justify-between gap-3 rounded-lg border border-[color:var(--color-border)] fill-1 px-4 py-3"
+              >
+                <p className="min-w-0 text-sm font-semibold txt-strong">{identity.text}</p>
+                <button
+                  type="button"
+                  className="focus-ring btn-small shrink-0"
+                  onClick={() => void deleteCustomIdentity(identity.id)}
+                >
+                  {t('identity.delete')}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
       <label className="mt-4 grid gap-2">

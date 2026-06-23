@@ -1,6 +1,7 @@
 import type {AppLocale} from '@/i18n/config';
 import {validateGoalSlotAlignment} from '@/lib/formulation/goal-alignment';
-import {selectMindsetExercise} from '@/lib/formulation/mindset-exercises';import {
+import {selectMindsetExercise} from '@/lib/formulation/mindset-exercises';
+import {
   MICRO_GOAL_TYPE_SLOTS,
   type MicroGoalOption,
 } from '@/lib/formulation/micro-goal-options';

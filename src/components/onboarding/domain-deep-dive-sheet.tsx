@@ -41,7 +41,7 @@ export function DomainDeepDiveSheet({domain, onClose}: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-[80] flex items-end justify-center bg-black/70 px-4 pb-4 sm:items-center sm:py-8"
+      className="fixed inset-0 z-[80] flex items-end justify-center bg-black/70 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center sm:py-8"
       role="dialog"
       aria-modal="true"
       aria-labelledby="domain-deep-dive-title"

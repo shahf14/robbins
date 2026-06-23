@@ -2,8 +2,9 @@
 
 import {useTranslations} from 'next-intl';
 import type {DailyStepStatus} from '@/lib/life-coach/types';
+import type {StepStatusFilter} from '@/lib/life-coach/domain-detail-url-state';
 
-export type StepStatusFilter = 'all' | DailyStepStatus;
+export type {StepStatusFilter};
 
 type Props = {
   value: StepStatusFilter;

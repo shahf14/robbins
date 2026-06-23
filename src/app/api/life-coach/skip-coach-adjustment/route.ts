@@ -3,7 +3,7 @@ import {buildSkipCoachAdjustment} from '@/lib/skip-coach-loop';
 import {saveSkipCoachAdjustment} from '@/lib/skip-coach-loop/repository';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {getUserParticipantProfile} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, resolveLocale, startOfToday} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, resolveLocale, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {skipCoachAdjustmentInputSchema} from '@/lib/life-coach/schemas';
 import type {PreferredActionWindow} from '@/lib/user-preferences';
 
@@ -11,25 +11,14 @@ export async function POST(request: Request) {
   const current = await requireLifeCoachAccess(request);
   if (!current.ok) return current.response;
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = skipCoachAdjustmentInputSchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError('Invalid skip coach payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, skipCoachAdjustmentInputSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   try {
     const profile = await getUserParticipantProfile(current.user.id);
-    const locale = resolveLocale(
-      (typeof body === 'object' && body && 'locale' in body
-        ? (body as {locale?: string}).locale
-        : profile.preferred_language) as AppLocale | undefined
-    );
+    const locale = resolveLocale(profile.preferred_language as AppLocale | undefined);
     const currentWindow = (profile.preferred_action_window ?? 'flexible') as PreferredActionWindow;
     const adjustment = buildSkipCoachAdjustment(
       parsed.data.coach_action,

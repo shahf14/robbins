@@ -1,6 +1,6 @@
 'use client';
 
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useTranslations, useLocale} from 'next-intl';
 import {REFLECTION_BLOCKER_REASONS, type ReflectionBlockerReason} from '@/lib/life-coach/types';
 import {countWords, detectSelfBlame} from '@/lib/clinical-analysis';
@@ -9,6 +9,8 @@ import {loadUserPreferences} from '@/lib/user-preferences';
 import {SkipCoachLoop} from '@/components/life-coach/shared/skip-coach-loop';
 import type {SkipCoachAction} from '@/lib/skip-coach-loop';
 import {SelfContractReminder} from '@/components/behavior-science/behavior-panels';
+import {useToast} from '@/components/feedback/toast-provider';
+import {resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
 import type {GoalSelfContract} from '@/lib/behavior-science/self-contract';
 
 type BlockerCategory = 'external' | 'internal' | 'unclear';
@@ -52,6 +54,7 @@ export function DailyReflectionModal({
   const t = useTranslations();
   const tBs = useTranslations('behaviorScience');
   const locale = useLocale();
+  const toast = useToast();
   const [blockerCategory, setBlockerCategory] = useState<BlockerCategory | null>(null);
   const [blockerReason, setBlockerReason] = useState<ReflectionBlockerReason | null>(initialBlocker);
   const [deepDiveAnswer, setDeepDiveAnswer] = useState('');
@@ -62,21 +65,64 @@ export function DailyReflectionModal({
   const [saving, setSaving] = useState(false);
   const writingStartRef = useRef<number | null>(null);
 
+  useEffect(() => {
+    if (!open) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape' && !saving) onClose();
+    }
+
+    document.addEventListener('keydown', onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open, onClose, saving]);
+
   if (!open) return null;
 
   const lifeContexts = loadUserPreferences().life_context_statuses;
   const blockerHintKey = reflectionBlockerHintKey(lifeContexts);
   const isSkipContext = context === 'skip';
+  const sheetTitle = isSkipContext
+    ? t(skipAction === 'partial' ? 'lifeCoach.markPartial' : 'lifeCoach.markSkipped')
+    : t('lifeCoach.dailyReflectionTitle');
+
+  function handleBackdropClose() {
+    if (!saving) onClose();
+  }
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/70 px-4 pb-4 sm:items-center sm:py-8" role="dialog" aria-modal="true" aria-labelledby="daily-reflection-title">
-      <div className="panel-surface-strong w-full max-w-lg rounded-2xl p-5 sm:p-7">
-        {isSkipContext && (
-          <h2 id="daily-reflection-title" className="sr-only">
-            {t(skipAction === 'partial' ? 'lifeCoach.markPartial' : 'lifeCoach.markSkipped')}
+    <div
+      className="fixed inset-0 z-[80] flex items-end justify-center bg-black/70 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center sm:py-8"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="daily-reflection-title"
+      onClick={handleBackdropClose}
+    >
+      <div
+        className="panel-surface-strong flex max-h-[min(90dvh,44rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex shrink-0 items-center justify-between gap-4 border-b border-[color:var(--color-border)] px-5 py-3 sm:px-7">
+          <h2 id="daily-reflection-title" className="min-w-0 text-base font-black leading-6 txt-strong sm:text-lg">
+            {sheetTitle}
           </h2>
-        )}
+          <button
+            type="button"
+            className="focus-ring inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[color:var(--color-border)] fill-1 text-xl leading-none txt-strong disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label={t('lifeCoach.cancel')}
+            disabled={saving}
+            onClick={onClose}
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
 
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-5 sm:p-7">
         {isSkipContext ? (
           <>
             <p className="text-sm leading-6 text-sky-200/80">
@@ -102,7 +148,6 @@ export function DailyReflectionModal({
                 onSelectAction={async (coach_action) => {
                   setSaving(true);
                   try {
-                    const collectBehavioralAnalytics = loadUserPreferences().behavioral_analytics_enabled;
                     await onSubmit({
                       mood_score: null,
                       energy_score: null,
@@ -114,6 +159,8 @@ export function DailyReflectionModal({
                       self_blame_language: false,
                       coach_action,
                     });
+                  } catch (error) {
+                    toast.error(resolveLifeCoachErrorMessage(error, t));
                   } finally {
                     setSaving(false);
                   }
@@ -146,7 +193,6 @@ export function DailyReflectionModal({
           /* ── Full daily reflection context ── */
           <>
             <p className="eyebrow">{t('lifeCoach.dailyReflection')}</p>
-            <h3 id="daily-reflection-title" className="mt-2 text-xl font-black txt-strong">{t('lifeCoach.dailyReflectionTitle')}</h3>
 
             <div className="mt-5 grid gap-4">
               <RangeInput label={t('lifeCoach.moodScore')}   value={moodScore}   onChange={setMoodScore}   tierLabel={getMoodTierLabel(moodScore, t)} />
@@ -216,6 +262,8 @@ export function DailyReflectionModal({
                     reflection_word_count: collectBehavioralAnalytics && finalText ? countWords(finalText) : null,
                     self_blame_language: collectBehavioralAnalytics && finalText ? detectSelfBlame(finalText, locale) : false,
                   });
+                } catch (error) {
+                  toast.error(resolveLifeCoachErrorMessage(error, t));
                 } finally {
                   setSaving(false);
                 }
@@ -223,18 +271,19 @@ export function DailyReflectionModal({
             >
               {saving ? t('lifeCoach.saving') : t('lifeCoach.saveReflection')}
             </button>
-            <button className="focus-ring btn-ghost" type="button" onClick={onClose}>
+            <button className="focus-ring btn-ghost" type="button" disabled={saving} onClick={onClose}>
               {t('lifeCoach.cancel')}
             </button>
           </div>
         )}
         {isSkipContext && skipAction === 'skipped' && (
           <div className="mt-4">
-            <button className="focus-ring btn-ghost text-sm" type="button" onClick={onClose}>
+            <button className="focus-ring btn-ghost text-sm" type="button" disabled={saving} onClick={onClose}>
               {t('lifeCoach.cancel')}
             </button>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

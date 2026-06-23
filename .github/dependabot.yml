@@ -1,0 +1,20 @@
+# Dependabot opens one PR per dependency by default — merge upgrades deliberately,
+# one at a time, with CI green. Re-verify @clerk/nextjs after Next.js bumps;
+# watch Tailwind v4 and Next 16 release notes for breaking minors.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies

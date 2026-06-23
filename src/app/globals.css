@@ -181,6 +181,10 @@ h6 {
   padding: var(--section-padding);
 }
 
+.section-block-tight {
+  padding: 48px 0;
+}
+
 html[data-theme='light'] .section-block {
   border-top-color: var(--color-border);
 }
@@ -271,6 +275,138 @@ html[data-theme='light'] .interactive-panel:focus-within {
   font-size: 13px;
   font-weight: 600;
   padding: 0.625rem 0.95rem;
+}
+
+.btn-admin-view,
+.btn-admin-action,
+.btn-admin-action-danger {
+  align-items: center;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 600;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-admin-view {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-soft);
+}
+
+.btn-admin-view:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text);
+  transform: translateY(-1px);
+}
+
+.btn-admin-action {
+  background: var(--color-primary);
+  border: none;
+  box-shadow: 0 8px 20px rgba(232, 87, 42, 0.18);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.btn-admin-action:hover {
+  transform: translateY(-1px);
+}
+
+.btn-admin-action-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fecaca;
+  font-weight: 700;
+}
+
+.btn-admin-action-danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+  transform: translateY(-1px);
+}
+
+.admin-tip {
+  display: inline-flex;
+  position: relative;
+  vertical-align: middle;
+}
+
+.admin-tip__trigger {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.55);
+  display: inline-flex;
+  font-size: 10px;
+  font-weight: 800;
+  height: 1.125rem;
+  justify-content: center;
+  line-height: 1;
+  width: 1.125rem;
+}
+
+.admin-tip__trigger:hover,
+.admin-tip__trigger:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.admin-tip__bubble {
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  bottom: calc(100% + 0.45rem);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 12px;
+  font-weight: 500;
+  inset-inline-end: 0;
+  line-height: 1.45;
+  max-width: min(18rem, 70vw);
+  opacity: 0;
+  padding: 0.55rem 0.7rem;
+  pointer-events: none;
+  position: absolute;
+  transform: translateY(4px);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+  white-space: normal;
+  z-index: 40;
+}
+
+.admin-tip:hover .admin-tip__bubble,
+.admin-tip:focus-within .admin-tip__bubble {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.admin-hover-tip {
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.35);
+  cursor: help;
+  display: inline-flex;
+  position: relative;
+}
+
+.admin-hover-tip .admin-tip__bubble {
+  inset-inline-start: 50%;
+  inset-inline-end: auto;
+  transform: translateX(-50%) translateY(4px);
+  white-space: normal;
+}
+
+.admin-hover-tip:hover .admin-tip__bubble,
+.admin-hover-tip:focus-visible .admin-tip__bubble {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .btn-primary,
@@ -501,6 +637,42 @@ html[data-theme='light'] .textarea-base {
   padding: 0.875rem 1rem;
 }
 
+select.input-base,
+select.select-base {
+  appearance: none;
+  -webkit-appearance: none;
+  color-scheme: dark;
+  cursor: pointer;
+  padding-inline-end: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 1rem;
+}
+
+:dir(rtl) select.input-base,
+:dir(rtl) select.select-base {
+  background-position: left 0.85rem center;
+  padding-inline: 2.75rem 1rem;
+}
+
+select.input-base option,
+select.select-base option {
+  background-color: #1e1e24;
+  color: #f4f4f5;
+}
+
+html[data-theme='light'] select.input-base,
+html[data-theme='light'] select.select-base {
+  color-scheme: light;
+}
+
+html[data-theme='light'] select.input-base option,
+html[data-theme='light'] select.select-base option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
 .textarea-base {
   min-height: 150px;
   padding: 1rem;
@@ -517,11 +689,58 @@ html[data-theme='light'] .textarea-base {
   text-transform: uppercase;
 }
 
+.admin-affirmations__input,
+.admin-affirmations__select {
+  width: 100%;
+  min-height: 2.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.admin-affirmations__select {
+  appearance: none;
+  color-scheme: dark;
+  padding-inline-end: 2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+}
+
+:dir(rtl) .admin-affirmations__select {
+  background-position: left 0.5rem center;
+}
+
+.admin-affirmations__select option {
+  background-color: #1e1e24;
+  color: #f4f4f5;
+}
+
+.admin-affirmations__detail {
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+}
+
+@media (max-width: 1279px) {
+  .admin-affirmations__detail {
+    position: static;
+    max-height: none;
+  }
+}
+
 input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
   cursor: pointer;
+  direction: ltr;
   height: 48px;
   width: 100%;
 }
@@ -708,7 +927,6 @@ input[type='range']::-moz-range-thumb {
 input[type='range'].life-wheel-range {
   --life-wheel-color: var(--color-accent);
   --life-wheel-progress: 50%;
-  direction: ltr;
   min-height: 44px;
   touch-action: none;
 }

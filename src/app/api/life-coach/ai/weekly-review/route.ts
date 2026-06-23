@@ -27,7 +27,7 @@ import {
   getLatestCompletedFormulation,
   hasWeeklyReviewForPeriod,
 } from '@/lib/life-coach/repository';
-import {currentWeekWindow, jsonError, jsonOk, resolveLocale} from '@/lib/life-coach/server';
+import {currentWeekWindow, jsonError, jsonOk, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
 import {listMorningRitualSessions} from '@/lib/db/repositories/morning-rituals';
 import {summarizeMorningRitualsForWeek} from '@/lib/life-coach/morning-ritual-weekly-summary';
 import {listCheckinRowsForPeriod} from '@/lib/db/repositories/checkins';
@@ -42,13 +42,9 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  let body: Record<string, unknown> = {};
-
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    body = {};
-  }
+  const bodyResult = await parseLifeCoachJsonBody<Record<string, unknown>>(request);
+  if (!bodyResult.ok) return bodyResult.response;
+  const body = (bodyResult.data ?? {}) as Record<string, unknown>;
 
   try {
     const locale = resolveLocale(typeof body.locale === 'string' ? body.locale : null);
@@ -183,14 +179,6 @@ export async function POST(request: Request) {
     });
 
     const { _metrics, ...reviewData } = review;
-    refreshWeeklyFocusesFromReview(
-      current.user.id,
-      context.goals,
-      context.milestonesByGoalId,
-      reviewData,
-      week.end,
-      locale
-    );
     const insight = await createAiInsight(current.user.id, {
       insight_type: 'weekly_review',
       content: reviewData.summary,
@@ -199,6 +187,14 @@ export async function POST(request: Request) {
       generation_duration_ms: _metrics.generation_duration_ms,
       model_used: _metrics.model_used,
     });
+    refreshWeeklyFocusesFromReview(
+      current.user.id,
+      context.goals,
+      context.milestonesByGoalId,
+      reviewData,
+      week.end,
+      locale
+    );
 
     return jsonOk({review: reviewData, insight});
   } catch (error) {

@@ -1,5 +1,5 @@
 import type {AppLocale} from '@/i18n/config';
-import {openAiRequestSignal} from '@/lib/life-coach/server';
+import {callOpenAiResponses} from '@/lib/llm/client';
 import type {EveningResetSession} from '@/lib/evening-reset-types';
 import type {EveningBriefingFields} from './briefing';
 
@@ -97,24 +97,6 @@ export function buildTomorrowTakeawayFallback(input: {
     : 'Tomorrow: pick one 10-minute action and do it before anything else.';
 }
 
-type OpenAiResponse = {
-  output_text?: string;
-  output?: Array<{
-    content?: Array<{text?: string}>;
-  }>;
-};
-
-function extractOpenAiText(response: OpenAiResponse): string | null {
-  if (response.output_text?.trim()) return response.output_text.trim();
-  const joined = response.output
-    ?.flatMap((item) => item.content ?? [])
-    .map((content) => content.text)
-    .filter(Boolean)
-    .join('\n')
-    .trim();
-  return joined || null;
-}
-
 export async function resolveTomorrowTakeaway(input: {
   locale: AppLocale;
   session: EveningResetSession;
@@ -126,9 +108,8 @@ export async function resolveTomorrowTakeaway(input: {
     briefing: input.briefing,
   });
 
-  const apiKey = process.env.OPENAI_API_KEY;
   const model = process.env.OPENAI_MODEL;
-  if (!apiKey || !model) {
+  if (!model) {
     return {text: fallback, source: 'rules'};
   }
 
@@ -156,33 +137,14 @@ export async function resolveTomorrowTakeaway(input: {
     tomorrow_constraint: input.briefing.tomorrow_constraint,
   };
 
-  try {
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      signal: openAiRequestSignal(),
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model,
-        instructions,
-        input: JSON.stringify(payload, null, 2),
-        max_output_tokens: 120,
-      }),
-    });
-
-    if (!response.ok) {
-      return {text: fallback, source: 'rules'};
-    }
-
-    const body = (await response.json()) as OpenAiResponse;
-    const text = extractOpenAiText(body);
-    if (text && isActionableTakeaway(text, input.locale)) {
-      return {text, source: 'openai'};
-    }
-  } catch {
-    /* use fallback */
+  const result = await callOpenAiResponses({
+    model,
+    instructions,
+    input: JSON.stringify(payload, null, 2),
+    maxOutputTokens: 120,
+  });
+  if (result?.text && isActionableTakeaway(result.text, input.locale)) {
+    return {text: result.text, source: 'openai'};
   }
 
   return {text: fallback, source: 'rules'};

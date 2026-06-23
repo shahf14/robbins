@@ -9,11 +9,13 @@
  *   morning_rituals?: MorningRitualSession[],
  * }
  */
+import {dbSyncBodySchema} from '@/lib/api-body-schemas';
 import {requireAdmin} from '@/lib/db/admin-guard';
 import {bulkUpsertCheckins} from '@/lib/db/repositories/checkins';
 import {bulkUpsertMorningRituals} from '@/lib/db/repositories/gratitude';
 import {dateToYMD} from '@/lib/date-utils';
 import {badRequest, serverError, payloadTooLarge} from '@/lib/api-response';
+import {JSON_BODY_LIMITS, readJsonBody} from '@/lib/read-json-body';
 
 type RawCheckin = {
   id?: string;
@@ -80,11 +82,12 @@ export async function POST(request: Request) {
   if (!guard.ok) return guard.response;
 
   let body: ReturnType<typeof normalizeSyncBody>;
-  try {
-    body = normalizeSyncBody(await request.json());
-  } catch {
-    return badRequest('Invalid JSON');
-  }
+  const parsed = await readJsonBody(request, {
+    maxBytes: JSON_BODY_LIMITS.dbSync,
+    schema: dbSyncBodySchema,
+  });
+  if (!parsed.ok) return parsed.response;
+  body = normalizeSyncBody(parsed.data);
 
   const userId = body.user_id ?? guard.user.id;
   if ((body.checkins?.length ?? 0) > 1000 || (body.morning_rituals?.length ?? 0) > 1000) {

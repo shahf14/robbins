@@ -74,6 +74,12 @@ export type AffirmationItem = {
   lastUsedAt: string | null;
   createdAt: string;
   isDefault?: boolean;
+  /** Hidden from ritual library (defaults are hidden, not deleted). */
+  hiddenFromLibrary?: boolean;
+  /** Draft affirmations stay in admin until published. */
+  isDraft?: boolean;
+  /** Created via admin panel (vs in-ritual quick add). */
+  isAdminManaged?: boolean;
   lifeContextInclude?: LifeContextStatus[];
 };
 

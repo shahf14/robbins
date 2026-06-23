@@ -1,3 +1,5 @@
+import {mergeLocalAuthHeaders} from '@/lib/auth/client-headers';
+import {observeAuthResponse} from '@/lib/auth/observe-auth-response';
 import type {AppLocale} from '@/i18n/config';
 import {parseJsonObjectOr} from '@/lib/safe-json';
 import type {
@@ -47,18 +49,43 @@ export function isOnboardingComplete(): boolean {
   return loadOnboardingState().completedAt !== null;
 }
 
-/** Persist server onboarding status into localStorage (server is source of truth). */
+/**
+ * Reconcile local onboarding state with the server (the source of truth) in
+ * BOTH directions. Pass only a confirmed server response — callers must not
+ * invoke this on a network/auth failure (where the server state is unknown).
+ *
+ * - server complete  → record completion locally
+ * - server incomplete → clear a stale local completion (e.g. after a server-side
+ *   reset), so the user isn't left unlocked forever / a new device isn't stuck.
+ */
 export function applyServerOnboardingStatus(status: {
   completedAt: string | null;
   primaryDomain?: LifeDomain | null;
 }) {
-  if (!status.completedAt) return;
   const current = loadOnboardingState();
-  saveOnboardingState({
-    completedAt: status.completedAt,
-    primaryDomain: status.primaryDomain ?? current.primaryDomain,
-    startedAt: current.startedAt ?? status.completedAt,
-  });
+
+  if (status.completedAt) {
+    saveOnboardingState({
+      completedAt: status.completedAt,
+      primaryDomain: status.primaryDomain ?? current.primaryDomain,
+      startedAt: current.startedAt ?? status.completedAt,
+    });
+    return;
+  }
+
+  // Server says not complete. Only act if local disagrees, to avoid needless writes.
+  if (current.completedAt) {
+    saveOnboardingState({
+      completedAt: null,
+      primaryDomain: status.primaryDomain ?? current.primaryDomain,
+      startedAt: current.startedAt,
+    });
+    // saveOnboardingState only emits the change event when completing; emit it
+    // here too so listeners react to the revocation.
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event(ONBOARDING_STATUS_CHANGED_EVENT));
+    }
+  }
 }
 
 export async function fetchServerOnboardingStatus(): Promise<{
@@ -68,7 +95,8 @@ export async function fetchServerOnboardingStatus(): Promise<{
 } | null> {
   if (typeof window === 'undefined') return null;
   try {
-    const res = await fetch('/api/onboarding/status');
+    const res = await fetch('/api/onboarding/status', {headers: mergeLocalAuthHeaders()});
+    observeAuthResponse(res);
     if (!res.ok) return null;
     return (await res.json()) as {
       completedAt: string | null;
@@ -105,7 +133,7 @@ export async function markOnboardingCompleteOnServer(
 ) {
   const res = await fetch('/api/onboarding/complete', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: mergeLocalAuthHeaders(),
     body: JSON.stringify({
       primaryDomain: payload.primaryDomain ?? null,
       locale: payload.locale,

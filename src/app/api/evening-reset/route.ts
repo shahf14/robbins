@@ -1,3 +1,4 @@
+import {eveningResetSessionSchema} from '@/lib/api-body-schemas';
 import {isLocale, type AppLocale} from '@/i18n/config';
 import {requireCurrentUser} from '@/lib/auth/get-current-user';
 import {
@@ -8,6 +9,7 @@ import {briefingFieldsFromSession} from '@/lib/evening-reset/briefing';
 import {resolveTomorrowTakeaway} from '@/lib/evening-reset/tomorrow-takeaway';
 import type {EveningResetSession} from '@/lib/evening-reset-types';
 import {badRequest, serverError} from '@/lib/api-response';
+import {JSON_BODY_LIMITS, readAuthenticatedJsonBody} from '@/lib/read-authenticated-json-body';
 
 export async function GET(request: Request) {
   const current = await requireCurrentUser(request);
@@ -18,19 +20,13 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const current = await requireCurrentUser(request);
-  if (!current.ok) return current.response;
+  const body = await readAuthenticatedJsonBody(request, {
+    maxBytes: JSON_BODY_LIMITS.sessionPost,
+    schema: eveningResetSessionSchema,
+  });
+  if (!body.ok) return body.response;
 
-  let session: EveningResetSession;
-  try {
-    session = (await request.json()) as EveningResetSession;
-  } catch {
-    return badRequest('Invalid JSON body');
-  }
-
-  if (!session?.id || typeof session.id !== 'string') {
-    return badRequest('Invalid evening reset session');
-  }
+  const session = body.data as EveningResetSession;
 
   try {
     const locale = isLocale(session.language) ? session.language : ('he' as AppLocale);
@@ -41,7 +37,7 @@ export async function POST(request: Request) {
       ...briefing,
       tomorrow_takeaway: takeaway.text,
     };
-    saveEveningResetSession(current.user.id, enriched);
+    saveEveningResetSession(body.user.id, enriched);
     return Response.json({ok: true, session: enriched, takeaway_source: takeaway.source});
   } catch {
     return serverError('Could not save evening reset session');

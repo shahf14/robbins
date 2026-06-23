@@ -11,7 +11,7 @@ import {
   updateFormulationSessionAiMetrics,
 } from '@/lib/life-coach/repository';
 import {formulationAiActionSchema} from '@/lib/life-coach/schemas';
-import {jsonError, jsonOk, resolveLocale} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, resolveLocale, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 export async function POST(
   request: Request,
@@ -21,16 +21,9 @@ export async function POST(
   if (!current.ok) return current.response;
 
   const {id} = await params;
-  let body: Record<string, unknown>;
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = formulationAiActionSchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError('Invalid AI action.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, formulationAiActionSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   try {
@@ -42,9 +35,7 @@ export async function POST(
       return jsonError('AI unavailable after crisis screen.', 403);
     }
 
-    const locale = resolveLocale(
-      typeof body.locale === 'string' ? body.locale : session.locale
-    );
+    const locale = resolveLocale(parsed.data.locale ?? session.locale);
     const limited = enforceAiRateLimit({
       action: `formulation:${parsed.data.action}`,
       userId: current.user.id,

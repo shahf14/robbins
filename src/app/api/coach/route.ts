@@ -5,7 +5,7 @@ import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
 import {buildCoachSystemPrompt, buildCoachUserPrompt} from '@/lib/ai-coach/prompts';
 import enMessages from '../../../../messages/en.json';
 import heMessages from '../../../../messages/he.json';
-import {requireCurrentUser} from '@/lib/auth/get-current-user';
+import {readAuthenticatedJsonBody} from '@/lib/read-authenticated-json-body';
 import {getUserBehaviorProfile} from '@/lib/behavior-profile/repository';
 import {
   buildPersonalizedCoachFallback,
@@ -24,7 +24,7 @@ import {
   listRecentReflections,
 } from '@/lib/life-coach/repository';
 import type {CoachingStyle} from '@/lib/user-preferences';
-import {openAiRequestSignal} from '@/lib/life-coach/server';
+import {callOpenAiResponses} from '@/lib/llm/client';
 import {
   buildCoachNextBestAction,
   coachResponseWithActionSchema,
@@ -74,25 +74,17 @@ const messages = {
 };
 
 export async function POST(request: Request) {
-  const current = await requireCurrentUser(request);
-  if (!current.ok) return current.response;
+  const bodyResult = await readAuthenticatedJsonBody<CoachRequest>(request);
+  if (!bodyResult.ok) return bodyResult.response;
 
-  let body: CoachRequest;
-
-  try {
-    body = (await request.json()) as CoachRequest;
-  } catch {
-    return badRequest('Invalid JSON body.');
-  }
-
-  const validation = validateCoachRequest(body);
+  const validation = validateCoachRequest(bodyResult.data as CoachRequest);
 
   if (!validation.ok) {
     return badRequest(validation.error);
   }
 
   const input = validation.value;
-  const userId = current.user.id;
+  const userId = bodyResult.user.id;
   const limited = enforceAiRateLimit({action: 'coach', userId, limit: 30});
   if (limited) return limited;
 
@@ -212,56 +204,35 @@ async function buildOpenAiCoachResponse({
   systemPrompt: string;
   userPrompt: string;
 }): Promise<{response?: string; next_best_action?: import('@/lib/next-best-action').NextBestAction}> {
-  const apiKey = process.env.OPENAI_API_KEY;
   const model = process.env.OPENAI_MODEL;
+  if (!model) {
+    return {};
+  }
 
-  if (!apiKey || !model) {
+  const result = await callOpenAiResponses({
+    model,
+    instructions: systemPrompt,
+    input: userPrompt,
+    maxOutputTokens: 420,
+  });
+
+  if (!result || !result.text) {
     return {};
   }
 
   try {
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      signal: openAiRequestSignal(),
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model,
-        instructions: systemPrompt,
-        input: userPrompt,
-        max_output_tokens: 420,
-      }),
-    });
-
-    if (!response.ok) {
-      return {};
+    const parsed = coachResponseWithActionSchema.safeParse(parseJsonOr<unknown>(result.text, null));
+    if (parsed.success) {
+      return {
+        response: parsed.data.response,
+        next_best_action: parsed.data.next_best_action,
+      };
     }
-
-    const body = (await response.json()) as OpenAiResponse;
-    const text = extractOpenAiText(body);
-
-    if (!text) {
-      return {};
-    }
-
-    try {
-      const parsed = coachResponseWithActionSchema.safeParse(parseJsonOr<unknown>(text, null));
-      if (parsed.success) {
-        return {
-          response: parsed.data.response,
-          next_best_action: parsed.data.next_best_action,
-        };
-      }
-    } catch {
-      /* plain text fallback */
-    }
-
-    return {response: text};
   } catch {
-    return {};
+    /* plain text fallback */
   }
+
+  return {response: result.text};
 }
 
 function validateCoachRequest(body: CoachRequest):
@@ -328,25 +299,3 @@ function normalizeScore(value: unknown) {
     : undefined;
 }
 
-type OpenAiResponse = {
-  output_text?: string;
-  output?: Array<{
-    content?: Array<{
-      text?: string;
-      type?: string;
-    }>;
-  }>;
-};
-
-function extractOpenAiText(response: OpenAiResponse) {
-  if (response.output_text) {
-    return response.output_text.trim();
-  }
-
-  return response.output
-    ?.flatMap((item) => item.content ?? [])
-    .map((content) => content.text)
-    .filter(Boolean)
-    .join('\n')
-    .trim();
-}

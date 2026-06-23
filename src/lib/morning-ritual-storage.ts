@@ -1,3 +1,6 @@
+import {mergeLocalAuthHeaders} from '@/lib/auth/client-headers';
+import {observeAuthResponse} from '@/lib/auth/observe-auth-response';
+import {throwIfNotOk} from '@/lib/http/api-response-error';
 import type {AffirmationItem, IdentityOption, MorningRitualSession} from './morning-ritual-types';
 import type {MorningRitualYesterdayContext} from './morning-ritual/yesterday-context';
 import type {MorningRitualGoalContext} from './morning-ritual/goal-context';
@@ -23,8 +26,9 @@ const SESSIONS_KEY = 'morning_ritual_sessions';
 export async function fetchMorningRitualBootContext(): Promise<MorningRitualBootContext> {
   try {
     const response = await fetch('/api/morning-ritual/yesterday-context', {
-      headers: {'Content-Type': 'application/json'},
+      headers: mergeLocalAuthHeaders(),
     });
+    observeAuthResponse(response);
     if (!response.ok) return {yesterday: null, goal: null, emotionalStage: null, meditationRecommendation: null};
     const data = (await response.json()) as {
       context?: MorningRitualYesterdayContext | null;
@@ -43,18 +47,24 @@ export async function fetchMorningRitualBootContext(): Promise<MorningRitualBoot
   }
 }
 
-export async function fetchSessions(): Promise<MorningRitualSession[]> {
+export async function fetchSessions(options?: {strict?: boolean}): Promise<MorningRitualSession[]> {
   const pending = readLegacyItems<MorningRitualSession>(SESSIONS_KEY) ?? [];
   try {
-    const res = await fetch('/api/morning-rituals', {headers: {'Content-Type': 'application/json'}});
-    if (!res.ok) return pending;
+    const res = await fetch('/api/morning-rituals', {headers: mergeLocalAuthHeaders()});
+    if (options?.strict) {
+      await throwIfNotOk(res);
+    } else {
+      observeAuthResponse(res);
+      if (!res.ok) return pending;
+    }
     const data = (await res.json()) as {sessions?: MorningRitualSession[]};
     if (pending.length > 0) {
       await Promise.all(pending.map(persistSession));
     }
     const remainingPending = readLegacyItems<MorningRitualSession>(SESSIONS_KEY) ?? [];
     return mergeSessions(data.sessions ?? [], remainingPending);
-  } catch {
+  } catch (error) {
+    if (options?.strict) throw error;
     return pending;
   }
 }
@@ -62,7 +72,7 @@ export async function fetchSessions(): Promise<MorningRitualSession[]> {
 async function persistSession(session: MorningRitualSession): Promise<void> {
   const response = await fetch('/api/morning-rituals', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: mergeLocalAuthHeaders(),
     body: JSON.stringify(session),
   });
   if (!response.ok) {
@@ -110,7 +120,7 @@ export async function fetchRitualContent() {
 
   try {
     const response = await fetch('/api/morning-rituals/content', {
-      headers: {'Content-Type': 'application/json'},
+      headers: mergeLocalAuthHeaders(),
     });
     if (response.ok) {
       databaseContent = await response.json() as typeof databaseContent;
@@ -173,7 +183,7 @@ async function persistRitualContent(body: {
 }) {
   const response = await fetch('/api/morning-rituals/content', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: mergeLocalAuthHeaders(),
     body: JSON.stringify(body),
   });
   if (!response.ok) {

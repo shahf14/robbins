@@ -4,7 +4,7 @@ import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
 import {getDailyBabyStepById} from '@/lib/life-coach/repository';
 import {skipRecoverySuggestInputSchema} from '@/lib/life-coach/schemas';
 import {buildSkipRecoveryStep} from '@/lib/life-coach/simplify-step';
-import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import type {AppLocale} from '@/i18n/config';
 
 export async function POST(
@@ -17,18 +17,9 @@ export async function POST(
     return current.response;
   }
 
-  let body: unknown;
-
-  try {
-    body = await request.json();
-  } catch {
-    body = {};
-  }
-
-  const parsed = skipRecoverySuggestInputSchema.safeParse(body);
-
-  if (!parsed.success) {
-    return jsonError('Invalid skip recovery payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, skipRecoverySuggestInputSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const {id} = await params;

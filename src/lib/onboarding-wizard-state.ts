@@ -1,3 +1,4 @@
+import {mergeLocalAuthHeaders} from '@/lib/auth/client-headers';
 import type {
   AvailableTimePerDay,
   IntensityPreference,
@@ -266,7 +267,7 @@ export async function callOnboardingAi(
 ) {
   const res = await fetch('/api/onboarding/ai', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: mergeLocalAuthHeaders(),
     body: JSON.stringify({mode, ...body}),
   });
   if (!res.ok) throw new Error('AI request failed');

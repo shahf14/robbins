@@ -6,6 +6,44 @@ import {clampStepReasoning} from '@/lib/life-coach/step-reasoning';
 import {dateToYMD} from '@/lib/date-utils';
 import {rowToStep} from './repository-mappers';
 import type {DailyBabyStep, StructuredDailyBabyStep} from './types';
+
+export class DailyStepRelationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DailyStepRelationError';
+  }
+}
+
+function validateDailyStepRelation(
+  userId: string,
+  input: {goal_id?: string | null; domain: DailyBabyStep['domain']; is_general?: boolean | null}
+): boolean {
+  const isGeneral = input.is_general ?? !input.goal_id;
+
+  if (isGeneral && input.goal_id) {
+    throw new DailyStepRelationError('General daily steps cannot be linked to a goal.');
+  }
+
+  if (!isGeneral && !input.goal_id) {
+    throw new DailyStepRelationError('Goal-linked daily steps must include goal_id.');
+  }
+
+  if (!input.goal_id) return isGeneral;
+
+  const goal = dbGet<{domain: DailyBabyStep['domain']}>(
+    `SELECT domain FROM goals WHERE id = ? AND user_id = ?`,
+    [input.goal_id, userId]
+  );
+  if (!goal) {
+    throw new DailyStepRelationError('daily_steps.goal_id must reference a goal owned by user_id.');
+  }
+  if (goal.domain !== input.domain) {
+    throw new DailyStepRelationError('daily_steps.domain must match the linked goal domain.');
+  }
+
+  return false;
+}
+
 export async function listDailyBabyStepsForDate(date: string, userId?: string): Promise<DailyBabyStep[]> {
   const rows = dbAll<Record<string, unknown>>(
     userId
@@ -57,6 +95,7 @@ export async function createDailyBabyStep(
     Partial<
       Pick<
         DailyBabyStep,
+        | 'is_general'
         | 'reasoning'
         | 'expected_resistance'
         | 'pain_addressed'
@@ -71,15 +110,16 @@ export async function createDailyBabyStep(
   const now = new Date().toISOString();
   const completedAt = input.status === 'completed' ? now : null;
   const id = randomUUID();
+  const isGeneral = validateDailyStepRelation(userId, input);
 
   dbRun(
     `INSERT INTO daily_steps
       (id, user_id, goal_id, domain, title, description, estimated_minutes,
-       difficulty, scheduled_date, status, generated_by_ai, completed_at,
+       difficulty, scheduled_date, status, generated_by_ai, is_general, completed_at,
        fallback_title, fallback_description, fallback_estimated_minutes,
        reasoning, expected_resistance, pain_addressed, success_signal,
        validation_fallback_applied, created_at, updated_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
       id,
       userId,
@@ -92,6 +132,7 @@ export async function createDailyBabyStep(
       input.scheduled_date,
       input.status,
       input.generated_by_ai ? 1 : 0,
+      isGeneral ? 1 : 0,
       completedAt,
       input.fallback_title ?? null,
       input.fallback_description ?? null,
@@ -116,7 +157,8 @@ export async function insertDailyBabySteps(
   date: string,
   steps: StructuredDailyBabyStep[],
   locale: import('@/i18n/config').AppLocale = 'he',
-  coachTone: import('@/lib/user-preferences').CoachingStyle | null = null
+  coachTone: import('@/lib/user-preferences').CoachingStyle | null = null,
+  options?: {domainScope?: import('@/lib/life-coach/types').LifeDomain}
 ): Promise<DailyBabyStep[]> {
   if (steps.length === 0) return [];
   const now = new Date().toISOString();
@@ -124,30 +166,38 @@ export async function insertDailyBabySteps(
   const stmt = db.prepare(
     `INSERT OR REPLACE INTO daily_steps
       (id, user_id, goal_id, domain, title, description, estimated_minutes,
-       difficulty, scheduled_date, status, generated_by_ai,
+       difficulty, scheduled_date, status, generated_by_ai, is_general,
        fallback_title, fallback_description, fallback_estimated_minutes,
        reasoning, expected_resistance, pain_addressed, success_signal, validation_fallback_applied,
        coach_tone, weekly_focus_id, created_at, updated_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   );
-  // Prevent duplicates: clear previously AI-generated, still-pending steps for
-  // this same date before regenerating. User-added (generated_by_ai = 0) and
-  // already-completed steps are preserved.
-  const clearStmt = db.prepare(
-    `DELETE FROM daily_steps
-     WHERE user_id = ? AND scheduled_date = ? AND generated_by_ai = 1 AND status = 'pending'`
-  );
+  const clearStmt = options?.domainScope
+    ? db.prepare(
+        `DELETE FROM daily_steps
+         WHERE user_id = ? AND scheduled_date = ? AND generated_by_ai = 1 AND status = 'pending'
+           AND domain = ?`
+      )
+    : db.prepare(
+        `DELETE FROM daily_steps
+         WHERE user_id = ? AND scheduled_date = ? AND generated_by_ai = 1 AND status = 'pending'`
+      );
 
   const inserted: DailyBabyStep[] = [];
   db.transaction((items: StructuredDailyBabyStep[]) => {
-    clearStmt.run(userId, date);
+    if (options?.domainScope) {
+      clearStmt.run(userId, date, options.domainScope);
+    } else {
+      clearStmt.run(userId, date);
+    }
     for (const raw of items) {
       const s = ensurePlanBFields(raw, locale);
+      const isGeneral = validateDailyStepRelation(userId, s);
       const id = randomUUID();
       stmt.run(
         id, userId, s.goal_id ?? null, s.domain,
         s.title, s.description ?? '', s.estimated_minutes,
-        s.difficulty, date, 'pending', 1,
+        s.difficulty, date, 'pending', 1, isGeneral ? 1 : 0,
         s.fallback_title ?? null,
         s.fallback_description ?? null,
         s.fallback_estimated_minutes ?? 2,
@@ -162,6 +212,7 @@ export async function insertDailyBabySteps(
       );
       inserted.push({
         id, user_id: userId, goal_id: s.goal_id ?? null,
+        is_general: isGeneral,
         domain: s.domain, title: s.title, description: s.description ?? '',
         estimated_minutes: s.estimated_minutes, difficulty: s.difficulty,
         scheduled_date: date, status: 'pending', generated_by_ai: true,

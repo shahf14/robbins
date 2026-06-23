@@ -3,6 +3,8 @@ import {dbAll, dbGet, dbRun, getDb} from '@/lib/db/sqlite';
 import {refreshUserBehaviorProfile} from '@/lib/behavior-profile/repository';
 import {upsertWeeklyReviewProjection} from '@/lib/db/repositories/insights';
 import {parseJsonObjectOr} from '@/lib/safe-json';
+import {saveReflectionAnalysis} from '@/lib/reflection-analysis/repository';
+import type {ReflectionAnalysis} from '@/lib/reflection-analysis/types';
 import {rowToInsight, rowToReflection} from './repository-mappers';
 import type {AiCoachingInsight, DailyReflection} from './types';
 export async function upsertDailyReflection(
@@ -101,10 +103,18 @@ export async function listRecentReflections(limit = 14, userId?: string): Promis
 // AI insights
 // ---------------------------------------------------------------------------
 
-export async function createAiInsight(
+/**
+ * Synchronous core of {@link createAiInsight}. Because better-sqlite3
+ * transactions must be synchronous, callers that need to insert an insight as
+ * part of a larger transaction (e.g. reflection analysis) must use this rather
+ * than the async wrapper, whose rejected promises would not roll the outer
+ * transaction back. Safe to nest — better-sqlite3 turns the inner
+ * `.transaction()` into a savepoint.
+ */
+export function createAiInsightSync(
   userId: string,
   input: Omit<AiCoachingInsight, 'id' | 'user_id' | 'created_at'>
-): Promise<AiCoachingInsight> {
+): AiCoachingInsight {
   const now = new Date().toISOString();
   const id = randomUUID();
   const insight = {id, user_id: userId, ...input, created_at: now};
@@ -122,6 +132,47 @@ export async function createAiInsight(
     upsertWeeklyReviewProjection(insight);
   })();
   return insight;
+}
+
+export async function createAiInsight(
+  userId: string,
+  input: Omit<AiCoachingInsight, 'id' | 'user_id' | 'created_at'>
+): Promise<AiCoachingInsight> {
+  return createAiInsightSync(userId, input);
+}
+
+/**
+ * Persist a reflection analysis together with its derived pattern/recommendation
+ * insights in a single transaction. Previously these three writes ran under
+ * `Promise.all` (not a transaction), so a failure on the second/third write left
+ * the analysis row and insight rows inconsistent.
+ */
+export function saveReflectionAnalysisWithInsights(
+  userId: string,
+  date: string,
+  analysis: ReflectionAnalysis,
+  metrics: {
+    tokens_used?: number | null;
+    generation_duration_ms?: number | null;
+    model_used?: string | null;
+  } = {}
+): void {
+  getDb().transaction(() => {
+    saveReflectionAnalysis(userId, date, analysis);
+    createAiInsightSync(userId, {
+      insight_type: 'pattern',
+      content: analysis.patterns.join('\n'),
+      metadata: analysis,
+      tokens_used: metrics.tokens_used,
+      generation_duration_ms: metrics.generation_duration_ms,
+      model_used: metrics.model_used,
+    });
+    createAiInsightSync(userId, {
+      insight_type: 'recommendation',
+      content: analysis.recommendations.join('\n'),
+      metadata: analysis,
+    });
+  })();
 }
 
 export async function listInsights(

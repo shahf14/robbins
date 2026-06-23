@@ -1,6 +1,6 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {upsertDailyReflection} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {reflectionCreateInputSchema} from '@/lib/life-coach/schemas';
 
 export async function POST(request: Request) {
@@ -10,18 +10,9 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  let body: unknown;
-
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = reflectionCreateInputSchema.safeParse(body);
-
-  if (!parsed.success) {
-    return jsonError('Invalid reflection payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, reflectionCreateInputSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   try {

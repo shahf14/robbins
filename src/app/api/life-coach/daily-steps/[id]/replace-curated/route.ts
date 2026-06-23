@@ -6,7 +6,7 @@ import {
 } from '@/lib/life-coach/repository';
 import {curatedTaskToStructuredDailyStep, curatedIdFromStepReasoning, getCuratedDailyTaskOption} from '@/lib/life-coach/curated-daily-tasks';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
-import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 const replaceCuratedSchema = z.object({
   replacement_task_id: z.string().trim().min(1),
@@ -20,16 +20,9 @@ export async function POST(
   const current = await requireLifeCoachAccess(request);
   if (!current.ok) return current.response;
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = replaceCuratedSchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError('Invalid curated replacement payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, replaceCuratedSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const {id} = await params;

@@ -5,9 +5,11 @@ import {useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 import type {AiCoachingInsight, DailyBabyStep, LifeDomain} from '@/lib/life-coach/types';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
+import {resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
 import {todayYMD} from '@/lib/date-utils';
 import {AIInsightCard} from '../ai-insight-card';
 import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microcopy';
+import {useToast} from '@/components/feedback/toast-provider';
 import {EnhancedWeeklyReview} from './enhanced-weekly-review';
 
 type Props = {
@@ -28,6 +30,7 @@ export function DomainInsightsTabContent({
   onRefresh,
 }: Props) {
   const t = useTranslations();
+  const toast = useToast();
   const [busy, setBusy] = useState(false);
 
   return (
@@ -69,6 +72,8 @@ export function DomainInsightsTabContent({
                       blocker_reason: null,
                     });
                     await onRefresh();
+                  } catch (error) {
+                    toast.error(resolveLifeCoachErrorMessage(error, t));
                   } finally {
                     setBusy(false);
                   }

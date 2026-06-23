@@ -1,8 +1,9 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
+import type {DomainDetailTab} from '@/lib/life-coach/domain-detail-url-state';
 
-export type DomainDetailTab = 'today' | 'goal' | 'progress' | 'insights';
+export type {DomainDetailTab};
 
 const TABS: DomainDetailTab[] = ['today', 'goal', 'progress', 'insights'];
 

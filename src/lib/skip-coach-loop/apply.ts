@@ -72,6 +72,7 @@ export function applySkipCoachToSteps(
                 scheduled_date: '',
                 status: 'pending',
                 generated_by_ai: true,
+                is_general: step.is_general ?? !step.goal_id,
                 created_at: '',
                 updated_at: '',
               },

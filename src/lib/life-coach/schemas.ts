@@ -193,6 +193,7 @@ const structuredDailyBabyStepSchema = z.object({
 });
 
 export const goalBundleCreateInputSchema = z.object({
+  idempotency_key: z.string().uuid().optional(),
   goal: goalCreateInputSchema,
   milestones: z.array(structuredGoalMilestoneSchema).max(12).default([]),
   initial_steps: z.array(structuredDailyBabyStepSchema.omit({goal_id: true})).max(6).default([]),
@@ -257,6 +258,8 @@ export type AiStructuredGoalResponse = z.infer<typeof aiStructuredGoalResponseSc
 export const aiGenerateDailyStepsRequestSchema = z.object({
   date: requiredIsoDateSchema.optional(),
   force: z.boolean().optional(),
+  /** When set, only (re)generate pending AI steps for this life domain. */
+  domain: lifeDomainSchema.optional(),
   /** After formulation completion — prepend a motivation-tuned first win step. */
   include_first_win: z.boolean().optional(),
 });

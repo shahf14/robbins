@@ -11,7 +11,7 @@ type KnipConfig = {
 const config: KnipConfig = {
   next: {
     entry: [
-      'src/middleware.ts',
+      'src/proxy.ts',
       'next.config.ts',
       'src/i18n/request.ts',
       'src/i18n/navigation.ts',

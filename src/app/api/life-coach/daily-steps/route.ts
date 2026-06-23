@@ -2,6 +2,7 @@ import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {z} from 'zod';
 import {
   createDailyBabyStep,
+  DailyStepRelationError,
   listDailyBabyStepsForDate,
   listDailyBabyStepsForRange,
 } from '@/lib/life-coach/repository';
@@ -11,7 +12,7 @@ import {
   dailyStepStatusSchema,
   lifeDomainSchema,
 } from '@/lib/life-coach/schemas';
-import {isIsoDate, jsonError, jsonOk, startOfToday} from '@/lib/life-coach/server';
+import {isIsoDate, jsonError, jsonOk, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 const dailyStepCreateSchema = z.object({
   goal_id: z.string().uuid().nullable().optional(),
@@ -23,6 +24,7 @@ const dailyStepCreateSchema = z.object({
   scheduled_date: z.string().date(),
   status: dailyStepStatusSchema.optional().default('pending'),
   generated_by_ai: z.boolean().optional().default(false),
+  is_general: z.boolean().optional(),
 });
 
 export async function GET(request: Request) {
@@ -73,16 +75,9 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = dailyStepCreateSchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError('Invalid daily step payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, dailyStepCreateSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   try {
@@ -92,6 +87,9 @@ export async function POST(request: Request) {
     });
     return jsonOk({step}, 201);
   } catch (error) {
+    if (error instanceof DailyStepRelationError) {
+      return jsonError(error.message, 400);
+    }
     return jsonError('Could not create daily step.', 500, String(error));
   }
 }

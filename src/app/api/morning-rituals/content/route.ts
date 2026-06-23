@@ -5,7 +5,7 @@ import {
   replaceIdentities,
 } from '@/lib/db/repositories/ritual-content';
 import type {AffirmationItem, IdentityOption} from '@/lib/morning-ritual-types';
-import {badRequest} from '@/lib/api-response';
+import {readAuthenticatedJsonBody} from '@/lib/read-authenticated-json-body';
 
 export async function GET(request: Request) {
   const current = await requireCurrentUser(request);
@@ -15,21 +15,19 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const current = await requireCurrentUser(request);
-  if (!current.ok) return current.response;
+  const bodyResult = await readAuthenticatedJsonBody(request);
+  if (!bodyResult.ok) return bodyResult.response;
 
-  let body: {affirmations?: AffirmationItem[]; identities?: IdentityOption[]};
-  try {
-    body = (await request.json()) as typeof body;
-  } catch {
-    return badRequest('Invalid JSON body');
-  }
+  const body = (bodyResult.data ?? {}) as {
+    affirmations?: AffirmationItem[];
+    identities?: IdentityOption[];
+  };
 
   if (Array.isArray(body.affirmations)) {
-    replaceAffirmations(current.user.id, body.affirmations);
+    replaceAffirmations(bodyResult.user.id, body.affirmations);
   }
   if (Array.isArray(body.identities)) {
-    replaceIdentities(current.user.id, body.identities);
+    replaceIdentities(bodyResult.user.id, body.identities);
   }
 
   return Response.json({ok: true});

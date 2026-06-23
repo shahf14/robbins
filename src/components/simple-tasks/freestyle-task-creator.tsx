@@ -2,7 +2,9 @@
 
 import {useEffect, useState} from 'react';
 import {useTranslations} from 'next-intl';
+import {useToast} from '@/components/feedback/toast-provider';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
+import {resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
 import type {LifeDomain} from '@/lib/life-coach/types';
 
 const TOTAL_STEPS = 3;
@@ -80,6 +82,8 @@ function FreestyleWizard({
   onCancel: () => void;
 }) {
   const t = useTranslations('simpleTasks');
+  const tFeedback = useTranslations();
+  const toast = useToast();
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState('');
   const [timesPerDay, setTimesPerDay] = useState(1);
@@ -103,6 +107,8 @@ function FreestyleWizard({
         success_metric: t('successMetric', {times: timesPerDay, days: targetDays}),
       });
       await onCreated();
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, tFeedback));
     } finally {
       setSaving(false);
     }

@@ -13,6 +13,8 @@ type Props = {
   dimensions: FormulationDimensions | null;
   riskLevel: FormulationApproved['risk_screen']['level'];
   riskAction: FormulationApproved['risk_screen']['action'];
+  drafting?: boolean;
+  loadError?: string | null;
   onLoadDraft: () => Promise<FormulationApproved | null>;
   onSubmit: (approved: FormulationApproved, userEdited: boolean) => void;
 };
@@ -24,6 +26,8 @@ export function FormulationEditStep({
   dimensions,
   riskLevel,
   riskAction,
+  drafting = false,
+  loadError,
   onLoadDraft,
   onSubmit,
 }: Props) {
@@ -34,7 +38,9 @@ export function FormulationEditStep({
   const [strengths, setStrengths] = useState('');
   const [uncertainties, setUncertainties] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const [loadStarted, setLoadStarted] = useState(Boolean(draft));
+  const [draftFailed, setDraftFailed] = useState(false);
+  const [manualMode, setManualMode] = useState(false);
 
   const applyDraft = useCallback((d: FormulationApproved) => {
     setCentral(d.presenting_concern_user_words);
@@ -44,26 +50,45 @@ export function FormulationEditStep({
     setUncertainties(joinCommaList(d.uncertainties));
   }, []);
 
+  const runDraftLoad = useCallback(async () => {
+    setAiLoading(true);
+    setDraftFailed(false);
+    try {
+      const loadedDraft = await onLoadDraft();
+      if (loadedDraft) {
+        applyDraft(loadedDraft);
+        setDraftFailed(false);
+        return true;
+      }
+      setDraftFailed(true);
+      return false;
+    } catch {
+      setDraftFailed(true);
+      return false;
+    } finally {
+      setAiLoading(false);
+    }
+  }, [applyDraft, onLoadDraft]);
+
   useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      if (draft) {
+    if (draft) {
+      const timeout = window.setTimeout(() => {
         applyDraft(draft);
-        setLoaded(true);
-        return;
-      }
-      if (!loaded) {
-        setAiLoading(true);
-        onLoadDraft()
-          .then((d) => {
-            if (d) applyDraft(d);
-            setLoaded(true);
-          })
-          .catch(() => { setLoaded(true); })
-          .finally(() => setAiLoading(false));
-      }
+        setLoadStarted(true);
+        setDraftFailed(false);
+      }, 0);
+      return () => window.clearTimeout(timeout);
+    }
+    if (manualMode || loadStarted) return;
+
+    const timeout = window.setTimeout(() => {
+      setLoadStarted(true);
+      void runDraftLoad();
     }, 0);
     return () => window.clearTimeout(timeout);
-  }, [applyDraft, draft, loaded, onLoadDraft]);
+  }, [applyDraft, draft, loadStarted, manualMode, runDraftLoad]);
+
+  const generating = drafting || aiLoading;
 
   const [validationWarning, setValidationWarning] = useState<string | null>(null);
 
@@ -101,10 +126,50 @@ export function FormulationEditStep({
     onSubmit(approved, true);
   }
 
+  if (generating && !draft && !manualMode) {
+    return (
+      <div className="grid gap-4">
+        <p className="text-sm txt-soft">{t('progressState.draftFormulation')}</p>
+        <p className="text-xs txt-muted">{t('progressState.draftFormulationHint')}</p>
+      </div>
+    );
+  }
+
+  if (draftFailed && !draft && !manualMode) {
+    return (
+      <div className="grid gap-4">
+        <p className="text-sm text-red-300" role="alert">
+          {loadError ?? t('formulationEdit.loadFailed')}
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <button
+            className="focus-ring btn-primary"
+            type="button"
+            disabled={generating}
+            onClick={() => void runDraftLoad()}
+          >
+            {t('formulationEdit.retry')}
+          </button>
+          <button
+            className="focus-ring btn-secondary"
+            type="button"
+            disabled={generating}
+            onClick={() => {
+              setDraftFailed(false);
+              setManualMode(true);
+            }}
+          >
+            {t('formulationEdit.fillManually')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-6">
       <p className="text-sm text-[var(--muted)]">{t('formulationEdit.subtitle')}</p>
-      <div aria-live="polite">{aiLoading && <p className="text-sm txt-muted">{t('aiWorking')}</p>}</div>
+      <div aria-live="polite">{generating && <p className="text-sm txt-muted">{t('aiWorking')}</p>}</div>
 
       <FormulationInsightsPanel session={session} />
 
@@ -148,12 +213,25 @@ export function FormulationEditStep({
       <button
         className="focus-ring btn-primary"
         type="button"
-        disabled={loading || aiLoading || !central.trim()}
-        aria-busy={loading || aiLoading}
+        disabled={loading || generating || !central.trim()}
+        aria-busy={loading || generating}
         onClick={validateAndSubmit}
       >
         {loading ? t('saving') : t('formulationEdit.approve')}
       </button>
+      {!draft && manualMode ? (
+        <button
+          className="focus-ring btn-secondary"
+          type="button"
+          disabled={generating}
+          onClick={() => {
+            setManualMode(false);
+            setDraftFailed(true);
+          }}
+        >
+          {t('formulationEdit.retryDraft')}
+        </button>
+      ) : null}
     </div>
   );
 }

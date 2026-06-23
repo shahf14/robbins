@@ -13,6 +13,22 @@ const healthUnits = {
   specific_illness: 'severity_score_1_10',
 } as const;
 
+function ensureDomainAssessmentForGoal(userId: string, domain: string): void {
+  const db = getDb();
+  const existing = db
+    .prepare(`SELECT id FROM domain_assessments WHERE user_id = ? AND domain = ?`)
+    .get(userId, domain);
+  if (existing) return;
+
+  const now = new Date().toISOString();
+  db.prepare(
+    `INSERT INTO domain_assessments
+      (id, user_id, domain, current_score, current_state, desired_state,
+       main_blockers, available_time_per_day, intensity_preference, created_at, updated_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+  ).run(randomUUID(), userId, domain, 5, '', '', '[]', 10, 'balanced', now, now);
+}
+
 function extractHealthFields(goal: Goal) {
   const hc = goal.health_context;
   if (!hc) return {};
@@ -70,7 +86,18 @@ export function rowToMilestone(row: Record<string, unknown>): Milestone {
   };
 }
 
-export function upsertGoal(goal: Goal, domainCategory = goal.domain_category ?? undefined): void {
+export function findGoalByCreateIdempotencyKey(userId: string, key: string): Goal | null {
+  const row = getDb()
+    .prepare(`SELECT * FROM goals WHERE user_id = ? AND create_idempotency_key = ?`)
+    .get(userId, key) as Record<string, unknown> | undefined;
+  return row ? rowToGoal(row) : null;
+}
+
+export function upsertGoal(
+  goal: Goal,
+  domainCategory = goal.domain_category ?? undefined,
+  createIdempotencyKey: string | null = null
+): void {
   const db = getDb();
   const hf = extractHealthFields(goal);
   const insertGoal = db.prepare(
@@ -81,8 +108,8 @@ export function upsertGoal(goal: Goal, domainCategory = goal.domain_category ?? 
        health_category, health_baseline, health_target, health_unit,
        health_weight_dir, health_anchor_habit, health_anchor_time,
        health_why_important, health_why_now, health_what_lost,
-       plan_source, health_context_json, created_at, updated_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+       plan_source, health_context_json, create_idempotency_key, created_at, updated_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
      ON CONFLICT(id) DO UPDATE SET
        user_id = excluded.user_id,
        domain = excluded.domain,
@@ -126,8 +153,11 @@ export function upsertGoal(goal: Goal, domainCategory = goal.domain_category ?? 
     hf.health_why_now ?? null, hf.health_what_lost ?? null,
     hf.plan_source ?? null,
     goal.health_context ? JSON.stringify(goal.health_context) : null,
+    createIdempotencyKey,
     goal.created_at, goal.updated_at
   );
+
+  ensureDomainAssessmentForGoal(goal.user_id, goal.domain);
 
   // Upsert health phases from execution_plan
   const plan = goal.health_context?.execution_plan;
@@ -229,6 +259,7 @@ export function createFreestyleGoal(
       goalId, userId, input.domain, title, '',
       input.success_metric ?? '', null, timesPerDay, targetDays, now, now
     );
+    ensureDomainAssessmentForGoal(userId, input.domain);
     for (let day = 0; day < targetDays; day++) {
       const date = new Date(today);
       date.setDate(date.getDate() + day);

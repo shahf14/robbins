@@ -11,6 +11,7 @@ import {
 } from '@/lib/life-coach/curated-daily-tasks';
 import {resolveCuratedErrorMessage} from '@/lib/life-coach/curated-api-errors';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
+import {resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
 import {isPlanBActive} from '@/lib/life-coach/plan-b';
 import {buildSkipRecoveryStep, buildSimplifiedStep} from '@/lib/life-coach/simplify-step';
 import {deriveFitContextFromSteps} from '@/lib/life-coach/step-fit-score';
@@ -867,6 +868,7 @@ export function DailyBabyStepsList({
                         ...(reattempt ? {reattempt_same_day: true} : {}),
                         actual_minutes: step.estimated_minutes,
                       });
+                      await onRefresh?.();
                       const identityMoment = pickIdentityMoment({
                         status: 'completed',
                         reattempt,
@@ -886,6 +888,8 @@ export function DailyBabyStepsList({
                       toast.success(reward);
                       setMinutesPromptId(step.id);
                       setActualMinutes(String(step.estimated_minutes));
+                    } catch (error) {
+                      toast.error(resolveLifeCoachErrorMessage(error, t));
                     } finally {
                       setLoadingId(null);
                     }
@@ -1038,45 +1042,45 @@ export function DailyBabyStepsList({
             return;
           }
 
-          if (activeAction === 'skipped') {
+          const step = activeStep;
+          const action = activeAction;
+
+          if (action === 'skipped') {
             recordStepSkip(
-              activeStep,
+              step,
               input.blocker_reason as ReflectionBlockerReason | null
             );
-            skipRecoveryBlockersRef.current[activeStep.id] =
+            skipRecoveryBlockersRef.current[step.id] =
               input.blocker_reason as ReflectionBlockerReason | null;
-            setSkipRecoveryHighlightId(activeStep.id);
+            setSkipRecoveryHighlightId(step.id);
           }
 
-          await onUpdateStatus(
-            activeStep.id,
-            activeAction,
-            {
-              reflection_text: input.reflection_text,
-              blocker_reason: input.blocker_reason,
-              blocker_category: input.blocker_category,
-              writing_duration_sec: input.writing_duration_sec,
-              reflection_word_count: input.reflection_word_count,
-              self_blame_language: input.self_blame_language,
-            }
-          );
-          if (activeAction === 'skipped' && input.coach_action) {
-            await lifeCoachApi.saveSkipCoachAdjustment({
-              skip_date: activeStep.scheduled_date,
-              step_id: activeStep.id,
-              goal_id: activeStep.goal_id,
-              blocker_reason: input.blocker_reason,
-              coach_action: input.coach_action,
-              locale,
-            });
-            toast.success(
-              resolveComebackMessage(comebackMessaging, 'skip_coach_saved', locale)
+          try {
+            await onUpdateStatus(
+              step.id,
+              action,
+              {
+                reflection_text: input.reflection_text,
+                blocker_reason: input.blocker_reason,
+                blocker_category: input.blocker_category,
+                writing_duration_sec: input.writing_duration_sec,
+                reflection_word_count: input.reflection_word_count,
+                self_blame_language: input.self_blame_language,
+              }
             );
-          } else if (activeAction === 'skipped') {
+          } catch (error) {
+            toast.error(resolveLifeCoachErrorMessage(error, t));
+            throw error;
+          }
+
+          setActiveStep(null);
+
+          if (action === 'skipped') {
             toast.success(resolveComebackMessage(comebackMessaging, 'skip_toast', locale));
-          } else if (activeAction === 'partial') {
+          } else if (action === 'partial') {
             toast.success(resolveComebackMessage(comebackMessaging, 'partial_toast', locale));
           }
+
           const loot = generateReflectionLoot({
             blocker_reason: input.blocker_reason,
             reflection_text: input.reflection_text,
@@ -1084,31 +1088,54 @@ export function DailyBabyStepsList({
             completedToday: completedToday.length,
           });
           setReflectionLoot(loot);
-          lifeCoachApi
-            .saveGamificationUnlock({kind: 'reflection_loot', reward_key: loot})
-            .catch(() => {});
-          setActiveStep(null);
-          if (activeAction === 'skipped') {
-            const personalized = resolveComebackMessage(comebackMessaging, 'skip_primary', locale);
-            setSkipCoachMessage(personalized);
-            setSkipCoachLoading(true);
-            void (async () => {
-              const text = await fetchCoachMomentSafe(
-                buildCoachPayloadFromSkip({
-                  locale,
-                  stepTitle: activeStep.title,
+
+          void (async () => {
+            if (action === 'skipped' && input.coach_action) {
+              try {
+                await lifeCoachApi.saveSkipCoachAdjustment({
+                  skip_date: step.scheduled_date,
+                  step_id: step.id,
+                  goal_id: step.goal_id,
                   blocker_reason: input.blocker_reason,
-                  reflection_text: input.reflection_text,
-                  energy,
-                })
-              );
-              setSkipCoachLoading(false);
-              if (text) {
-                setSkipCoachMessage(text);
+                  coach_action: input.coach_action,
+                  locale,
+                });
+                toast.success(
+                  resolveComebackMessage(comebackMessaging, 'skip_coach_saved', locale)
+                );
+              } catch (error) {
+                toast.error(resolveLifeCoachErrorMessage(error, t));
               }
-            })();
-          }
-          await onRefresh?.();
+            }
+
+            lifeCoachApi
+              .saveGamificationUnlock({kind: 'reflection_loot', reward_key: loot})
+              .catch(() => {});
+
+            if (action === 'skipped') {
+              const personalized = resolveComebackMessage(comebackMessaging, 'skip_primary', locale);
+              setSkipCoachMessage(personalized);
+              setSkipCoachLoading(true);
+              try {
+                const text = await fetchCoachMomentSafe(
+                  buildCoachPayloadFromSkip({
+                    locale,
+                    stepTitle: step.title,
+                    blocker_reason: input.blocker_reason,
+                    reflection_text: input.reflection_text,
+                    energy,
+                  })
+                );
+                if (text) {
+                  setSkipCoachMessage(text);
+                }
+              } catch {
+                /* coach moment is optional */
+              } finally {
+                setSkipCoachLoading(false);
+              }
+            }
+          })();
         }}
       />
     </>

@@ -2,6 +2,20 @@ import {dateToYMD} from '@/lib/date-utils';
 import {NextResponse} from 'next/server';
 import {isLocale, type AppLocale} from '@/i18n/config';
 import {getLifeCoachCronSecret} from '@/lib/life-coach/env';
+import {JSON_BODY_LIMITS, readJsonBody} from '@/lib/read-json-body';
+import type {z} from 'zod';
+
+export {JSON_BODY_LIMITS, readJsonBody};
+
+export async function parseLifeCoachJsonBody<T = unknown>(
+  request: Request,
+  schema?: z.ZodType<T>
+) {
+  return readJsonBody(request, {
+    maxBytes: JSON_BODY_LIMITS.defaultApi,
+    schema,
+  });
+}
 
 export function jsonError(message: string, status = 400, details?: unknown) {
   const payload: {error: string; details?: unknown} = {error: message};
@@ -30,10 +44,6 @@ export function verifyCronRequest(request: Request) {
   return null;
 }
 
-function localDateStr(d: Date = new Date()): string {
-  return dateToYMD(d);
-}
-
 export function isIsoDate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const parsed = new Date(`${value}T00:00:00Z`);
@@ -41,17 +51,17 @@ export function isIsoDate(value: string): boolean {
 }
 
 export function startOfToday() {
-  return localDateStr();
+  return dateToYMD(new Date());
 }
 
 export function currentWeekWindow() {
   const today = new Date();
-  const end = localDateStr(today);
+  const end = dateToYMD(today);
   const start = new Date(today);
   start.setDate(start.getDate() - 6);
 
   return {
-    start: localDateStr(start),
+    start: dateToYMD(start),
     end,
   };
 }

@@ -31,7 +31,7 @@ import {
   buildMicroGoalUserPrompt,
   type MicroGoalSuggestion,
 } from './prompts';
-import {openAiRequestSignal} from '@/lib/life-coach/server';
+import {callOpenAiResponses} from '@/lib/llm/client';
 
 const explorationQuestionSchema = z.object({
   id: z.string().regex(/^q\d{2}$/),
@@ -101,24 +101,6 @@ type AiCallMetrics = {
   model_used: string | null;
 };
 
-type OpenAiResponse = {
-  output_text?: string;
-  output?: Array<{content?: Array<{text?: string}>}>;
-  usage?: {total_tokens?: number};
-};
-
-function extractOpenAiText(response: OpenAiResponse): string {
-  if (response.output_text) return response.output_text.trim();
-  return (
-    response.output
-      ?.flatMap((item) => item.content ?? [])
-      .map((c) => c.text)
-      .filter(Boolean)
-      .join('\n')
-      .trim() ?? ''
-  );
-}
-
 /** Normalize LLM ids (q1, Q01) → q01…q15 */
 function normalizeExplorationQuestionIds(
   questions: LlmExplorationQuestion[]
@@ -164,51 +146,29 @@ async function requestJsonFromLlm<T>({
   model?: string;
 }): Promise<{data: T | null; metrics: AiCallMetrics}> {
   const nullMetrics: AiCallMetrics = {tokens_used: null, generation_duration_ms: null, model_used: null};
-  const apiKey = process.env.OPENAI_API_KEY;
   const model = modelOverride ?? modelConfig.structuring;
 
-  if (!apiKey) {
+  const result = await callOpenAiResponses({
+    model,
+    instructions: systemPrompt,
+    input: userPrompt,
+    maxOutputTokens,
+    jsonObject,
+  });
+  if (!result) {
     return {data: null, metrics: nullMetrics};
   }
 
-  const startMs = Date.now();
-  try {
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      signal: openAiRequestSignal(),
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model,
-        instructions: systemPrompt,
-        input: userPrompt,
-        max_output_tokens: maxOutputTokens,
-        ...(jsonObject ? {text: {format: {type: 'json_object'}}} : {}),
-      }),
-    });
+  const parsed = result.text ? parseJsonFromText(result.text, schema) : null;
 
-    const durationMs = Date.now() - startMs;
-    if (!response.ok) {
-      return {data: null, metrics: nullMetrics};
-    }
-
-    const body = (await response.json()) as OpenAiResponse;
-    const text = extractOpenAiText(body);
-    const parsed = text ? parseJsonFromText(text, schema) : null;
-
-    return {
-      data: parsed,
-      metrics: {
-        tokens_used: body.usage?.total_tokens ?? null,
-        generation_duration_ms: durationMs,
-        model_used: model,
-      },
-    };
-  } catch {
-    return {data: null, metrics: nullMetrics};
-  }
+  return {
+    data: parsed,
+    metrics: {
+      tokens_used: result.tokensUsed,
+      generation_duration_ms: result.durationMs,
+      model_used: model,
+    },
+  };
 }
 
 async function requestJson<T>({

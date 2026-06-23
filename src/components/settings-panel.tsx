@@ -25,11 +25,14 @@ import {
   type FamilyStatus,
   type PhysicalConsideration,
 } from '@/lib/user-preferences';
-import {syncSchedulePrefsToServer} from '@/lib/sync-schedule-to-server';
+import {syncUserPreferencesToServer} from '@/lib/sync-schedule-to-server';
+import {resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
+import type {UserPreferences} from '@/lib/user-preferences';
 import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microcopy';
 import {LanguageSwitcher} from './language-switcher';
 import {ThemeToggle} from './theme-toggle';
 import {ScheduleReminderSettings} from './schedule-reminder-settings';
+import {LocalAuthTokenSettings} from './settings/local-auth-token-settings';
 
 export function SettingsPanel() {
   const t = useTranslations();
@@ -48,11 +51,15 @@ export function SettingsPanel() {
   const [sleepTime, setSleepTime] = useState('22:30');
   const [familyStatus, setFamilyStatus] = useState<FamilyStatus | ''>('');
   const [physical, setPhysical] = useState<PhysicalConsideration[]>([]);
-  const [saveState, setSaveState] = useState<'idle' | 'saved'>('idle');
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [saveMessage, setSaveMessage] = useState('');
   const [lifeContextChanged, setLifeContextChanged] = useState(false);
   const [regeneratingSteps, setRegeneratingSteps] = useState(false);
+  const [hasPendingSyncPrefs, setHasPendingSyncPrefs] = useState(false);
   const saveResetTimeoutRef = useRef<number | null>(null);
+  const savingRef = useRef(false);
+  const pendingSyncPrefsRef = useRef<UserPreferences | null>(null);
+  const pendingLifeContextImpactRef = useRef(false);
   useEffect(() => {
     let cancelled = false;
     const timeout = window.setTimeout(() => {
@@ -107,8 +114,64 @@ export function SettingsPanel() {
     }, 2800);
   }
 
-  function savePreferences(event?: FormEvent<HTMLFormElement>) {
+  async function syncSavedPreferences(
+    saved: UserPreferences,
+    contextChanged: boolean
+  ): Promise<void> {
+    pendingSyncPrefsRef.current = saved;
+    setHasPendingSyncPrefs(true);
+    pendingLifeContextImpactRef.current = contextChanged;
+    try {
+      await syncUserPreferencesToServer(saved);
+      pendingSyncPrefsRef.current = null;
+      setHasPendingSyncPrefs(false);
+      setLifeContextChanged(contextChanged);
+      setSaveMessage(
+        contextChanged
+          ? t('lifeContext.settings.savedWithImpact')
+          : t('settings.savedSynced')
+      );
+      setSaveState('saved');
+      scheduleSaveReset();
+    } catch (error) {
+      setSaveMessage(
+        t('settings.syncFailed', {detail: resolveLifeCoachErrorMessage(error, t)})
+      );
+      setSaveState('error');
+      setLifeContextChanged(false);
+    }
+  }
+
+  async function retryServerSync() {
+    if (savingRef.current) return;
+    const prefs = pendingSyncPrefsRef.current ?? loadUserPreferences();
+    savingRef.current = true;
+    setSaveState('saving');
+    try {
+      await syncUserPreferencesToServer(prefs);
+      pendingSyncPrefsRef.current = null;
+      setHasPendingSyncPrefs(false);
+      setLifeContextChanged(pendingLifeContextImpactRef.current);
+      setSaveMessage(
+        pendingLifeContextImpactRef.current
+          ? t('lifeContext.settings.savedWithImpact')
+          : t('settings.savedSynced')
+      );
+      setSaveState('saved');
+      scheduleSaveReset();
+    } catch (error) {
+      setSaveMessage(
+        t('settings.syncFailed', {detail: resolveLifeCoachErrorMessage(error, t)})
+      );
+      setSaveState('error');
+    } finally {
+      savingRef.current = false;
+    }
+  }
+
+  async function savePreferences(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault();
+    if (savingRef.current) return;
     const prevContexts = normalizeLifeContextSelection(
       loadUserPreferences().life_context_statuses ?? []
     );
@@ -118,6 +181,8 @@ export function SettingsPanel() {
     const parsedAge = normalizeParticipantAge(age);
     const nextWake = wakeTimeRef.current?.value ?? wakeTime;
     const nextSleep = sleepTimeRef.current?.value ?? sleepTime;
+    savingRef.current = true;
+    setSaveState('saving');
     const saved = saveUserPreferences({
       display_name: displayNameRef.current?.value ?? '',
       wake_time: nextWake,
@@ -135,21 +200,11 @@ export function SettingsPanel() {
       life_context_statuses: contexts.length > 0 ? contexts : undefined,
       life_context_note: lifeContextNote.trim() || undefined,
     });
-    syncSchedulePrefsToServer(saved);
-    void formulationApi.updateParticipantProfile({
-      life_context_statuses: contexts,
-      life_context_note: lifeContextNote.trim() || null,
-      gender: gender,
-      age: agePreferNot ? null : parsedAge,
-    });
-    setLifeContextChanged(contextChanged && contexts.length > 0);
-    setSaveMessage(
-      contextChanged && contexts.length > 0
-        ? t('lifeContext.settings.savedWithImpact')
-        : t('settings.saved')
-    );
-    setSaveState('saved');
-    scheduleSaveReset();
+    try {
+      await syncSavedPreferences(saved, contextChanged && contexts.length > 0);
+    } finally {
+      savingRef.current = false;
+    }
   }
 
   async function regenerateTodaySteps() {
@@ -169,12 +224,13 @@ export function SettingsPanel() {
       scheduleSaveReset();
     } catch {
       setSaveMessage(t('lifeContext.settings.stepsRegenerateError'));
-      setSaveState('saved');
-      scheduleSaveReset();
+      setSaveState('error');
     } finally {
       setRegeneratingSteps(false);
     }
   }
+
+  const isSaving = saveState === 'saving';
 
   return (
     <>
@@ -185,7 +241,7 @@ export function SettingsPanel() {
           className="fixed bottom-6 left-1/2 z-[80] flex max-w-md -translate-x-1/2 flex-col items-center gap-2 animate-[fadeIn_0.2s_ease-out]"
         >
           <div className="rounded-full border border-emerald-500/30 bg-emerald-500/15 px-5 py-3 text-sm font-semibold text-emerald-300 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur">
-            {saveMessage || t('settings.saved')}
+            {saveMessage || t('settings.savedSynced')}
           </div>
           {lifeContextChanged ? (
             <div className="flex flex-col items-center gap-2">
@@ -204,6 +260,27 @@ export function SettingsPanel() {
             </div>
           ) : null}
         </div>
+      ) : saveState === 'error' ? (
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="fixed bottom-6 left-1/2 z-[80] flex max-w-md -translate-x-1/2 flex-col items-center gap-2 animate-[fadeIn_0.2s_ease-out]"
+        >
+          <div className="rounded-2xl border border-red-500/30 bg-red-500/15 px-5 py-3 text-sm font-semibold text-red-200 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur">
+            {saveMessage}
+          </div>
+          {hasPendingSyncPrefs ? (
+            <button
+              type="button"
+              className="focus-ring rounded-full border border-red-400/35 bg-red-500/10 px-4 py-2 text-xs font-bold text-red-100"
+              disabled={isSaving}
+              aria-busy={isSaving}
+              onClick={() => void retryServerSync()}
+            >
+              {isSaving ? t('settings.saving') : t('settings.retrySync')}
+            </button>
+          ) : null}
+        </div>
       ) : null}
 
       {/* Header */}
@@ -215,6 +292,7 @@ export function SettingsPanel() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="grid gap-6">
+          <LocalAuthTokenSettings />
 
           {/* Section: Profile */}
           <section className="panel-surface p-6 sm:p-8" aria-labelledby="settings-profile-heading">
@@ -326,8 +404,8 @@ export function SettingsPanel() {
                 )}
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <button className="focus-ring btn-primary" type="submit">
-                  {t('settings.save')}
+                <button className="focus-ring btn-primary" type="submit" disabled={isSaving} aria-busy={isSaving}>
+                  {isSaving ? t('settings.saving') : t('settings.save')}
                 </button>
                 <span className="text-sm font-semibold txt-muted">
                   {t('settings.localOnly')}
@@ -439,8 +517,8 @@ export function SettingsPanel() {
               </div>
 
               <div>
-                <button className="focus-ring btn-primary" type="submit">
-                  {t('settings.save')}
+                <button className="focus-ring btn-primary" type="submit" disabled={isSaving} aria-busy={isSaving}>
+                  {isSaving ? t('settings.saving') : t('settings.save')}
                 </button>
               </div>
             </form>
@@ -460,8 +538,14 @@ export function SettingsPanel() {
                 <span className="mt-1 block text-xs leading-6 txt-muted">{t('settings.behavioralAnalyticsHelp')}</span>
               </span>
             </label>
-            <button className="focus-ring btn-primary mt-4" type="button" onClick={() => savePreferences()}>
-              {t('settings.save')}
+            <button
+              className="focus-ring btn-primary mt-4"
+              type="button"
+              disabled={isSaving}
+              aria-busy={isSaving}
+              onClick={() => void savePreferences()}
+            >
+              {isSaving ? t('settings.saving') : t('settings.save')}
             </button>
           </section>
 

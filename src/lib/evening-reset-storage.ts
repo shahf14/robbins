@@ -1,3 +1,6 @@
+import {mergeLocalAuthHeaders} from '@/lib/auth/client-headers';
+import {observeAuthResponse} from '@/lib/auth/observe-auth-response';
+import {throwIfNotOk} from '@/lib/http/api-response-error';
 import type {EveningResetSession} from './evening-reset-types';
 import type {EveningResetPainContext} from './evening-reset/pain-context';
 import type {AccountabilityContext} from '@/lib/formulation/accountability-routing';
@@ -17,8 +20,9 @@ export type EveningResetBootContext = {
 export async function fetchEveningBootContext(): Promise<EveningResetBootContext> {
   try {
     const response = await fetch('/api/evening-reset/pain-context', {
-      headers: {'Content-Type': 'application/json'},
+      headers: mergeLocalAuthHeaders(),
     });
+    observeAuthResponse(response);
     if (!response.ok) return {painContext: null, emotionalStage: null, meditationRecommendation: null, accountability: null};
     const data = (await response.json()) as {
       pain_context?: EveningResetPainContext | null;
@@ -37,18 +41,24 @@ export async function fetchEveningBootContext(): Promise<EveningResetBootContext
   }
 }
 
-export async function fetchEveningSessions(): Promise<EveningResetSession[]> {
+export async function fetchEveningSessions(options?: {strict?: boolean}): Promise<EveningResetSession[]> {
   const pending = readLegacyItems<EveningResetSession>(SESSIONS_KEY) ?? [];
   try {
-    const res = await fetch('/api/evening-reset', {headers: {'Content-Type': 'application/json'}});
-    if (!res.ok) return pending;
+    const res = await fetch('/api/evening-reset', {headers: mergeLocalAuthHeaders()});
+    if (options?.strict) {
+      await throwIfNotOk(res);
+    } else {
+      observeAuthResponse(res);
+      if (!res.ok) return pending;
+    }
     const data = (await res.json()) as {sessions?: EveningResetSession[]};
     if (pending.length > 0) {
       await Promise.all(pending.map(persistEveningSession));
     }
     const remainingPending = readLegacyItems<EveningResetSession>(SESSIONS_KEY) ?? [];
     return mergeSessions(data.sessions ?? [], remainingPending);
-  } catch {
+  } catch (error) {
+    if (options?.strict) throw error;
     return pending;
   }
 }
@@ -58,7 +68,7 @@ export async function persistEveningSession(
 ): Promise<EveningResetSession | null> {
   const response = await fetch('/api/evening-reset', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: mergeLocalAuthHeaders(),
     body: JSON.stringify(session),
   });
   if (!response.ok) {

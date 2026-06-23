@@ -1,46 +1,95 @@
 'use client';
 
 import {useLocale, useTranslations} from 'next-intl';
-import {type FormEvent, useEffect, useRef, useState} from 'react';
+import {type FormEvent, useCallback, useEffect, useRef, useState} from 'react';
 import type {AppLocale} from '@/i18n/config';
-import type {AffirmationItem, AffirmationType, IdentityOption} from '@/lib/morning-ritual-types';
-import {DEFAULT_AFFIRMATIONS} from '@/lib/default-affirmations';
+import type {IdentityOption} from '@/lib/morning-ritual-types';
 import {
   fetchRitualContent,
-  saveAffirmations,
   saveIdentities,
 } from '@/lib/morning-ritual-storage';
 import {loadUserPreferences, saveUserPreferences} from '@/lib/user-preferences';
-import {AffirmationManager} from './affirmation-manager';
 import {LanguageSwitcher} from './language-switcher';
-
+import {useConfirm} from '@/components/feedback/confirm-provider';
+import {useToast} from '@/components/feedback/toast-provider';
+import {scheduleDeferredRitualCommit} from '@/lib/morning-ritual/deferred-ritual-persist';
 import {DatabaseTab} from './admin-db/database-tab';
+import {dbApi, DbApiError, type LogLine} from './admin-db/use-db-api';
 import {dateToYMD} from '@/lib/date-utils';
+import {
+  AdminActivityBar,
+  AdminButtonLegend,
+  AdminEmptyState,
+  AdminHelpDrawer,
+  AdminOverviewCard,
+  AdminRiskBadge,
+  AdminSetupChecklist,
+  AdminTabChrome,
+  AdminViewButton,
+  AdminActionButton,
+  type AdminShellTab,
+} from './admin/admin-shell';
+import {AdminAffirmationsPanel} from './admin/admin-affirmations-panel';
+import {AdminDomainDefaultGoalsPanel} from './admin/admin-domain-default-goals-panel';
+import {recordAdminActivity, type AdminActivityKey} from '@/lib/admin/admin-activity';
+import {AdminTooltip} from '@/components/admin/admin-tooltip';
 
-type AdminTab = 'content' | 'logs' | 'settings' | 'database';
+type AdminTab = AdminShellTab;
 
 export function AdminPanel() {
   const t = useTranslations();
   const locale = useLocale() as AppLocale;
   const [tab, setTab] = useState<AdminTab>('content');
+  const [subCrumb, setSubCrumb] = useState<string | null>(null);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [activityVersion, setActivityVersion] = useState(0);
 
-  const tabs: {key: AdminTab; label: string}[] = [
+  const bumpActivity = useCallback((key: AdminActivityKey) => {
+    recordAdminActivity(key);
+    setActivityVersion((value) => value + 1);
+  }, []);
+
+  useEffect(() => {
+    if (tab === 'database') {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setSubCrumb(tab === 'content' ? t('admin.shell.subCrumbs.content') : null);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [tab, t]);
+
+  const tabs: {key: AdminTab; label: string; tip?: string}[] = [
     {key: 'content', label: t('admin.tabs.content')},
     {key: 'logs', label: t('admin.tabs.logs')},
     {key: 'settings', label: t('admin.tabs.settings')},
-    {key: 'database', label: 'Database'},
+    {key: 'database', label: t('admin.tabs.database'), tip: t('admin.tooltips.tabs.database')},
   ];
+
+  function selectTab(next: AdminTab) {
+    setTab(next);
+    setSubCrumb(null);
+    setHelpOpen(false);
+  }
 
   return (
     <section className="panel-surface p-6 sm:p-8">
-      {/* Admin notice banner #26/#27 */}
       <div className="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-amber-400/20 bg-amber-400/6 px-4 py-3">
         <p className="text-sm font-semibold text-amber-200/80">{t('admin.securityNotice')}</p>
       </div>
+
       <div>
         <p className="eyebrow txt-soft">{t('admin.title')}</p>
         <h1 className="mt-4 text-3xl font-black sm:text-4xl">{t('admin.pageTitle')}</h1>
         <p className="mt-3 max-w-2xl leading-7 text-[var(--muted)]">{t('admin.subtitle')}</p>
+      </div>
+
+      <div className="mt-6 grid gap-4">
+        <AdminSetupChecklist activityVersion={activityVersion} onGoToTab={selectTab} />
+        <AdminActivityBar locale={locale} activityVersion={activityVersion} />
+        <AdminOverviewCard activeTab={tab} onSelectTab={selectTab} />
       </div>
 
       <div className="mt-6 flex flex-wrap gap-2 border-b border-[color:var(--color-border)] pb-3">
@@ -48,48 +97,52 @@ export function AdminPanel() {
           <button
             key={item.key}
             type="button"
-            className={`focus-ring rounded-full px-4 py-2 text-sm font-semibold transition ${
-              tab === item.key
-                ? 'fill-3 txt-strong'
-                : 'txt-soft hover:txt-strong'
+            className={`focus-ring flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+              tab === item.key ? 'fill-3 txt-strong' : 'txt-soft hover:txt-strong'
             }`}
-            onClick={() => setTab(item.key)}
+            onClick={() => selectTab(item.key)}
+            title={item.tip}
           >
-            {item.label}
+            <span>{item.label}</span>
+            {item.tip ? <AdminTooltip tip={item.tip} className="ms-1" /> : null}
+            <AdminRiskBadge tab={item.key} />
           </button>
         ))}
       </div>
 
       <div className="mt-6">
-        {tab === 'content' && <ContentTab locale={locale} />}
-        {tab === 'logs' && <LogsTab />}
-        {tab === 'settings' && <SettingsTab />}
-        {tab === 'database' && <DatabaseTab />}
+        <AdminTabChrome tab={tab} subCrumb={subCrumb} onOpenHelp={() => setHelpOpen(true)} />
+        <AdminButtonLegend />
+        <div className="mt-4">
+          {tab === 'content' && <ContentTab locale={locale} />}
+          {tab === 'logs' && <LogsTab onActivity={bumpActivity} />}
+          {tab === 'settings' && <SettingsTab onActivity={bumpActivity} />}
+          {tab === 'database' && (
+            <DatabaseTab onActivity={bumpActivity} onSubCrumbChange={setSubCrumb} />
+          )}
+        </div>
       </div>
+
+      <AdminHelpDrawer tab={tab} open={helpOpen} onClose={() => setHelpOpen(false)} />
     </section>
   );
 }
 
-function ContentTab({locale}: {locale: AppLocale}) {
+function ContentTab({locale: _locale}: {locale: AppLocale}) {
   const t = useTranslations();
+  const tRitual = useTranslations('morningRitual');
+  const {confirm} = useConfirm();
+  const toast = useToast();
 
-  const [affirmations, setAffirmations] = useState<AffirmationItem[]>([]);
   const [identities, setIdentities] = useState<IdentityOption[]>([]);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newType, setNewType] = useState<AffirmationType>('text');
-  const [newTitle, setNewTitle] = useState('');
-  const [newContent, setNewContent] = useState('');
-  const [newYoutubeUrl, setNewYoutubeUrl] = useState('');
-  const [newTags, setNewTags] = useState('');
   const [newIdentity, setNewIdentity] = useState('');
 
   useEffect(() => {
     let cancelled = false;
     const id = window.setTimeout(() => {
-      void fetchRitualContent().then(({affirmations: saved, identities}) => {
+      void fetchRitualContent().then(({identities: savedIdentities}) => {
         if (cancelled) return;
-        setAffirmations(saved.length > 0 ? saved : DEFAULT_AFFIRMATIONS);
-        setIdentities(identities);
+        setIdentities(savedIdentities);
       }).catch(() => {});
     }, 0);
     return () => {
@@ -97,40 +150,6 @@ function ContentTab({locale}: {locale: AppLocale}) {
       window.clearTimeout(id);
     };
   }, []);
-
-  function addAffirmation() {
-    const item: AffirmationItem = {
-      id: crypto.randomUUID(),
-      type: newType,
-      title: newTitle.trim(),
-      textContent: newType === 'text' ? newContent.trim() : '',
-      youtubeVideoId: null,
-      youtubeUrl: newType === 'youtube' ? newYoutubeUrl.trim() : null,
-      tags: newTags
-        .split(',')
-        .map((s) => s.trim().toLowerCase())
-        .filter(Boolean),
-      language: locale,
-      active: true,
-      weight: 1,
-      lastUsedAt: null,
-      createdAt: new Date().toISOString(),
-    };
-    const next = [item, ...affirmations];
-    setAffirmations(next);
-    saveAffirmations(next.filter((affirmation) => !affirmation.isDefault));
-    setNewTitle('');
-    setNewContent('');
-    setNewYoutubeUrl('');
-    setNewTags('');
-    setShowAddForm(false);
-  }
-
-  function deleteAffirmation(id: string) {
-    const next = affirmations.filter((a) => a.id !== id);
-    setAffirmations(next);
-    saveAffirmations(next.filter((affirmation) => !affirmation.isDefault));
-  }
 
   function addIdentity(e: FormEvent) {
     e.preventDefault();
@@ -146,38 +165,31 @@ function ContentTab({locale}: {locale: AppLocale}) {
     setNewIdentity('');
   }
 
-  function deleteIdentity(id: string) {
+  async function deleteIdentity(id: string) {
+    const ok = await confirm({
+      title: t('admin.content.deleteIdentityConfirmTitle'),
+      message: t('admin.content.deleteIdentityConfirmMessage'),
+      confirmLabel: t('admin.content.deleteIdentity'),
+      destructive: true,
+    });
+    if (!ok) return;
+    const previous = identities;
     const next = identities.filter((i) => i.id !== id);
     setIdentities(next);
-    saveIdentities(next);
+    scheduleDeferredRitualCommit({
+      key: 'admin-identities',
+      commit: () => saveIdentities(next),
+      undo: () => setIdentities(previous),
+      toast,
+      message: tRitual('identity.deletedUndo'),
+      undoLabel: tRitual('common.undo'),
+    });
   }
 
   return (
     <div className="grid gap-8">
-      <div>
-        <h3 className="text-lg font-bold">{t('admin.content.affirmationsTitle')}</h3>
-        <p className="mt-1 text-sm text-[var(--muted)]">{t('admin.content.affirmationsDescription')}</p>
-        <div className="mt-4">
-          <AffirmationManager
-            affirmations={affirmations}
-            showAddForm={showAddForm}
-            newType={newType}
-            newTitle={newTitle}
-            newContent={newContent}
-            newYoutubeUrl={newYoutubeUrl}
-            newTags={newTags}
-            onShowAddForm={setShowAddForm}
-            onNewTypeChange={setNewType}
-            onNewTitleChange={setNewTitle}
-            onNewContentChange={setNewContent}
-            onNewYoutubeUrlChange={setNewYoutubeUrl}
-            onNewTagsChange={setNewTags}
-            onAdd={addAffirmation}
-            onDelete={deleteAffirmation}
-            onClose={() => {}}
-          />
-        </div>
-      </div>
+      <AdminDomainDefaultGoalsPanel />
+      <AdminAffirmationsPanel />
 
       <div>
         <h3 className="text-lg font-bold">{t('admin.content.identitiesTitle')}</h3>
@@ -190,29 +202,28 @@ function ContentTab({locale}: {locale: AppLocale}) {
             placeholder={t('admin.content.identityPlaceholder')}
             onChange={(e) => setNewIdentity(e.target.value)}
           />
-          <button
-            className="focus-ring btn-primary shrink-0 disabled:opacity-60"
-            type="submit"
-            disabled={!newIdentity.trim()}
-          >
+          <AdminActionButton className="shrink-0 disabled:opacity-60" type="submit" disabled={!newIdentity.trim()}>
             {t('admin.content.addIdentity')}
-          </button>
+          </AdminActionButton>
         </form>
 
         <div className="mt-3 grid gap-2">
-          {identities.length === 0 && (
-            <p className="text-sm text-[var(--muted)]">{t('admin.content.noIdentities')}</p>
-          )}
+          {identities.length === 0 ? (
+            <AdminEmptyState
+              title={t('admin.content.emptyIdentitiesTitle')}
+              description={t('admin.content.emptyIdentitiesDetail')}
+            />
+          ) : null}
           {identities.map((identity) => (
             <div key={identity.id} className="panel-surface flex items-center justify-between gap-3 p-3">
               <p className="min-w-0 truncate text-sm">{identity.text}</p>
-              <button
-                className="focus-ring btn-small shrink-0"
-                type="button"
-                onClick={() => deleteIdentity(identity.id)}
+              <AdminActionButton
+                className="shrink-0 text-xs"
+                destructive
+                onClick={() => void deleteIdentity(identity.id)}
               >
                 {t('admin.content.deleteIdentity')}
-              </button>
+              </AdminActionButton>
             </div>
           ))}
         </div>
@@ -221,40 +232,47 @@ function ContentTab({locale}: {locale: AppLocale}) {
   );
 }
 
-type LogEntry = {
-  timestamp?: string;
-  type?: string;
-  message?: string;
-  raw?: string;
-};
+type LogEntry = LogLine;
 
-function LogsTab() {
-  const t = useTranslations();
+function LogsTab({onActivity}: {onActivity: (key: AdminActivityKey) => void}) {
+  const t = useTranslations('admin.logs');
   const [date, setDate] = useState(() => dateToYMD(new Date()));
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(false);
+  const [logsError, setLogsError] = useState<string | null>(null);
+
+  const fetchLogs = useCallback(async (dateStr: string) => {
+    setLoading(true);
+    setLogsError(null);
+    try {
+      const data = await dbApi.listLogs(dateStr);
+      setLogs(data.lines ?? []);
+      onActivity('logsRefresh');
+    } catch (err) {
+      setLogs([]);
+      if (err instanceof DbApiError) {
+        if (err.status === 401 || err.status === 403) {
+          setLogsError(t('authError'));
+        } else if (err.status === 503) {
+          setLogsError(t('serverError'));
+        } else {
+          setLogsError(err.message);
+        }
+      } else {
+        setLogsError(err instanceof Error ? err.message : t('genericError'));
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [onActivity, t]);
 
   useEffect(() => {
-    fetchLogs(date);
-  }, [date]);
-
-  async function fetchLogs(dateStr: string) {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/logs?date=${dateStr}&limit=200`);
-      const data = (await res.json()) as {lines: LogEntry[]};
-      setLogs(data.lines ?? []);
-    } catch {
-      setLogs([]);
-    }
-    setLoading(false);
-  }
+    const timeout = window.setTimeout(() => void fetchLogs(date), 0);
+    return () => window.clearTimeout(timeout);
+  }, [date, fetchLogs]);
 
   return (
     <div>
-      <h3 className="text-lg font-bold">{t('admin.logs.title')}</h3>
-      <p className="mt-1 text-sm text-[var(--muted)]">{t('admin.logs.description')}</p>
-
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <input
           type="date"
@@ -262,30 +280,32 @@ function LogsTab() {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        <button
-          className="focus-ring btn-secondary"
-          type="button"
-          onClick={() => fetchLogs(date)}
-        >
-          {t('admin.logs.refresh')}
-        </button>
-        <span className="text-sm text-[var(--muted)]">
-          {t('admin.logs.count', {count: logs.length})}
-        </span>
+        <AdminViewButton onClick={() => void fetchLogs(date)}>{t('refresh')}</AdminViewButton>
+        <span className="text-sm text-[var(--muted)]">{t('count', {count: logs.length})}</span>
       </div>
 
+      {logsError ? (
+        <div className="mt-4 rounded-[16px] border border-red-500/20 bg-red-500/10 p-4">
+          <p className="text-sm font-semibold text-red-300">{t('loadErrorTitle')}</p>
+          <p className="mt-2 text-sm text-red-400">{logsError}</p>
+          <AdminViewButton className="mt-4" onClick={() => void fetchLogs(date)}>
+            {t('retry')}
+          </AdminViewButton>
+        </div>
+      ) : null}
+
       <div className="mt-4 grid gap-2">
-        {loading && <p className="text-sm text-[var(--muted)]">Loading...</p>}
-        {!loading && logs.length === 0 && (
-          <p className="text-sm text-[var(--muted)]">{t('admin.logs.noLogs')}</p>
-        )}
+        {loading ? <p className="text-sm text-[var(--muted)]">{t('loading')}</p> : null}
+        {!loading && !logsError && logs.length === 0 ? (
+          <AdminEmptyState title={t('emptyTitle')} description={t('noLogsDetail')} />
+        ) : null}
         {logs.map((entry, i) => (
           <div key={`log-${i}`} className="panel-surface p-3">
             <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--muted)]">
-              {entry.timestamp && <span>{new Date(entry.timestamp).toLocaleTimeString()}</span>}
-              {entry.type && (
+              {entry.timestamp ? <span>{new Date(entry.timestamp).toLocaleTimeString()}</span> : null}
+              {entry.type ? (
                 <span className="rounded fill-2 px-2 py-0.5 font-mono">{entry.type}</span>
-              )}
+              ) : null}
             </div>
             <p className="mt-1 text-sm">{entry.message ?? entry.raw ?? '—'}</p>
           </div>
@@ -295,7 +315,7 @@ function LogsTab() {
   );
 }
 
-function SettingsTab() {
+function SettingsTab({onActivity}: {onActivity: (key: AdminActivityKey) => void}) {
   const t = useTranslations();
   const displayNameRef = useRef<HTMLInputElement>(null);
   const [saveState, setSaveState] = useState<'idle' | 'saved'>('idle');
@@ -315,6 +335,7 @@ function SettingsTab() {
   function handleSave(e?: FormEvent) {
     e?.preventDefault();
     saveUserPreferences({display_name: displayNameRef.current?.value ?? ''});
+    onActivity('settingsSave');
     setSaveState('saved');
     if (saveResetTimeoutRef.current) {
       window.clearTimeout(saveResetTimeoutRef.current);
@@ -327,10 +348,7 @@ function SettingsTab() {
 
   return (
     <div>
-      <h3 className="text-lg font-bold">{t('admin.settings.title')}</h3>
-      <p className="mt-1 text-sm text-[var(--muted)]">{t('admin.settings.description')}</p>
-
-      <form className="mt-6 grid max-w-md gap-5" onSubmit={handleSave}>
+      <form className="mt-2 grid max-w-md gap-5" onSubmit={handleSave}>
         <label className="grid gap-2">
           <span className="field-label mb-0">{t('settings.displayName')}</span>
           <input
@@ -342,9 +360,7 @@ function SettingsTab() {
         </label>
 
         <div className="flex flex-wrap items-center gap-3">
-          <button className="focus-ring btn-primary" type="submit">
-            {t('settings.save')}
-          </button>
+          <AdminActionButton type="submit">{t('settings.save')}</AdminActionButton>
           <span className="text-sm font-semibold text-[var(--blue)]">
             {saveState === 'saved' ? t('settings.saved') : t('settings.localOnly')}
           </span>

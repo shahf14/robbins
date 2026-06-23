@@ -2,6 +2,7 @@
 
 import {useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
+import {useToast} from '@/components/feedback/toast-provider';
 import {survivalModeCopyKeys, survivalModeSoftCopyKeys} from '@/lib/life-context-content';
 import {hasStoredPlanB, planBPreviewLine} from '@/lib/life-coach/plan-b';
 import type {AppLocale} from '@/i18n/config';
@@ -42,6 +43,7 @@ export function SurvivalModeBanner({
 }: Props) {
   const t = useTranslations();
   const locale = useLocale() as AppLocale;
+  const toast = useToast();
   const copy = softCopy
     ? survivalModeSoftCopyKeys(lifeContexts)
     : survivalModeCopyKeys(lifeContexts);
@@ -71,6 +73,8 @@ export function SurvivalModeBanner({
       }
       setDone(selected);
       setSelected(null);
+    } catch {
+      toast.error(t('feedback.failed'));
     } finally {
       setBusy(false);
     }
@@ -130,8 +134,8 @@ export function SurvivalModeBanner({
 
       {/* Modal */}
       {open && (
-        <div className="fixed inset-0 z-[90] flex items-end justify-center bg-black/70 px-4 pb-4 sm:items-center sm:py-8" role="dialog" aria-modal="true" aria-labelledby="survival-mode-title">
-          <div className="panel-surface-strong w-full max-w-md rounded-2xl p-6">
+        <div className="fixed inset-0 z-[90] flex items-end justify-center bg-black/70 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center sm:py-8" role="dialog" aria-modal="true" aria-labelledby="survival-mode-title">
+          <div className="panel-surface-strong max-h-[min(90dvh,44rem)] w-full max-w-md overflow-y-auto rounded-2xl p-6">
 
             {done ? (
               /* ── Done state ── */

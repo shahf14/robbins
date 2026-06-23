@@ -2,9 +2,11 @@
 
 import {NavArrow} from '@/components/directional-arrow';
 import {useState, type ReactNode} from 'react';
+import {useSearchParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 import type {DailyBabyStep, Goal, LifeDomain, LifeDomainState, Milestone} from '@/lib/life-coach/types';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
+import {hasDomainGoalDraftForDomain} from '@/lib/open-process-drafts';
 import {LifeCoachFormulationGate} from '@/components/formulation/life-coach-formulation-gate';
 import {DomainAssessmentForm} from '../domain-assessment-form';
 import {BlockerDeepDive} from './blocker-deep-dive';
@@ -33,8 +35,12 @@ export function DomainGoalTabContent({
   topSlot,
 }: Props) {
   const t = useTranslations();
+  const searchParams = useSearchParams();
+  const resumeGoal = searchParams.get('resumeGoal') === '1';
   const [activeBlockerDeepDive, setActiveBlockerDeepDive] = useState<string | null>(null);
-  const [showNewGoalWizard, setShowNewGoalWizard] = useState(false);
+  const [showNewGoalWizard, setShowNewGoalWizard] = useState(
+    () => resumeGoal || hasDomainGoalDraftForDomain(domain)
+  );
 
   const domainGoals = goals.filter((goal) => goal.domain === domain && goal.status === 'active');
   const hasActiveGoal = domainGoals.length > 0;

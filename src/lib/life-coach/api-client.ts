@@ -18,6 +18,8 @@ import type {
   WeeklyReview,
 } from './types';
 import type {AppLocale} from '@/i18n/config';
+import {mergeLocalAuthHeaders} from '@/lib/auth/client-headers';
+import {notifyLocalAuthRequired} from '@/lib/auth/local-auth-events';
 import type {CuratedDailyTaskOption} from './curated-daily-tasks';
 import type {DailyFocusContext} from '@/lib/daily-focus-context';
 import {parseGoalCreateResponse} from './schemas';
@@ -27,23 +29,30 @@ import type {z} from 'zod';
 type GoalWithMilestones = Goal & {milestones?: Milestone[]};
 
 export class LifeCoachApiError extends Error {
+  readonly status: number;
   readonly details?: unknown;
 
-  constructor(message: string, details?: unknown) {
+  constructor(message: string, status: number, details?: unknown) {
     super(message);
     this.name = 'LifeCoachApiError';
+    this.status = status;
     this.details = details;
   }
 }
 
 async function lifeCoachFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
-  });
+  let response: Response;
+  try {
+    response = await fetch(path, {
+      ...init,
+      headers: mergeLocalAuthHeaders(init),
+    });
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new LifeCoachApiError('offline', 503, {offline: true});
+    }
+    throw error;
+  }
 
   // The body may not be JSON (e.g. an unhandled 500 HTML page, an infra-level
   // 413/429, or an empty response). Parse defensively so we always surface a
@@ -59,11 +68,34 @@ async function lifeCoachFetch<T>(path: string, init?: RequestInit): Promise<T> {
   if (!response.ok) {
     const message =
       payload?.error || response.statusText || `Request failed (${response.status}).`;
-    throw new LifeCoachApiError(message, payload?.details);
+    if (response.status === 401) {
+      notifyLocalAuthRequired();
+    }
+    const payloadDetails =
+      payload && typeof payload === 'object'
+        ? (() => {
+            const {error: _error, details: nestedDetails, offline, ...rest} = payload as {
+              error?: string;
+              details?: unknown;
+              offline?: boolean;
+              [key: string]: unknown;
+            };
+            const merged = {
+              ...(nestedDetails && typeof nestedDetails === 'object' ? nestedDetails : {}),
+              ...(offline ? {offline: true} : {}),
+              ...rest,
+            };
+            return Object.keys(merged).length > 0 ? merged : undefined;
+          })()
+        : undefined;
+    throw new LifeCoachApiError(message, response.status, payloadDetails);
   }
 
   if (payload === null) {
-    throw new LifeCoachApiError('Received an invalid response from the server.');
+    throw new LifeCoachApiError(
+      'Received an invalid response from the server.',
+      response.status || 0
+    );
   }
 
   return payload;
@@ -134,7 +166,12 @@ export const lifeCoachApi = {
       body: JSON.stringify(input),
     });
   },
-  async createGoal(input: Record<string, unknown>) {
+  async createGoal(input: {
+    idempotency_key?: string;
+    goal: Record<string, unknown>;
+    milestones?: unknown[];
+    initial_steps?: unknown[];
+  }) {
     const payload = await lifeCoachFetch<unknown>('/api/life-coach/goals', {
       method: 'POST',
       body: JSON.stringify(input),
@@ -177,7 +214,18 @@ export const lifeCoachApi = {
       method: 'DELETE',
     });
   },
-  generateDailySteps(input: Record<string, unknown>) {
+  generateDailySteps(input: {
+    date?: string;
+    force?: boolean;
+    domain?: LifeDomain;
+    include_first_win?: boolean;
+    locale?: AppLocale;
+    wake_time?: string;
+    sleep_time?: string;
+    coaching_style?: string;
+    physical_considerations?: string[];
+    preferred_action_window?: string;
+  }) {
     return lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>('/api/life-coach/ai/generate-daily-steps', {
       method: 'POST',
       body: JSON.stringify(input),
@@ -223,6 +271,7 @@ export const lifeCoachApi = {
     difficulty: 'easy' | 'medium' | 'hard';
     scheduled_date: string;
     status?: 'pending' | 'completed' | 'skipped' | 'partial';
+    is_general?: boolean;
   }) {
     return lifeCoachFetch<{step: DailyBabyStep}>('/api/life-coach/daily-steps', {
       method: 'POST',

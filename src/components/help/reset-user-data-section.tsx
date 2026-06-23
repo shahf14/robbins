@@ -4,7 +4,7 @@ import {useState} from 'react';
 import {useTranslations} from 'next-intl';
 import {useRouter} from '@/i18n/navigation';
 import {useConfirm} from '@/components/feedback/confirm-provider';
-import {resetAllUserData} from '@/lib/user-reset';
+import {isUserResetError, resetAllUserData} from '@/lib/user-reset';
 
 export function ResetUserDataSection() {
   const t = useTranslations('help.resetData');
@@ -29,7 +29,17 @@ export function ResetUserDataSection() {
       router.replace('/onboarding');
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('error'));
+      if (isUserResetError(err)) {
+        if (err.kind === 'auth') {
+          setError(t('authFailed'));
+        } else if (err.kind === 'offline') {
+          setError(t('offlineFailed'));
+        } else {
+          setError(t('serverFailed'));
+        }
+      } else {
+        setError(err instanceof Error ? err.message : t('error'));
+      }
       setBusy(false);
     }
   }
@@ -40,7 +50,7 @@ export function ResetUserDataSection() {
       <h2 className="mt-4 text-2xl font-black txt-strong">{t('title')}</h2>
       <p className="mt-3 max-w-2xl leading-7 text-[var(--muted)]">{t('body')}</p>
       {error && (
-        <p className="mt-4 rounded-[16px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+        <p className="mt-4 rounded-[16px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200" role="alert">
           {error}
         </p>
       )}

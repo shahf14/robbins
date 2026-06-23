@@ -198,7 +198,9 @@ export function pickMorningAffirmation(
   context: MorningAffirmationContext
 ): AffirmationItem | null {
   const {preferredTags, excludedTags} = resolveAffirmationFilter(context);
-  const active = affirmations.filter((item) => item.active && item.language === language);
+  const active = affirmations.filter(
+    (item) => item.active && item.language === language && !item.hiddenFromLibrary && !item.isDraft
+  );
   if (active.length === 0) return null;
 
   const today = new Date().toDateString();

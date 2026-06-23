@@ -10,6 +10,7 @@ import {
   type MorningAffirmationContext,
 } from '@/lib/morning-ritual/affirmation-context';
 import {StepNavigation} from '@/components/morning-ritual/morning-ritual-navigation';
+import type {RitualListPersistMode} from '@/lib/morning-ritual/deferred-ritual-persist';
 
 type AffirmationStepProps = {
   affirmation: AffirmationItem | null;
@@ -21,7 +22,7 @@ type AffirmationStepProps = {
   onPickAffirmation: (item: AffirmationItem | null) => void;
   onNext: () => void;
   onBack: () => void;
-  onAffirmationsChange: (items: AffirmationItem[]) => void;
+  onAffirmationsChange: (items: AffirmationItem[], options?: {persist?: RitualListPersistMode}) => void;
 };
 
 export function AffirmationStep({
@@ -49,7 +50,7 @@ export function AffirmationStep({
   const [newTags, setNewTags] = useState('');
 
   const hasYoutubeAffirmations = allAffirmations.some(
-    (a) => a.active && a.language === locale && a.type === 'youtube'
+    (a) => a.active && !a.hiddenFromLibrary && !a.isDraft && a.language === locale && a.type === 'youtube'
   );
   const activeAffirmation = affirmation && affirmation.type === viewType ? affirmation : null;
 
@@ -73,6 +74,8 @@ export function AffirmationStep({
     const pool = allAffirmations.filter(
       (item) =>
         item.active &&
+        !item.hiddenFromLibrary &&
+        !item.isDraft &&
         item.language === locale &&
         item.type === viewType &&
         item.tags.some((entry) => entry.toLowerCase() === nextTag.toLowerCase())
@@ -100,6 +103,8 @@ export function AffirmationStep({
     const pool = allAffirmations.filter(
       (item) =>
         item.active &&
+        !item.hiddenFromLibrary &&
+        !item.isDraft &&
         item.language === locale &&
         item.type === viewType &&
         item.tags.some((entry) => entry.toLowerCase() === activeTagFilter.toLowerCase()) &&
@@ -111,6 +116,8 @@ export function AffirmationStep({
       const currentTagPool = allAffirmations.filter(
         (item) =>
           item.active &&
+        !item.hiddenFromLibrary &&
+        !item.isDraft &&
           item.language === locale &&
           item.type === viewType &&
           item.tags.some((entry) => entry.toLowerCase() === activeTagFilter.toLowerCase())
@@ -160,7 +167,10 @@ export function AffirmationStep({
   }
 
   function deleteAffirmation(id: string) {
-    onAffirmationsChange(allAffirmations.filter((a) => a.id !== id));
+    onAffirmationsChange(
+      allAffirmations.filter((a) => a.id !== id),
+      {persist: 'deferred'}
+    );
   }
 
   if (showManager) {

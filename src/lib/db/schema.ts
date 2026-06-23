@@ -105,6 +105,105 @@ CREATE TABLE IF NOT EXISTS ritual_content (
 CREATE INDEX IF NOT EXISTS idx_ritual_content_user_type
   ON ritual_content(user_id, content_type, created_at DESC);
 
+-- ── Content Studio (global governed content registry) ────────────────────
+CREATE TABLE IF NOT EXISTS content_items (
+  id                      TEXT PRIMARY KEY,
+  title                   TEXT NOT NULL,
+  content_type            TEXT NOT NULL CHECK (content_type IN ('ui_copy', 'curated_task', 'ritual_content', 'gratitude_trigger', 'onboarding_content', 'formulation_question', 'life_wheel_content', 'prompt_template', 'fallback_rule', 'personalization_rule', 'admin_content')),
+  journey                 TEXT NOT NULL CHECK (journey IN ('global', 'onboarding', 'morning_ritual', 'evening_reset', 'life_coach', 'formulation', 'coach_chat', 'weekly_review', 'admin')),
+  source                  TEXT NOT NULL CHECK (source IN ('json', 'messages', 'prompt_code', 'rules_code', 'database', 'hybrid')),
+  status                  TEXT NOT NULL CHECK (status IN ('published', 'runtime_generated', 'code_owned', 'user_managed', 'needs_migration')),
+  risk                    TEXT NOT NULL CHECK (risk IN ('low', 'medium', 'high')),
+  locales_json            TEXT NOT NULL DEFAULT '[]',
+  path                    TEXT NOT NULL,
+  version_label           TEXT,
+  domains_json            TEXT NOT NULL DEFAULT '[]',
+  item_count              INTEGER CHECK (item_count IS NULL OR item_count >= 0),
+  tags_json               TEXT NOT NULL DEFAULT '[]',
+  owners_json             TEXT NOT NULL DEFAULT '[]',
+  migration_priority      INTEGER CHECK (migration_priority IS NULL OR migration_priority IN (1, 2, 3)),
+  editable_now            INTEGER NOT NULL DEFAULT 0 CHECK (editable_now IN (0, 1)),
+  simulator_inputs_json   TEXT NOT NULL DEFAULT '[]',
+  eval_signals_json       TEXT NOT NULL DEFAULT '[]',
+  description             TEXT NOT NULL,
+  runtime_use_json        TEXT NOT NULL DEFAULT '[]',
+  governance_json         TEXT NOT NULL DEFAULT '[]',
+  registry_checksum       TEXT NOT NULL,
+  registry_source         TEXT NOT NULL DEFAULT 'static_registry',
+  created_at              TEXT DEFAULT (datetime('now')),
+  updated_at              TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_content_items_source ON content_items(source, status);
+CREATE INDEX IF NOT EXISTS idx_content_items_journey ON content_items(journey, risk);
+CREATE INDEX IF NOT EXISTS idx_content_items_risk_priority ON content_items(risk, migration_priority);
+CREATE INDEX IF NOT EXISTS idx_content_items_status ON content_items(status, updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS content_item_versions (
+  id              TEXT PRIMARY KEY,
+  content_item_id TEXT NOT NULL REFERENCES content_items(id) ON DELETE CASCADE,
+  version_label   TEXT,
+  checksum        TEXT NOT NULL,
+  item_json       TEXT NOT NULL,
+  change_note     TEXT,
+  created_by      TEXT,
+  created_at      TEXT DEFAULT (datetime('now'))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_content_versions_item_checksum
+  ON content_item_versions(content_item_id, checksum);
+CREATE INDEX IF NOT EXISTS idx_content_versions_item_created
+  ON content_item_versions(content_item_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS content_governance_checks (
+  id              TEXT PRIMARY KEY,
+  content_item_id TEXT NOT NULL REFERENCES content_items(id) ON DELETE CASCADE,
+  check_name      TEXT NOT NULL,
+  status          TEXT NOT NULL CHECK (status IN ('pass', 'warn', 'fail')),
+  details_json    TEXT NOT NULL DEFAULT '{}',
+  created_at      TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_content_governance_item_status
+  ON content_governance_checks(content_item_id, status, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS content_eval_cases (
+  id                    TEXT PRIMARY KEY,
+  content_item_id        TEXT NOT NULL REFERENCES content_items(id) ON DELETE CASCADE,
+  name                  TEXT NOT NULL,
+  locale                TEXT CHECK (locale IS NULL OR locale IN ('he', 'en')),
+  input_json            TEXT NOT NULL DEFAULT '{}',
+  expected_signals_json TEXT NOT NULL DEFAULT '[]',
+  status                TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'archived')),
+  created_at            TEXT DEFAULT (datetime('now')),
+  updated_at            TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_content_eval_cases_item_status
+  ON content_eval_cases(content_item_id, status);
+
+CREATE TABLE IF NOT EXISTS content_audit_events (
+  id              TEXT PRIMARY KEY,
+  content_item_id TEXT REFERENCES content_items(id) ON DELETE SET NULL,
+  event_type      TEXT NOT NULL CHECK (event_type IN ('registry_sync', 'created', 'updated', 'versioned', 'governance_checked', 'exported', 'archived')),
+  actor_id        TEXT,
+  before_json     TEXT,
+  after_json      TEXT,
+  metadata_json   TEXT NOT NULL DEFAULT '{}',
+  created_at      TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_content_audit_item_created
+  ON content_audit_events(content_item_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_content_audit_type_created
+  ON content_audit_events(event_type, created_at DESC);
+
+CREATE TRIGGER IF NOT EXISTS trg_content_items_updated_at
+AFTER UPDATE ON content_items
+BEGIN
+  UPDATE content_items SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+CREATE TRIGGER IF NOT EXISTS trg_content_eval_cases_updated_at
+AFTER UPDATE ON content_eval_cases
+BEGIN
+  UPDATE content_eval_cases SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
 -- ── Domain Assessments ───────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS domain_assessments (
   id                     TEXT PRIMARY KEY,
@@ -154,9 +253,13 @@ CREATE TABLE IF NOT EXISTS goals (
   health_what_lost      TEXT,
   plan_source           TEXT,
   health_context_json   TEXT,              -- Full JSON backup of health_context
+  create_idempotency_key TEXT,
   created_at            TEXT DEFAULT (datetime('now')),
   updated_at            TEXT DEFAULT (datetime('now'))
 );
+CREATE UNIQUE INDEX IF NOT EXISTS idx_goals_create_idempotency
+  ON goals(user_id, create_idempotency_key)
+  WHERE create_idempotency_key IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_goals_user_domain ON goals(user_id, domain, status);
 CREATE INDEX IF NOT EXISTS idx_goals_user_status_updated ON goals(user_id, status, updated_at DESC);
 
@@ -190,6 +293,7 @@ CREATE TABLE IF NOT EXISTS daily_steps (
   scheduled_date       TEXT NOT NULL,
   status               TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'skipped', 'partial')),
   generated_by_ai      INTEGER DEFAULT 0 CHECK (generated_by_ai IN (0, 1)),
+  is_general           INTEGER DEFAULT 0 CHECK (is_general IN (0, 1)),
   reflection_text      TEXT,
   blocker_reason        TEXT,
   completed_at          TEXT,              -- exact timestamp of status→completed
@@ -406,6 +510,30 @@ CREATE INDEX IF NOT EXISTS idx_formulation_user_status
 CREATE INDEX IF NOT EXISTS idx_formulation_user_completed
   ON formulation_sessions(user_id, completed_at DESC);
 
+-- ── Evening Resets ──────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS evening_resets (
+  id                         TEXT PRIMARY KEY,
+  user_id                    TEXT REFERENCES users(id) ON DELETE SET NULL,
+  date                       TEXT NOT NULL,
+  duration_sec               INTEGER,
+  completed                  INTEGER DEFAULT 0 CHECK (completed IN (0, 1)),
+  mode                       TEXT CHECK (mode IN ('quick', 'standard', 'deep')),
+  readiness_score            INTEGER DEFAULT 0,
+  tomorrows_win              TEXT,
+  emotional_dump_word_count  INTEGER,
+  blocker_mentioned          INTEGER DEFAULT 0,
+  skipped_steps              TEXT,  -- JSON array
+  tomorrow_constraint        TEXT,
+  what_worked                TEXT,
+  what_failed                TEXT,
+  energy_forecast            TEXT CHECK (energy_forecast IN ('low', 'medium', 'high')),
+  tomorrow_takeaway          TEXT,
+  session_json               TEXT,  -- full session backup
+  created_at                 TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_evening_resets_date      ON evening_resets(date);
+CREATE INDEX IF NOT EXISTS idx_evening_resets_user_date ON evening_resets(user_id, date DESC, created_at DESC);
+
 -- Seed profile placeholders for local-first data that predates the users table.
 INSERT OR IGNORE INTO users(id)
 SELECT user_id FROM (
@@ -498,6 +626,41 @@ WHEN NEW.goal_id IS NOT NULL
  AND NOT EXISTS (SELECT 1 FROM goals WHERE id = NEW.goal_id AND user_id = NEW.user_id)
 BEGIN SELECT RAISE(ABORT, 'daily_steps.goal_id must reference a goal owned by user_id'); END;
 
+CREATE TRIGGER IF NOT EXISTS trg_steps_general_guard_insert
+BEFORE INSERT ON daily_steps
+WHEN NEW.is_general = 1 AND NEW.goal_id IS NOT NULL
+BEGIN SELECT RAISE(ABORT, 'general daily_steps cannot reference goal_id'); END;
+CREATE TRIGGER IF NOT EXISTS trg_steps_general_guard_update
+BEFORE UPDATE OF is_general, goal_id ON daily_steps
+WHEN NEW.is_general = 1 AND NEW.goal_id IS NOT NULL
+BEGIN SELECT RAISE(ABORT, 'general daily_steps cannot reference goal_id'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_steps_goal_required_guard_insert
+BEFORE INSERT ON daily_steps
+WHEN COALESCE(NEW.is_general, 0) = 0 AND NEW.goal_id IS NULL
+BEGIN SELECT RAISE(ABORT, 'non-general daily_steps must reference goal_id'); END;
+CREATE TRIGGER IF NOT EXISTS trg_steps_goal_required_guard_update
+BEFORE UPDATE OF is_general, goal_id ON daily_steps
+WHEN COALESCE(NEW.is_general, 0) = 0 AND NEW.goal_id IS NULL
+BEGIN SELECT RAISE(ABORT, 'non-general daily_steps must reference goal_id'); END;
+
+CREATE TRIGGER IF NOT EXISTS trg_steps_goal_domain_guard_insert
+BEFORE INSERT ON daily_steps
+WHEN NEW.goal_id IS NOT NULL
+ AND EXISTS (
+   SELECT 1 FROM goals
+   WHERE id = NEW.goal_id AND user_id = NEW.user_id AND domain <> NEW.domain
+ )
+BEGIN SELECT RAISE(ABORT, 'daily_steps.domain must match linked goal domain'); END;
+CREATE TRIGGER IF NOT EXISTS trg_steps_goal_domain_guard_update
+BEFORE UPDATE OF goal_id, user_id, domain ON daily_steps
+WHEN NEW.goal_id IS NOT NULL
+ AND EXISTS (
+   SELECT 1 FROM goals
+   WHERE id = NEW.goal_id AND user_id = NEW.user_id AND domain <> NEW.domain
+ )
+BEGIN SELECT RAISE(ABORT, 'daily_steps.domain must match linked goal domain'); END;
+
 CREATE TRIGGER IF NOT EXISTS trg_health_phases_goal_guard_insert
 BEFORE INSERT ON health_phases
 WHEN NOT EXISTS (SELECT 1 FROM goals WHERE id = NEW.goal_id AND user_id = NEW.user_id)
@@ -553,30 +716,6 @@ AFTER DELETE ON ai_insights
 BEGIN
   DELETE FROM weekly_reviews WHERE id = OLD.id;
 END;
-
--- ── Evening Resets ──────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS evening_resets (
-  id                         TEXT PRIMARY KEY,
-  user_id                    TEXT REFERENCES users(id) ON DELETE SET NULL,
-  date                       TEXT NOT NULL,
-  duration_sec               INTEGER,
-  completed                  INTEGER DEFAULT 0 CHECK (completed IN (0, 1)),
-  mode                       TEXT CHECK (mode IN ('quick', 'standard', 'deep')),
-  readiness_score            INTEGER DEFAULT 0,
-  tomorrows_win              TEXT,
-  emotional_dump_word_count  INTEGER,
-  blocker_mentioned          INTEGER DEFAULT 0,
-  skipped_steps              TEXT,  -- JSON array
-  tomorrow_constraint        TEXT,
-  what_worked                TEXT,
-  what_failed                TEXT,
-  energy_forecast            TEXT CHECK (energy_forecast IN ('low', 'medium', 'high')),
-  tomorrow_takeaway          TEXT,
-  session_json               TEXT,  -- full session backup
-  created_at                 TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_evening_resets_date      ON evening_resets(date);
-CREATE INDEX IF NOT EXISTS idx_evening_resets_user_date ON evening_resets(user_id, date DESC, created_at DESC);
 
 -- ── Subscriptions ────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS subscriptions (

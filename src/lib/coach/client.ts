@@ -1,3 +1,4 @@
+import {mergeLocalAuthHeaders} from '@/lib/auth/client-headers';
 import type {AppLocale} from '@/i18n/config';
 
 export const COACH_EMOTIONS = [
@@ -37,7 +38,7 @@ export async function askVirtualCoach(
 ): Promise<CoachResponsePayload> {
   const response = await fetch('/api/coach', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: mergeLocalAuthHeaders(),
     body: JSON.stringify(payload),
   });
 

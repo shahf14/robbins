@@ -1,4 +1,5 @@
 import {NextResponse} from 'next/server';
+import {dbGet, dbRun, getDb} from '@/lib/db/sqlite';
 
 type RateLimitOptions = {
   action: string;
@@ -7,16 +8,9 @@ type RateLimitOptions = {
   windowMs?: number;
 };
 
-type Bucket = {
-  count: number;
-  resetAt: number;
-};
-
 const DEFAULT_LIMIT = parsePositiveInt(process.env.AI_RATE_LIMIT_MAX_REQUESTS, 20);
 const DEFAULT_WINDOW_MS =
   parsePositiveInt(process.env.AI_RATE_LIMIT_WINDOW_SECONDS, 60 * 60) * 1000;
-
-const buckets = new Map<string, Bucket>();
 
 function parsePositiveInt(value: string | undefined, fallback: number) {
   if (!value) return fallback;
@@ -28,14 +22,18 @@ function bucketKey({action, userId}: Pick<RateLimitOptions, 'action' | 'userId'>
   return `${userId}:${action}`;
 }
 
-function pruneExpiredBuckets(now: number) {
-  if (buckets.size < 1000) return;
+function ensureRateLimitTable() {
+  getDb().exec(`
+    CREATE TABLE IF NOT EXISTS ai_rate_limit_buckets (
+      bucket_key TEXT PRIMARY KEY,
+      count INTEGER NOT NULL,
+      reset_at INTEGER NOT NULL
+    )
+  `);
+}
 
-  for (const [key, bucket] of buckets.entries()) {
-    if (bucket.resetAt <= now) {
-      buckets.delete(key);
-    }
-  }
+function pruneExpiredBuckets(now: number) {
+  dbRun(`DELETE FROM ai_rate_limit_buckets WHERE reset_at <= ?`, [now]);
 }
 
 export function enforceAiRateLimit({
@@ -44,24 +42,37 @@ export function enforceAiRateLimit({
   limit = DEFAULT_LIMIT,
   windowMs = DEFAULT_WINDOW_MS,
 }: RateLimitOptions): NextResponse | null {
+  ensureRateLimitTable();
   const now = Date.now();
   pruneExpiredBuckets(now);
 
   const key = bucketKey({action, userId});
-  const existing = buckets.get(key);
+  const existing = dbGet<{count: number; reset_at: number}>(
+    `SELECT count, reset_at FROM ai_rate_limit_buckets WHERE bucket_key = ?`,
+    [key]
+  );
+
   const bucket =
-    existing && existing.resetAt > now
+    existing && existing.reset_at > now
       ? existing
-      : {count: 0, resetAt: now + windowMs};
+      : {count: 0, reset_at: now + windowMs};
 
-  bucket.count += 1;
-  buckets.set(key, bucket);
+  const nextCount = bucket.count + 1;
 
-  if (bucket.count <= limit) {
+  dbRun(
+    `INSERT INTO ai_rate_limit_buckets (bucket_key, count, reset_at)
+     VALUES (?, ?, ?)
+     ON CONFLICT(bucket_key) DO UPDATE SET
+       count = excluded.count,
+       reset_at = excluded.reset_at`,
+    [key, nextCount, bucket.reset_at]
+  );
+
+  if (nextCount <= limit) {
     return null;
   }
 
-  const retryAfterSeconds = Math.max(1, Math.ceil((bucket.resetAt - now) / 1000));
+  const retryAfterSeconds = Math.max(1, Math.ceil((bucket.reset_at - now) / 1000));
 
   return NextResponse.json(
     {
@@ -74,7 +85,7 @@ export function enforceAiRateLimit({
         'Retry-After': String(retryAfterSeconds),
         'X-RateLimit-Limit': String(limit),
         'X-RateLimit-Remaining': '0',
-        'X-RateLimit-Reset': String(Math.ceil(bucket.resetAt / 1000)),
+        'X-RateLimit-Reset': String(Math.ceil(bucket.reset_at / 1000)),
       },
     }
   );

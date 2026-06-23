@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {weeklyReviewFramingKey} from '@/lib/life-context-content';
 import type {AccountabilityContext} from '@/lib/formulation/accountability-routing';
@@ -21,6 +21,9 @@ import {WeeklyReviewRecurringPatternSection} from '@/components/life-coach/share
 import {WeeklyReviewExplainer} from '@/components/life-coach/shared/weekly-review-explainer';
 import {WeeklyReviewLockedExplainer} from '@/components/life-coach/shared/weekly-review-locked-explainer';
 import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microcopy';
+import {useToast} from '@/components/feedback/toast-provider';
+import {resolveWeeklyReviewErrorMessage} from '@/lib/life-coach/api-error';
+import {BusyButton} from '@/components/feedback/busy-button';
 import {NextBestActionCta} from '@/components/next-best-action/next-best-action-cta';
 import {computeWeeklyReviewReadiness, WEEKLY_REVIEW_MIN_ACTIVE_DAYS, WEEKLY_REVIEW_MIN_STEPS} from '@/lib/life-coach/weekly-review-readiness';
 
@@ -33,10 +36,13 @@ type Props = {
 
 export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerateReview}: Props) {
   const t = useTranslations();
+  const toast = useToast();
   const locale = useLocale() as import('@/i18n/config').AppLocale;
   const lifeContexts = loadUserPreferences().life_context_statuses;
   const framingKey = weeklyReviewFramingKey(lifeContexts);
   const [generating, setGenerating] = useState(false);
+  const [generateError, setGenerateError] = useState<string | null>(null);
+  const generatingRef = useRef(false);
   const [checkinDone, setCheckinDone] = useState(false);
   const [accountability, setAccountability] = useState<AccountabilityContext | null>(null);
   const [behaviorChange, setBehaviorChange] = useState<BehaviorChangeContext | null>(null);
@@ -100,10 +106,18 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
     : 0;
 
   async function handleGenerate() {
+    if (generatingRef.current) return;
+    generatingRef.current = true;
     setGenerating(true);
+    setGenerateError(null);
     try {
       await onGenerateReview();
+    } catch (error) {
+      const message = resolveWeeklyReviewErrorMessage(error, t);
+      setGenerateError(message);
+      toast.error(message);
     } finally {
+      generatingRef.current = false;
       setGenerating(false);
     }
   }
@@ -115,17 +129,24 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
           <p className="field-label mb-0 text-[var(--blue)]" aria-hidden="true">{t('enhancedReview.eyebrow')}</p>
           <h2 className="mt-3 text-xl font-black txt-strong">{t(framingKey)}</h2>
         </div>
-        <button
+        <BusyButton
           className="focus-ring btn-small"
           type="button"
-          disabled={generating || !readiness.isReady}
-          aria-busy={generating}
+          busy={generating}
+          busyLabel={t('lifeCoach.generatingInsight')}
+          disabled={!readiness.isReady}
           aria-describedby={!readiness.isReady ? 'weekly-review-locked-hint' : undefined}
-          onClick={handleGenerate}
+          onClick={() => void handleGenerate()}
         >
-          {generating ? t('lifeCoach.generating') : t('enhancedReview.generateBtn')}
-        </button>
+          {t('enhancedReview.generateBtn')}
+        </BusyButton>
       </div>
+
+      {generateError ? (
+        <p className="mt-3 text-sm text-red-300" role="alert">
+          {generateError}
+        </p>
+      ) : null}
 
       <AiActionHelpMicrocopy kind="weeklyReview" className="mt-3" />
 
@@ -170,6 +191,7 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <NextBestActionCta
                 action={metadata.next_best_action}
+                disabled={generating}
                 onCustomAction={() => void handleGenerate()}
               />
             </div>

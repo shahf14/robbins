@@ -64,7 +64,11 @@
   "language": {
     "label": "Language",
     "english": "English",
-    "hebrew": "Hebrew"
+    "hebrew": "Hebrew",
+    "switchConfirmTitle": "Switch language?",
+    "switchConfirmMessage": "You have unsaved progress in a wizard or draft. Your work stays on this device, but switching language reloads this page.",
+    "switchConfirmAction": "Switch anyway",
+    "switchConfirmCancel": "Stay here"
   },
   "theme": {
     "toggle": "Toggle dark mode",
@@ -79,7 +83,11 @@
     "displayName": "Display name",
     "displayNamePlaceholder": "How should the app greet you?",
     "save": "Save changes",
+    "saving": "Saving…",
     "saved": "Saved on this device.",
+    "savedSynced": "Saved and synced.",
+    "syncFailed": "Saved locally, but server sync failed: {detail}",
+    "retrySync": "Retry sync",
     "localOnly": "Stored locally only.",
     "themeTitle": "Appearance",
     "themeHelp": "Choose light or dark mode. Your preference is saved on this device.",
@@ -116,6 +124,19 @@
     "reminderTitle": "Daily reminder",
     "reminderHelp": "Get a reminder at a fixed time to check in. This setting is saved on this device.",
     "privacyControlsTitle": "Privacy controls",
+    "localAuth": {
+      "title": "Local API authentication",
+      "body": "Paste LOCAL_AUTH_TOKEN from .env.local (generate with openssl rand -hex 32). Stored in this browser tab only.",
+      "placeholder": "LOCAL_AUTH_TOKEN",
+      "save": "Save",
+      "saved": "Saved",
+      "cleared": "Cleared",
+      "clearedBody": "The stored token was removed from this browser tab. API requests will fail until you save a valid token.",
+      "verifying": "Checking…",
+      "invalidToken": "That token was rejected. Copy LOCAL_AUTH_TOKEN from .env.local exactly.",
+      "offlineError": "Could not reach the server to verify the token. Check that the app is running.",
+      "serverError": "Could not verify the token right now. Try again in a moment."
+    },
     "behavioralAnalytics": "Use additional behavioral insights",
     "behavioralAnalyticsHelp": "Allow optional passive signals such as writing duration, edits, viewed task details, and locally inferred text patterns. Turn this off to keep core coaching without the extra analytics.",
     "coachingStyleOption": {
@@ -160,7 +181,14 @@
     "energy": "Energy",
     "focus": "Focus",
     "momentum": "Momentum",
-    "prompt": "What is the truth you are avoiding right now?"
+    "prompt": "What is the truth you are avoiding right now?",
+    "loadStatus": {
+      "staleTitle": "Showing your last loaded view",
+      "staleBody": "A fresh load failed, so goals and steps below may be out of date until you retry.",
+      "partialTitle": "Some home sections did not load",
+      "partialBody": "Core goals and steps are current, but ritual or coach extras may be missing.",
+      "retry": "Try again"
+    }
   },
   "simpleTasks": {
     "sectionTitle": "Simple daily tasks",
@@ -318,6 +346,8 @@
       "domainLabel": "Which area do you want to move today?",
       "taskLabel": "Choose 1-3 actions for today",
       "loading": "Loading small ideas...",
+      "loadErrorTitle": "Could not load tasks",
+      "retry": "Try again",
       "selectedCount": "{count}/3 selected",
       "cta": "Set my day",
       "saving": "Saving your day...",
@@ -354,6 +384,12 @@
       "wrongDomain": "The replacement must be from the same area.",
       "sameTask": "Choose a different action than the current one.",
       "alreadyInPlan": "This action is already in today's plan."
+    },
+    "weeklyReviewErrors": {
+      "duplicatePeriod": "You already have a weekly review for this period. Scroll down to read it.",
+      "rateLimited": "Weekly review generation is temporarily limited. Try again later.",
+      "rateLimitedMinutes": "Weekly review generation is limited right now. Try again in about {count} minutes.",
+      "rateLimitedHours": "Weekly review generation is limited right now. Try again in about {count} hours."
     },
     "goals": "Goals",
     "activeGoals": "Goals",
@@ -421,6 +457,7 @@
     "intensityPreference": "Intensity preference",
     "saveAssessment": "Save assessment",
     "assessmentSavedToast": "Assessment saved",
+    "assessmentRequiredFields": "Describe where you are now and where you want to be before saving.",
     "assessmentSummaryEyebrow": "Saved assessment",
     "assessmentSummaryTitle": "Your direction",
     "assessmentGoalEyebrow": "Active goal",
@@ -515,8 +552,15 @@
     "stepSkipCoachHint": "Skipping teaches the coach to better adapt the next step.",
     "generateTodaySteps": "Generate today's steps",
     "regenerateTodaySteps": "Regenerate steps",
+    "generateTodayStepsForDomain": "Generate today's steps for {domain}",
+    "regenerateTodayStepsForDomain": "Regenerate steps for {domain}",
+    "generateTodayStepsAllDomains": "Generate today's steps (all areas)",
+    "regenerateTodayStepsAllDomains": "Regenerate steps (all areas)",
+    "noStepsGeneratedForDomain": "No steps were created for this area. Add a goal here first, then try again.",
+    "reflectionFollowUpFailed": "Step saved, but reflection analysis didn't finish ({detail}). You can retry from Insights.",
     "energyAdapted": "Adapted to your energy level",
     "generateWeeklyReview": "Generate weekly review",
+    "weeklyReviewGenerated": "Your weekly review is ready — scroll down to read it.",
     "aiInsights": "AI insights",
     "patternsAndAdjustments": "Patterns and adjustments",
     "aiInsightsVsReviewTitle": "How is this different from the weekly review?",
@@ -742,6 +786,12 @@
       "stage2": "Building today's steps...",
       "stage3": "Matching your energy and schedule...",
       "stage4": "Finishing your plan..."
+    },
+    "weeklyReview": {
+      "stage1": "Collecting your week...",
+      "stage2": "Spotting patterns and blockers...",
+      "stage3": "Drafting recommendations...",
+      "stage4": "Finalizing your review..."
     }
   },
   "continueProcess": {
@@ -766,6 +816,7 @@
   "feedback": {
     "saved": "Saved",
     "failed": "Something went wrong — please try again",
+    "offline": "Could not reach the server. Check your connection and try again.",
     "completed": "Completed",
     "draftAutoSaved": "Draft saved automatically",
     "confirmCancel": "Cancel",
@@ -1065,7 +1116,13 @@
     "nav": {
       "ariaLabel": "Step navigation",
       "backOne": "Go back one step",
-      "restart": "Back to start"
+      "restart": "Back to start",
+      "discardBackTitle": "Leave this step?",
+      "discardBackMessage": "You have answers on this step that are not saved to the server yet. They stay on this device if you go back. Continue?",
+      "discardBackConfirm": "Go back",
+      "discardRestartTitle": "Restart clarification?",
+      "discardRestartMessage": "This clears your in-progress answers on this device and sends you back to the start. Saved server steps may still apply until you submit again.",
+      "discardRestartConfirm": "Restart from the start"
     },
     "back": "Back",
     "next": "Continue",
@@ -1312,7 +1369,11 @@
       "uncertaintyFallback": "It's still unclear what maintains the difficulty most.",
       "diagnosticWarning": "Note: your wording includes terms that sound like a medical diagnosis. This tool is not for diagnosing — consider using language of difficulty or experience instead.",
       "submitAnyway": "Got it, submit anyway",
-      "approve": "This sounds right"
+      "approve": "This sounds right",
+      "loadFailed": "We couldn't draft your formulation summary.",
+      "retry": "Try again",
+      "fillManually": "Fill in manually",
+      "retryDraft": "Try AI draft again"
     },
     "microGoal": {
       "title": "One small step for this week",
@@ -1366,7 +1427,10 @@
       "body": "A short clarification (~5 min) helps set a safe, grounded goal — not a diagnosis.",
       "cta": "Start clarification",
       "resume": "Resume draft",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "errorTitle": "Could not check clarification status",
+      "errorBody": "Your coach workspace stayed locked until we can confirm whether clarification is required. Check your connection and try again.",
+      "retry": "Try again"
     },
     "handoff": {
       "title": "What the coach knows",
@@ -1628,7 +1692,15 @@
   "auth": {
     "signIn": "Sign in",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "clerkDisabled": {
+      "signInTitle": "Account sign-in is not enabled",
+      "signInBody": "This deployment uses local API authentication instead of Clerk. Paste your access token below or open Settings to save it for this browser.",
+      "signUpTitle": "Account sign-up is not enabled",
+      "signUpBody": "This deployment uses local API authentication instead of Clerk. There is no sign-up flow here — paste your access token below or open Settings.",
+      "settingsCta": "Open settings",
+      "homeCta": "Back to app"
+    }
   },
   "analytics": {
     "weeklyProgress": "Weekly progress",
@@ -1816,7 +1888,10 @@
       "confirmTitle": "Reset all data?",
       "confirmMessage": "All your data on this device will be deleted — profile, goals, history, and preferences. You will be sent back to first-time onboarding. This cannot be undone.",
       "confirmButton": "Yes, reset everything",
-      "error": "Could not reset your data. Please try again."
+      "error": "Could not reset your data. Please try again.",
+      "authFailed": "Nothing was deleted. Sign in with your local access token in Settings, then try again.",
+      "offlineFailed": "Nothing was deleted. Could not reach the server — try again when you are back online.",
+      "serverFailed": "Nothing was deleted. The server could not reset your account, so your goals and history are still saved. Try again in a moment."
     }
   },
   "onboarding": {
@@ -2113,7 +2188,33 @@
     "runtimeEyebrow": "Something broke",
     "runtimeTitle": "The app hit a runtime error",
     "runtimeBody": "Try again. If it repeats, restart the dev server so Next clears stale chunks.",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "apiAccess": {
+      "authEyebrow": "Sign in required",
+      "checking": "Checking access…",
+      "authTitle": "Paste your local access token to load your data",
+      "authBody": "Your goals and history are still on the server — this tab just needs LOCAL_AUTH_TOKEN from your deployment. It is stored only in this browser tab.",
+      "authTokenPlaceholder": "LOCAL_AUTH_TOKEN",
+      "authSaveAndRetry": "Save and reload",
+      "authSaved": "Saved",
+      "authVerifying": "Checking…",
+      "authInvalidToken": "That token was rejected. Paste LOCAL_AUTH_TOKEN from .env.local exactly.",
+      "authOffline": "Could not reach the server to verify the token.",
+      "authServerError": "Could not verify the token right now. Try again.",
+      "authSettingsLink": "Open Settings for full instructions",
+      "onboardingEyebrow": "Setup required",
+      "onboardingTitle": "Finish onboarding to unlock your coach workspace",
+      "onboardingBody": "The server has not marked your account as ready yet. Complete the short onboarding flow — your existing data will still be there afterward.",
+      "onboardingCta": "Continue onboarding",
+      "offlineShell": "You're offline — cached coaching data may still be available.",
+      "offlineEyebrow": "Offline",
+      "offlineTitle": "Reconnect to refresh your coaching data",
+      "offlineBody": "The app shell works offline, but goals and steps load from the server. Check your connection and try again.",
+      "transientEyebrow": "Connection issue",
+      "transientTitle": "Could not reach the server right now",
+      "transientBody": "Check that the app backend is running and your network is available, then try again. Your data is not deleted.",
+      "retry": "Try again"
+    }
   },
   "morningRitual": {
     "nav": "Morning Ritual",
@@ -2270,6 +2371,9 @@
       "save": "Save",
       "cancel": "Cancel",
       "delete": "Delete",
+      "deleteConfirmTitle": "Delete this affirmation?",
+      "deleteConfirmMessage": "It will be removed from your ritual library. You can undo for a few seconds.",
+      "deletedUndo": "Affirmation removed.",
       "noAffirmations": "No affirmations yet. Add your first one!"
     },
     "visualization": {
@@ -2295,6 +2399,11 @@
       "declaration": "Today I act as a person who...",
       "placeholder": "...doesn't negotiate with distractions.",
       "addNew": "Add new identity",
+      "savedTitle": "Your saved identities",
+      "delete": "Delete",
+      "deleteConfirmTitle": "Delete this identity?",
+      "deleteConfirmMessage": "It will be removed from your ritual library. You can undo for a few seconds.",
+      "deletedUndo": "Identity removed.",
       "defaultIdentities": {
         "finisher": "I am a person who finishes things.",
         "calm_pressure": "I am a person who stays calm under pressure.",
@@ -2335,6 +2444,7 @@
       "back": "Back",
       "skip": "Skip",
       "done": "Done",
+      "undo": "Undo",
       "step": "Step {current} of {total}"
     },
     "dashboard": {
@@ -2542,9 +2652,167 @@
     "securityNotice": "This page is for internal use only. Changes here affect all app data.",
     "tabs": {
       "content": "Content",
+      "contentStudio": "Content Studio",
+      "database": "Database",
       "data": "Data",
       "logs": "Logs",
       "settings": "Settings"
+    },
+    "shell": {
+      "breadcrumbRoot": "Admin",
+      "tabs": {
+        "content-studio": "Content Studio",
+        "content": "Content",
+        "logs": "Logs",
+        "settings": "Settings",
+        "database": "Database"
+      },
+      "tabHint": {
+        "content-studio": "View and sync all content sources across the app.",
+        "content": "Edit affirmations and identities used in the morning ritual.",
+        "logs": "Inspect client and server errors for a chosen date.",
+        "settings": "Adjust display name and language for this device.",
+        "database": "Run read-only queries and manage admin tokens — writes are high risk."
+      },
+      "overview": {
+        "title": "What can you do here?",
+        "subtitle": "Pick an area below. Each shows how risky it is and what access you need.",
+        "actions": {
+          "content": {
+            "title": "Content",
+            "hint": "Edit affirmations and identities for the morning ritual.",
+            "access": "Changes copy · local/server"
+          },
+          "database": {
+            "title": "Database",
+            "hint": "Browse tables, run SQL, and save admin tokens for API access.",
+            "access": "High risk · Requires tokens"
+          },
+          "logs": {
+            "title": "Logs",
+            "hint": "Review errors logged by the app for debugging.",
+            "access": "Read-only · Requires tokens"
+          },
+          "settings": {
+            "title": "Settings",
+            "hint": "Display name and language — stored on this device.",
+            "access": "Safe · Local only"
+          }
+        }
+      },
+      "setup": {
+        "title": "First-time setup",
+        "subtitle": "Complete these steps before relying on admin tools.",
+        "go": "Go",
+        "steps": {
+          "localToken": "Save LOCAL_AUTH_TOKEN",
+          "adminToken": "Save ADMIN_API_TOKEN",
+          "dbConnection": "Check DB connection",
+          "contentStudioSync": "Sync Content Studio to DB"
+        }
+      },
+      "activity": {
+        "never": "never",
+        "contentStudioSync": "Last Content Studio sync",
+        "dbSync": "Last DB import",
+        "export": "Last export",
+        "settingsSave": "Last saved setting"
+      },
+      "buttons": {
+        "view": "View",
+        "viewHint": "refresh, check, export",
+        "action": "Action",
+        "actionHint": "save, sync, delete, import"
+      },
+      "help": {
+        "open": "Open tab help",
+        "close": "Close",
+        "sections": {
+          "what": "What this tab does",
+          "when": "When to use it",
+          "avoid": "What not to do",
+          "buttons": "Main buttons"
+        },
+        "content-studio": {
+          "title": "Content Studio help",
+          "what": "Live inventory of messages, JSON, prompts, and DB-backed content with risk labels.",
+          "when": "Before changing copy, prompts, or planning a content migration.",
+          "avoid": "Do not assume Sync to DB edits runtime text — it only mirrors the registry.",
+          "buttons": "Check DB = read-only status. Sync to DB = writes registry snapshot. Guided presets filter by task, not raw field names."
+        },
+        "content": {
+          "title": "Content help",
+          "what": "Manage affirmations and identity declarations for the morning ritual.",
+          "when": "When curating ritual content for yourself or test users.",
+          "avoid": "Deletes are undoable briefly but affect the ritual library immediately.",
+          "buttons": "Add = creates content. Delete = removes after confirm."
+        },
+        "logs": {
+          "title": "Logs help",
+          "what": "Shows error lines captured for the selected date.",
+          "when": "When debugging client failures or verifying a fix.",
+          "avoid": "Empty logs for today usually means no errors — not a broken connection.",
+          "buttons": "Refresh = reload for the selected date. Requires valid tokens in Database tab."
+        },
+        "settings": {
+          "title": "Settings help",
+          "what": "Local display name and language preference.",
+          "when": "Personalizing how the app greets you on this device.",
+          "avoid": "This tab does not store API tokens — use Database for that.",
+          "buttons": "Save changes = writes to local storage only."
+        },
+        "database": {
+          "title": "Database help",
+          "what": "SQLite browser, SQL editor, token gate, and legacy localStorage import.",
+          "when": "Inspecting data, verifying migrations, or importing legacy device data.",
+          "avoid": "Import legacy localStorage overwrites matching rows. SQL can mutate data if not read-only.",
+          "buttons": "Save tokens = session storage for this tab. Import = destructive upsert. Table browser Refresh = view-only."
+        }
+      },
+      "risk": {
+        "content-studio": {"label": "Safe"},
+        "content": {"label": "Changes ritual"},
+        "logs": {"label": "Read-only"},
+        "settings": {"label": "Local"},
+        "database": {"label": "High risk"}
+      },
+      "subCrumbs": {
+        "content-studio": "Local registry",
+        "content": "Ritual content"
+      }
+    },
+    "tooltips": {
+      "tabs": {
+        "contentStudio": "Map of all app content sources: translations, JSON, prompts, rules, and DB content.",
+        "database": "Sensitive admin tool for DB viewing and queries. Requires ADMIN_API_TOKEN. For careful inspection and repair."
+      },
+      "risk": {
+        "high": "Risk level based on user impact, personalization, AI involvement, and rollback complexity.",
+        "medium": "Risk level based on user impact, personalization, AI involvement, and rollback complexity.",
+        "low": "Risk level based on user impact, personalization, AI involvement, and rollback complexity."
+      },
+      "p1Priority": "P1 means this asset should move to versioned/approved management before lower-priority assets.",
+      "migrationPriority": {
+        "p1": "P1 — highest migration priority. Review and move to versioned/approved content management before other assets.",
+        "p2": "P2 — medium priority. Important to migrate, but after all P1 assets are handled.",
+        "p3": "P3 — lower priority. Can wait until P1 and P2 migration work is underway."
+      },
+      "editableNow": "Whether this content can be edited in the app today without a code change.",
+      "promptOwned": "Content embedded in code or prompts. Changing it requires a deploy, not just a DB edit.",
+      "syncDb": "Syncs the current registry to Content Studio tables: assets, versions, governance checks, and audit.",
+      "checkDb": "Checks how many Content Studio assets, versions, governance checks, and audit events exist in DB now.",
+      "exportSelected": "Exports only the assets you selected, for review or migration work.",
+      "selectHighP1": "Selects all high-risk or P1 migration-priority assets in the current results.",
+      "localeDelta": "Gap in content unit count between English and Hebrew. Not always a problem, but needs parity review.",
+      "runtimeUse": "Where this asset actually runs in the app or user journey.",
+      "governance": "What must happen before a safe change or publish: review, evals, rollback, telemetry.",
+      "evalSignals": "Metrics to judge whether content works: completion, skip, fallback, output quality, locale purity.",
+      "simulatorInputs": "Parameters to set in the simulator to test how content behaves for different users.",
+      "dbLocalMode": "The screen uses the local in-code registry. DB sync is available only with an admin token.",
+      "needsAttention": "Flagged High risk or P1 — review this asset first.",
+      "stable": "Not flagged High/P1, but a specific change may still need review.",
+      "copyLink": "Copies a direct link to this asset inside Content Studio.",
+      "viewMode": "Compact is for quick scanning; Detailed shows more context without opening each asset."
     },
     "content": {
       "affirmationsTitle": "Affirmation Manager",
@@ -2553,10 +2821,147 @@
       "identitiesDescription": "View and manage saved identity declarations.",
       "addIdentity": "Add identity",
       "deleteIdentity": "Delete",
+      "deleteIdentityConfirmTitle": "Delete this identity?",
+      "deleteIdentityConfirmMessage": "It will be removed from your ritual library. You can undo for a few seconds.",
       "noIdentities": "No custom identities saved yet.",
+      "emptyIdentitiesTitle": "No custom identities yet",
+      "emptyIdentitiesDetail": "Add an identity declaration above. It will appear in the morning ritual picker.",
       "identityPlaceholder": "I am a person who...",
       "gratitudeTitle": "Gratitude Triggers",
       "gratitudeDescription": "View the default gratitude triggers. Editing will be available in a future update."
+    },
+    "affirmations": {
+      "title": "Affirmation library",
+      "description": "Search, filter, edit, and manage affirmations used in the morning ritual.",
+      "add": "Add affirmation",
+      "addDraft": "New draft",
+      "manageTags": "Manage tags",
+      "export": "Export JSON",
+      "import": "Import",
+      "searchPlaceholder": "Search by text, title, tag, language, or type",
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive",
+      "draft": "Draft",
+      "hidden": "Hidden",
+      "yes": "Yes",
+      "no": "No",
+      "never": "Never",
+      "untitled": "Untitled",
+      "untagged": "Untagged",
+      "edit": "Edit",
+      "delete": "Delete",
+      "hide": "Hide",
+      "unhide": "Show again",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saved": "Saved",
+      "exported": "Download started",
+      "imported": "Imported {count} affirmations",
+      "importEmpty": "No affirmations found in file",
+      "importError": "Import failed — check file format",
+      "hiddenToast": "Affirmation hidden from your library",
+      "deletedUndo": "Affirmation deleted",
+      "undo": "Undo",
+      "selectItem": "Select an affirmation from the list to see details",
+      "detailTitle": "Affirmation details",
+      "createTitle": "New affirmation",
+      "editTitle": "Edit affirmation",
+      "previewTitle": "Morning ritual preview",
+      "qualityTitle": "Quality warnings",
+      "tagManagerTitle": "Tag manager",
+      "renameTag": "Rename tag",
+      "mergeTags": "Merge tags",
+      "fromTag": "From tag",
+      "toTag": "To tag",
+      "mergeFrom": "Tags to merge (comma-separated)",
+      "mergeTo": "Target tag",
+      "applyRename": "Rename",
+      "applyMerge": "Merge",
+      "tagsUpdated": "Tags updated",
+      "groupByTag": "Group by tag",
+      "resetFilters": "Reset filters",
+      "showing": "Showing {shown} of {total}",
+      "selected": "{count} selected",
+      "selectVisible": "Select visible",
+      "clearSelection": "Clear selection",
+      "bulkActivate": "Activate",
+      "bulkDeactivate": "Deactivate",
+      "bulkAddTag": "Add tag",
+      "bulkDelete": "Delete selected",
+      "bulkExport": "Export CSV",
+      "bulkTagPlaceholder": "New tag",
+      "bulkDeleteTitle": "Delete selected affirmations?",
+      "bulkDeleteMessage": "This removes {count} custom affirmations. Default library items are not affected.",
+      "deleteConfirmTitle": "Delete this affirmation?",
+      "deleteConfirmMessage": "It will be removed from your library. This does not affect global defaults.",
+      "emptyTitle": "No matching affirmations",
+      "emptyDetail": "Try another tab, clear filters, or add a new affirmation.",
+      "prevPage": "Previous",
+      "nextPage": "Next",
+      "loadMore": "Load more",
+      "page": "Page {page} of {total}",
+      "usageShort": "Selected {count} times in ritual",
+      "tabs": {
+        "active": "Active",
+        "drafts": "Drafts",
+        "hidden": "Hidden",
+        "default": "Defaults",
+        "custom": "Custom"
+      },
+      "filters": {
+        "language": "Language",
+        "type": "Type",
+        "active": "Status",
+        "origin": "Source",
+        "tag": "Tag"
+      },
+      "sort": {
+        "label": "Sort",
+        "createdAt": "Created date",
+        "lastUsedAt": "Last used",
+        "title": "Title",
+        "type": "Type",
+        "language": "Language",
+        "weight": "Weight"
+      },
+      "type": {
+        "text": "Text",
+        "youtube": "YouTube"
+      },
+      "origin": {
+        "default": "Default",
+        "custom": "User",
+        "admin": "Admin"
+      },
+      "originHelp": {
+        "default": "Global library item. You can hide it, not delete it.",
+        "custom": "Created by the user in ritual or elsewhere.",
+        "admin": "Created or edited through the admin panel."
+      },
+      "fields": {
+        "title": "Title",
+        "text": "Text",
+        "youtubeUrl": "YouTube URL",
+        "tags": "Tags",
+        "language": "Language",
+        "type": "Type",
+        "weight": "Weight",
+        "active": "Active",
+        "draft": "Save as draft",
+        "createdAt": "Created",
+        "lastUsedAt": "Last used",
+        "selectedCount": "Selected in ritual",
+        "lastSelectedAt": "Last selected in ritual"
+      },
+      "quality": {
+        "too_short": "Text is too short",
+        "duplicate": "Possible duplicate",
+        "no_tags": "No tags",
+        "no_language": "Missing language",
+        "bad_youtube_url": "Invalid YouTube URL",
+        "missing_title": "Missing title"
+      }
     },
     "data": {
       "title": "Data Management",
@@ -2584,8 +2989,36 @@
       "type": "Type",
       "message": "Message",
       "noLogs": "No logs found for this date.",
+      "noLogsDetail": "No logs for this date. That is normal if there were no errors today.",
+      "emptyTitle": "No logs to show",
+      "loadErrorTitle": "Could not load logs",
+      "authError": "Authentication failed. Open the Database tab, enter LOCAL_AUTH_TOKEN and ADMIN_API_TOKEN, then click Save tokens.",
+      "serverError": "Admin API is not configured on the server (ADMIN_API_TOKEN missing).",
+      "genericError": "Could not load logs.",
+      "loading": "Loading…",
+      "retry": "Retry",
       "refresh": "Refresh",
       "count": "{count} entries"
+    },
+    "database": {
+      "eyebrow": "Database",
+      "title": "Local SQLite — life-coach.db",
+      "loading": "Loading…",
+      "tableSummary": "{tables} tables · {rows} total rows",
+      "import": "Import legacy localStorage",
+      "importing": "Importing…",
+      "tokenTitle": "Admin access tokens",
+      "tokenHelp": "Stored in this browser tab session only. Production DB routes require ADMIN_API_TOKEN.",
+      "saveTokens": "Save tokens",
+      "checking": "Checking…",
+      "syncComplete": "Sync complete",
+      "tablesView": "Tables",
+      "queryView": "SQL Query",
+      "noTablesTitle": "No tables found",
+      "noTablesDetail": "Use Import legacy localStorage or run migrations to populate the database.",
+      "loadErrorTitle": "Could not load database tables",
+      "retry": "Retry",
+      "loadingTables": "Loading tables…"
     },
     "settings": {
       "title": "App Settings",
@@ -3218,6 +3651,8 @@
       "morningTime": "At {time} (wake + 15 min)",
       "eveningTime": "At {time} (sleep − 45 min)",
       "enable": "Enable reminders",
+      "saving": "Saving schedule…",
+      "syncFailed": "Could not sync wake/sleep times: {detail}",
       "enabled": "Reminders enabled on this device.",
       "denied": "Notifications are blocked in this browser.",
       "unsupported": "This browser does not support notifications.",

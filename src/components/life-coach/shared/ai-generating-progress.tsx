@@ -3,7 +3,7 @@
 import {useEffect, useMemo, useState} from 'react';
 import {useTranslations} from 'next-intl';
 
-type Variant = 'goal' | 'dailySteps';
+type Variant = 'goal' | 'dailySteps' | 'weeklyReview';
 
 type Props = {
   variant?: Variant;
@@ -19,7 +19,14 @@ export function AiGeneratingProgress({variant = 'goal'}: Props) {
     () =>
       variant === 'dailySteps'
         ? [t('dailySteps.stage1'), t('dailySteps.stage2'), t('dailySteps.stage3'), t('dailySteps.stage4')]
-        : [t('stage1'), t('stage2'), t('stage3'), t('stage4')],
+        : variant === 'weeklyReview'
+          ? [
+              t('weeklyReview.stage1'),
+              t('weeklyReview.stage2'),
+              t('weeklyReview.stage3'),
+              t('weeklyReview.stage4'),
+            ]
+          : [t('stage1'), t('stage2'), t('stage3'), t('stage4')],
     [t, variant]
   );
   const [stageIndex, setStageIndex] = useState(0);
@@ -27,7 +34,7 @@ export function AiGeneratingProgress({variant = 'goal'}: Props) {
   useEffect(() => {
     const id = window.setInterval(() => {
       setStageIndex((i) => Math.min(i + 1, stages.length - 1));
-    }, variant === 'dailySteps' ? 3500 : 4500);
+    }, variant === 'dailySteps' ? 3500 : variant === 'weeklyReview' ? 4000 : 4500);
     return () => window.clearInterval(id);
   }, [stages.length, variant]);
 

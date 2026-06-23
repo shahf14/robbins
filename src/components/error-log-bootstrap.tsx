@@ -1,22 +1,67 @@
+'use client';
+
 import Script from 'next/script';
+import {LOCAL_AUTH_TOKEN_STORAGE_KEY} from '@/lib/auth-storage-keys';
 
 export function ErrorLogBootstrap() {
+  const storageKey = LOCAL_AUTH_TOKEN_STORAGE_KEY;
   const script = `
     (() => {
       if (window.__robbinsErrorLoggerInstalled) return;
       window.__robbinsErrorLoggerInstalled = true;
+      const storageKey = ${JSON.stringify(storageKey)};
       const ignoreLoggingFailure = (error) => {
         void error;
+      };
+
+      const redactText = (value) => {
+        if (!value) return value;
+        let redacted = String(value)
+          .replace(/Bearer\\s+[A-Za-z0-9._\\-+/=]+/gi, 'Bearer [REDACTED]')
+          .replace(/\\bsk-[A-Za-z0-9]{8,}\\b/g, 'sk-[REDACTED]')
+          .replace(/\\bwhsec_[A-Za-z0-9]+\\b/g, 'whsec_[REDACTED]')
+          .replace(/\\bpk_(test|live)_[A-Za-z0-9]+\\b/g, 'pk_[REDACTED]');
+        try {
+          const url = new URL(redacted);
+          for (const param of ['token', 'key', 'secret', 'code', 'password', 'auth']) {
+            if (url.searchParams.has(param)) {
+              url.searchParams.set(param, '[REDACTED]');
+            }
+          }
+          redacted = url.toString();
+        } catch {
+          // Not a URL.
+        }
+        return redacted;
       };
 
       const send = (payload) => {
         try {
           const body = JSON.stringify({
-            ...payload,
-            url: location.href,
+            type: payload.type,
+            message: redactText(payload.message),
+            stack: redactText(payload.stack),
+            source: payload.source,
+            line: payload.line,
+            column: payload.column,
+            url: redactText(location.href),
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString()
           });
+
+          const token = sessionStorage.getItem(storageKey)?.trim() ?? '';
+          if (token) {
+            fetch('/api/log', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token
+              },
+              body,
+              keepalive: true
+            }).catch(ignoreLoggingFailure);
+            return;
+          }
 
           if (navigator.sendBeacon) {
             navigator.sendBeacon('/api/log', new Blob([body], {type: 'application/json'}));

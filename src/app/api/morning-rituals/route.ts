@@ -4,13 +4,15 @@
  *
  * Backed purely by the local SQLite DB.
  */
+import {morningRitualSessionSchema} from '@/lib/api-body-schemas';
 import {requireCurrentUser} from '@/lib/auth/get-current-user';
 import {
   listMorningRitualSessions,
   saveMorningRitualSession,
 } from '@/lib/db/repositories/morning-rituals';
 import type {MorningRitualSession} from '@/lib/morning-ritual-types';
-import {badRequest, serverError} from '@/lib/api-response';
+import {serverError} from '@/lib/api-response';
+import {JSON_BODY_LIMITS, readAuthenticatedJsonBody} from '@/lib/read-authenticated-json-body';
 
 export async function GET(request: Request) {
   const current = await requireCurrentUser(request);
@@ -21,26 +23,16 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const current = await requireCurrentUser(request);
-  if (!current.ok) return current.response;
+  const body = await readAuthenticatedJsonBody(request, {
+    maxBytes: JSON_BODY_LIMITS.sessionPost,
+    schema: morningRitualSessionSchema,
+  });
+  if (!body.ok) return body.response;
 
-  let session: MorningRitualSession;
-  try {
-    session = (await request.json()) as MorningRitualSession;
-  } catch {
-    return badRequest('Invalid JSON body');
-  }
-
-  if (
-    !session?.id ||
-    typeof session.id !== 'string' ||
-    !Array.isArray(session.gratitudeEntries)
-  ) {
-    return badRequest('Invalid morning ritual session');
-  }
+  const session = body.data as MorningRitualSession;
 
   try {
-    saveMorningRitualSession(current.user.id, session);
+    saveMorningRitualSession(body.user.id, session);
     return Response.json({ok: true});
   } catch {
     return serverError('Could not save morning ritual session');

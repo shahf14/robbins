@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useTranslations} from 'next-intl';
 import {Link} from '@/i18n/navigation';
 import {formulationApi} from '@/lib/life-coach/api-client';
@@ -14,14 +14,22 @@ export function LifeCoachFormulationGate({children}: Props) {
   const t = useTranslations('formulation.gate');
   const [gate, setGate] = useState<FormulationGateResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
-  useEffect(() => {
+  const loadGate = useCallback(() => {
+    setLoading(true);
+    setLoadError(false);
     formulationApi
       .getGate()
       .then(({gate: g}) => setGate(g))
-      .catch(() => setGate({required: false}))
+      .catch(() => setLoadError(true))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(loadGate, 0);
+    return () => window.clearTimeout(timeout);
+  }, [loadGate]);
 
   if (loading) {
     return (
@@ -32,6 +40,18 @@ export function LifeCoachFormulationGate({children}: Props) {
         />
         <span>{t('loading')}</span>
       </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <section className="panel-surface max-w-lg p-6" role="alert">
+        <h3 className="text-lg font-black txt-strong">{t('errorTitle')}</h3>
+        <p className="mt-2 text-sm leading-7 text-[var(--muted)]">{t('errorBody')}</p>
+        <button type="button" className="focus-ring btn-primary mt-5 text-sm" onClick={loadGate}>
+          {t('retry')}
+        </button>
+      </section>
     );
   }
 

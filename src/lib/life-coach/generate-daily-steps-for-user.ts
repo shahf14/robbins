@@ -254,7 +254,8 @@ async function qualifyAndInsertSteps(
   steps: StructuredDailyBabyStep[],
   planStepKeys: Set<string>,
   params: AiGenerationParams,
-  coachTone: CoachingStyle
+  coachTone: CoachingStyle,
+  domainScope?: import('@/lib/life-coach/types').LifeDomain
 ) {
   const validationProfile = buildStepValidationProfile({
     locale,
@@ -313,7 +314,13 @@ async function qualifyAndInsertSteps(
     });
   }
 
-  return insertDailyBabySteps(userId, date, qualified, locale, coachTone);
+  const stepsToInsert = domainScope
+    ? qualified.filter((step) => step.domain === domainScope)
+    : qualified;
+
+  return insertDailyBabySteps(userId, date, stepsToInsert, locale, coachTone, {
+    domainScope,
+  });
 }
 
 function stepKey(step: StructuredDailyBabyStep): string {
@@ -344,7 +351,8 @@ export async function generateDailyStepsForUser(
   physicalConsiderations: PhysicalConsideration[] = [],
   preferredActionWindow: PreferredActionWindow = 'flexible',
   sleepTime = '22:30',
-  includeFirstWin = false
+  includeFirstWin = false,
+  domainScope?: import('@/lib/life-coach/types').LifeDomain
 ) {
   refreshUserBehaviorProfile(userId, preferredActionWindow);
   const [context, profile, latestWeeklyReview, formulation] = await Promise.all([
@@ -530,9 +538,17 @@ export async function generateDailyStepsForUser(
       : 'flexible';
   const skipAwareWindow = resolveSchedulingActionWindow(behaviorProfile, baseWindow);
   const effectiveWindow = resolveSkipCoachTimeWindow(skipAwareWindow, skipCoachAdjustment);
+  const scopedGoals = domainScope
+    ? context.goals.filter((goal) => goal.domain === domainScope)
+    : context.goals;
+
+  if (domainScope && scopedGoals.length === 0) {
+    return [];
+  }
+
   const planSteps: StructuredDailyBabyStep[] = [];
   const planStepKeys = new Set<string>();
-  const goalsForAi = [...context.goals];
+  const goalsForAi = [...scopedGoals];
   const aiParams: AiGenerationParams = {
     locale,
     date,
@@ -568,7 +584,7 @@ export async function generateDailyStepsForUser(
     skipCoachAdjustment,
   };
 
-  for (const goal of context.goals) {
+  for (const goal of scopedGoals) {
     if (goal.domain !== 'health' || !goal.health_context?.execution_plan) {
       continue;
     }
@@ -647,7 +663,7 @@ export async function generateDailyStepsForUser(
   if (adjustedSteps.length === 0) {
     const regenerated = await generateAiStepsBatch({
       ...aiParams,
-      goalsForAi: context.goals,
+      goalsForAi: scopedGoals,
     });
     const finalized = finalizeSteps(
       regenerated,
@@ -711,8 +727,9 @@ export async function generateDailyStepsForUser(
       locale,
       adjustedFinal,
       planStepKeys,
-      {...aiParams, goalsForAi: context.goals},
-      dynamicTone.effective_style
+      {...aiParams, goalsForAi: scopedGoals},
+      dynamicTone.effective_style,
+      domainScope
     );
     if (weeklyPlanAdjustments && latestWeeklyReview) {
       await markWeeklyPlanAdjustmentsApplied(latestWeeklyReview.id, userId);
@@ -749,7 +766,8 @@ export async function generateDailyStepsForUser(
     adjustedSteps,
     planStepKeys,
     aiParams,
-    dynamicTone.effective_style
+    dynamicTone.effective_style,
+    domainScope
   );
   if (weeklyPlanAdjustments && latestWeeklyReview) {
     await markWeeklyPlanAdjustmentsApplied(latestWeeklyReview.id, userId);

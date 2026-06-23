@@ -12,7 +12,7 @@ import {
   getUserParticipantProfile,
   listRecentReflections,
 } from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, resolveLocale} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, resolveLocale, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {aiStructureGoalRequestSchema} from '@/lib/life-coach/schemas';
 
 export async function POST(request: Request) {
@@ -22,18 +22,9 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  let body: Record<string, unknown>;
-
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
-
-  const parsed = aiStructureGoalRequestSchema.safeParse(body);
-
-  if (!parsed.success) {
-    return jsonError('Invalid goal structuring payload.', 400, parsed.error.flatten());
+  const parsed = await parseLifeCoachJsonBody(request, aiStructureGoalRequestSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const limited = enforceAiRateLimit({
@@ -65,12 +56,8 @@ export async function POST(request: Request) {
       motivation: parsed.data.motivation,
       constraints: parsed.data.constraints,
     });
-    const locale = resolveLocale(typeof body.locale === 'string' ? body.locale : null);
-    const baseStyle = (
-      typeof body.coaching_style === 'string'
-        ? body.coaching_style
-        : profile.coaching_style ?? 'supportive'
-    ) as CoachingStyle;
+    const locale = resolveLocale(profile.preferred_language ?? null);
+    const baseStyle = (profile.coaching_style ?? 'supportive') as CoachingStyle;
     const dynamicTone = resolveDynamicCoachTone(current.user.id, baseStyle, locale);
     const mergedTone = mergeToneWithPersonalization(
       {

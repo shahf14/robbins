@@ -5,6 +5,9 @@ import {useLocale, useTranslations} from 'next-intl';
 import {useRouter} from '@/i18n/navigation';
 import type {AppLocale} from '@/i18n/config';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
+import {type ApiLoadFailureKind, resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
+import {useOnLocalAuthReady} from '@/lib/auth/use-on-local-auth-ready';
+import {loadHomeDashboardData, type HomeOptionalSection} from '@/lib/home/load-home-dashboard-data';
 import {SurvivalModeBanner} from '@/components/life-coach/survival-mode-banner';
 import {
   shouldHighlightSurvivalMode,
@@ -14,9 +17,8 @@ import {
   getPersonalDayPhase,
 } from '@/lib/schedule-content';
 import {loadOnboardingState} from '@/lib/onboarding-state';
-import {fetchSessions, getStreak} from '@/lib/morning-ritual-storage';
-import type {MorningRitualSession} from '@/lib/morning-ritual-types';
 import {useToast} from '@/components/feedback/toast-provider';
+import {HomeLoadStatusBanner} from '@/components/home/home-load-status-banner';
 import {MobileQuickAction} from '@/components/feedback/mobile-quick-action';
 import {ContinueProcessBanner} from '@/components/feedback/continue-process-banner';
 import {HomeHowItWorks} from '@/components/home/home-how-it-works';
@@ -56,15 +58,12 @@ import {
   getRecommendedToolLabelKey,
   getRecommendedToolsBarId,
 } from '@/lib/home/resolve-recommended-path';
-import {fetchEveningSessions} from '@/lib/evening-reset-storage';
-import {fetchFormulationCoachContext} from '@/lib/formulation/personalized-challenge-storage';
 import {
   analyzeWeekBehaviorChange,
 } from '@/lib/formulation/behavior-change-tracking';
 import {analyzeReturningBarrierWeek} from '@/lib/formulation/skip-adaptation-routing';
 import {BehaviorChangeInsightCard} from '@/components/behavior-science/behavior-change-insight-card';
 import {shouldEmphasizeSurvivalMode, isSoftSurvivalMode, shouldHidePersonalizedChallenge} from '@/lib/formulation/load-adaptation-routing';
-import {sumWeeklyInvestedMinutes} from '@/lib/life-coach/weekly-minutes';
 import {computeComebackChain} from '@/lib/gamification/comeback-chain';
 import {computeDomainRivalry} from '@/lib/gamification/domain-rivalry';
 import {deriveIdentityTitle} from '@/lib/gamification/identity-titles';
@@ -113,12 +112,16 @@ export function HomeDashboard() {
 
   const [data,     setData]     = useState<HomeData | null>(null);
   const [loading,  setLoading]  = useState(true);
+  const [loadFailure, setLoadFailure] = useState<ApiLoadFailureKind | null>(null);
+  const [partialFailures, setPartialFailures] = useState<HomeOptionalSection[]>([]);
+  const [isStaleView, setIsStaleView] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [microReward, setMicroReward] = useState<string | null>(null);
   const [coachMessage, setCoachMessage] = useState<CoachMessageView | null>(null);
   const [sharingWeekly, setSharingWeekly] = useState(false);
   const focusDraftKey = 'home_focus_draft';
   const focusRef = useRef<HTMLInputElement>(null);
+  const dataRef = useRef<HomeData | null>(null);
   const microRewardTimeoutRef = useRef<number | null>(null);
   const toast = useToast();
   const router = useRouter();
@@ -131,79 +134,43 @@ export function HomeDashboard() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    try {
-      const today = todayYMD();
-      const {start, end} = currentWeekRange();
-      const prefs = loadUserPreferences();
+    setLoadFailure(null);
+    setPartialFailures([]);
+    setIsStaleView(false);
 
-      const [goalsRes, stepsRes, weekStepsRes, domainsRes, sessions, eveningSessions, coachContext, dailyFocusRes] = await Promise.all([
-        lifeCoachApi.listGoals().catch(() => ({goals: []})),
-        lifeCoachApi.getDailySteps(today).catch(() => ({steps: []})),
-        lifeCoachApi.getDailyStepsRange(start, end).catch(() => ({steps: []})),
-        lifeCoachApi.listDomains().catch(() => ({domains: [], states: []})),
-        fetchSessions().catch(() => [] as MorningRitualSession[]),
-        fetchEveningSessions().catch(() => []),
-        fetchFormulationCoachContext().catch(() => ({
-          challenge: null,
-          load_adaptation: null,
-          comeback_messaging: null,
-          accountability: null,
-          behavior_change: null,
-          skip_adaptation: null,
-        })),
-        lifeCoachApi.getDailyFocus(today).catch(() => ({dailyFocus: null})),
-      ]);
+    const prefs = loadUserPreferences();
+    const result = await loadHomeDashboardData({
+      displayName: prefs.display_name,
+      previous: dataRef.current,
+    });
 
-      const ritualStreak = getStreak(sessions);
-      const todayStr = new Date().toDateString();
-      const hasTodayRitual = sessions.some(
-        (s) => s.completed && s.completedAt &&
-          new Date(s.completedAt).toDateString() === todayStr
-      );
-      const hasTodayEvening = eveningSessions.some(
-        (s) => s.completed && s.completedAt &&
-          new Date(s.completedAt).toDateString() === todayStr
-      );
-
-      // Weekly step counts
-      const weekSteps  = weekStepsRes.steps;
-      const weeklyDone  = weekSteps.filter((s) => s.status === 'completed').length;
-      const weeklyTotal = weekSteps.length;
-
-      if (focusRef.current && !focusRef.current.value) {
-        focusRef.current.value = window.localStorage.getItem(focusDraftKey) ?? '';
-      }
-
-      setData({
-        goals:          goalsRes.goals,
-        todaySteps:     stepsRes.steps,
-        domainStates:   domainsRes.states,
-        ritualStreak,
-        hasTodayRitual,
-        hasTodayEvening,
-        ritualSessions: sessions,
-        weeklyDone,
-        weeklyTotal,
-        weeklyMinutes:  sumWeeklyInvestedMinutes(weekSteps),
-        weekSteps,
-        displayName:    prefs.display_name,
-        personalizedChallenge: coachContext.challenge,
-        loadAdaptation: coachContext.load_adaptation,
-        comebackMessaging: coachContext.comeback_messaging,
-        accountability: coachContext.accountability,
-        behaviorChange: coachContext.behavior_change,
-        skipAdaptation: coachContext.skip_adaptation,
-        dailyFocus: dailyFocusRes.dailyFocus,
-      });
-    } finally {
+    if (!result.ok) {
+      setLoadFailure(result.failure);
+      setIsStaleView(dataRef.current !== null);
       setLoading(false);
+      return;
     }
+
+    if (focusRef.current && !focusRef.current.value) {
+      focusRef.current.value = window.localStorage.getItem(focusDraftKey) ?? '';
+    }
+
+    dataRef.current = result.data;
+    setData(result.data);
+    setPartialFailures(result.partialFailures);
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   useEffect(() => {
     const id = window.setTimeout(() => void load(), 0);
     return () => window.clearTimeout(id);
   }, [load]);
+
+  useOnLocalAuthReady(useCallback(() => void load(), [load]));
 
   useEffect(() => {
     let cancelled = false;
@@ -266,8 +233,8 @@ export function HomeDashboard() {
       window.setTimeout(() => {
         document.getElementById('home-primary-action')?.scrollIntoView({behavior: 'smooth', block: 'start'});
       }, 50);
-    } catch {
-      toast.error(t('feedback.failed'));
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
     } finally {
       setGenerating(false);
     }
@@ -291,8 +258,8 @@ export function HomeDashboard() {
         microRewardTimeoutRef.current = null;
       }, 2600);
       await load();
-    } catch {
-      toast.error(t('feedback.failed'));
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
     }
   }, [data, load, t, toast]);
 
@@ -367,8 +334,20 @@ export function HomeDashboard() {
     }
   }, [identityUnlockTitle]);
 
-  if (loading) return <HomeSkeleton />;
-  if (!data)   return null;
+  if (loading && !data) return <HomeSkeleton />;
+  if (loadFailure && !data) {
+    return (
+      <div className="page-shell py-6 sm:py-8">
+        <HomeLoadStatusBanner
+          failure={loadFailure}
+          partialFailures={[]}
+          stale={false}
+          onRetry={() => void load()}
+        />
+      </div>
+    );
+  }
+  if (!data) return null;
 
   const prefs         = loadUserPreferences();
   const latestEnergy = ritualEnergy(completedRitualSessions(data.ritualSessions)[0]);
@@ -486,8 +465,8 @@ export function HomeDashboard() {
       await lifeCoachApi.updateDailyStepContent(target.id, planB);
       await load();
       document.getElementById('home-primary-action')?.scrollIntoView({behavior: 'smooth', block: 'start'});
-    } catch {
-      toast.error(t('feedback.failed'));
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
     }
   }
 
@@ -509,8 +488,8 @@ export function HomeDashboard() {
       await load();
       toast.success(t('feedback.saved'));
       document.getElementById('home-primary-action')?.scrollIntoView({behavior: 'smooth', block: 'start'});
-    } catch {
-      toast.error(t('feedback.failed'));
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
     }
   }
 
@@ -561,6 +540,14 @@ export function HomeDashboard() {
 
   return (
     <div className="page-shell flex flex-col gap-4 py-6 pb-24 sm:gap-5 sm:py-8 sm:pb-8">
+      {(loadFailure || partialFailures.length > 0) && (
+        <HomeLoadStatusBanner
+          failure={loadFailure}
+          partialFailures={partialFailures}
+          stale={isStaleView}
+          onRetry={() => void load()}
+        />
+      )}
 
       {/* ── Above the fold: ברכה + פעולה + כלים ───────────────────────────── */}
       <div className="flex flex-col gap-3">

@@ -39,6 +39,8 @@ export function CuratedDailyTaskPicker({onCreated, initialDomain}: Props) {
   const [selectedPhysical, setSelectedPhysical] = useState<PhysicalConsideration[]>([]);
   const [showPhysicalPrompt, setShowPhysicalPrompt] = useState(false);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadNonce, setReloadNonce] = useState(0);
   const [saving, setSaving] = useState(false);
   const selectedCount = selectedIds.size;
   const fetchKey = `${domain}:${locale}`;
@@ -50,10 +52,16 @@ export function CuratedDailyTaskPicker({onCreated, initialDomain}: Props) {
     lifeCoachApi
       .getCuratedDailyTasks({domain, date: todayYMD(), locale})
       .then((res) => {
-        if (!cancelled) setTasks(res.tasks);
+        if (!cancelled) {
+          setTasks(res.tasks);
+          setLoadError(null);
+        }
       })
-      .catch(() => {
-        if (!cancelled) setTasks([]);
+      .catch((error) => {
+        if (!cancelled) {
+          setTasks([]);
+          setLoadError(resolveCuratedErrorMessage(error, t));
+        }
       })
       .finally(() => {
         if (!cancelled) setLoadedKey(key);
@@ -61,7 +69,13 @@ export function CuratedDailyTaskPicker({onCreated, initialDomain}: Props) {
     return () => {
       cancelled = true;
     };
-  }, [domain, locale, fetchKey]);
+  }, [domain, locale, fetchKey, reloadNonce, t]);
+
+  function retryLoad() {
+    setLoadError(null);
+    setLoadedKey(null);
+    setReloadNonce((current) => current + 1);
+  }
 
   const selectedTasks = useMemo(
     () => tasks.filter((task) => selectedIds.has(task.id)),
@@ -86,6 +100,8 @@ export function CuratedDailyTaskPicker({onCreated, initialDomain}: Props) {
     setDomain(nextDomain);
     setSelectedIds(new Set());
     setShowPhysicalPrompt(false);
+    setLoadError(null);
+    setLoadedKey(null);
   }
 
   function shouldAskPhysicalConsiderations() {
@@ -208,6 +224,21 @@ export function CuratedDailyTaskPicker({onCreated, initialDomain}: Props) {
           <div className="mt-3 rounded-[14px] border border-[color:var(--color-border)] fill-1 px-4 py-5 text-sm txt-muted">
             {t('lifeCoach.curatedPicker.loading')}
           </div>
+        ) : loadError ? (
+          <div
+            className="mt-3 rounded-[14px] border border-red-400/30 bg-red-500/8 px-4 py-5"
+            role="alert"
+          >
+            <p className="text-sm font-black txt-strong">{t('lifeCoach.curatedPicker.loadErrorTitle')}</p>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{loadError}</p>
+            <button
+              type="button"
+              className="focus-ring btn-primary mt-4 text-sm"
+              onClick={retryLoad}
+            >
+              {t('lifeCoach.curatedPicker.retry')}
+            </button>
+          </div>
         ) : (
           <div className="mt-3 grid gap-3">
             {tasks.map((task) => {
@@ -311,7 +342,7 @@ export function CuratedDailyTaskPicker({onCreated, initialDomain}: Props) {
           className="focus-ring btn-primary"
           busy={saving}
           busyLabel={t('lifeCoach.curatedPicker.saving')}
-          disabled={selectedCount < 1}
+          disabled={selectedCount < 1 || loading || Boolean(loadError)}
           onClick={() => void saveSelection()}
         >
           {t('lifeCoach.curatedPicker.cta')}

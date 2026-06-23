@@ -17,6 +17,7 @@ function truncate(value: string, max: number) {
 
 export function sanitizeGoalBundleInput(input: GoalBundleInput): GoalBundleInput {
   return {
+    idempotency_key: input.idempotency_key,
     goal: {
       ...input.goal,
       title: truncate(input.goal.title, 140),

@@ -4,7 +4,7 @@ import {
   HEALTH_GOAL_DRAFT_KEY,
   ONBOARDING_DRAFT_KEY,
 } from '@/lib/draft-storage-keys';
-import {LOCAL_AUTH_TOKEN_STORAGE_KEY} from '@/lib/auth-storage-keys';
+import {getLocalAuthHeaders} from '@/lib/auth/client-headers';
 
 const USER_LOCAL_STORAGE_KEYS = [
   'onboarding_v2',
@@ -37,10 +37,22 @@ const USER_LOCAL_STORAGE_PREFIXES = [
   'robbins_feature_hint_dismissed_',
 ] as const;
 
+export type UserResetFailureKind = 'auth' | 'server' | 'offline';
+
+export class UserResetError extends Error {
+  readonly kind: UserResetFailureKind;
+  readonly status?: number;
+
+  constructor(kind: UserResetFailureKind, message: string, status?: number) {
+    super(message);
+    this.name = 'UserResetError';
+    this.kind = kind;
+    this.status = status;
+  }
+}
+
 function localAuthHeaders(): HeadersInit {
-  if (typeof window === 'undefined') return {};
-  const token = window.sessionStorage.getItem(LOCAL_AUTH_TOKEN_STORAGE_KEY)?.trim();
-  return token ? {Authorization: `Bearer ${token}`} : {};
+  return getLocalAuthHeaders();
 }
 
 function clearUserLocalStorage(): void {
@@ -64,22 +76,43 @@ function clearUserLocalStorage(): void {
   }
 }
 
+async function readResetErrorMessage(response: Response): Promise<string> {
+  try {
+    const body = (await response.json()) as {error?: string};
+    if (body.error?.trim()) return body.error.trim();
+  } catch {
+    // Fall back to status text below.
+  }
+
+  return response.statusText || `Request failed (${response.status}).`;
+}
+
+/** Clears server account data first; local storage is wiped only after server success. */
 export async function resetAllUserData(): Promise<void> {
-  let serverCleared = false;
+  let response: Response;
 
   try {
-    const response = await fetch('/api/user/reset', {
+    response = await fetch('/api/user/reset', {
       method: 'POST',
       headers: localAuthHeaders(),
     });
-    serverCleared = response.ok;
   } catch {
-    serverCleared = false;
+    throw new UserResetError(
+      'offline',
+      'Could not reach the server to reset your account.'
+    );
+  }
+
+  if (!response.ok) {
+    const message = await readResetErrorMessage(response);
+    const kind: UserResetFailureKind =
+      response.status === 401 || response.status === 403 ? 'auth' : 'server';
+    throw new UserResetError(kind, message, response.status);
   }
 
   clearUserLocalStorage();
+}
 
-  if (!serverCleared) {
-    console.warn('[reset] Server data could not be cleared; local storage was reset.');
-  }
+export function isUserResetError(error: unknown): error is UserResetError {
+  return error instanceof UserResetError;
 }

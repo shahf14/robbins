@@ -3,7 +3,8 @@ import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
 import {formatLifeContextLabels} from '@/lib/life-context-labels';
 import {getLifeCoachModelConfig} from '@/lib/life-coach/env';
 import {getUserParticipantProfile} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, openAiRequestSignal, resolveLocale} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
+import {callOpenAiResponses} from '@/lib/llm/client';
 import {LIFE_DOMAINS} from '@/lib/life-coach/types';
 import {parseJsonObjectOr} from '@/lib/safe-json';
 import type {AppLocale} from '@/i18n/config';
@@ -91,47 +92,14 @@ const languageInstruction: Record<AppLocale, string> = {
 type MilestonesResult = {days_30: string; days_60: string; days_90: string};
 
 async function callOpenAi(systemPrompt: string, userPrompt: string, maxTokens: number): Promise<string | null> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return null;
-
   const modelConfig = getLifeCoachModelConfig();
-
-  try {
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      signal: openAiRequestSignal(),
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: modelConfig.structuring,
-        instructions: systemPrompt,
-        input: userPrompt,
-        max_output_tokens: maxTokens,
-      }),
-    });
-
-    if (!response.ok) return null;
-
-    const body = (await response.json()) as {
-      output_text?: string;
-      output?: Array<{content?: Array<{text?: string}>}>;
-    };
-
-    return (
-      body.output_text?.trim() ||
-      body.output
-        ?.flatMap((item) => item.content ?? [])
-        .map((c) => c.text)
-        .filter(Boolean)
-        .join('')
-        .trim() ||
-      null
-    );
-  } catch {
-    return null;
-  }
+  const result = await callOpenAiResponses({
+    model: modelConfig.structuring,
+    instructions: systemPrompt,
+    input: userPrompt,
+    maxOutputTokens: maxTokens,
+  });
+  return result?.text || null;
 }
 
 async function generateGoalInspiration(
@@ -250,13 +218,9 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  let body: Record<string, unknown>;
-
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    return jsonError('Invalid JSON body.', 400);
-  }
+  const bodyResult = await parseLifeCoachJsonBody<Record<string, unknown>>(request);
+  if (!bodyResult.ok) return bodyResult.response;
+  const body = (bodyResult.data ?? {}) as Record<string, unknown>;
 
   const domain = typeof body.domain === 'string' ? body.domain : '';
   const category = typeof body.category === 'string' ? body.category : '';

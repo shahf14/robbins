@@ -1,49 +1,102 @@
+import {clerkMiddleware, createRouteMatcher} from '@clerk/nextjs/server';
+import createIntlMiddleware from 'next-intl/middleware';
 import {NextRequest, NextResponse} from 'next/server';
-import {defaultLocale, isLocale, type AppLocale} from './i18n/config';
+import {isClerkConfigured} from '@/lib/auth/clerk-config';
+import {
+  isLegacyAuthPath,
+  localizedAuthLocale,
+  localizedAuthRewriteTarget,
+} from '@/lib/i18n/auth-route';
+import {defaultLocale, isLocale, routing, type AppLocale} from './i18n/config';
+import {resolveLocalePreference} from './lib/i18n/locale-detection';
 
-export default function proxy(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-  const pathnameLocale = getPathnameLocale(pathname);
-  const locale = pathnameLocale ?? detectLocale(request);
+const handleI18nRouting = createIntlMiddleware(routing);
 
-  if (!pathnameLocale) {
-    const url = request.nextUrl.clone();
-    url.pathname = `/${locale}${pathname === '/' ? '' : pathname}`;
-    return NextResponse.redirect(url);
-  }
+const isPublicRoute = createRouteMatcher([
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/:locale/sign-in(.*)',
+  '/:locale/sign-up(.*)',
+  '/api/cron(.*)',
+  '/api/webhooks/clerk(.*)',
+  '/:locale/privacy',
+  '/:locale/terms',
+  '/:locale/help',
+]);
 
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-robbins-locale', locale);
+const clerkEnabled = isClerkConfigured();
 
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders
-    }
+function detectLocale(request: NextRequest): AppLocale {
+  return resolveLocalePreference({
+    cookieLocale: request.cookies.get('NEXT_LOCALE')?.value,
+    acceptLanguage: request.headers.get('accept-language'),
   });
 }
 
+function composeLocaleResponse(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  if (pathname.startsWith('/api')) {
+    return NextResponse.next();
+  }
+
+  const rewriteTarget = localizedAuthRewriteTarget(pathname);
+  if (rewriteTarget) {
+    const locale = localizedAuthLocale(pathname) ?? defaultLocale;
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('x-robbins-locale', locale);
+
+    const url = request.nextUrl.clone();
+    url.pathname = rewriteTarget;
+
+    return NextResponse.rewrite(url, {
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  }
+
+  if (isLegacyAuthPath(pathname)) {
+    const locale = detectLocale(request);
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}${pathname}`;
+    return NextResponse.redirect(url);
+  }
+
+  return handleI18nRouting(request);
+}
+
+function redirectToLocalizedSignIn(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const locale = getPathnameLocale(pathname) ?? detectLocale(request);
+  const signInUrl = new URL(`/${locale}/sign-in`, request.url);
+  signInUrl.searchParams.set('redirect_url', request.url);
+  return NextResponse.redirect(signInUrl);
+}
+
+const proxy = clerkEnabled
+  ? clerkMiddleware(async (auth, request) => {
+      if (!isPublicRoute(request)) {
+        const {userId} = await auth();
+        if (!userId) {
+          return redirectToLocalizedSignIn(request);
+        }
+      }
+      return composeLocaleResponse(request);
+    })
+  : composeLocaleResponse;
+
+export default proxy;
+
 export const config = {
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+  matcher: [
+    '/((?!api|trpc|_next|_vercel|.*\\..*).*)',
+    '/(api|trpc)(.*)',
+    '/__clerk/(.*)',
+  ],
 };
 
 function getPathnameLocale(pathname: string): AppLocale | undefined {
   const segment = pathname.split('/')[1];
   return isLocale(segment) ? segment : undefined;
-}
-
-function detectLocale(request: NextRequest): AppLocale {
-  const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
-  if (cookieLocale && isLocale(cookieLocale)) {
-    return cookieLocale;
-  }
-
-  const languageHeader = request.headers.get('accept-language')?.toLowerCase() ?? '';
-  const languageRanges = languageHeader
-    .split(',')
-    .map((item) => item.trim().split(';')[0])
-    .filter(Boolean);
-
-  return languageRanges.some((range) => range === 'he' || range.startsWith('he-'))
-    ? 'he'
-    : defaultLocale;
 }
