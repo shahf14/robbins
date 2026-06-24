@@ -46,7 +46,7 @@ import {
   buildSkipRecoverySystemPrompt,
   buildSkipRecoveryUserPrompt,
 } from './prompts';
-import {callOpenAiResponses} from '@/lib/llm/client';
+import {callOpenAiResponses, type AiCallMetrics} from '@/lib/llm/client';
 import {
   buildEmotionalReflectionFallback,
   buildProgressEvidenceFallback,
@@ -431,12 +431,6 @@ export const openaiLifeCoachService = {
       difficulty: 'easy',
     };
   },
-};
-
-export type AiCallMetrics = {
-  tokens_used: number | null;
-  generation_duration_ms: number | null;
-  model_used: string | null;
 };
 
 async function requestStructuredJson<T>({

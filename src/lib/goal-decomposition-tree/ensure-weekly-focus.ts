@@ -1,4 +1,4 @@
-import {dateToYMD} from '@/lib/date-utils';
+import {addDaysYMD} from '@/lib/date-utils';
 import type {AppLocale} from '@/i18n/config';
 import type {Goal, Milestone, WeeklyReview} from '@/lib/life-coach/types';
 import {upsertWeeklyGoalFocus, getWeeklyFocusForGoal} from './repository';
@@ -46,7 +46,7 @@ export function refreshWeeklyFocusesFromReview(
   periodEnd: string,
   locale: AppLocale
 ): Record<string, WeeklyGoalFocus> {
-  const nextWeekStart = addDays(periodEnd, 1);
+  const nextWeekStart = addDaysYMD(periodEnd, 1);
   const week = isoWeekWindow(nextWeekStart);
   const byGoalId: Record<string, WeeklyGoalFocus> = {};
 
@@ -73,10 +73,4 @@ export function refreshWeeklyFocusesFromReview(
   }
 
   return byGoalId;
-}
-
-function addDays(date: string, days: number): string {
-  const d = new Date(`${date}T12:00:00`);
-  d.setDate(d.getDate() + days);
-  return dateToYMD(d);
 }

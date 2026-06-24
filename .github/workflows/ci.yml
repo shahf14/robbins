@@ -54,3 +54,6 @@ jobs:
 
       - name: Domain detail URL state tests
         run: npm run test:domain-detail-url-state
+
+      - name: Date utils tests
+        run: npm run test:date-utils

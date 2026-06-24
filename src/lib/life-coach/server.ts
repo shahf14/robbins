@@ -1,4 +1,4 @@
-import {dateToYMD} from '@/lib/date-utils';
+import {dateToYMD, todayYMD} from '@/lib/date-utils';
 import {NextResponse} from 'next/server';
 import {isLocale, type AppLocale} from '@/i18n/config';
 import {getLifeCoachCronSecret} from '@/lib/life-coach/env';
@@ -50,9 +50,7 @@ export function isIsoDate(value: string): boolean {
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
 
-export function startOfToday() {
-  return dateToYMD(new Date());
-}
+export const startOfToday = todayYMD;
 
 export function currentWeekWindow() {
   const today = new Date();

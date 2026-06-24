@@ -31,7 +31,7 @@ import {
   buildMicroGoalUserPrompt,
   type MicroGoalSuggestion,
 } from './prompts';
-import {callOpenAiResponses} from '@/lib/llm/client';
+import {callOpenAiResponses, type AiCallMetrics} from '@/lib/llm/client';
 
 const explorationQuestionSchema = z.object({
   id: z.string().regex(/^q\d{2}$/),
@@ -94,12 +94,6 @@ function microGoalSuggestionFromLlm(
 }
 
 const modelConfig = getLifeCoachModelConfig();
-
-type AiCallMetrics = {
-  tokens_used: number | null;
-  generation_duration_ms: number | null;
-  model_used: string | null;
-};
 
 /** Normalize LLM ids (q1, Q01) → q01…q15 */
 function normalizeExplorationQuestionIds(

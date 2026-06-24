@@ -9,13 +9,9 @@ export function isoWeekWindow(date: string): {start: string; end: string} {
   const sunday = new Date(monday);
   sunday.setDate(monday.getDate() + 6);
   return {
-    start: formatDate(monday),
-    end: formatDate(sunday),
+    start: dateToYMD(monday),
+    end: dateToYMD(sunday),
   };
-}
-
-function formatDate(d: Date): string {
-  return dateToYMD(d);
 }
 
 export function dateInWeek(date: string, weekStart: string, weekEnd: string): boolean {

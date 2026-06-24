@@ -38,6 +38,13 @@ export type LlmTextResult = {
   model: string;
 };
 
+/** Persisted AI call metrics shape (ai_coaching_insights / ai_insights). */
+export type AiCallMetrics = {
+  tokens_used: number | null;
+  generation_duration_ms: number | null;
+  model_used: string | null;
+};
+
 /**
  * Call the OpenAI Responses API and return the extracted text plus basic
  * metrics. Returns `null` when no API key is configured, the request fails, or
