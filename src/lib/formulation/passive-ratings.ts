@@ -73,7 +73,7 @@ const DOMAIN_FOLLOW_UP: Record<string, Omit<RatingFollowUp, 'weight' | 'source_r
   general: {key: 'general_follow', questionKey: 'followUps.worry'},
 };
 
-const MAX_FOLLOW_UPS = 3;
+const MAX_FOLLOW_UPS = 2;
 
 function followUpMetaForKey(
   key: string
@@ -94,7 +94,7 @@ export function distressWeight(key: string, score: number): number {
 
 export function getRatingFollowUps(
   ratings: PassiveRatingItem[],
-  lifeContexts: LifeContextStatus[] = []
+  _lifeContexts: LifeContextStatus[] = []
 ): RatingFollowUp[] {
   const scored = ratings
     .map((r) => ({
@@ -123,52 +123,7 @@ export function getRatingFollowUps(
     .sort((a, b) => b.weight - a.weight)
     .slice(0, MAX_FOLLOW_UPS);
 
-  if (fromRatings.length >= MAX_FOLLOW_UPS) {
-    return fromRatings;
-  }
-
-  const contextBoost: Partial<Record<LifeContextStatus, RatingFollowUp>> = {
-    new_parent: {
-      key: 'ctx_parent',
-      questionKey: 'followUps.contextParent',
-      weight: 2,
-      source_rating_key: null,
-    },
-    student: {
-      key: 'ctx_student',
-      questionKey: 'followUps.contextStudent',
-      weight: 2,
-      source_rating_key: null,
-    },
-    manager: {
-      key: 'ctx_work',
-      questionKey: 'followUps.contextWork',
-      weight: 2,
-      source_rating_key: null,
-    },
-    caregiver: {
-      key: 'ctx_care',
-      questionKey: 'followUps.contextCare',
-      weight: 2,
-      source_rating_key: null,
-    },
-    between_jobs: {
-      key: 'ctx_transition',
-      questionKey: 'followUps.contextTransition',
-      weight: 2,
-      source_rating_key: null,
-    },
-  };
-
-  for (const ctx of lifeContexts) {
-    const extra = contextBoost[ctx];
-    if (extra && !fromRatings.some((f) => f.key === extra.key)) {
-      fromRatings.push(extra);
-      if (fromRatings.length >= MAX_FOLLOW_UPS) break;
-    }
-  }
-
-  return fromRatings.slice(0, MAX_FOLLOW_UPS);
+  return fromRatings;
 }
 
 export function overallIntensityFromRatings(ratings: PassiveRatingItem[]): number {

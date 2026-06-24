@@ -34,7 +34,6 @@ import {
   buildPassiveReflection,
   deriveConcernSummary,
   dimensionsFromRatings,
-  getRatingFollowUps,
 } from '@/lib/formulation/passive-ratings';
 import {
   profileFromFormulationSession,
@@ -837,41 +836,18 @@ export async function patchFormulationSession(
       session.presenting_concern_user_words = summary;
       session.presenting_concern_raw = session.presenting_concern_raw || summary;
       session.reflection_llm_text = buildPassiveReflection(ratings, session.locale);
-      session.rating_follow_ups = getRatingFollowUps(ratings, session.life_context_statuses);
-      session.current_phase = patch.next_phase;
-      break;
-    }
-
-    case 'dimensions':
-      session.dimensions =
-        patch.dimensions ??
-        (session.passive_ratings.length > 0
-          ? dimensionsFromRatings(session.passive_ratings)
-          : session.dimensions);
-      session.checkin_prefill = patch.checkin_prefill ?? session.checkin_prefill;
-      if (patch.prior_question_answers?.length) {
-        session.prior_question_answers = patch.prior_question_answers;
-        session.prior_question_key = patch.prior_question_answers[0]?.key ?? null;
-        session.prior_question_answer = patch.prior_question_answers[0]?.answer ?? null;
-      } else {
-        session.prior_question_key = patch.prior_question_key ?? null;
-        session.prior_question_answer = patch.prior_question_answer ?? null;
-        session.prior_question_answers =
-          patch.prior_question_key && patch.prior_question_answer
-            ? [{key: patch.prior_question_key, answer: patch.prior_question_answer}]
-            : session.prior_question_answers;
-      }
-      if (patch.phases_skipped) {
-        session.phases_skipped = [...new Set([...session.phases_skipped, ...patch.phases_skipped])];
-      }
+      session.rating_follow_ups = [];
+      session.dimensions = dimensionsFromRatings(ratings);
+      session.prior_question_answers = [];
+      session.prior_question_key = null;
+      session.prior_question_answer = null;
+      session.phases_skipped = [...new Set([...session.phases_skipped, 'follow_ups'])];
       if (patch.next_phase === 'exploration' && session.llm_exploration_questions.length === 0) {
         session.llm_exploration_answers = [];
       }
-      if (session.prior_question_answers.length > 0) {
-        syncSessionNarrativeFromInsights(session);
-      }
       session.current_phase = patch.next_phase;
       break;
+    }
 
     case 'exploration':
       if (patch.llm_exploration_questions?.length === 15) {
@@ -889,9 +865,7 @@ export async function patchFormulationSession(
           throw new Error('All 15 exploration answers are required.');
         }
         session.llm_exploration_answers = patch.llm_exploration_answers;
-        if (session.prior_question_answers.length > 0) {
-          syncSessionNarrativeFromInsights(session);
-        }
+        syncSessionNarrativeFromInsights(session);
       }
       session.current_phase = patch.next_phase;
       break;

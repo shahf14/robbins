@@ -6,7 +6,6 @@ import {useSearchParams} from 'next/navigation';
 import type {AppLocale} from '@/i18n/config';
 import {ConsentStep} from '@/components/formulation/steps/consent-step';
 import {PassiveRatingsStep} from '@/components/formulation/steps/passive-ratings-step';
-import {FollowUpStep} from '@/components/formulation/steps/follow-up-step';
 import {ExplorationStep} from '@/components/formulation/steps/exploration-step';
 import {FormulationEditStep} from '@/components/formulation/steps/formulation-edit-step';
 import {MicroGoalStep} from '@/components/formulation/steps/micro-goal-step';
@@ -210,11 +209,6 @@ export function FormulationSessionWizard() {
       setLiveDraft((d) => ({...d, passive_ratings})),
     []
   );
-  const onFollowUpDraft = useCallback(
-    (follow_up_answers: WizardLiveDraft['follow_up_answers']) =>
-      setLiveDraft((d) => ({...d, follow_up_answers})),
-    []
-  );
   const onExplorationDraft = useCallback(
     (llm_exploration_answers: WizardLiveDraft['llm_exploration_answers']) =>
       setLiveDraft((d) => ({...d, llm_exploration_answers})),
@@ -241,10 +235,6 @@ export function FormulationSessionWizard() {
         if (body.phase === 'open' && 'passive_ratings' in body) {
           delete next.passive_ratings;
           clearFormulationLiveDraft(id, 'open');
-        }
-        if (body.phase === 'dimensions' && 'prior_question_answers' in body) {
-          delete next.follow_up_answers;
-          clearFormulationLiveDraft(id, 'dimensions');
         }
         if (body.phase === 'exploration' && 'llm_exploration_answers' in body) {
           delete next.llm_exploration_answers;
@@ -463,29 +453,6 @@ export function FormulationSessionWizard() {
               await patchAndSet(session.id, {
                 phase: 'open',
                 passive_ratings: ratings,
-                next_phase: 'dimensions',
-              });
-            }}
-          />
-        )}
-
-        {phase === 'dimensions' && (
-          <FollowUpStep
-            loading={saving}
-            followUps={session.rating_follow_ups}
-            initialAnswers={liveDraft.follow_up_answers}
-            onDraftChange={onFollowUpDraft}
-            onSubmit={async (answers) => {
-              await patchAndSet(session.id, {
-                phase: 'dimensions',
-                prior_question_answers: answers,
-                next_phase: 'exploration',
-              });
-            }}
-            onSkipAll={async () => {
-              await patchAndSet(session.id, {
-                phase: 'dimensions',
-                phases_skipped: ['follow_ups'],
                 next_phase: 'exploration',
               });
             }}

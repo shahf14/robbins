@@ -410,7 +410,7 @@
     "todayStatus": "Today's step status",
     "progress": "Progress",
     "weeklyReview": "Weekly review",
-    "weeklyReviewEmpty": "Your first weekly review appears after about a week of activity. Keep marking daily steps — once enough history builds up, you'll get pattern analysis and tailored recommendations here.",
+    "weeklyReviewEmpty": "Your first weekly review unlocks after a few days of logging steps. Keep marking daily steps — once enough history builds up, you'll get pattern analysis and tailored recommendations here.",
     "weeklyReviewLocked": "Locked",
     "weeklyReviewLockedWhyTitle": "Why the review is empty",
     "weeklyReviewLockedExplainer": "You need at least {minSteps} logged steps or {minDays} active days before the review can be meaningful.",
@@ -597,7 +597,7 @@
     "generateInitialInsight": "Generate first insight",
     "generatingInsight": "Analyzing…",
     "crossDomainTitle": "Cross-area observation",
-    "crossDomainBlocker": "The blocker \"{blocker}\"appears in {count} different areas.",
+    "crossDomainBlocker": "The blocker \"{blocker}\" appears in {count} different areas.",
     "crossDomainSuggestion": "A root-cause fix in one area will lift the others — consider building a goal that addresses this blocker directly.",
     "mastery": {
       "title": "Domain mastery",
@@ -821,7 +821,7 @@
   "continueProcess": {
     "cta": "Continue",
     "onboarding": {
-      "title": "You have an open onboarding",
+      "title": "You have an unfinished setup",
       "body": "Pick up where you left off and finish setup."
     },
     "health_goal": {
@@ -1018,10 +1018,10 @@
     "whyThisStep": "Why this step?"
   },
   "healthDashboard": {
-    "eyebrow": "Health Status",
+    "eyebrow": "Area status",
     "eyebrowForDomain": "{domain} Status",
     "title": "Progress Dashboard",
-    "healthScore": "Health Score",
+    "healthScore": "Area score",
     "consistencyRate": "Consistency Rate",
     "vsLastMonth": "vs Last Month",
     "thisMonth": "this month",
@@ -1285,14 +1285,16 @@
       }
     },
     "followUps": {
-      "intro": "A few short questions based on your ratings, to understand what is actually active right now and what is less relevant. You can skip all.",
+      "intro": "In the previous step you rated general statements. Here we refine what you marked as meaningful — how much each topic is actually felt for you. Choosing «almost not» lowers its weight in the summary.",
       "none": "No extra follow-up questions — you can continue.",
       "skipAll": "Skip follow-up questions",
+      "basedOnRating": "Based on what you rated earlier",
+      "chipPrompt": "How much is this actually felt for you lately?",
       "clarificationPlaceholder": "Want to make it more precise in a word or two? (optional)",
       "chips": {
-        "not_at_all": "Not at all",
+        "not_at_all": "Almost not",
         "a_little": "A little",
-        "moderate": "Moderate",
+        "moderate": "Moderately",
         "a_lot": "A lot",
         "not_sure": "Not sure"
       },
@@ -1434,7 +1436,7 @@
       "microGoalLabel": "Your micro-goal this week",
       "generatingSteps": "Preparing your first daily steps…",
       "stepsReady": "Your steps for today are ready",
-      "stepsError": "Could not generate steps — you can do this from Life Coach",
+      "stepsError": "Couldn't generate your steps. You can create them from the Life Coach screen.",
       "firstWinLabel": "Your first win — start here",
       "firstWinMinutes": "{minutes} min",
       "toCoachDomain": "Go to {domain}"
@@ -1992,7 +1994,7 @@
     "enabled": "Reminder enabled on this device.",
     "denied": "Notifications are blocked in this browser.",
     "unsupported": "This browser does not support notifications.",
-    "note": "We'll send you a gentle reminder at the time you choose, as long as the app is open on this device.",
+    "note": "Works only while the app is open in this tab — we can't send reminders in the background yet.",
     "notificationTitle": "Daily Check-In",
     "notificationBody": "Take three minutes. Read the state. Choose the next move."
   },
@@ -2012,7 +2014,7 @@
     "intro": "This app is a coaching prototype, not medical, mental-health, legal, or financial advice.",
     "use": "Use the coaching responses as reflection prompts and action planning support.",
     "limits": "Do not rely on the app for distress or crisis situations. In those cases, seek human support outside the app.",
-    "data": "Do not enter information you are not comfortable storing locally in this browser during prototype testing."
+    "data": "Do not enter information you are not comfortable saving to your account on our server during prototype testing."
   },
   "errors": {
     "notFoundTitle": "This page is not here",
@@ -3603,7 +3605,7 @@
       "enabled": "Reminders enabled on this device.",
       "denied": "Notifications are blocked in this browser.",
       "unsupported": "This browser does not support notifications.",
-      "note": "Sent only while the app is open on this device.",
+      "note": "Works only while the app is open in this tab — we can't send reminders in the background yet.",
       "morningNotificationTitle": "Your steps are ready",
       "morningNotificationBody": "Take 5 minutes for your first step today.",
       "eveningNotificationTitle": "Evening reset",

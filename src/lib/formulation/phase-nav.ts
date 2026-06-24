@@ -4,18 +4,18 @@ import type {FormulationPhase, FormulationSession} from '@/lib/life-coach/types'
 export const WIZARD_PHASES: FormulationPhase[] = [
   'consent',
   'open',
-  'dimensions',
   'exploration',
   'formulation',
   'goal',
 ];
 
-/** Map legacy risk step / crisis_stopped sessions onto the current wizard. */
+/** Map legacy wizard steps onto the current flow. */
 export function normalizeWizardPhase(
   phase: FormulationPhase,
   status?: FormulationSession['status']
 ): FormulationPhase {
   if (phase === 'risk' || status === 'crisis_stopped') return 'open';
+  if (phase === 'dimensions') return 'exploration';
   return phase;
 }
 

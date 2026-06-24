@@ -3,7 +3,6 @@
 import {useMemo, useState, type ReactNode} from 'react';
 import {useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
-import {chipAnswerDisplayLabel, parseChipSeverity} from '@/lib/formulation/chip-flare-filter';
 import {distressWeight} from '@/lib/formulation/passive-ratings';
 import {
   getGuidedQuestionBody,
@@ -28,7 +27,6 @@ type Props = {
 const PHASE_ICONS: Record<string, string> = {
   consent: '✔',     // ✔
   open: '⭐',        // ⭐
-  dimensions: '⚙',  // ⚙
   exploration: '🔬', // 🔬
   formulation: '📄', // 📄
   goal: '🎯', // 🎯
@@ -84,23 +82,6 @@ function MiniProgressBar({value, max, label}: {value: number; max: number; label
 }
 
 /* ── Chip badge ─────────────────────────────────────────── */
-
-const CHIP_COLORS: Record<string, string> = {
-  a_lot: 'border-red-400/40 bg-red-400/10 text-red-300',
-  moderate: 'border-amber-400/40 bg-amber-400/10 text-amber-300',
-  a_little: 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300',
-  not_at_all: 'border-[color:var(--color-border-strong)] fill-1 txt-muted',
-  not_sure: 'border-[color:var(--color-border-strong)] fill-1 txt-muted',
-};
-
-function ChipBadge({chip, label}: {chip: string; label: string}) {
-  const cls = CHIP_COLORS[chip] ?? CHIP_COLORS.not_sure!;
-  return (
-    <span className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${cls}`}>
-      {label}
-    </span>
-  );
-}
 
 /* ── Section wrapper ────────────────────────────────────── */
 
@@ -219,15 +200,6 @@ function RatingRow({
     <div className="flex items-center gap-2 py-0.5">
       <span className="min-w-0 flex-1 truncate text-[11px] leading-snug txt-soft">{label}</span>
       <ScoreDots score={dots} />
-    </div>
-  );
-}
-
-function ChipRow({label, answer, chipKey}: {label: string; answer: string; chipKey: string}) {
-  return (
-    <div className="flex items-center gap-2 py-0.5">
-      <span className="min-w-0 flex-1 truncate text-[11px] leading-snug txt-soft">{label}</span>
-      <ChipBadge chip={chipKey} label={answer} />
     </div>
   );
 }
@@ -367,24 +339,6 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
     [ratingsEntries]
   );
 
-  /* ── Follow-ups data ── */
-  const followUps = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const a of session.prior_question_answers) map.set(a.key, a.answer);
-    for (const a of draft.follow_up_answers ?? []) {
-      if (a.answer.trim()) map.set(a.key, a.answer);
-    }
-    const labelByKey = new Map(
-      session.rating_follow_ups.map((f) => [f.key, f.questionKey] as const)
-    );
-    return [...map.entries()].map(([key, answer]) => ({
-      key,
-      chipKey: parseChipSeverity(answer, locale),
-      answer: chipAnswerDisplayLabel(answer, locale),
-      label: labelByKey.has(key) ? t(labelByKey.get(key)!) : key,
-    }));
-  }, [session.prior_question_answers, draft.follow_up_answers, session.rating_follow_ups, locale, t]);
-
   /* ── Exploration data ── */
   const explorationAnswers = useMemo(() => {
     const map = new Map<string, number>();
@@ -423,17 +377,15 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
     let count = 0;
     if (profile.hasProfile) count++;
     if (ratingsEntries.length > 0) count++;
-    if (followUps.length > 0 || session.phases_skipped?.includes('follow_ups')) count++;
     if (explorationAnswers.length > 0) count++;
     if (session.formulation_approved) count++;
     if (session.coach_handoff) count++;
     return count;
-  }, [profile, session, ratingsEntries, followUps, explorationAnswers]);
+  }, [profile, session, ratingsEntries, explorationAnswers]);
 
   const hasAnything =
     profile.hasProfile ||
     ratingsEntries.length > 0 ||
-    followUps.length > 0 ||
     explorationAnswers.length > 0 ||
     session.formulation_approved != null ||
     session.coach_handoff != null;
@@ -557,34 +509,7 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
           )}
         </SummarySection>
 
-        {/* 4. Follow-ups (chips) */}
-        <SummarySection
-          title={phaseLabel('dimensions')}
-          icon={PHASE_ICONS.dimensions}
-          status={getPhaseStatus('dimensions', displayPhase)}
-          defaultOpen={sectionDefaultOpen('dimensions', displayPhase)}
-          badge={
-            session.phases_skipped?.includes('follow_ups') ? (
-              <span className="text-[10px] txt-faint">{t('liveSummary.skipped')}</span>
-            ) : followUps.length > 0 ? (
-              <span className="text-[10px] tabular-nums txt-muted">{followUps.length}</span>
-            ) : undefined
-          }
-        >
-          {followUps.length > 0 ? (
-            <div className="grid gap-1">
-              {followUps.map((f) => (
-                <ChipRow key={f.key} label={f.label} answer={f.answer} chipKey={f.chipKey} />
-              ))}
-            </div>
-          ) : session.phases_skipped?.includes('follow_ups') ? (
-            <p className="text-[10px] italic txt-faint">{t('liveSummary.sectionSkipped')}</p>
-          ) : (
-            <p className="text-[10px] txt-faint">{t('liveSummary.notFilled')}</p>
-          )}
-        </SummarySection>
-
-        {/* 5. Exploration */}
+        {/* 3. Exploration */}
         <SummarySection
           title={phaseLabel('exploration')}
           icon={PHASE_ICONS.exploration}

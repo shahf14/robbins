@@ -24,10 +24,10 @@ export function parseChipSeverity(answer: string, locale: AppLocale): ChipSeveri
     if (raw === labels[key]) return key;
   }
 
-  if (/בכלל לא|not at all/i.test(raw)) return 'not_at_all';
-  if (/^קצת$|a little/i.test(raw)) return 'a_little';
-  if (/בינוני|moderate/i.test(raw)) return 'moderate';
-  if (/הרבה|a lot/i.test(raw)) return 'a_lot';
+  if (/כמעט לא|בכלל לא|not at all|almost not/i.test(raw)) return 'not_at_all';
+  if (/^מעט$|^קצת$|a little/i.test(raw)) return 'a_little';
+  if (/בינונית|בינוני|moderate/i.test(raw)) return 'moderate';
+  if (/מאוד|הרבה|a lot/i.test(raw)) return 'a_lot';
   if (/לא בטוח|not sure/i.test(raw)) return 'not_sure';
 
   return 'unknown';

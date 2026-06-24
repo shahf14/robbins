@@ -127,7 +127,7 @@ export function HomeKpiStrip({
   const kpis = [
     {
       label: t('home.kpiStreak'),
-      value: streak > 0 ? `${streak}d` : '—',
+      value: streak > 0 ? String(streak) : '—',
       color: streak >= 7 ? 'text-emerald-400' : streak > 0 ? 'text-[var(--blue)]' : 'txt-muted',
     },
     {

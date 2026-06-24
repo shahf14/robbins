@@ -136,7 +136,7 @@ export function Step1BasicInfo({s, set, onNext}: Props) {
               className="focus-ring textarea-base mt-3 min-h-14 w-full rounded-lg border border-[color:var(--color-border)]/70 fill-2 px-3 py-2 text-sm"
               value={s.lifeContextNote}
               maxLength={200}
-              aria-label={t('lifeContext.notePlaceholder')}
+              aria-label={t('lifeContext.noteLabel')}
               placeholder={t('onboarding.lifeContextNotePlaceholder')}
               onChange={(e) => set({lifeContextNote: e.target.value})}
             />

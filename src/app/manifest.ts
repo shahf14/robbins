@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Robbins App',
     short_name: 'Robbins',
-    description: 'Daily emotional check-ins and direct coaching.',
+    description: 'A calmer daily space for check-ins, morning ritual, and practical next steps.',
     start_url: '/he',
     display: 'standalone',
     background_color: '#000000',

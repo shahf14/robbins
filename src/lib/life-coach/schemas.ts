@@ -377,22 +377,6 @@ const passiveRatingItemSchema = z.object({
 const formulationPatchOpenSchema = z.object({
   phase: z.literal('open'),
   passive_ratings: z.array(passiveRatingItemSchema).min(1).max(40),
-  next_phase: z.literal('dimensions'),
-});
-
-const priorQuestionAnswerSchema = z.object({
-  key: z.string().trim().min(1).max(80),
-  answer: z.string().trim().min(1).max(1000),
-});
-
-const formulationPatchDimensionsSchema = z.object({
-  phase: z.literal('dimensions'),
-  dimensions: formulationDimensionsSchema.optional(),
-  checkin_prefill: formulationCheckinPrefillSchema.nullable().optional(),
-  prior_question_key: z.string().trim().max(80).optional(),
-  prior_question_answer: z.string().trim().max(1000).optional(),
-  prior_question_answers: z.array(priorQuestionAnswerSchema).max(3).optional(),
-  phases_skipped: z.array(z.string().trim().max(40)).optional(),
   next_phase: z.literal('exploration'),
 });
 
@@ -469,7 +453,6 @@ const formulationPatchNavigateSchema = z.object({
 export const formulationSessionPatchSchema = z.discriminatedUnion('phase', [
   formulationPatchConsentSchema,
   formulationPatchOpenSchema,
-  formulationPatchDimensionsSchema,
   formulationPatchExplorationSchema,
   formulationPatchFormulationSchema,
   formulationPatchGoalSchema,

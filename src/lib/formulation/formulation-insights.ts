@@ -221,15 +221,16 @@ export function syncSessionNarrativeFromInsights(session: FormulationSession): v
 
   const insights = buildFormulationInsights(session, session.locale);
   const hasChipAnswers = session.prior_question_answers.length > 0;
+  const hasExplorationAnswers = session.llm_exploration_answers.length > 0;
 
-  if (hasChipAnswers && insights.burning_now_themes.length > 0) {
+  if ((hasChipAnswers || hasExplorationAnswers) && insights.burning_now_themes.length > 0) {
     session.presenting_concern_user_words = insights.one_line_concern;
     session.presenting_concern_raw = insights.one_line_concern;
     session.reflection_llm_text = buildReflectionFromInsights(insights, session.locale);
     return;
   }
 
-  if (hasChipAnswers) {
+  if (hasChipAnswers || hasExplorationAnswers) {
     session.reflection_llm_text = buildReflectionFromInsights(insights, session.locale);
   }
 }
