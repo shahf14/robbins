@@ -73,7 +73,17 @@ export function computeStreak(steps: DailyBabyStep[], domain?: string): StreakIn
 
   const totalCompleted = filtered.filter((s) => s.status === 'completed').length;
   const totalSteps = filtered.length;
-  const consistencyRate = totalSteps > 0 ? Math.round((totalCompleted / totalSteps) * 100) : 0;
+
+  // Consistency rate is reported as "the last 30 days" in the UI, so it must be
+  // windowed regardless of how much history the caller passes in. A "partial"
+  // day counts as showing up, matching how the streak mechanic treats it.
+  const windowStart = formatLocalDate(addDays(today, -29));
+  const windowSteps = filtered.filter((s) => s.scheduled_date >= windowStart);
+  const windowShowUps = windowSteps.filter(
+    (s) => s.status === 'completed' || s.status === 'partial'
+  ).length;
+  const consistencyRate =
+    windowSteps.length > 0 ? Math.round((windowShowUps / windowSteps.length) * 100) : 0;
 
   return {
     current_streak: currentStreak,

@@ -32,6 +32,8 @@ export function WeeklyReviewEmotionalLayer({reflection}: Props) {
           {reflection.next_identity_action}
         </p>
       </div>
+
+      <p className="mt-4 text-xs txt-muted">{t('aiNote')}</p>
     </section>
   );
 }

@@ -10,17 +10,15 @@ import type {LifeDomain} from '@/lib/life-coach/types';
 const TOTAL_STEPS = 3;
 
 /** Event other components (e.g. a floating action button) can dispatch to open the creator. */
-const OPEN_FREESTYLE_TASK_EVENT = 'open-freestyle-task';
+const OPEN_GENERAL_TASK_EVENT = 'open-freestyle-task';
 
 /**
- * Lightweight creator for a "freestyle" daily task.
+ * Lightweight creator for repeated general daily tasks in a domain.
  *
- * A freestyle task is just a goal (plan_source = 'freestyle') with one
- * pre-generated daily_step per occurrence, so it shows up in the regular goals
- * list and the daily-tasks list. This component only handles *creation*; the
- * tracking happens through the normal daily-step UI.
+ * These tasks are stored directly as daily_steps with is_general=true and no
+ * goal_id, so they do not create a fake goal just to appear in the daily list.
  */
-export function FreestyleTaskCreator({
+export function GeneralTaskSeriesCreator({
   domain,
   onCreated,
 }: {
@@ -34,15 +32,15 @@ export function FreestyleTaskCreator({
     const handler = () => {
       setOpen(true);
       document
-        .getElementById('freestyle-creator')
+        .getElementById('general-task-series-creator')
         ?.scrollIntoView({behavior: 'smooth', block: 'center'});
     };
-    window.addEventListener(OPEN_FREESTYLE_TASK_EVENT, handler);
-    return () => window.removeEventListener(OPEN_FREESTYLE_TASK_EVENT, handler);
+    window.addEventListener(OPEN_GENERAL_TASK_EVENT, handler);
+    return () => window.removeEventListener(OPEN_GENERAL_TASK_EVENT, handler);
   }, []);
 
   return (
-    <section id="freestyle-creator" className="panel-surface scroll-mt-24 p-6 sm:p-8" aria-label={t('sectionTitle')}>
+    <section id="general-task-series-creator" className="panel-surface scroll-mt-24 p-6 sm:p-8" aria-label={t('sectionTitle')}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="eyebrow">{t('sectionEyebrow')}</p>
@@ -58,7 +56,7 @@ export function FreestyleTaskCreator({
 
       {open && (
         <div className="mt-5">
-          <FreestyleWizard
+          <GeneralTaskSeriesWizard
             domain={domain}
             onCancel={() => setOpen(false)}
             onCreated={async () => {
@@ -72,7 +70,7 @@ export function FreestyleTaskCreator({
   );
 }
 
-function FreestyleWizard({
+function GeneralTaskSeriesWizard({
   domain,
   onCreated,
   onCancel,
@@ -99,12 +97,11 @@ function FreestyleWizard({
     if (saving) return;
     setSaving(true);
     try {
-      await lifeCoachApi.createFreestyleGoal({
+      await lifeCoachApi.createGeneralDailyTaskSeries({
         domain,
         title: title.trim(),
         times_per_day: timesPerDay,
         target_days: targetDays,
-        success_metric: t('successMetric', {times: timesPerDay, days: targetDays}),
       });
       await onCreated();
     } catch (error) {
@@ -208,7 +205,7 @@ function NumberStepper({
         onClick={() => onChange(clamp(value - 1))}
         aria-label={`decrease ${unit}`}
       >
-        −
+        -
       </button>
       <input
         type="number"

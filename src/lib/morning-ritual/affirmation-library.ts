@@ -124,28 +124,89 @@ export function filterAffirmations(
 }
 
 export function sortAffirmations(items: AffirmationItem[], sort: AffirmationSortKey): AffirmationItem[] {
-  const next = [...items];
-  next.sort((a, b) => {
-    switch (sort) {
-      case 'title':
-        return a.title.localeCompare(b.title, undefined, {sensitivity: 'base'});
-      case 'type':
-        return a.type.localeCompare(b.type);
-      case 'language':
-        return a.language.localeCompare(b.language);
-      case 'weight':
-        return b.weight - a.weight || a.title.localeCompare(b.title);
-      case 'lastUsedAt': {
-        const aTime = a.lastUsedAt ? Date.parse(a.lastUsedAt) : 0;
-        const bTime = b.lastUsedAt ? Date.parse(b.lastUsedAt) : 0;
-        return bTime - aTime;
-      }
-      case 'createdAt':
-      default:
-        return Date.parse(b.createdAt) - Date.parse(a.createdAt);
+  return [...items].sort((a, b) => compareAffirmations(a, b, sort));
+}
+
+export function compareAffirmations(
+  a: AffirmationItem,
+  b: AffirmationItem,
+  sort: AffirmationSortKey
+): number {
+  switch (sort) {
+    case 'title':
+      return a.title.localeCompare(b.title, undefined, {sensitivity: 'base'});
+    case 'type':
+      return a.type.localeCompare(b.type);
+    case 'language':
+      return a.language.localeCompare(b.language);
+    case 'weight':
+      return b.weight - a.weight || a.title.localeCompare(b.title);
+    case 'lastUsedAt': {
+      const aTime = a.lastUsedAt ? Date.parse(a.lastUsedAt) : 0;
+      const bTime = b.lastUsedAt ? Date.parse(b.lastUsedAt) : 0;
+      return bTime - aTime;
     }
-  });
-  return next;
+    case 'createdAt':
+    default:
+      return Date.parse(b.createdAt) - Date.parse(a.createdAt);
+  }
+}
+
+export type AffirmationPairGroup = {
+  key: string;
+  he: AffirmationItem | null;
+  en: AffirmationItem | null;
+  extras: AffirmationItem[];
+};
+
+export function getAffirmationPairKey(item: AffirmationItem): string {
+  const match = item.id.match(/^(.+)-(he|en)$/);
+  if (match) return match[1];
+  return item.id;
+}
+
+export function groupAffirmationsIntoPairs(items: AffirmationItem[]): AffirmationPairGroup[] {
+  const map = new Map<string, AffirmationPairGroup>();
+
+  for (const item of items) {
+    const key = getAffirmationPairKey(item);
+    const group = map.get(key) ?? {key, he: null, en: null, extras: []};
+
+    if (item.language === 'he') {
+      if (group.he) group.extras.push(item);
+      else group.he = item;
+    } else if (item.language === 'en') {
+      if (group.en) group.extras.push(item);
+      else group.en = item;
+    } else {
+      group.extras.push(item);
+    }
+
+    map.set(key, group);
+  }
+
+  return [...map.values()];
+}
+
+export function getAffirmationPairRepresentative(pair: AffirmationPairGroup): AffirmationItem {
+  return pair.he ?? pair.en ?? pair.extras[0];
+}
+
+export function getAffirmationPairMembers(pair: AffirmationPairGroup): AffirmationItem[] {
+  return [pair.he, pair.en, ...pair.extras].filter((item): item is AffirmationItem => Boolean(item));
+}
+
+export function sortAffirmationPairs(
+  pairs: AffirmationPairGroup[],
+  sort: AffirmationSortKey
+): AffirmationPairGroup[] {
+  return [...pairs].sort((a, b) =>
+    compareAffirmations(
+      getAffirmationPairRepresentative(a),
+      getAffirmationPairRepresentative(b),
+      sort
+    )
+  );
 }
 
 export function collectAffirmationTags(items: AffirmationItem[]): string[] {

@@ -1,5 +1,4 @@
 import type { AppLocale } from '@/i18n/config';
-import type { HealthWizardContextInput } from '@/lib/ai-life-coach/health-goal-fallback';
 import { buildLifeContextAdaptationHint, lifeContextForPrompt } from '@/lib/life-context-labels';
 import type {
   DailyBabyStep,
@@ -168,7 +167,7 @@ const SHORT_TERM_MEMORY_HINT =
 
 const LONG_TERM_MEMORY_HINT =
   'long_term_profile = 30-day patterns: what actually works (winning_patterns, best_action_window). ' +
-  'Never repeat losing_patterns or anything in avoid. Prefer successful_domains and proven step types.';
+  'Never repeat losing_patterns or anything in avoid. Prefer successful_domains and curated step types.';
 
 const PHYSICAL_CONSIDERATIONS_HE: Record<PhysicalConsideration, string> = {
   low_intensity:
@@ -220,7 +219,7 @@ const AGE_HEALTH_HE: Record<AgeGroup, string> = {
   youth: 'גיל 16–19: הצע הרגלים בסיסיים ובטוחים. מניעת פציעות חשובה יותר מעצימות. פעילות קצרה ועקבית עדיפה.',
   young_adult: 'גיל 20–29: ניתן להציע עצימות מתונה–גבוהה עם התאוששות מלאה. מיקוד בבניית הרגל ועקביות.',
   mid_adult: 'גיל 30–49: בריאות מטבולית, ניהול סטרס ואיכות שינה חשובים כמו הפעילות עצמה. ההתאוששות אחרי מאמץ גבוה ארוכה יותר מגיל 20.',
-  mature_adult: 'גיל 50–64: הגנה על מפרקים חיונית. סיכון קרדיווסקולרי גבוה יותר. אסור להציע ימים עוקבים של עצימות גבוהה. עקביות > עצימות.',
+  mature_adult: 'גיל 50–64: הגנה על מפרקים חיונית. היזהר בעומס קרדיווסקולרי — אסור להציע ימים עוקבים של עצימות גבוהה. עקביות > עצימות.',
   senior: 'גיל 65+: ניידות, גמישות ובריאות קרדיווסקולרית עדינה. אין להציע מאמץ מעל 15 דקות ברצף. כל שיפור קטן הוא הצלחה.',
 };
 
@@ -228,14 +227,14 @@ const AGE_HEALTH_EN: Record<AgeGroup, string> = {
   youth: 'Age 16–19: Suggest safe foundational habits. Injury prevention over intensity. Short, consistent activity is best.',
   young_adult: 'Age 20–29: Moderate to high intensity is fine with full recovery. Focus on habit building and consistency.',
   mid_adult: 'Age 30–49: Metabolic health, stress management, and sleep quality matter as much as exercise. Recovery after high effort takes longer than in their 20s.',
-  mature_adult: 'Age 50–64: Joint protection is essential. Higher cardiovascular risk. Never suggest consecutive high-intensity days. Consistency over intensity.',
+  mature_adult: 'Age 50–64: Joint protection is essential. Be cautious with cardiovascular load — never suggest consecutive high-intensity days. Consistency over intensity.',
   senior: 'Age 65+: Mobility, flexibility, and gentle cardiovascular health. Do not suggest continuous effort beyond 15 minutes. Every small improvement is a win.',
 };
 
 const PERIMENOPAUSE_HE =
-  'חשוב (אישה 40–58): שינויי משקל, עייפות וקשיי שינה בגיל זה עשויים להיות הורמונליים — לא רק חוסר מאמץ. אסור למסגר שינויי משקל כבעיית רצון. תעדף ניהול אנרגיה, שינה והפחתת סטרס.';
+  'חשוב (אישה 40–58): בגיל זה שינויי משקל, עייפות וקשיי שינה שכיחים ומושפעים מגורמים רבים מעבר למאמץ — אל תייחס אותם לסיבה מסוימת, ולעולם אל תמסגר שינויי משקל כבעיית רצון. תעדף ניהול אנרגיה, שינה והפחתת סטרס. אם תסמינים כאלה נמשכים, הצע בעדינות להתייעץ עם איש מקצוע מוסמך.';
 const PERIMENOPAUSE_EN =
-  'Important (woman 40–58): Weight changes, fatigue, and sleep issues at this age may be hormonal — not just effort-related. Never frame weight changes as a willpower problem. Prioritize energy management, sleep, and stress reduction.';
+  'Important (woman 40–58): At this life stage, weight changes, fatigue, and sleep issues are common and reflect many factors beyond effort — do not attribute them to a specific cause, and never frame weight changes as a willpower problem. Prioritize energy management, sleep, and stress reduction. If such symptoms persist, gently suggest checking with a qualified professional.';
 
 const MEN_HEALTH_HE =
   'גבר 35–55 (בריאות ו-mind): מסגר בריאות כ"ניהול ביצועים ומניעה" — לא "מסע לבריאות". שפה: "אנרגיה", "חדות", "הפחתת סיכון קרדיווסקולרי". לתחום mind: "ביצועים מנטליים", "ריכוז תחת לחץ" — לא "חיבור רגשי". הוסף נגיעה עדינה לבדיקות מניעה שגרתיות.';
@@ -512,7 +511,7 @@ export function buildGoalStructuringSystemPrompt(
     'Do not give generic motivational advice.',
     'Make the plan realistic for a busy adult.',
     'Baby steps must be specific, small, and executable today.',
-    'Never provide medical, legal, or financial advice as absolute instruction.',
+    'Never provide medical, legal, or financial advice. Do not state a cause for the user\'s symptoms; if something sounds medical, suggest they check with a qualified professional.',
     lifeHint,
     lifeStageHint,
     STEP_CONTRACT_PROMPT_BLOCK,
@@ -549,7 +548,6 @@ export function buildGoalStructuringUserPrompt(input: {
   deadline: string | null;
   motivation: string;
   constraints: string;
-  health_wizard_context?: HealthWizardContextInput;
   life_context_statuses?: LifeContextStatus[];
   age?: number | null;
   gender?: string | null;
@@ -579,7 +577,6 @@ export function buildGoalStructuringUserPrompt(input: {
       deadline: input.deadline,
       motivation: input.motivation,
       constraints: input.constraints,
-      health_wizard_context: input.health_wizard_context ?? null,
       user_behavior_profile: behaviorProfileForPrompt(input.user_behavior_profile ?? null),
     },
     null,
@@ -960,10 +957,10 @@ export function buildWeeklyReviewSystemPrompt(
     '- When life_context_labels are provided, reframe missed steps as understandable given their life situation — not failure.',
     '- Highlight the smallest win of the week and amplify it.',
     '- Suggest one specific, concrete adjustment for next week (not a vague platitude).',
-    '- pattern_mining contains computed correlations — treat as ground truth for recommendations.',
+    '- pattern_mining contains computed correlations — treat as the best available signal (correlation, not proof) for recommendations.',
     '- Echo pattern_insights in summary when relevant; align recommended_adjustment with plan_adjustments.',
-    '- If this is the first or second week with minimal data, still provide a useful review based on whatever data exists.',
-    '- Never say "not enough data" — always find something actionable.',
+    '- If this is the first or second week with minimal data, still provide a useful review based on whatever data exists, but frame observations as tentative (e.g. "early signs suggest") rather than established patterns.',
+    '- Always offer something actionable, but do not invent confident patterns from one or two data points.',
     '',
     '## Emotional Reflection Layer (required):',
     '- Add emotional_reflection that translates week_execution into a short personal identity story.',
@@ -1042,8 +1039,6 @@ export function buildWeeklyReviewUserPrompt(input: {
         title: goal.title,
         description: goal.description,
         success_metric: goal.success_metric,
-        why_important: goal.health_context?.why_deep?.why_important ?? null,
-        why_now: goal.health_context?.why_deep?.why_now ?? null,
       })),
       week_execution: input.week_execution ?? null,
       identity_phrases: input.identity_phrases ?? [],

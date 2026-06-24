@@ -1,4 +1,4 @@
-import {goalDayIndex} from '@/lib/ai-life-coach/resolve-daily-step';
+import {goalDayIndex} from '@/lib/life-coach/goal-day-index';
 import type {Goal, Milestone} from '@/lib/life-coach/types';
 import type {ActiveMilestoneContext} from './types';
 

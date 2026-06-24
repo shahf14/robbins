@@ -13,10 +13,6 @@ import {
   FORMULATION_SESSION_STATUSES,
   GOAL_CREATED_BY,
   GOAL_STATUSES,
-  HEALTH_ANCHOR_HABITS,
-  HEALTH_CATEGORIES,
-  HEALTH_PLAN_SOURCES,
-  HEALTH_SECONDARY_FOCUSES,
   INSIGHT_TYPES,
   INTENSITY_PREFERENCES,
   LIFE_CONTEXT_STATUSES,
@@ -26,7 +22,6 @@ import {
   STEP_VALUE_FEEDBACK_OPTIONS,
   RISK_ACTIONS,
   RISK_LEVELS,
-  WEIGHT_DIRECTIONS,
 } from './types';
 
 export const lifeDomainSchema = z.enum(LIFE_DOMAINS);
@@ -57,86 +52,6 @@ export const lifeDomainAssessmentInputSchema = z.object({
   intensity_preference: intensityPreferenceSchema,
 });
 
-const healthCategorySchema = z.enum(HEALTH_CATEGORIES);
-const weightDirectionSchema = z.enum(WEIGHT_DIRECTIONS);
-const healthSecondaryFocusSchema = z.enum(HEALTH_SECONDARY_FOCUSES);
-const healthAnchorHabitSchema = z.enum(HEALTH_ANCHOR_HABITS);
-const healthPlanSourceSchema = z.enum(HEALTH_PLAN_SOURCES);
-
-const healthMetricsSchema = z.object({
-  category: healthCategorySchema,
-  baseline_value: z.number().min(0).max(500),
-  target_value: z.number().min(0).max(500),
-});
-
-const healthPlanTaskTemplateSchema = z.object({
-  title: z.string().trim().min(1).max(180),
-  description: z.string().trim().min(1).max(1000),
-  estimated_minutes: z.number().int().min(2).max(20),
-  difficulty: dailyStepDifficultySchema,
-  day_of_week: z.number().int().min(0).max(6).optional(),
-});
-
-const healthPlanPhaseSchema = z.object({
-  start_day: z.number().int().min(1).max(90),
-  end_day: z.number().int().min(1).max(90),
-  focus: z.string().trim().min(1).max(280),
-  task_templates: z.array(healthPlanTaskTemplateSchema).min(1).max(14),
-  weigh_in: z.boolean().optional(),
-});
-
-const healthExecutionPlanSchema = z.object({
-  phases: z.array(healthPlanPhaseSchema).min(1).max(13),
-});
-
-const healthGoalAnchorSchema = z.object({
-  habit_key: healthAnchorHabitSchema,
-  time: z.string().max(8).optional(),
-  custom_label: z.string().trim().max(120).optional(),
-});
-
-const healthGoalContextSchema = z.object({
-  category: healthCategorySchema,
-  metrics: healthMetricsSchema,
-  weight_direction: weightDirectionSchema.optional(),
-  secondary_focus: healthSecondaryFocusSchema.optional(),
-  current_kg: z.number().min(20).max(300).optional(),
-  target_kg: z.number().min(20).max(300).optional(),
-  timeline: z.object({
-    days_30: z.string().trim().max(280),
-    days_60: z.string().trim().max(280),
-    days_90: z.string().trim().max(280),
-  }),
-  why_deep: z.object({
-    why_important: z.string().trim().max(1000),
-    why_now: z.string().trim().max(1000),
-    what_lost: z.string().trim().max(1000),
-  }),
-  anchor: healthGoalAnchorSchema.optional(),
-  execution_plan: healthExecutionPlanSchema.optional(),
-  plan_source: healthPlanSourceSchema.optional(),
-});
-
-export const healthWizardContextInputSchema = z.object({
-  category: healthCategorySchema,
-  metrics: healthMetricsSchema,
-  weight_direction: weightDirectionSchema.optional(),
-  secondary_focus: healthSecondaryFocusSchema.optional(),
-  current_kg: z.number().min(20).max(300).optional(),
-  target_kg: z.number().min(20).max(300).optional(),
-  timeline: z.object({
-    days_30: z.string().trim().min(1).max(280),
-    days_60: z.string().trim().max(280).optional().default(''),
-    days_90: z.string().trim().max(280).optional().default(''),
-  }),
-  why_deep: z.object({
-    why_important: z.string().trim().min(1).max(1000),
-    why_now: z.string().trim().max(1000).optional().default(''),
-    what_lost: z.string().trim().max(1000).optional().default(''),
-  }),
-  anchor: healthGoalAnchorSchema.optional(),
-});
-
 const goalCreateInputSchema = z.object({
   domain: lifeDomainSchema,
   domain_category: z.string().trim().min(1).max(120).nullable().optional(),
@@ -146,7 +61,6 @@ const goalCreateInputSchema = z.object({
   deadline: optionalIsoDateSchema,
   status: goalStatusSchema.default('active'),
   created_by: goalCreatedBySchema.default('user'),
-  health_context: healthGoalContextSchema.nullable().optional(),
   success_metric_specificity: z.enum(['measurable', 'vague', 'absent']).optional(),
 });
 
@@ -194,6 +108,7 @@ const structuredDailyBabyStepSchema = z.object({
 
 export const goalBundleCreateInputSchema = z.object({
   idempotency_key: z.string().uuid().optional(),
+  formulation_session_id: z.string().uuid().optional(),
   goal: goalCreateInputSchema,
   milestones: z.array(structuredGoalMilestoneSchema).max(12).default([]),
   initial_steps: z.array(structuredDailyBabyStepSchema.omit({goal_id: true})).max(6).default([]),
@@ -229,7 +144,6 @@ export const aiStructureGoalRequestSchema = z.object({
   deadline: optionalIsoDateSchema.optional().default(null),
   motivation: z.string().trim().max(2000).optional().default(''),
   constraints: z.string().trim().max(1000).optional().default(''),
-  health_wizard_context: healthWizardContextInputSchema.optional(),
 });
 
 const goalRealismRiskLevelSchema = z.enum(['low', 'medium', 'high']);
@@ -247,8 +161,6 @@ export const aiStructuredGoalResponseSchema = z.object({
   deadline: optionalIsoDateSchema,
   milestones: z.array(structuredGoalMilestoneSchema).max(12),
   daily_baby_steps: z.array(goalBreakdownStepContractSchema).min(1).max(6),
-  execution_plan: healthExecutionPlanSchema.nullable().optional(),
-  plan_source: healthPlanSourceSchema.optional(),
   realism_check: goalRealismCheckSchema,
   next_best_action: nextBestActionSchema,
 });

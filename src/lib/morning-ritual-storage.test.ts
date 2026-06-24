@@ -293,6 +293,23 @@ test('domain detail pages classify API access failures for recovery UI', () => {
   assert.match(panelSource, /ApiAccessPanel/);
 });
 
+test('domain goal tab exposes general daily task management', () => {
+  const source = readFileSync(
+    join(here, '..', 'components', 'life-coach', 'shared', 'domain-goal-tab-content.tsx'),
+    'utf8'
+  );
+  const managerSource = readFileSync(
+    join(here, '..', 'components', 'life-coach', 'shared', 'general-daily-steps-manager.tsx'),
+    'utf8'
+  );
+
+  assert.match(source, /GeneralDailyStepsManager/);
+  assert.match(managerSource, /step\.is_general && !step\.goal_id/);
+  assert.match(managerSource, /lifeCoachApi\.updateDailyStep/);
+  assert.match(managerSource, /goal_id: null/);
+  assert.match(managerSource, /is_general: true/);
+});
+
 test('daily reflection modal is dismissible on small screens', () => {
   const source = readFileSync(
     join(here, '..', 'components', 'life-coach', 'daily-reflection-modal.tsx'),
@@ -313,7 +330,12 @@ test('custom ritual content deletes confirm before deferred persistence', () => 
     join(here, '..', 'components', 'affirmation-manager.tsx'),
     'utf8'
   );
-  const adminPanel = readFileSync(join(here, '..', 'components', 'admin-panel.tsx'), 'utf8');
+  // Identity/affirmation admin management was extracted from admin-panel.tsx
+  // into dedicated panels; the confirm + deferred-commit behavior lives there now.
+  const adminIdentitiesPanel = readFileSync(
+    join(here, '..', 'components', 'admin', 'admin-identities-panel.tsx'),
+    'utf8'
+  );
   const identityStep = readFileSync(
     join(here, '..', 'components', 'morning-ritual', 'morning-ritual-basic-steps.tsx'),
     'utf8'
@@ -327,8 +349,8 @@ test('custom ritual content deletes confirm before deferred persistence', () => 
   assert.match(affirmationManager, /deleteConfirmTitle/);
   assert.match(affirmationManager, /destructive: true/);
 
-  assert.match(adminPanel, /scheduleDeferredRitualCommit/);
-  assert.match(adminPanel, /deleteIdentityConfirmTitle/);
+  assert.match(adminIdentitiesPanel, /scheduleDeferredRitualCommit/);
+  assert.match(adminIdentitiesPanel, /deleteIdentityConfirmTitle/);
 
   assert.match(identityStep, /deleteCustomIdentity/);
   assert.match(identityStep, /persist: 'deferred'/);

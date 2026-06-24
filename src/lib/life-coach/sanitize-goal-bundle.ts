@@ -18,6 +18,7 @@ function truncate(value: string, max: number) {
 export function sanitizeGoalBundleInput(input: GoalBundleInput): GoalBundleInput {
   return {
     idempotency_key: input.idempotency_key,
+    formulation_session_id: input.formulation_session_id,
     goal: {
       ...input.goal,
       title: truncate(input.goal.title, 140),
@@ -40,11 +41,5 @@ export function sanitizeGoalBundleInput(input: GoalBundleInput): GoalBundleInput
 }
 
 export function formatGoalCreateError(error: unknown): string {
-  const message = error instanceof Error ? error.message : String(error);
-
-  if (message.includes('health_context') && message.includes('column')) {
-    return 'Database is missing health_context on goals. Apply the local SQLite schema update.';
-  }
-
-  return message;
+  return error instanceof Error ? error.message : String(error);
 }

@@ -143,7 +143,7 @@ export function Step5FirstWin({
           )}
           <div className="mt-4 flex items-center gap-3">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/5 px-3 py-1 text-xs font-semibold text-white/50">
-              ⏱ ~{s.firstStep.estimated_minutes} min
+              ⏱ ~{s.firstStep.estimated_minutes} {t('lifeCoach.minutes')}
             </span>
             {s.selectedDomain && (
               <span className="text-xs font-semibold text-white/35">

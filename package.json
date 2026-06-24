@@ -15,7 +15,6 @@
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
     "test:formulation-migration": "node --experimental-strip-types --test src/lib/db/migrations/formulation-sessions-exploration.test.ts",
-    "test:content-studio-db": "node --experimental-strip-types --test src/lib/db/migrations/content-studio.test.ts",
     "test:frontend-audit": "node --experimental-strip-types --test src/lib/morning-ritual-storage.test.ts",
     "test:api-error": "node --experimental-strip-types --test src/lib/life-coach/api-error.test.ts",
     "test:generate-daily-steps-scope": "node --experimental-strip-types --test src/lib/life-coach/generate-daily-steps-scope.test.ts",
@@ -27,6 +26,8 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.7",
+    "@fontsource-variable/heebo": "^5.2.8",
+    "@fontsource-variable/inter": "^5.2.8",
     "better-sqlite3": "^12.10.0",
     "next": "^16.2.6",
     "next-intl": "^4.1.0",

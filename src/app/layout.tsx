@@ -1,5 +1,4 @@
 import {ClerkProvider} from '@clerk/nextjs';
-import {Heebo, Inter} from 'next/font/google';
 import {headers} from 'next/headers';
 import type {CSSProperties, ReactNode} from 'react';
 import {isClerkConfigured} from '@/lib/auth/clerk-config';
@@ -12,15 +11,10 @@ type Props = {
   children: ReactNode;
 };
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter'
-});
-
-const heebo = Heebo({
-  subsets: ['hebrew', 'latin'],
-  variable: '--font-heebo'
-});
+const FONT_STACK_HE =
+  "'Heebo Variable', 'Inter Variable', system-ui, -apple-system, Segoe UI, Arial, sans-serif";
+const FONT_STACK_EN =
+  "'Inter Variable', 'Heebo Variable', system-ui, -apple-system, Segoe UI, Arial, sans-serif";
 
 export default async function RootLayout({children}: Props) {
   const requestHeaders = await headers();
@@ -29,13 +23,10 @@ export default async function RootLayout({children}: Props) {
   const locale: AppLocale = isLocale(rawLocale) ? rawLocale : defaultLocale;
   const dir = localeDirections[locale];
   const clerkEnabled = isClerkConfigured();
-  const fontStack =
-    locale === 'he'
-      ? 'var(--font-heebo), var(--font-inter), Arial, sans-serif'
-      : 'var(--font-inter), var(--font-heebo), Arial, sans-serif';
+  const fontStack = locale === 'he' ? FONT_STACK_HE : FONT_STACK_EN;
 
   return (
-    <html lang={locale} dir={dir} className={`${inter.variable} ${heebo.variable}`} suppressHydrationWarning>
+    <html lang={locale} dir={dir} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{__html: themeBootstrapScript}} />
       </head>
@@ -43,7 +34,7 @@ export default async function RootLayout({children}: Props) {
         style={
           {
             '--font-body': fontStack,
-            '--font-display': fontStack
+            '--font-display': fontStack,
           } as CSSProperties
         }
       >

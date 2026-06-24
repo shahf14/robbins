@@ -42,6 +42,7 @@ export function CompletionScreen({
         <div className="inline-flex flex-col items-center gap-1 rounded-2xl border border-[color:var(--color-border)] fill-2 px-8 py-4">
           <p className={`text-4xl font-bold ${scoreColor}`}>{readinessScore}/100</p>
           <p className="text-sm txt-muted">{t('complete.readinessLabel')}</p>
+          <p className="max-w-xs text-center text-xs txt-muted">{t('complete.readinessHint')}</p>
         </div>
       </div>
 

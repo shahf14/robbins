@@ -4,14 +4,19 @@ import type {CoachingStyle} from '@/lib/user-preferences';
 type TemplatePair = {sentence: string; action: string};
 
 function intensify(pair: TemplatePair, locale: AppLocale): TemplatePair {
+  // Only inject the "— let's win" flourish when the sentence has no em-dash of
+  // its own, otherwise we get an awkward double em-dash.
+  const hasDash = pair.sentence.includes('—');
   if (locale === 'he') {
+    const sentence = pair.sentence.replace('צעד אחד', 'צעד אחד חזק');
     return {
-      sentence: pair.sentence.replace('צעד אחד', 'צעד אחד חזק').replace('היום', 'היום — בוא ננצח'),
+      sentence: hasDash ? sentence : sentence.replace('היום', 'היום — בוא ננצח'),
       action: pair.action.replace('התחלה:', 'קדימה:').replace('Start with', 'Go:'),
     };
   }
+  const sentence = pair.sentence.replace('one step', 'one bold step');
   return {
-    sentence: pair.sentence.replace('one step', 'one bold step').replace('Today', 'Today — let\'s win'),
+    sentence: hasDash ? sentence : sentence.replace('Today', 'Today — let\'s win'),
     action: pair.action.replace('Start with', 'Go —').replace('Start:', 'Move:'),
   };
 }
@@ -30,14 +35,18 @@ function soften(pair: TemplatePair, locale: AppLocale): TemplatePair {
 }
 
 function directify(pair: TemplatePair, locale: AppLocale): TemplatePair {
+  // Direct tone = clipped, no fluff. Turn the em-dash aside into a short second
+  // sentence rather than dropping it — the clause after the dash often carries
+  // the actionable half of the message.
+  const directSentence = pair.sentence.replace(/\s*—\s*/g, '. ');
   if (locale === 'he') {
     return {
-      sentence: pair.sentence.split('—')[0]?.trim() || pair.sentence,
+      sentence: directSentence,
       action: pair.action.replace('בוא ', '').replace('Let\'s ', ''),
     };
   }
   return {
-    sentence: pair.sentence.split('—')[0]?.trim() || pair.sentence,
+    sentence: directSentence,
     action: pair.action.replace(/^Start with /i, '').replace(/^Open /i, ''),
   };
 }

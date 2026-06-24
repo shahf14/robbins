@@ -5,7 +5,11 @@ export type AdminActivityKey =
   | 'settingsSave'
   | 'tokenSave'
   | 'logsRefresh'
-  | 'dbConnectionOk';
+  | 'dbConnectionOk'
+  | 'goalsSave'
+  | 'identitiesSave'
+  | 'affirmationsSave'
+  | 'goallessTasksSave';
 
 const STORAGE_KEY = 'robbins_admin_activity';
 
@@ -26,6 +30,19 @@ export function recordAdminActivity(key: AdminActivityKey): void {
   if (typeof window === 'undefined') return;
   const next = {...getAdminActivity(), [key]: new Date().toISOString()};
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+}
+
+export function getLatestAdminActivity(
+  state: AdminActivityState
+): {key: AdminActivityKey; at: string} | null {
+  let latest: {key: AdminActivityKey; at: string} | null = null;
+  for (const [key, at] of Object.entries(state) as Array<[AdminActivityKey, string]>) {
+    if (!at) continue;
+    if (!latest || Date.parse(at) > Date.parse(latest.at)) {
+      latest = {key, at};
+    }
+  }
+  return latest;
 }
 
 export function formatAdminActivityTime(

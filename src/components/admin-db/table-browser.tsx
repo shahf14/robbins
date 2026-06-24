@@ -2,13 +2,19 @@
 
 import {BackArrow, NavArrow} from '@/components/directional-arrow';
 import {downloadCsv, rowsToCsv} from '@/lib/csv-export';
-import {useEffect, useState, useCallback} from 'react';
-import {dbApi, type TableSummary, type TableData} from './use-db-api';
-
-const PAGE_SIZE = 50;
+import {useEffect, useState, useCallback, useMemo} from 'react';
+import {useTranslations} from 'next-intl';
+import {dbApi, DbApiError, ensureAdminSession, type TableSummary, type TableData} from './use-db-api';
 
 function cellStr(val: unknown): string {
   return val == null ? '' : String(val);
+}
+
+function pickDefaultTable(tables: TableSummary[]): string | null {
+  if (tables.length === 0) return null;
+  const withRows = tables.filter((table) => table.row_count > 0);
+  if (withRows.length === 0) return tables[0].name;
+  return withRows.reduce((best, table) => (table.row_count > best.row_count ? table : best)).name;
 }
 
 type Props = {
@@ -17,22 +23,40 @@ type Props = {
 };
 
 export function TableBrowser({tables, onRefresh}: Props) {
-  const [selected, setSelected] = useState<string | null>(tables[0]?.name ?? null);
+  const t = useTranslations('admin.database.browser');
+  const defaultTable = useMemo(() => pickDefaultTable(tables), [tables]);
+  const [selected, setSelected] = useState<string | null>(defaultTable);
   const [data, setData] = useState<TableData | null>(null);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSelected((current) => {
+      if (current && tables.some((table) => table.name === current)) return current;
+      return defaultTable;
+    });
+  }, [tables, defaultTable]);
 
   const load = useCallback(async (table: string, p: number, q: string) => {
     setLoading(true);
+    setLoadError(null);
     try {
+      await ensureAdminSession();
       const result = await dbApi.getTable(table, p, q);
       setData(result);
-    } catch {
+    } catch (err) {
       setData(null);
+      if (err instanceof DbApiError) {
+        setLoadError(err.message);
+      } else {
+        setLoadError(err instanceof Error ? err.message : t('loadError'));
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (!selected) return;
@@ -44,6 +68,7 @@ export function TableBrowser({tables, onRefresh}: Props) {
     setSelected(name);
     setPage(1);
     setSearch('');
+    setLoadError(null);
   }
 
   function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -57,74 +82,83 @@ export function TableBrowser({tables, onRefresh}: Props) {
     downloadCsv(`${data.table}-page${page}.csv`, rowsToCsv(columns, data.rows as Record<string, unknown>[]));
   }
 
-  return (
-    <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
-      {/* Sidebar */}
-      <div className="rounded-[18px] border border-[color:var(--color-border)] fill-1 p-3">
-        <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider txt-muted">Tables</p>
-        <div className="grid gap-0.5">
-          {tables.map((t) => (
-            <button
-              key={t.name}
-              type="button"
-              onClick={() => handleSelectTable(t.name)}
-              className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm font-semibold transition ${
-                selected === t.name
-                  ? 'bg-[var(--blue)]/15 txt-strong'
-                  : 'txt-soft hover:fill-2 hover:txt-strong'
-              }`}
-            >
-              <span>{t.name}</span>
-              <span className={`rounded-full px-2 py-0.5 text-xs ${
-                selected === t.name ? 'bg-[var(--blue)]/20 text-[var(--blue)]' : 'fill-2 txt-faint'
-              }`}>
-                {t.row_count.toLocaleString()}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
+  const totalPages = data ? Math.max(1, data.total_pages) : 1;
 
-      {/* Data panel */}
-      <div className="grid gap-3">
-        {/* Toolbar */}
+  return (
+    <div className="admin-db-browser">
+      <aside className="admin-db-browser__sidebar rounded-[18px] border border-[color:var(--color-border)] fill-1 p-3">
+        <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider txt-muted">{t('tablesLabel')}</p>
+        <div className="admin-db-browser__table-list">
+          {tables.map((table) => {
+            const active = selected === table.name;
+            return (
+              <button
+                key={table.name}
+                type="button"
+                onClick={() => handleSelectTable(table.name)}
+                className={`admin-db-browser__table-btn ${active ? 'admin-db-browser__table-btn--active' : ''}`}
+              >
+                <span className={`admin-db-browser__table-name ${active ? 'txt-strong' : 'txt-soft'}`}>
+                  {table.name}
+                </span>
+                <span
+                  className={`admin-db-browser__table-count ${
+                    active ? 'bg-[var(--color-accent)]/20 text-[var(--color-accent)]' : 'fill-2 txt-faint'
+                  }`}
+                  aria-hidden
+                >
+                  {table.row_count.toLocaleString()}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </aside>
+
+      <div className="admin-db-browser__main grid gap-3">
         <div className="flex flex-wrap items-center gap-3">
           <input
-            className="focus-ring input-base h-9 flex-1 min-w-48 text-sm"
-            placeholder="Search…"
+            className="focus-ring input-base h-9 min-w-0 flex-1 text-sm"
+            style={{minWidth: '12rem'}}
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={handleSearchChange}
           />
           <button
             type="button"
-            className="focus-ring btn-ghost h-9 text-sm"
+            className="focus-ring btn-ghost h-9 shrink-0 text-sm"
             onClick={exportCsv}
-            disabled={!data}
+            disabled={!data || data.rows.length === 0}
           >
-            ↓ Export CSV
+            {t('exportCsv')}
           </button>
           <button
             type="button"
-            className="focus-ring btn-ghost h-9 text-sm"
+            className="focus-ring btn-ghost h-9 shrink-0 text-sm"
             onClick={onRefresh}
           >
-            ↺ Refresh
+            {t('refresh')}
           </button>
         </div>
 
-        {/* Table grid */}
-        <div className="overflow-x-auto rounded-[18px] border border-[color:var(--color-border)]">
+        {loadError ? (
+          <div className="rounded-[16px] border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+            {loadError}
+          </div>
+        ) : null}
+
+        <div className="admin-db-browser__grid-wrap">
           {loading ? (
-            <div className="p-8 text-center text-sm txt-muted">Loading…</div>
+            <div className="p-8 text-center text-sm txt-muted">{t('loading')}</div>
           ) : data ? (
             <>
-              <table className="w-full text-left text-sm">
+              <table className="admin-db-browser__grid">
                 <thead>
-                  <tr className="border-b border-[color:var(--color-border)] fill-1">
+                  <tr>
                     {data.columns.map((col) => (
-                      <th key={col.name} className="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider txt-muted">
+                      <th key={col.name}>
                         {col.name}
-                        <span className="ml-1 txt-faint">{col.type}</span>
+                        <span className="ms-1 txt-faint">{col.type}</span>
                       </th>
                     ))}
                   </tr>
@@ -132,30 +166,33 @@ export function TableBrowser({tables, onRefresh}: Props) {
                 <tbody>
                   {data.rows.length === 0 ? (
                     <tr>
-                      <td colSpan={data.columns.length} className="px-4 py-8 text-center txt-muted">
-                        No rows
+                      <td colSpan={data.columns.length} className="py-8 text-center txt-muted">
+                        {t('noRows', {table: data.table})}
                       </td>
                     </tr>
-                  ) : data.rows.map((row, idx) => (
-                    <tr key={idx} className="border-b border-[color:var(--color-border)] hover:fill-1">
-                      {data.columns.map((col) => {
-                        const val = (row as Record<string, unknown>)[col.name];
-                        const str = cellStr(val);
-                        return (
-                          <td key={col.name} className="max-w-xs truncate px-4 py-2.5 text-xs txt-soft" title={str}>
-                            {str}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
+                  ) : (
+                    data.rows.map((row, idx) => (
+                      <tr key={idx}>
+                        {data.columns.map((col) => {
+                          const val = (row as Record<string, unknown>)[col.name];
+                          const str = cellStr(val);
+                          return (
+                            <td key={col.name} title={str}>
+                              {str}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
 
-              {/* Pagination */}
-              <div className="flex items-center justify-between border-t border-[color:var(--color-border)] px-4 py-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--color-border)] px-4 py-3">
                 <span className="text-xs txt-muted">
-                  {data.total.toLocaleString()} rows · page {data.page} / {data.total_pages}
+                  {data.total === 0
+                    ? t('paginationEmpty', {table: data.table})
+                    : t('pagination', {total: data.total, page: data.page, pages: totalPages})}
                 </span>
                 <div className="flex gap-2">
                   <button
@@ -164,21 +201,21 @@ export function TableBrowser({tables, onRefresh}: Props) {
                     disabled={page <= 1}
                     onClick={() => setPage((p) => p - 1)}
                   >
-                    <BackArrow /> Prev
+                    <BackArrow /> {t('prev')}
                   </button>
                   <button
                     type="button"
                     className="focus-ring rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 text-xs txt-soft disabled:opacity-30 hover:txt-strong"
-                    disabled={page >= data.total_pages}
+                    disabled={!data.total || page >= totalPages}
                     onClick={() => setPage((p) => p + 1)}
                   >
-                    Next <NavArrow />
+                    {t('next')} <NavArrow />
                   </button>
                 </div>
               </div>
             </>
           ) : (
-            <div className="p-8 text-center text-sm txt-muted">Select a table to view data</div>
+            <div className="p-8 text-center text-sm txt-muted">{t('selectTable')}</div>
           )}
         </div>
       </div>

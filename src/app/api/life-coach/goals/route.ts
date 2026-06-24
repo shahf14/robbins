@@ -1,5 +1,5 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
-import {createGoalBundle, ensureCommitmentDailySteps, listGoals, listMilestonesForGoal} from '@/lib/life-coach/repository';
+import {createGoalBundle, ensureCommitmentDailySteps, linkFormulationCreatedGoal, listGoals, listMilestonesForGoal} from '@/lib/life-coach/repository';
 import {jsonError, jsonOk, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {goalBundleCreateInputSchema} from '@/lib/life-coach/schemas';
 import {formatGoalCreateError, sanitizeGoalBundleInput} from '@/lib/life-coach/sanitize-goal-bundle';
@@ -49,12 +49,15 @@ export async function POST(request: Request) {
     const today = startOfToday();
     const goal = await createGoalBundle(
       current.user.id,
-      {...bundle.goal, health_context: null},
+      bundle.goal,
       bundle.milestones,
       bundle.initial_steps.map((step) => ({...step, goal_id: null})),
       today,
       {idempotencyKey: parsed.data.idempotency_key}
     );
+    if (bundle.formulation_session_id) {
+      linkFormulationCreatedGoal(current.user.id, bundle.formulation_session_id, goal.id);
+    }
 
     return jsonOk({goal}, 201);
   } catch (error) {

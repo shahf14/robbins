@@ -35,9 +35,6 @@ import {buildReflectionAnalysisFallback} from '@/lib/reflection-analysis/fallbac
 import type {ReflectionAnalysis} from '@/lib/reflection-analysis/types';
 import {getLifeCoachModelConfig} from '@/lib/life-coach/env';
 import {
-  type HealthWizardContextInput,
-} from './health-goal-fallback';
-import {
   buildDailyStepsSystemPrompt,
   buildDailyStepsUserPrompt,
   buildGoalStructuringSystemPrompt,
@@ -88,7 +85,6 @@ type GoalStructuringInput = {
   deadline: string | null;
   motivation: string;
   constraints: string;
-  health_wizard_context?: HealthWizardContextInput;
   life_context_statuses?: LifeContextStatus[];
   coaching_style?: string;
   preferred_tone?: string;
@@ -488,8 +484,6 @@ function mapAiStructuredGoalResponse(response: AiStructuredGoalResponse): Struct
     deadline: response.deadline,
     milestones: response.milestones,
     daily_baby_steps: goalBabyStepsFromContracts(response.daily_baby_steps),
-    execution_plan: response.execution_plan ?? null,
-    plan_source: response.plan_source,
     realism_check: response.realism_check
       ? {
           risk_level: response.realism_check.risk_level,
@@ -514,8 +508,6 @@ function normalizeStructuredGoalResult(
   const normalized: StructuredGoalPlan = {
     ...result,
     success_metric: capSuccessMetric(result.success_metric),
-    execution_plan: null,
-    plan_source: undefined,
     daily_baby_steps: enforcedSteps,
   };
 
@@ -560,8 +552,6 @@ function buildStructuredGoalFallbackResponse(input: GoalStructuringInput): AiStr
     deadline: response.deadline,
     milestones: response.milestones,
     daily_baby_steps: goalBabyStepsFromContracts(response.daily_baby_steps),
-    execution_plan: null,
-    plan_source: undefined,
   };
 
   const firstStep = response.daily_baby_steps[0];

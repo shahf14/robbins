@@ -157,8 +157,6 @@ export const lifeCoachApi = {
         estimated_minutes: number;
         difficulty: 'easy' | 'medium' | 'hard';
       }>;
-      execution_plan?: import('@/lib/life-coach/types').HealthExecutionPlan | null;
-      plan_source?: 'ai' | 'fallback';
       realism_check?: import('@/lib/life-coach/types').GoalRealismCheck | null;
       next_best_action?: import('@/lib/life-coach/types').NextBestAction | null;
     }>('/api/life-coach/ai/structure-goal', {
@@ -168,6 +166,7 @@ export const lifeCoachApi = {
   },
   async createGoal(input: {
     idempotency_key?: string;
+    formulation_session_id?: string;
     goal: Record<string, unknown>;
     milestones?: unknown[];
     initial_steps?: unknown[];
@@ -179,14 +178,13 @@ export const lifeCoachApi = {
     parseGoalCreateResponse(payload);
     return payload as {goal: Goal};
   },
-  createFreestyleGoal(input: {
+  createGeneralDailyTaskSeries(input: {
     domain: LifeDomain;
     title: string;
     times_per_day: number;
     target_days: number;
-    success_metric?: string;
   }) {
-    return lifeCoachFetch<{goal: Goal}>('/api/life-coach/goals/freestyle', {
+    return lifeCoachFetch<{steps: DailyBabyStep[]}>('/api/life-coach/daily-steps/general-series', {
       method: 'POST',
       body: JSON.stringify(input),
     });
@@ -281,6 +279,13 @@ export const lifeCoachApi = {
   getDailySteps(date: string) {
     return lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>(`/api/life-coach/daily-steps?date=${date}`);
   },
+  getGeneralDailySteps(input: {date: string; domain?: LifeDomain}) {
+    const params = new URLSearchParams({date: input.date, is_general: 'true'});
+    if (input.domain) params.set('domain', input.domain);
+    return lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>(
+      `/api/life-coach/daily-steps?${params.toString()}`
+    );
+  },
   getDailyCoachMessage(date: string, locale?: string) {
     const params = new URLSearchParams({date});
     if (locale) params.set('locale', locale);
@@ -320,6 +325,25 @@ export const lifeCoachApi = {
     }
   ) {
     return lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}/content`, {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    });
+  },
+  updateDailyStep(
+    id: string,
+    input: Partial<{
+      goal_id: string | null;
+      domain: LifeDomain;
+      title: string;
+      description: string;
+      estimated_minutes: number;
+      difficulty: 'easy' | 'medium' | 'hard';
+      scheduled_date: string;
+      status: 'pending' | 'completed' | 'skipped' | 'partial';
+      is_general: boolean;
+    }>
+  ) {
+    return lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(input),
     });
@@ -373,7 +397,7 @@ export const lifeCoachApi = {
       {method: 'POST', body: JSON.stringify(input)}
     );
   },
-  saveGamificationUnlock(input: {
+  recordGamificationEvent(input: {
     kind: 'mystery_unlock' | 'reflection_loot' | 'identity_title';
     reward_key: string;
     week_start?: string | null;
@@ -383,6 +407,14 @@ export const lifeCoachApi = {
       '/api/life-coach/gamification-unlocks',
       {method: 'POST', body: JSON.stringify(input)}
     );
+  },
+  saveGamificationUnlock(input: {
+    kind: 'mystery_unlock' | 'reflection_loot' | 'identity_title';
+    reward_key: string;
+    week_start?: string | null;
+    context?: Record<string, unknown> | null;
+  }) {
+    return this.recordGamificationEvent(input);
   },
   listGamificationUnlocks() {
     return lifeCoachFetch<{unlocks: import('@/lib/db/repositories/gamification-unlocks').GamificationUnlock[]}>(

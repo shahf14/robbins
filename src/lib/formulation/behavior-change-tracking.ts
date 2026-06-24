@@ -103,6 +103,12 @@ function clip(text: string, max: number): string {
   return `${t.slice(0, max - 1).trim()}…`;
 }
 
+/** "1 step" / "3 steps" / "צעד אחד" / "3 צעדים" — keeps count and noun in agreement. */
+function stepsWord(count: number, he: boolean): string {
+  if (he) return count === 1 ? 'צעד אחד' : `${count} צעדים`;
+  return count === 1 ? '1 step' : `${count} steps`;
+}
+
 export function buildBehaviorChangeContext(
   session: FormulationSession,
   locale: AppLocale
@@ -245,16 +251,16 @@ function buildHeadline(
   } else if (analysis.goal_aligned_count >= 1) {
     details.push(
       he
-        ? `כל ${showUps} הצעדים שביצעת קשורים ל-${clip(ctx.micro_goal_week ?? ctx.primary_goal_focus, 50)}.`
-        : `All ${showUps} steps you took connected to ${clip(ctx.micro_goal_week ?? ctx.primary_goal_focus, 50)}.`
+        ? `כל ${showUps === 1 ? 'הצעד שביצעת' : `${showUps} הצעדים שביצעת`} קשורים ל-${clip(ctx.micro_goal_week ?? ctx.primary_goal_focus, 50)}.`
+        : `${showUps === 1 ? 'The single step you took connected' : `All ${showUps} steps you took connected`} to ${clip(ctx.micro_goal_week ?? ctx.primary_goal_focus, 50)}.`
     );
   }
 
   if (analysis.maintaining_addressed_count >= 1) {
     details.push(
       he
-        ? `${analysis.maintaining_addressed_count} צעדים עבדו נגד דפוסים שמחזיקים את הקושי במקום.`
-        : `${analysis.maintaining_addressed_count} steps worked against patterns that keep the struggle in place.`
+        ? `${stepsWord(analysis.maintaining_addressed_count, true)} עבדו נגד דפוסים שמחזיקים את הקושי במקום.`
+        : `${stepsWord(analysis.maintaining_addressed_count, false)} worked against patterns that keep the struggle in place.`
     );
   }
 
@@ -267,8 +273,8 @@ function buildHeadline(
     if (ratio < 0.5 && showUps >= 2) {
       details.push(
         he
-          ? `רק ${analysis.target_domain_action_count} צעדים בתחום ${ctx.suggested_domain} — שווה לכוון יותר פעולה לשם השבוע הבא.`
-          : `Only ${analysis.target_domain_action_count} steps in ${ctx.suggested_domain} — worth steering more action there next week.`
+          ? `רק ${stepsWord(analysis.target_domain_action_count, true)} בתחום ${ctx.suggested_domain} — שווה לכוון יותר פעולה לשם השבוע הבא.`
+          : `Only ${stepsWord(analysis.target_domain_action_count, false)} in ${ctx.suggested_domain} — worth steering more action there next week.`
       );
     } else if (analysis.target_domain_action_count >= 2) {
       details.push(
@@ -301,15 +307,15 @@ function buildDetailLines(
   if (analysis.goal_aligned_count >= 1) {
     lines.push(
       he
-        ? `${analysis.goal_aligned_count} צעדים קשורים ל-${clip(ctx.micro_goal_week ?? ctx.primary_goal_focus, 45)}.`
-        : `${analysis.goal_aligned_count} steps tied to ${clip(ctx.micro_goal_week ?? ctx.primary_goal_focus, 45)}.`
+        ? `${stepsWord(analysis.goal_aligned_count, true)} קשורים ל-${clip(ctx.micro_goal_week ?? ctx.primary_goal_focus, 45)}.`
+        : `${stepsWord(analysis.goal_aligned_count, false)} tied to ${clip(ctx.micro_goal_week ?? ctx.primary_goal_focus, 45)}.`
     );
   }
   if (analysis.maintaining_addressed_count >= 1) {
     lines.push(
       he
-        ? `${analysis.maintaining_addressed_count} צעדים עבדו על maintaining_factors.`
-        : `${analysis.maintaining_addressed_count} steps addressed maintaining factors.`
+        ? `${stepsWord(analysis.maintaining_addressed_count, true)} עבדו נגד דפוסים שמחזיקים את הקושי במקום.`
+        : `${stepsWord(analysis.maintaining_addressed_count, false)} addressed maintaining factors.`
     );
   }
   if (analysis.comeback_after_barrier && analysis.comeback_detail) {

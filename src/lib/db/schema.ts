@@ -105,105 +105,6 @@ CREATE TABLE IF NOT EXISTS ritual_content (
 CREATE INDEX IF NOT EXISTS idx_ritual_content_user_type
   ON ritual_content(user_id, content_type, created_at DESC);
 
--- ── Content Studio (global governed content registry) ────────────────────
-CREATE TABLE IF NOT EXISTS content_items (
-  id                      TEXT PRIMARY KEY,
-  title                   TEXT NOT NULL,
-  content_type            TEXT NOT NULL CHECK (content_type IN ('ui_copy', 'curated_task', 'ritual_content', 'gratitude_trigger', 'onboarding_content', 'formulation_question', 'life_wheel_content', 'prompt_template', 'fallback_rule', 'personalization_rule', 'admin_content')),
-  journey                 TEXT NOT NULL CHECK (journey IN ('global', 'onboarding', 'morning_ritual', 'evening_reset', 'life_coach', 'formulation', 'coach_chat', 'weekly_review', 'admin')),
-  source                  TEXT NOT NULL CHECK (source IN ('json', 'messages', 'prompt_code', 'rules_code', 'database', 'hybrid')),
-  status                  TEXT NOT NULL CHECK (status IN ('published', 'runtime_generated', 'code_owned', 'user_managed', 'needs_migration')),
-  risk                    TEXT NOT NULL CHECK (risk IN ('low', 'medium', 'high')),
-  locales_json            TEXT NOT NULL DEFAULT '[]',
-  path                    TEXT NOT NULL,
-  version_label           TEXT,
-  domains_json            TEXT NOT NULL DEFAULT '[]',
-  item_count              INTEGER CHECK (item_count IS NULL OR item_count >= 0),
-  tags_json               TEXT NOT NULL DEFAULT '[]',
-  owners_json             TEXT NOT NULL DEFAULT '[]',
-  migration_priority      INTEGER CHECK (migration_priority IS NULL OR migration_priority IN (1, 2, 3)),
-  editable_now            INTEGER NOT NULL DEFAULT 0 CHECK (editable_now IN (0, 1)),
-  simulator_inputs_json   TEXT NOT NULL DEFAULT '[]',
-  eval_signals_json       TEXT NOT NULL DEFAULT '[]',
-  description             TEXT NOT NULL,
-  runtime_use_json        TEXT NOT NULL DEFAULT '[]',
-  governance_json         TEXT NOT NULL DEFAULT '[]',
-  registry_checksum       TEXT NOT NULL,
-  registry_source         TEXT NOT NULL DEFAULT 'static_registry',
-  created_at              TEXT DEFAULT (datetime('now')),
-  updated_at              TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_content_items_source ON content_items(source, status);
-CREATE INDEX IF NOT EXISTS idx_content_items_journey ON content_items(journey, risk);
-CREATE INDEX IF NOT EXISTS idx_content_items_risk_priority ON content_items(risk, migration_priority);
-CREATE INDEX IF NOT EXISTS idx_content_items_status ON content_items(status, updated_at DESC);
-
-CREATE TABLE IF NOT EXISTS content_item_versions (
-  id              TEXT PRIMARY KEY,
-  content_item_id TEXT NOT NULL REFERENCES content_items(id) ON DELETE CASCADE,
-  version_label   TEXT,
-  checksum        TEXT NOT NULL,
-  item_json       TEXT NOT NULL,
-  change_note     TEXT,
-  created_by      TEXT,
-  created_at      TEXT DEFAULT (datetime('now'))
-);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_content_versions_item_checksum
-  ON content_item_versions(content_item_id, checksum);
-CREATE INDEX IF NOT EXISTS idx_content_versions_item_created
-  ON content_item_versions(content_item_id, created_at DESC);
-
-CREATE TABLE IF NOT EXISTS content_governance_checks (
-  id              TEXT PRIMARY KEY,
-  content_item_id TEXT NOT NULL REFERENCES content_items(id) ON DELETE CASCADE,
-  check_name      TEXT NOT NULL,
-  status          TEXT NOT NULL CHECK (status IN ('pass', 'warn', 'fail')),
-  details_json    TEXT NOT NULL DEFAULT '{}',
-  created_at      TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_content_governance_item_status
-  ON content_governance_checks(content_item_id, status, created_at DESC);
-
-CREATE TABLE IF NOT EXISTS content_eval_cases (
-  id                    TEXT PRIMARY KEY,
-  content_item_id        TEXT NOT NULL REFERENCES content_items(id) ON DELETE CASCADE,
-  name                  TEXT NOT NULL,
-  locale                TEXT CHECK (locale IS NULL OR locale IN ('he', 'en')),
-  input_json            TEXT NOT NULL DEFAULT '{}',
-  expected_signals_json TEXT NOT NULL DEFAULT '[]',
-  status                TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'archived')),
-  created_at            TEXT DEFAULT (datetime('now')),
-  updated_at            TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_content_eval_cases_item_status
-  ON content_eval_cases(content_item_id, status);
-
-CREATE TABLE IF NOT EXISTS content_audit_events (
-  id              TEXT PRIMARY KEY,
-  content_item_id TEXT REFERENCES content_items(id) ON DELETE SET NULL,
-  event_type      TEXT NOT NULL CHECK (event_type IN ('registry_sync', 'created', 'updated', 'versioned', 'governance_checked', 'exported', 'archived')),
-  actor_id        TEXT,
-  before_json     TEXT,
-  after_json      TEXT,
-  metadata_json   TEXT NOT NULL DEFAULT '{}',
-  created_at      TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_content_audit_item_created
-  ON content_audit_events(content_item_id, created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_content_audit_type_created
-  ON content_audit_events(event_type, created_at DESC);
-
-CREATE TRIGGER IF NOT EXISTS trg_content_items_updated_at
-AFTER UPDATE ON content_items
-BEGIN
-  UPDATE content_items SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
-CREATE TRIGGER IF NOT EXISTS trg_content_eval_cases_updated_at
-AFTER UPDATE ON content_eval_cases
-BEGIN
-  UPDATE content_eval_cases SET updated_at = datetime('now') WHERE id = NEW.id;
-END;
-
 -- ── Domain Assessments ───────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS domain_assessments (
   id                     TEXT PRIMARY KEY,
@@ -240,19 +141,6 @@ CREATE TABLE IF NOT EXISTS goals (
   -- Psychological metrics
   abandoned_before_first_step   INTEGER DEFAULT 0, -- deleted/archived with 0 completed steps
   success_metric_specificity    TEXT,    -- measurable / vague / absent
-  -- Health wizard fields (flattened from health_context jsonb)
-  health_category       TEXT,
-  health_baseline       REAL,
-  health_target         REAL,
-  health_unit           TEXT,
-  health_weight_dir     TEXT,
-  health_anchor_habit   TEXT,
-  health_anchor_time    TEXT,
-  health_why_important  TEXT,
-  health_why_now        TEXT,
-  health_what_lost      TEXT,
-  plan_source           TEXT,
-  health_context_json   TEXT,              -- Full JSON backup of health_context
   create_idempotency_key TEXT,
   created_at            TEXT DEFAULT (datetime('now')),
   updated_at            TEXT DEFAULT (datetime('now'))
@@ -346,22 +234,6 @@ CREATE TABLE IF NOT EXISTS daily_reflections (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_reflections_user_date
   ON daily_reflections(user_id, date);
-
--- ── Health Phases (from goals.health_context.execution_plan) ─────────────
-CREATE TABLE IF NOT EXISTS health_phases (
-  id             TEXT PRIMARY KEY,
-  goal_id        TEXT NOT NULL REFERENCES goals(id) ON DELETE CASCADE,
-  user_id        TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  phase_index    INTEGER NOT NULL,
-  start_day      INTEGER NOT NULL,
-  end_day        INTEGER NOT NULL,
-  focus          TEXT,
-  task_templates TEXT,           -- JSON array of strings
-  weigh_in       INTEGER DEFAULT 0,
-  created_at     TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_health_phases_goal ON health_phases(goal_id);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_health_phases_goal_phase ON health_phases(goal_id, phase_index);
 
 -- ── Weekly Goal Focus (Goal → milestone → weekly focus → daily steps) ───
 CREATE TABLE IF NOT EXISTS weekly_goal_focus (
@@ -489,6 +361,8 @@ CREATE TABLE IF NOT EXISTS formulation_sessions (
   user_edited_formulation       INTEGER DEFAULT 0 CHECK (user_edited_formulation IN (0, 1)),
   formulation_approved_at       TEXT,
   coach_handoff_json            TEXT,
+  suggested_domain              TEXT CHECK (suggested_domain IS NULL OR suggested_domain IN ('health', 'time', 'wealth', 'career', 'relationships', 'mind', 'spirit', 'house_family')),
+  created_goal_id               TEXT REFERENCES goals(id) ON DELETE SET NULL,
   checkin_prefill_json          TEXT,
   phases_skipped_json           TEXT,
   prior_question_key            TEXT,
@@ -546,7 +420,6 @@ SELECT user_id FROM (
   UNION SELECT user_id FROM milestones
   UNION SELECT user_id FROM daily_steps
   UNION SELECT user_id FROM daily_reflections
-  UNION SELECT user_id FROM health_phases
   UNION SELECT user_id FROM weekly_goal_focus
   UNION SELECT user_id FROM skip_coach_adjustments
   UNION SELECT user_id FROM ai_insights
@@ -584,9 +457,6 @@ BEFORE INSERT ON daily_steps
 BEGIN INSERT OR IGNORE INTO users(id) VALUES (NEW.user_id); END;
 CREATE TRIGGER IF NOT EXISTS trg_reflections_user_seed
 BEFORE INSERT ON daily_reflections
-BEGIN INSERT OR IGNORE INTO users(id) VALUES (NEW.user_id); END;
-CREATE TRIGGER IF NOT EXISTS trg_health_phases_user_seed
-BEFORE INSERT ON health_phases
 BEGIN INSERT OR IGNORE INTO users(id) VALUES (NEW.user_id); END;
 CREATE TRIGGER IF NOT EXISTS trg_insights_user_seed
 BEFORE INSERT ON ai_insights
@@ -661,15 +531,6 @@ WHEN NEW.goal_id IS NOT NULL
  )
 BEGIN SELECT RAISE(ABORT, 'daily_steps.domain must match linked goal domain'); END;
 
-CREATE TRIGGER IF NOT EXISTS trg_health_phases_goal_guard_insert
-BEFORE INSERT ON health_phases
-WHEN NOT EXISTS (SELECT 1 FROM goals WHERE id = NEW.goal_id AND user_id = NEW.user_id)
-BEGIN SELECT RAISE(ABORT, 'health_phases.goal_id must reference a goal owned by user_id'); END;
-CREATE TRIGGER IF NOT EXISTS trg_health_phases_goal_guard_update
-BEFORE UPDATE OF goal_id, user_id ON health_phases
-WHEN NOT EXISTS (SELECT 1 FROM goals WHERE id = NEW.goal_id AND user_id = NEW.user_id)
-BEGIN SELECT RAISE(ABORT, 'health_phases.goal_id must reference a goal owned by user_id'); END;
-
 CREATE TRIGGER IF NOT EXISTS trg_gratitude_ritual_guard_insert
 BEFORE INSERT ON gratitude_entries
 WHEN NEW.ritual_id IS NOT NULL
@@ -703,7 +564,6 @@ AFTER DELETE ON goals
 BEGIN
   DELETE FROM milestones WHERE goal_id = OLD.id;
   DELETE FROM daily_steps WHERE goal_id = OLD.id;
-  DELETE FROM health_phases WHERE goal_id = OLD.id;
   DELETE FROM weekly_goal_focus WHERE goal_id = OLD.id;
 END;
 CREATE TRIGGER IF NOT EXISTS trg_rituals_delete_dependents
@@ -716,23 +576,6 @@ AFTER DELETE ON ai_insights
 BEGIN
   DELETE FROM weekly_reviews WHERE id = OLD.id;
 END;
-
--- ── Subscriptions ────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS subscriptions (
-  id                       TEXT PRIMARY KEY,
-  user_id                  TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  stripe_subscription_id   TEXT NOT NULL UNIQUE,
-  stripe_customer_id       TEXT NOT NULL,
-  status                   TEXT NOT NULL,           -- active | trialing | past_due | canceled
-  price_id                 TEXT,
-  current_period_end       TEXT,
-  cancel_at_period_end     INTEGER DEFAULT 0,
-  canceled_at              TEXT,
-  created_at               TEXT DEFAULT (datetime('now')),
-  updated_at               TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_subscriptions_user   ON subscriptions(user_id, created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe ON subscriptions(stripe_subscription_id);
 
 -- ── User behavior profile (dynamic, refreshed from actions) ───────────────────
 CREATE TABLE IF NOT EXISTS user_behavior_profile (
@@ -753,17 +596,6 @@ CREATE TABLE IF NOT EXISTS user_behavior_profile (
   tone_effectiveness     TEXT,
   updated_at             TEXT DEFAULT (datetime('now'))
 );
-
--- ── Push subscriptions (Web Push for Phase 1) ─────────────────────────────────
-CREATE TABLE IF NOT EXISTS push_subscriptions (
-  id         TEXT PRIMARY KEY,
-  user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  endpoint   TEXT NOT NULL UNIQUE,
-  p256dh     TEXT NOT NULL,
-  auth       TEXT NOT NULL,
-  created_at TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_push_user ON push_subscriptions(user_id);
 
 -- ── Gamification unlocks (persisted reward history) ───────────────────────
 CREATE TABLE IF NOT EXISTS gamification_unlocks (
@@ -788,7 +620,6 @@ BEGIN
   DELETE FROM ritual_content WHERE user_id = OLD.id;
   DELETE FROM domain_assessments WHERE user_id = OLD.id;
   DELETE FROM daily_reflections WHERE user_id = OLD.id;
-  DELETE FROM health_phases WHERE user_id = OLD.id;
   DELETE FROM milestones WHERE user_id = OLD.id;
   DELETE FROM daily_steps WHERE user_id = OLD.id;
   DELETE FROM goals WHERE user_id = OLD.id;

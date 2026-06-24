@@ -1,8 +1,8 @@
 import {
   listGamificationUnlocks,
-  saveGamificationUnlock,
   type GamificationUnlockKind,
 } from '@/lib/db/repositories/gamification-unlocks';
+import {recordGamificationEvent} from '@/lib/gamification/events';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const unlock = saveGamificationUnlock(current.user.id, {
+    const unlock = recordGamificationEvent(current.user.id, {
       kind: input.kind as GamificationUnlockKind,
       reward_key: input.reward_key,
       week_start: input.week_start ?? null,

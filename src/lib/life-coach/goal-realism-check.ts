@@ -1,8 +1,6 @@
 import type {AppLocale} from '@/i18n/config';
-import type {HealthWizardContextInput} from '@/lib/ai-life-coach/health-goal-fallback';
 import type {KnownBlockersProfile} from '@/lib/life-coach/known-blockers';
 import type {
-  HealthExecutionPlan,
   LifeDomainState,
   StructuredGoalPlan,
 } from '@/lib/life-coach/types';
@@ -17,7 +15,6 @@ export type GoalRealismStructuringInput = {
     'available_time_per_day' | 'intensity_preference'
   > | null;
   known_blockers?: KnownBlockersProfile | null;
-  health_wizard_context?: HealthWizardContextInput;
 };
 
 export type GoalRealismRiskLevel = 'low' | 'medium' | 'high';
@@ -74,13 +71,6 @@ function assessRiskScore(input: GoalRealismStructuringInput, plan: StructuredGoa
   if (longSteps >= 1) score += 2;
   if (plan.daily_baby_steps.length >= 3 && minutes <= 10) score += 1;
 
-  const wizard = input.health_wizard_context;
-  if (wizard && minutes <= 10) {
-    const delta = Math.abs(wizard.metrics.target_value - wizard.metrics.baseline_value);
-    if (delta >= 8) score += 2;
-    if (delta >= 15) score += 1;
-  }
-
   return score;
 }
 
@@ -125,42 +115,6 @@ function buildFirstWeekAdjustment(locale: AppLocale, maxMinutes: number): string
   return locale === 'he'
     ? `השבוע הראשון צומצם ל-1-2 צעדים קלים של עד ${maxMinutes} דקות — עקביות לפני האצה.`
     : `Week one was reduced to 1-2 easy steps of up to ${maxMinutes} minutes — consistency before acceleration.`;
-}
-
-function shrinkExecutionPlanFirstWeek(
-  plan: HealthExecutionPlan | null | undefined,
-  maxMinutes: number,
-  highRisk: boolean
-): HealthExecutionPlan | null | undefined {
-  if (!plan?.phases?.length) return plan;
-
-  const phases = plan.phases.map((phase, index) => {
-    if (index > 0 || phase.end_day > 14) return phase;
-    const templates = phase.task_templates
-      .slice(0, highRisk ? 2 : 3)
-      .map((task) => ({
-        ...task,
-        difficulty: 'easy' as const,
-        estimated_minutes: Math.min(task.estimated_minutes, maxMinutes),
-        description:
-          highRisk && task.description.length > 120
-            ? `${task.description.slice(0, 117)}…`
-            : task.description,
-      }));
-
-    return {
-      ...phase,
-      focus:
-        highRisk && phase.focus
-          ? phase.focus.includes('הרחב') || phase.focus.includes('expand')
-            ? phase.focus
-            : phase.focus
-          : phase.focus,
-      task_templates: templates,
-    };
-  });
-
-  return {phases};
 }
 
 function shrinkBabySteps(
@@ -257,7 +211,6 @@ export function applyGoalRealismToPlan(
     ...plan,
     daily_baby_steps: shrinkBabySteps(plan.daily_baby_steps, maxMinutes, true),
     milestones: softenFirstMilestone(plan.milestones, input.locale, true),
-    execution_plan: shrinkExecutionPlanFirstWeek(plan.execution_plan, maxMinutes, true) ?? plan.execution_plan,
   };
 
   const realism_check: GoalRealismCheck = {
@@ -294,7 +247,6 @@ export const GOAL_REALISM_PROMPT_BLOCK = [
   'Always return realism_check with risk_level (low|medium|high), risk_reason, first_week_adjustment.',
   'Compare raw_goal ambition vs available_time_per_day and intensity_preference.',
   'If risk_level is "high": you MUST shrink week one — max 2 easy daily_baby_steps, each ≤ available_time_per_day (cap 10 min), no hard steps.',
-  'For health execution_plan: phase 1 (days 1-14) must have at most 2 easy task_templates within time budget.',
   'first_week_adjustment: one sentence explaining what you reduced (null if risk is low).',
   'Ambitious goal + ≤10 min/day → high risk and mandatory first-week reduction.',
 ].join('\n');

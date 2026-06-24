@@ -1,6 +1,31 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
-import {deleteDailyBabyStep, rescheduleDailyBabyStep} from '@/lib/life-coach/repository';
+import {
+  DailyStepRelationError,
+  deleteDailyBabyStep,
+  updateDailyBabyStep,
+} from '@/lib/life-coach/repository';
+import {z} from 'zod';
+import {
+  dailyStepDifficultySchema,
+  dailyStepStatusSchema,
+  lifeDomainSchema,
+} from '@/lib/life-coach/schemas';
 import {isIsoDate, jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+
+const dailyStepPatchSchema = z.object({
+  goal_id: z.string().uuid().nullable().optional(),
+  domain: lifeDomainSchema.optional(),
+  title: z.string().trim().min(1).max(180).optional(),
+  description: z.string().trim().max(1000).optional(),
+  estimated_minutes: z.coerce.number().int().min(1).max(60).optional(),
+  difficulty: dailyStepDifficultySchema.optional(),
+  scheduled_date: z.string().date().optional(),
+  rescheduled_from: z.string().date().optional(),
+  status: dailyStepStatusSchema.optional(),
+  is_general: z.boolean().optional(),
+}).refine((value) => Object.keys(value).length > 0, {
+  message: 'At least one field is required.',
+});
 
 export async function PATCH(
   request: Request,
@@ -12,29 +37,23 @@ export async function PATCH(
     return current.response;
   }
 
-  const bodyResult = await parseLifeCoachJsonBody<Record<string, unknown>>(request);
-  if (!bodyResult.ok) return bodyResult.response;
-  const body = bodyResult.data ?? {};
-
-  const scheduledDate = (body as {scheduled_date?: unknown})?.scheduled_date;
-  const rescheduledFrom = (body as {rescheduled_from?: unknown})?.rescheduled_from;
-
-  if (typeof scheduledDate !== 'string' || !isIsoDate(scheduledDate)) {
-    return jsonError('Invalid scheduled_date. Expected YYYY-MM-DD.', 400);
-  }
+  const parsed = await parseLifeCoachJsonBody(request, dailyStepPatchSchema);
+  if (!parsed.ok) return parsed.response;
 
   const {id} = await params;
 
   try {
-    const step = await rescheduleDailyBabyStep(
-      id, scheduledDate,
-      typeof rescheduledFrom === 'string' ? rescheduledFrom : undefined,
-      current.user.id
-    );
+    if (parsed.data.scheduled_date && !isIsoDate(parsed.data.scheduled_date)) {
+      return jsonError('Invalid scheduled_date. Expected YYYY-MM-DD.', 400);
+    }
+    const step = await updateDailyBabyStep(id, parsed.data, current.user.id);
     return jsonOk({step});
   } catch (error) {
     if (String(error).includes('not found')) return jsonError('Daily step not found.', 404);
-    return jsonError('Could not reschedule daily step.', 500, String(error));
+    if (error instanceof DailyStepRelationError) {
+      return jsonError(error.message, 400);
+    }
+    return jsonError('Could not update daily step.', 500, String(error));
   }
 }
 

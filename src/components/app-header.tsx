@@ -148,15 +148,12 @@ export function AppHeader() {
     },
   ];
 
-  const openMenuLabel = locale === 'he' ? 'פתח ניווט' : 'Open navigation';
-  const closeMenuLabel = locale === 'he' ? 'סגור ניווט' : 'Close navigation';
+  const openMenuLabel = t('nav.openMenu');
+  const closeMenuLabel = t('nav.closeMenu');
   const isOnboarding = pathname.includes('/onboarding');
 
   if (isOnboarding) {
-    const promise =
-      locale === 'he'
-        ? 'עוד כמה דקות ויש לך מטרה, צעד ראשון, וסיבה ברורה לחזור מחר.'
-        : 'A few minutes from now you will have a goal, a first step, and a clear reason to return tomorrow.';
+    const promise = t('nav.onboardingPromise');
 
     return (
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[rgba(0,0,0,0.9)] backdrop-blur-xl">
@@ -251,7 +248,7 @@ export function AppHeader() {
               pathname={pathname}
               locale={locale}
             />
-            <HeaderProfileChip displayName={displayName} locale={locale} />
+            <HeaderProfileChip displayName={displayName} />
             <ThemeToggle compact />
             <LanguageSwitcher compact />
           </div>
@@ -366,7 +363,7 @@ export function AppHeader() {
         ))}
 
         <div className="mt-auto grid gap-4 pt-6">
-          <HeaderProfileChip displayName={displayName} locale={locale} />
+          <HeaderProfileChip displayName={displayName} />
           <ThemeToggle compact />
           <LanguageSwitcher compact />
         </div>
@@ -531,28 +528,17 @@ function NavMoreMenu({
   );
 }
 
-function HeaderProfileChip({displayName, locale}: {displayName: string; locale: string}) {
+function HeaderProfileChip({displayName}: {displayName: string}) {
   const t = useTranslations();
-  const fallbackName = locale === 'he' ? 'המרחב שלי' : 'My space';
-  const name = displayName || fallbackName;
-  const initials = name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('');
-
-  const tooltip = locale === 'he' ? `פתח הגדרות — ${name}` : `Settings — ${name}`;
+  const name = displayName || t('nav.mySpace');
+  const tooltip = t('nav.settingsTooltip', {name});
 
   return (
     <Link
       href="/settings"
-      className="focus-ring group inline-flex w-full items-center gap-3 rounded-full bg-white/4 px-3 py-2 text-white transition hover:bg-white/8 lg:w-auto"
+      className="focus-ring group inline-flex w-full items-center rounded-full bg-white/4 px-3 py-2 text-white transition hover:bg-white/8 lg:w-auto"
       aria-label={tooltip}
     >
-      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(26,109,255,0.18)] text-xs font-bold uppercase tracking-[0.12em] text-white transition group-hover:bg-[var(--blue)]/30">
-        {initials || '—'}
-      </span>
       <span className="truncate text-sm font-semibold text-white/82 group-hover:text-white">{name}</span>
     </Link>
   );

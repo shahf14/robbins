@@ -47,16 +47,32 @@ async function dbFetch<T>(path: string, init?: RequestInit): Promise<T> {
 
   const res = await fetch(path, {
     ...init,
+    credentials: 'include',
     headers: {
       ...mergeLocalAuthHeaders(init),
       ...(adminApiToken ? {'x-admin-api-token': adminApiToken} : {}),
     },
   });
 
+  const contentType = res.headers.get('content-type') ?? '';
+  if (!contentType.includes('application/json')) {
+    const fallback =
+      res.status === 404
+        ? 'Admin API route not found.'
+        : `Request failed (${res.status}).`;
+    throw new DbApiError(fallback, res.status);
+  }
+
   const payload = (await res.json()) as T & {error?: string};
   if (!res.ok) throw new DbApiError(payload.error ?? 'Request failed', res.status);
   return payload;
 }
+
+export type AdminSessionStatus = {
+  active: boolean;
+  canBootstrap: boolean;
+  expiresInSec: number;
+};
 
 export type TableSummary = {name: string; row_count: number};
 export type TableData = {
@@ -83,6 +99,14 @@ export type LogLine = {
 };
 
 export const dbApi = {
+  getAdminSession: () => dbFetch<AdminSessionStatus>('/api/admin/session'),
+
+  establishAdminSession: () =>
+    dbFetch<{ok: boolean; expiresInSec: number}>('/api/admin/session', {method: 'POST'}),
+
+  clearAdminSession: () =>
+    dbFetch<{ok: boolean}>('/api/admin/session', {method: 'DELETE'}),
+
   listTables: () => dbFetch<{tables: TableSummary[]}>('/api/db/tables'),
 
   getTable: (table: string, page = 1, search = '') =>
@@ -99,3 +123,16 @@ export const dbApi = {
   listLogs: (date: string, limit = 200) =>
     dbFetch<{lines: LogLine[]}>(`/api/logs?date=${encodeURIComponent(date)}&limit=${limit}`),
 };
+
+/** Opens an httpOnly admin session when possible (token header or dev localhost bypass). */
+export async function ensureAdminSession(): Promise<AdminSessionStatus> {
+  try {
+    const status = await dbApi.getAdminSession();
+    if (status.active) return status;
+    if (!status.canBootstrap) return status;
+    await dbApi.establishAdminSession();
+    return dbApi.getAdminSession();
+  } catch {
+    return {active: false, canBootstrap: false, expiresInSec: 0};
+  }
+}

@@ -10,8 +10,9 @@ import {hasDomainGoalDraftForDomain} from '@/lib/open-process-drafts';
 import {LifeCoachFormulationGate} from '@/components/formulation/life-coach-formulation-gate';
 import {DomainAssessmentForm} from '../domain-assessment-form';
 import {BlockerDeepDive} from './blocker-deep-dive';
-import {FreestyleTaskCreator} from '@/components/simple-tasks/freestyle-task-creator';
+import {GeneralTaskSeriesCreator} from '@/components/simple-tasks/general-task-series-creator';
 import {GoalEditCard} from './goal-edit-card';
+import {GeneralDailyStepsManager} from './general-daily-steps-manager';
 
 type GoalWithMilestones = Goal & {milestones?: Milestone[]};
 
@@ -132,7 +133,12 @@ export function DomainGoalTabContent({
         {assessmentColumn}
         {goalColumn}
       </div>
-      <FreestyleTaskCreator domain={domain} onCreated={onRefresh} />
+      <GeneralDailyStepsManager
+        domain={domain}
+        steps={allRecentSteps}
+        onChanged={onRefresh}
+      />
+      <GeneralTaskSeriesCreator domain={domain} onCreated={onRefresh} />
     </div>
   );
 }

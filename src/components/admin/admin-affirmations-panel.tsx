@@ -6,7 +6,7 @@ import type {AppLocale} from '@/i18n/config';
 import {useConfirm} from '@/components/feedback/confirm-provider';
 import {useToast} from '@/components/feedback/toast-provider';
 import {formatAffirmationTag} from '@/components/affirmation-manager';
-import {AdminActionButton, AdminEmptyState, AdminViewButton} from '@/components/admin/admin-shell';
+import {AdminActionButton, AdminCreateButton, AdminEmptyState, AdminMetaItem, AdminViewButton} from '@/components/admin/admin-shell';
 import type {AffirmationItem, AffirmationType, MorningRitualSession} from '@/lib/morning-ritual-types';
 import {DEFAULT_AFFIRMATIONS} from '@/lib/default-affirmations';
 import {
@@ -17,8 +17,9 @@ import {
   exportAffirmationsJson,
   extractYoutubeVideoId,
   filterAffirmations,
+  getAffirmationPairMembers,
   getAffirmationQualityIssues,
-  groupAffirmationsByTag,
+  groupAffirmationsIntoPairs,
   mergeAffirmationLibrary,
   mergeAffirmationTags,
   normalizeAffirmationTags,
@@ -26,13 +27,32 @@ import {
   persistableAffirmations,
   renameAffirmationTag,
   resolveAffirmationSource,
+  sortAffirmationPairs,
   sortAffirmations,
   type AffirmationLibraryTab,
+  type AffirmationPairGroup,
   type AffirmationQualityIssue,
   type AffirmationSortKey,
 } from '@/lib/morning-ritual/affirmation-library';
 import {fetchRitualContent, fetchSessions, saveAffirmations} from '@/lib/morning-ritual-storage';
+import {loadUserPreferences} from '@/lib/user-preferences';
 import {scheduleDeferredRitualCommit} from '@/lib/morning-ritual/deferred-ritual-persist';
+import {recordAdminActivity, type AdminActivityKey} from '@/lib/admin/admin-activity';
+
+function formatAdminTimestamp(iso: string, locale: AppLocale): string {
+  try {
+    return new Date(iso).toLocaleString(locale === 'he' ? 'he-IL' : 'en-US', {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    });
+  } catch {
+    return iso;
+  }
+}
+
+function resolveAdminActorLabel(): string {
+  return loadUserPreferences().display_name?.trim() ?? '';
+}
 
 const PAGE_SIZE = 25;
 
@@ -54,11 +74,12 @@ const DEFAULT_FILTERS: FilterState = {
   tag: 'all',
 };
 
-export function AdminAffirmationsPanel() {
+export function AdminAffirmationsPanel({onActivity}: {onActivity?: (key: AdminActivityKey) => void}) {
   const t = useTranslations('admin.affirmations');
   const locale = useLocale() as AppLocale;
   const {confirm} = useConfirm();
   const toast = useToast();
+  const actorLabel = resolveAdminActorLabel() || t('meta.admin');
 
   const [affirmations, setAffirmations] = useState<AffirmationItem[]>([]);
   const [usageById, setUsageById] = useState<Map<string, {selectedCount: number; lastSelectedAt: string | null}>>(new Map());
@@ -71,6 +92,7 @@ export function AdminAffirmationsPanel() {
   const [detailId, setDetailId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showTagManager, setShowTagManager] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [bulkTag, setBulkTag] = useState('');
   const [tagRenameFrom, setTagRenameFrom] = useState('');
   const [tagRenameTo, setTagRenameTo] = useState('');
@@ -108,14 +130,52 @@ export function AdminAffirmationsPanel() {
     [affirmations, tab, filters, sort]
   );
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const pageItems = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return filtered.slice(start, start + PAGE_SIZE);
-  }, [filtered, page]);
+  const filteredPairs = useMemo(
+    () => sortAffirmationPairs(groupAffirmationsIntoPairs(filtered), sort),
+    [filtered, sort]
+  );
 
-  const grouped = useMemo(() => groupAffirmationsByTag(pageItems), [pageItems]);
+  const totalPages = Math.max(1, Math.ceil(filteredPairs.length / PAGE_SIZE));
+  const pagePairs = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return filteredPairs.slice(start, start + PAGE_SIZE);
+  }, [filteredPairs, page]);
+
+  const groupedPairs = useMemo(() => {
+    if (!groupByTag) return null;
+    const map = new Map<string, AffirmationPairGroup[]>();
+    for (const pair of pagePairs) {
+      const tags = new Set<string>();
+      for (const item of getAffirmationPairMembers(pair)) {
+        for (const tag of item.tags) {
+          if (tag.trim()) tags.add(tag.toLowerCase());
+        }
+      }
+      const keys = tags.size > 0 ? [...tags] : ['__untagged__'];
+      for (const key of keys) {
+        const list = map.get(key) ?? [];
+        list.push(pair);
+        map.set(key, list);
+      }
+    }
+    return map;
+  }, [pagePairs, groupByTag]);
+
+  const pageItems = useMemo(() => pagePairs.flatMap((pair) => getAffirmationPairMembers(pair)), [pagePairs]);
   const detailItem = affirmations.find((item) => item.id === detailId) ?? null;
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (filters.query.trim()) count++;
+    if (filters.language !== 'all') count++;
+    if (filters.type !== 'all') count++;
+    if (filters.active !== 'all') count++;
+    if (filters.origin !== 'all') count++;
+    if (filters.tag !== 'all') count++;
+    if (sort !== 'createdAt') count++;
+    if (groupByTag) count++;
+    return count;
+  }, [filters, sort, groupByTag]);
 
   const tabCounts = useMemo(() => {
     const counts: Record<AffirmationLibraryTab, number> = {
@@ -138,7 +198,9 @@ export function AdminAffirmationsPanel() {
   const persist = useCallback((next: AffirmationItem[]) => {
     setAffirmations(next);
     saveAffirmations(persistableAffirmations(next));
-  }, []);
+    if (onActivity) onActivity('affirmationsSave');
+    else recordAdminActivity('affirmationsSave');
+  }, [onActivity]);
 
   const load = useCallback(async () => {
     const [{affirmations: stored}, sessions] = await Promise.all([
@@ -161,10 +223,31 @@ export function AdminAffirmationsPanel() {
   useEffect(() => {
     const timeoutId = window.setTimeout(() => setPage(1), 0);
     return () => window.clearTimeout(timeoutId);
-  }, [tab, filters, sort]);
+  }, [tab, filters, sort, groupByTag]);
+
+  function togglePairSelected(members: AffirmationItem[]) {
+    const ids = members.map((item) => item.id);
+    const allSelected = ids.every((id) => selectedIds.has(id));
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      for (const id of ids) {
+        if (allSelected) next.delete(id);
+        else next.add(id);
+      }
+      return next;
+    });
+  }
+
+  function stampAffirmationPatch(patch: Partial<AffirmationItem>): Partial<AffirmationItem> {
+    return {
+      ...patch,
+      updatedAt: new Date().toISOString(),
+      updatedBy: actorLabel,
+    };
+  }
 
   function updateItem(id: string, patch: Partial<AffirmationItem>) {
-    persist(affirmations.map((item) => (item.id === id ? {...item, ...patch} : item)));
+    persist(affirmations.map((item) => (item.id === id ? {...item, ...stampAffirmationPatch(patch)} : item)));
   }
 
   function toggleSelected(id: string) {
@@ -263,6 +346,7 @@ export function AdminAffirmationsPanel() {
       draft.type === 'youtube' ? extractYoutubeVideoId(draft.youtubeUrl) : null;
 
     if (editingId === '__new__') {
+      const timestamp = new Date().toISOString();
       const item: AffirmationItem = {
         id: crypto.randomUUID(),
         type: draft.type,
@@ -275,7 +359,9 @@ export function AdminAffirmationsPanel() {
         active: draft.active && !draft.isDraft,
         weight: draft.weight,
         lastUsedAt: null,
-        createdAt: new Date().toISOString(),
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        updatedBy: actorLabel,
         isAdminManaged: true,
         isDraft: draft.isDraft,
       };
@@ -340,7 +426,7 @@ export function AdminAffirmationsPanel() {
     persist(
       affirmations.map((item) =>
         selectedIds.has(item.id)
-          ? {...item, active: action === 'activate'}
+          ? {...item, ...stampAffirmationPatch({active: action === 'activate'})}
           : item
       )
     );
@@ -397,16 +483,29 @@ export function AdminAffirmationsPanel() {
 
   const qualityLabel = (issue: AffirmationQualityIssue) => t(`quality.${issue}`);
 
+  const paginationBar =
+    !groupByTag && filteredPairs.length > PAGE_SIZE ? (
+      <PaginationBar
+        page={page}
+        totalPages={totalPages}
+        label={t('page', {page, total: totalPages})}
+        prevLabel={t('prevPage')}
+        nextLabel={t('nextPage')}
+        onPrev={() => setPage((p) => Math.max(1, p - 1))}
+        onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
+      />
+    ) : null;
+
   return (
-    <div className="admin-affirmations grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)]">
-      <div className="grid gap-4">
+    <div className="admin-affirmations admin-affirmations--split">
+      <div className="admin-affirmations__list-col grid gap-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="text-lg font-bold">{t('title')}</h3>
             <p className="mt-1 text-sm text-[var(--muted)]">{t('description')}</p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <AdminViewButton onClick={() => startCreate(false)}>{t('add')}</AdminViewButton>
+          <div className="flex flex-wrap items-center gap-2">
+            <AdminCreateButton onClick={() => startCreate(false)}>{t('add')}</AdminCreateButton>
             <AdminViewButton onClick={() => startCreate(true)}>{t('addDraft')}</AdminViewButton>
             <AdminViewButton onClick={() => setShowTagManager((value) => !value)}>{t('manageTags')}</AdminViewButton>
             <AdminViewButton onClick={() => exportItems('json')}>{t('export')}</AdminViewButton>
@@ -440,36 +539,60 @@ export function AdminAffirmationsPanel() {
           ))}
         </div>
 
-        <div className="admin-affirmations__filters grid gap-3">
-          <input
-            className="focus-ring admin-affirmations__input"
-            value={filters.query}
-            placeholder={t('searchPlaceholder')}
-            onChange={(event) => setFilters((prev) => ({...prev, query: event.target.value}))}
-          />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            <FilterSelect label={t('filters.language')} value={filters.language} onChange={(language) => setFilters((p) => ({...p, language}))} options={[['all', t('all')], ['he', 'עברית'], ['en', 'English']]} />
-            <FilterSelect label={t('filters.type')} value={filters.type} onChange={(type) => setFilters((p) => ({...p, type}))} options={[['all', t('all')], ['text', t('type.text')], ['youtube', t('type.youtube')]]} />
-            <FilterSelect label={t('filters.active')} value={filters.active} onChange={(active) => setFilters((p) => ({...p, active}))} options={[['all', t('all')], ['active', t('active')], ['inactive', t('inactive')]]} />
-            <FilterSelect label={t('filters.origin')} value={filters.origin} onChange={(origin) => setFilters((p) => ({...p, origin}))} options={[['all', t('all')], ['default', t('origin.default')], ['custom', t('origin.custom')], ['admin', t('origin.admin')]]} />
-            <FilterSelect label={t('filters.tag')} value={filters.tag} onChange={(tag) => setFilters((p) => ({...p, tag}))} options={[['all', t('all')], ...allTags.map((tag) => [tag, formatAffirmationTag(tag)] as const)]} />
+        <div className="admin-affirmations__filter-bar grid gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              className="focus-ring admin-affirmations__input min-w-[12rem] flex-1"
+              value={filters.query}
+              placeholder={t('searchPlaceholder')}
+              onChange={(event) => setFilters((prev) => ({...prev, query: event.target.value}))}
+            />
+            {activeFilterCount > 0 ? (
+              <span className="admin-affirmations__filter-badge">{t('filters.activeCount', {count: activeFilterCount})}</span>
+            ) : null}
+            <button
+              type="button"
+              className="focus-ring btn-admin-view shrink-0"
+              aria-expanded={filtersOpen}
+              onClick={() => setFiltersOpen((open) => !open)}
+            >
+              {t('filters.panelTitle')} {filtersOpen ? '▴' : '▾'}
+            </button>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <FilterSelect label={t('sort.label')} value={sort} onChange={(value) => setSort(value as AffirmationSortKey)} options={[
-              ['createdAt', t('sort.createdAt')],
-              ['lastUsedAt', t('sort.lastUsedAt')],
-              ['title', t('sort.title')],
-              ['type', t('sort.type')],
-              ['language', t('sort.language')],
-              ['weight', t('sort.weight')],
-            ]} />
-            <label className="flex items-center gap-2 text-sm text-[var(--muted)]">
-              <input type="checkbox" checked={groupByTag} onChange={(event) => setGroupByTag(event.target.checked)} />
-              {t('groupByTag')}
-            </label>
-            <span className="text-sm text-[var(--muted)]">{t('showing', {shown: filtered.length, total: affirmations.length})}</span>
-            <AdminViewButton onClick={() => setFilters(DEFAULT_FILTERS)}>{t('resetFilters')}</AdminViewButton>
-          </div>
+
+          {filtersOpen ? (
+            <div className="admin-affirmations__filter-panel grid gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <FilterSelect label={t('filters.language')} value={filters.language} onChange={(language) => setFilters((p) => ({...p, language}))} options={[['all', t('all')], ['he', 'עברית'], ['en', 'English']]} />
+                <FilterSelect label={t('filters.type')} value={filters.type} onChange={(type) => setFilters((p) => ({...p, type}))} options={[['all', t('all')], ['text', t('type.text')], ['youtube', t('type.youtube')]]} />
+                <FilterSelect label={t('filters.active')} value={filters.active} onChange={(active) => setFilters((p) => ({...p, active}))} options={[['all', t('all')], ['active', t('active')], ['inactive', t('inactive')]]} />
+                <FilterSelect label={t('filters.origin')} value={filters.origin} onChange={(origin) => setFilters((p) => ({...p, origin}))} options={[['all', t('all')], ['default', t('origin.default')], ['custom', t('origin.custom')], ['admin', t('origin.admin')]]} />
+                <FilterSelect label={t('filters.tag')} value={filters.tag} onChange={(tag) => setFilters((p) => ({...p, tag}))} options={[['all', t('all')], ...allTags.map((tag) => [tag, formatAffirmationTag(tag)] as const)]} />
+                <FilterSelect label={t('sort.label')} value={sort} onChange={(value) => setSort(value as AffirmationSortKey)} options={[
+                  ['createdAt', t('sort.createdAt')],
+                  ['lastUsedAt', t('sort.lastUsedAt')],
+                  ['title', t('sort.title')],
+                  ['type', t('sort.type')],
+                  ['language', t('sort.language')],
+                  ['weight', t('sort.weight')],
+                ]} />
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="flex items-center gap-2 text-sm text-[var(--muted)]">
+                  <input type="checkbox" checked={groupByTag} onChange={(event) => setGroupByTag(event.target.checked)} />
+                  {t('groupByTag')}
+                </label>
+                <span className="text-sm text-[var(--muted)]">
+                  {t('showingPairs', {
+                    pairs: filteredPairs.length,
+                    items: filtered.length,
+                    total: affirmations.length,
+                  })}
+                </span>
+                <AdminViewButton onClick={() => setFilters(DEFAULT_FILTERS)}>{t('resetFilters')}</AdminViewButton>
+              </div>
+            </div>
+          ) : null}
         </div>
 
         {showTagManager ? (
@@ -509,33 +632,70 @@ export function AdminAffirmationsPanel() {
           </div>
         )}
 
-        {filtered.length === 0 ? (
+        {filteredPairs.length === 0 ? (
           <AdminEmptyState title={t('emptyTitle')} description={t('emptyDetail')} />
-        ) : groupByTag ? (
-          <div className="grid gap-4">
-            {[...grouped.entries()].map(([tag, items]) => (
-              <section key={tag}>
-                <h4 className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-white/45">
-                  {tag === '__untagged__' ? t('untagged') : `#${formatAffirmationTag(tag)}`}
-                </h4>
-                <div className="grid gap-2">{items.map((item) => renderRow(item))}</div>
-              </section>
-            ))}
-          </div>
         ) : (
-          <div className="grid gap-2">{pageItems.map((item) => renderRow(item))}</div>
+          <>
+            {paginationBar}
+            <div className="admin-affirmations__list-scroll grid gap-2">
+              {groupByTag && groupedPairs ? (
+                <div className="grid gap-4">
+                  {[...groupedPairs.entries()].map(([tag, pairs]) => (
+                    <section key={tag}>
+                      <h4 className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-white/45">
+                        {tag === '__untagged__' ? t('untagged') : `#${formatAffirmationTag(tag)}`}
+                      </h4>
+                      <div className="grid gap-2">
+                        {pairs.map((pair) => (
+                          <AffirmationPairRow
+                            key={pair.key}
+                            pair={pair}
+                            locale={locale}
+                            detailId={detailId}
+                            duplicateIds={duplicateIds}
+                            qualityLabel={qualityLabel}
+                            selectedIds={selectedIds}
+                            t={t}
+                            usageById={usageById}
+                            onDelete={(item) => void deleteAffirmation(item)}
+                            onEdit={startEdit}
+                            onHide={hideAffirmation}
+                            onSelect={setDetailId}
+                            onToggleMember={(id) => toggleSelected(id)}
+                            onTogglePair={(members) => togglePairSelected(members)}
+                            onUnhide={unhideAffirmation}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              ) : (
+                pagePairs.map((pair) => (
+                  <AffirmationPairRow
+                    key={pair.key}
+                    pair={pair}
+                    locale={locale}
+                    detailId={detailId}
+                    duplicateIds={duplicateIds}
+                    qualityLabel={qualityLabel}
+                    selectedIds={selectedIds}
+                    t={t}
+                    usageById={usageById}
+                    onDelete={(item) => void deleteAffirmation(item)}
+                    onEdit={startEdit}
+                    onHide={hideAffirmation}
+                    onSelect={setDetailId}
+                    onToggleMember={(id) => toggleSelected(id)}
+                    onTogglePair={(members) => togglePairSelected(members)}
+                    onUnhide={unhideAffirmation}
+                  />
+                ))
+              )}
+            </div>
+            {paginationBar}
+          </>
         )}
-
-        {!groupByTag && filtered.length > PAGE_SIZE ? (
-          <div className="flex flex-wrap items-center gap-3">
-            <AdminViewButton disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>{t('prevPage')}</AdminViewButton>
-            <span className="text-sm text-[var(--muted)]">{t('page', {page, total: totalPages})}</span>
-            <AdminViewButton disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>{t('nextPage')}</AdminViewButton>
-            {page < totalPages ? (
-              <AdminViewButton onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>{t('loadMore')}</AdminViewButton>
-            ) : null}
-          </div>
-        ) : null}
       </div>
 
       <aside className="admin-affirmations__detail rounded-2xl border border-white/10 bg-white/[0.03] p-4">
@@ -564,63 +724,197 @@ export function AdminAffirmationsPanel() {
       </aside>
     </div>
   );
+}
 
-  function renderRow(item: AffirmationItem) {
-    const issues = getAffirmationQualityIssues(item, duplicateIds);
-    const usage = usageById.get(item.id);
-    const source = resolveAffirmationSource(item);
+function PaginationBar({
+  page,
+  totalPages,
+  label,
+  prevLabel,
+  nextLabel,
+  onPrev,
+  onNext,
+}: {
+  page: number;
+  totalPages: number;
+  label: string;
+  prevLabel: string;
+  nextLabel: string;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  return (
+    <div className="admin-affirmations__pagination flex flex-wrap items-center gap-3">
+      <AdminViewButton disabled={page <= 1} onClick={onPrev}>
+        {prevLabel}
+      </AdminViewButton>
+      <span className="text-sm text-[var(--muted)]">{label}</span>
+      <AdminViewButton disabled={page >= totalPages} onClick={onNext}>
+        {nextLabel}
+      </AdminViewButton>
+    </div>
+  );
+}
 
-    return (
-      <div
-        key={item.id}
-        className={`admin-affirmations__row rounded-xl border p-3 ${
-          detailId === item.id ? 'border-white/30 bg-white/10' : 'border-white/10 bg-white/[0.02]'
-        }`}
-      >
-        <div className="flex items-start gap-3">
-          <input type="checkbox" checked={selectedIds.has(item.id)} onChange={() => toggleSelected(item.id)} />
-          <button type="button" className="min-w-0 flex-1 text-start" onClick={() => setDetailId(item.id)}>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-semibold txt-strong">{item.title || t('untitled')}</span>
-              <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase">{t(`type.${item.type}`)}</span>
-              <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase">{t(`origin.${source}`)}</span>
-              {!item.active ? <span className="text-[10px] font-bold text-amber-200">{t('inactive')}</span> : null}
-              {item.isDraft ? <span className="text-[10px] font-bold text-sky-200">{t('draft')}</span> : null}
-              {item.hiddenFromLibrary ? <span className="text-[10px] font-bold text-white/50">{t('hidden')}</span> : null}
-            </div>
-            <p className="mt-1 line-clamp-1 text-sm text-[var(--muted)]">
-              {item.type === 'youtube' ? item.youtubeUrl : item.textContent}
-            </p>
-            <div className="mt-2 flex flex-wrap gap-1">
-              {item.tags.slice(0, 4).map((tag) => (
-                <span key={tag} className="rounded-full bg-white/8 px-2 py-0.5 text-[10px] text-white/60">#{formatAffirmationTag(tag)}</span>
-              ))}
-            </div>
-            {issues.length > 0 ? (
-              <p className="mt-2 text-[11px] text-amber-200">{issues.map(qualityLabel).join(' · ')}</p>
-            ) : null}
-            {usage ? (
-              <p className="mt-1 text-[11px] text-white/45">{t('usageShort', {count: usage.selectedCount})}</p>
-            ) : null}
-          </button>
-          <div className="flex shrink-0 flex-col gap-1">
-            {!item.isDefault ? (
-              <AdminViewButton className="text-xs" onClick={() => startEdit(item)}>{t('edit')}</AdminViewButton>
-            ) : null}
-            {item.isDefault ? (
-              item.hiddenFromLibrary ? (
-                <AdminViewButton className="text-xs" onClick={() => unhideAffirmation(item)}>{t('unhide')}</AdminViewButton>
-              ) : (
-                <AdminViewButton className="text-xs" onClick={() => hideAffirmation(item)}>{t('hide')}</AdminViewButton>
-              )
+function AffirmationPairRow({
+  pair,
+  locale,
+  detailId,
+  duplicateIds,
+  qualityLabel,
+  selectedIds,
+  t,
+  usageById,
+  onDelete,
+  onEdit,
+  onHide,
+  onSelect,
+  onToggleMember,
+  onTogglePair,
+  onUnhide,
+}: {
+  pair: AffirmationPairGroup;
+  locale: AppLocale;
+  detailId: string | null;
+  duplicateIds: Set<string>;
+  qualityLabel: (issue: AffirmationQualityIssue) => string;
+  selectedIds: Set<string>;
+  t: ReturnType<typeof useTranslations<'admin.affirmations'>>;
+  usageById: Map<string, {selectedCount: number; lastSelectedAt: string | null}>;
+  onDelete: (item: AffirmationItem) => void;
+  onEdit: (item: AffirmationItem) => void;
+  onHide: (item: AffirmationItem) => void;
+  onSelect: (id: string) => void;
+  onToggleMember: (id: string) => void;
+  onTogglePair: (members: AffirmationItem[]) => void;
+  onUnhide: (item: AffirmationItem) => void;
+}) {
+  const members = getAffirmationPairMembers(pair);
+  const hasPairTabs = Boolean(pair.he && pair.en);
+  const [localeTab, setLocaleTab] = useState<'he' | 'en'>(pair.he ? 'he' : 'en');
+
+  useEffect(() => {
+    if (detailId && pair.he?.id === detailId) setLocaleTab('he');
+    if (detailId && pair.en?.id === detailId) setLocaleTab('en');
+  }, [detailId, pair.he?.id, pair.en?.id]);
+
+  const activeItem =
+    localeTab === 'he'
+      ? pair.he ?? pair.en ?? members[0]
+      : pair.en ?? pair.he ?? members[0];
+
+  if (!activeItem) return null;
+
+  const issues = getAffirmationQualityIssues(activeItem, duplicateIds);
+  const usage = usageById.get(activeItem.id);
+  const source = resolveAffirmationSource(activeItem);
+  const pairSelected = members.length > 0 && members.every((item) => selectedIds.has(item.id));
+  const rowActive = members.some((item) => item.id === detailId);
+  const updatedAt = activeItem.updatedAt ?? activeItem.createdAt;
+  const updatedBy =
+    activeItem.updatedBy ??
+    (activeItem.isDefault ? t('meta.system') : activeItem.isAdminManaged ? t('meta.admin') : t('meta.user'));
+
+  return (
+    <div
+      className={`admin-affirmations__row rounded-xl border p-3 ${
+        rowActive ? 'border-white/30 bg-white/10' : 'border-white/10 bg-white/[0.02]'
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <input
+          type="checkbox"
+          checked={pairSelected}
+          onChange={() => (members.length > 1 ? onTogglePair(members) : onToggleMember(activeItem.id))}
+        />
+        <button type="button" className="min-w-0 flex-1 text-start" onClick={() => onSelect(activeItem.id)}>
+          <div className="flex flex-wrap items-center gap-2">
+            {hasPairTabs ? (
+              <span className="admin-affirmations__pair-tabs" onClick={(event) => event.stopPropagation()}>
+                <button
+                  type="button"
+                  className={`admin-affirmations__pair-tab ${localeTab === 'he' ? 'admin-affirmations__pair-tab--active' : ''}`}
+                  onClick={() => {
+                    setLocaleTab('he');
+                    if (pair.he) onSelect(pair.he.id);
+                  }}
+                >
+                  HE
+                </button>
+                <button
+                  type="button"
+                  className={`admin-affirmations__pair-tab ${localeTab === 'en' ? 'admin-affirmations__pair-tab--active' : ''}`}
+                  onClick={() => {
+                    setLocaleTab('en');
+                    if (pair.en) onSelect(pair.en.id);
+                  }}
+                >
+                  EN
+                </button>
+              </span>
             ) : (
-              <AdminActionButton className="text-xs" destructive onClick={() => void deleteAffirmation(item)}>{t('delete')}</AdminActionButton>
+              <span className="admin-affirmations__pair-tab admin-affirmations__pair-tab--active">
+                {activeItem.language.toUpperCase()}
+              </span>
             )}
+            <span className="font-semibold txt-strong">{activeItem.title || t('untitled')}</span>
+            {hasPairTabs ? (
+              <span className="text-[10px] font-bold uppercase tracking-wide text-white/45">{t('pairBadge')}</span>
+            ) : null}
           </div>
+          <p className="mt-1 line-clamp-1 text-sm text-[var(--muted)]">
+            {activeItem.type === 'youtube' ? activeItem.youtubeUrl : activeItem.textContent}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+            <AdminMetaItem label={t('filters.type')} value={t(`type.${activeItem.type}`)} />
+            <AdminMetaItem label={t('filters.origin')} value={t(`origin.${source}`)} />
+            <AdminMetaItem label={t('filters.active')} value={activeItem.active ? t('active') : t('inactive')} />
+            {activeItem.isDraft ? <AdminMetaItem label={t('draft')} value={t('yes')} /> : null}
+            {activeItem.hiddenFromLibrary ? <AdminMetaItem label={t('hidden')} value={t('yes')} /> : null}
+            {usage ? <AdminMetaItem label={t('fields.selectedCount')} value={String(usage.selectedCount)} /> : null}
+          </div>
+          {activeItem.tags.length > 0 ? (
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+              <AdminMetaItem
+                label={t('filters.tag')}
+                value={activeItem.tags.slice(0, 4).map((tag) => `#${formatAffirmationTag(tag)}`).join(', ')}
+              />
+            </div>
+          ) : null}
+          {issues.length > 0 ? (
+            <p className="mt-2 text-[11px] text-amber-200">{issues.map(qualityLabel).join(' · ')}</p>
+          ) : null}
+          <p className="admin-affirmations__row-meta mt-2 text-[11px] text-white/40">
+            {t('meta.created', {date: formatAdminTimestamp(activeItem.createdAt, locale)})}
+            {' · '}
+            {t('meta.updated', {date: formatAdminTimestamp(updatedAt, locale), by: updatedBy})}
+          </p>
+        </button>
+        <div className="flex shrink-0 flex-col gap-1">
+          {!activeItem.isDefault ? (
+            <AdminViewButton className="text-xs" onClick={() => onEdit(activeItem)}>
+              {t('edit')}
+            </AdminViewButton>
+          ) : null}
+          {activeItem.isDefault ? (
+            activeItem.hiddenFromLibrary ? (
+              <AdminViewButton className="text-xs" onClick={() => onUnhide(activeItem)}>
+                {t('unhide')}
+              </AdminViewButton>
+            ) : (
+              <AdminViewButton className="text-xs" onClick={() => onHide(activeItem)}>
+                {t('hide')}
+              </AdminViewButton>
+            )
+          ) : (
+            <AdminActionButton className="text-xs" destructive onClick={() => onDelete(activeItem)}>
+              {t('delete')}
+            </AdminActionButton>
+          )}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 function FilterSelect({
@@ -684,6 +978,17 @@ function DetailPanel({
         <DetailRow label={t('fields.weight')} value={String(item.weight)} />
         <DetailRow label={t('fields.active')} value={item.active ? t('yes') : t('no')} />
         <DetailRow label={t('fields.createdAt')} value={new Date(item.createdAt).toLocaleString()} />
+        <DetailRow
+          label={t('fields.updatedAt')}
+          value={new Date(item.updatedAt ?? item.createdAt).toLocaleString()}
+        />
+        <DetailRow
+          label={t('fields.updatedBy')}
+          value={
+            item.updatedBy ??
+            (item.isDefault ? t('meta.system') : item.isAdminManaged ? t('meta.admin') : t('meta.user'))
+          }
+        />
         <DetailRow label={t('fields.lastUsedAt')} value={item.lastUsedAt ? new Date(item.lastUsedAt).toLocaleString() : t('never')} />
         {usage ? (
           <>
@@ -856,9 +1161,8 @@ function PreviewCard({item}: {item: AffirmationItem}) {
 
 function DetailRow({label, value}: {label: string; value: string}) {
   return (
-    <div className="flex items-start justify-between gap-3 border-b border-white/6 pb-2">
-      <dt className="text-white/45">{label}</dt>
-      <dd className="text-end font-medium txt-soft">{value}</dd>
+    <div className="border-b border-white/6 pb-2">
+      <AdminMetaItem label={label} value={value} />
     </div>
   );
 }

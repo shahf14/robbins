@@ -60,28 +60,24 @@ export function LifeCoachFormulationGate({children}: Props) {
   }
 
   return (
-    <div className="relative">
-      <div className="pointer-events-none select-none opacity-40 blur-[1px]" aria-hidden>
-        {children}
-      </div>
-      <div className="absolute inset-0 z-10 flex items-start justify-center p-6">
-        <div className="panel-surface max-w-lg p-6 shadow-2xl">
-          <h3 className="text-xl font-black txt-strong">{t('title')}</h3>
-          <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{t('body')}</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              className="focus-ring btn-primary"
-              href={
-                gate.draft_id
-                  ? `/clarification?resume=${gate.draft_id}`
-                  : '/clarification'
-              }
-            >
-              {gate.draft_id ? t('resume') : t('cta')}
-            </Link>
-          </div>
+    <div className="grid gap-4">
+      <div className="panel-surface max-w-lg p-5">
+        <h3 className="text-lg font-black txt-strong">{t('title')}</h3>
+        <p className="mt-2 text-sm leading-7 text-[var(--muted)]">{t('body')}</p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Link
+            className="focus-ring btn-secondary"
+            href={
+              gate.draft_id
+                ? `/clarification?resume=${gate.draft_id}`
+                : '/clarification'
+            }
+          >
+            {gate.draft_id ? t('resume') : t('cta')}
+          </Link>
         </div>
       </div>
+      {children}
     </div>
   );
 }

@@ -356,6 +356,84 @@ export async function updateDailyBabyStepContent(
   return rowToStep(row);
 }
 
+export async function updateDailyBabyStep(
+  id: string,
+  input: Partial<
+    Pick<
+      DailyBabyStep,
+      | 'goal_id'
+      | 'domain'
+      | 'title'
+      | 'description'
+      | 'estimated_minutes'
+      | 'difficulty'
+      | 'scheduled_date'
+      | 'status'
+      | 'is_general'
+    >
+  > & {rescheduled_from?: string | null},
+  userId?: string
+): Promise<DailyBabyStep> {
+  const existing = getDailyBabyStepById(id, userId);
+  if (!existing) throw new Error(`Step ${id} not found`);
+
+  const next: DailyBabyStep = {
+    ...existing,
+    ...input,
+    goal_id: input.goal_id !== undefined ? input.goal_id : existing.goal_id,
+    description: input.description !== undefined ? input.description : existing.description,
+  };
+  const isGeneral = validateDailyStepRelation(next.user_id, {
+    goal_id: next.goal_id,
+    domain: next.domain,
+    is_general: next.is_general,
+  });
+  const now = new Date().toISOString();
+  const dateChanged =
+    input.scheduled_date !== undefined && input.scheduled_date !== existing.scheduled_date;
+  const completedAt =
+    next.status === 'completed'
+      ? existing.completed_at ?? now
+      : next.status === existing.status
+        ? existing.completed_at ?? null
+        : null;
+
+  dbRun(
+    `UPDATE daily_steps
+     SET goal_id = ?, domain = ?, title = ?, description = ?,
+         estimated_minutes = ?, difficulty = ?, scheduled_date = ?, status = ?,
+         is_general = ?, completed_at = ?, user_edited = 1, updated_at = ?,
+         rescheduled_from = CASE WHEN ? = 1 THEN COALESCE(rescheduled_from, ?) ELSE rescheduled_from END,
+         reschedule_count = CASE WHEN ? = 1 THEN reschedule_count + 1 ELSE reschedule_count END
+     WHERE id = ?${userId ? ' AND user_id = ?' : ''}`,
+    [
+      next.goal_id ?? null,
+      next.domain,
+      next.title,
+      next.description ?? '',
+      next.estimated_minutes,
+      next.difficulty,
+      next.scheduled_date,
+      next.status,
+      isGeneral ? 1 : 0,
+      completedAt,
+      now,
+      dateChanged ? 1 : 0,
+      input.rescheduled_from ?? existing.scheduled_date,
+      dateChanged ? 1 : 0,
+      id,
+      ...(userId ? [userId] : []),
+    ]
+  );
+
+  const row = dbGet<Record<string, unknown>>(
+    userId ? `SELECT * FROM daily_steps WHERE id = ? AND user_id = ?` : `SELECT * FROM daily_steps WHERE id = ?`,
+    userId ? [id, userId] : [id]
+  );
+  if (!row) throw new Error(`Step ${id} not found`);
+  return rowToStep(row);
+}
+
 export async function replaceDailyBabyStepWithCuratedContent(
   id: string,
   input: Pick<

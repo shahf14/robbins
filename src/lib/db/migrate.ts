@@ -28,10 +28,7 @@ function addColumn(db: MigrationDb, table: string, column: string, definition: s
  * Runs inside a single transaction (see `runMigrations`).
  */
 function applyBaseline(db: MigrationDb): void {
-  addColumn(db, 'goals', 'health_context_json', 'TEXT');
   addColumn(db, 'morning_rituals', 'session_json', 'TEXT');
-  addColumn(db, 'goals', 'freestyle_times_per_day', 'INTEGER');
-  addColumn(db, 'goals', 'freestyle_target_days', 'INTEGER');
 
   // ── Raw behavioral metrics (2025) ─────────────────────────────────────
   addColumn(db, 'gratitude_entries', 'trigger_key', 'TEXT');
@@ -160,6 +157,8 @@ function applyBaseline(db: MigrationDb): void {
   addColumn(db, 'formulation_sessions', 'rating_follow_ups_json', 'TEXT');
   addColumn(db, 'formulation_sessions', 'llm_exploration_questions_json', 'TEXT');
   addColumn(db, 'formulation_sessions', 'llm_exploration_answers_json', 'TEXT');
+  addColumn(db, 'formulation_sessions', 'suggested_domain', 'TEXT');
+  addColumn(db, 'formulation_sessions', 'created_goal_id', 'TEXT');
 
   // formulation_sessions indexes (table created via SCHEMA_SQL)
   db.exec(`CREATE INDEX IF NOT EXISTS idx_formulation_user_status ON formulation_sessions(user_id, status)`);
@@ -238,6 +237,99 @@ function applyBaseline(db: MigrationDb): void {
   );
 }
 
+function rebuildGoalsWithoutLegacyColumns(db: MigrationDb): void {
+  const columns = db.pragma('table_info(goals)') as Array<{name: string}>;
+  const names = new Set(columns.map((column) => column.name));
+  const legacyColumns = [
+    'health_category',
+    'health_baseline',
+    'health_target',
+    'health_unit',
+    'health_weight_dir',
+    'health_anchor_habit',
+    'health_anchor_time',
+    'health_why_important',
+    'health_why_now',
+    'health_what_lost',
+    'plan_source',
+    'health_context_json',
+    'freestyle_times_per_day',
+    'freestyle_target_days',
+  ];
+  if (!legacyColumns.some((column) => names.has(column))) return;
+  const createIdempotencySelect = names.has('create_idempotency_key')
+    ? 'create_idempotency_key'
+    : 'NULL';
+  const goalTriggers = db.prepare(`
+    SELECT name, sql
+    FROM sqlite_master
+    WHERE type = 'trigger' AND sql LIKE '%goals%'
+  `).all() as Array<{name: string; sql: string | null}>;
+
+  db.pragma('foreign_keys = OFF');
+  db.exec('BEGIN');
+  try {
+    for (const trigger of goalTriggers) {
+      db.exec(`DROP TRIGGER IF EXISTS ${trigger.name}`);
+    }
+    db.exec(`
+      DROP TABLE IF EXISTS goals_new;
+
+      CREATE TABLE goals_new (
+        id                    TEXT PRIMARY KEY,
+        user_id               TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        domain                TEXT NOT NULL CHECK (domain IN ('health', 'time', 'wealth', 'career', 'relationships', 'mind', 'spirit', 'house_family')),
+        domain_category       TEXT,
+        title                 TEXT NOT NULL,
+        description           TEXT,
+        success_metric        TEXT,
+        deadline              TEXT,
+        commitment_days       INTEGER DEFAULT 30,
+        commitment_started_at TEXT,
+        status                TEXT DEFAULT 'active' CHECK (status IN ('active', 'completed', 'paused', 'archived')),
+        created_by            TEXT DEFAULT 'user' CHECK (created_by IN ('user', 'ai')),
+        completed_at          TEXT,
+        revision_count        INTEGER DEFAULT 0,
+        abandoned_before_first_step INTEGER DEFAULT 0,
+        success_metric_specificity  TEXT,
+        create_idempotency_key TEXT,
+        created_at            TEXT DEFAULT (datetime('now')),
+        updated_at            TEXT DEFAULT (datetime('now'))
+      );
+
+      INSERT INTO goals_new
+        (id, user_id, domain, domain_category, title, description, success_metric,
+         deadline, commitment_days, commitment_started_at, status, created_by,
+         completed_at, revision_count, abandoned_before_first_step,
+         success_metric_specificity, create_idempotency_key, created_at, updated_at)
+      SELECT
+        id, user_id, domain, domain_category, title, description, success_metric,
+        deadline, COALESCE(commitment_days, 30), commitment_started_at, status, created_by,
+        completed_at, COALESCE(revision_count, 0), COALESCE(abandoned_before_first_step, 0),
+        success_metric_specificity, ${createIdempotencySelect}, created_at, updated_at
+      FROM goals;
+
+      DROP TABLE goals;
+      ALTER TABLE goals_new RENAME TO goals;
+
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_goals_create_idempotency
+        ON goals(user_id, create_idempotency_key)
+        WHERE create_idempotency_key IS NOT NULL;
+      CREATE INDEX IF NOT EXISTS idx_goals_user_domain ON goals(user_id, domain, status);
+      CREATE INDEX IF NOT EXISTS idx_goals_user_status_updated ON goals(user_id, status, updated_at DESC);
+    `);
+    for (const trigger of goalTriggers) {
+      if (trigger.sql) db.exec(trigger.sql);
+    }
+    db.exec('COMMIT');
+  } catch (error) {
+    db.exec('ROLLBACK');
+    throw error;
+  } finally {
+    db.pragma('foreign_keys = ON');
+  }
+}
+
 type Migration = {
   version: number;
   name: string;
@@ -309,25 +401,59 @@ const MIGRATIONS: Migration[] = [
     version: 5,
     name: 'standardize_health_goal_storage',
     up: (db) => {
+      const cols = new Set(
+        (db.pragma('table_info(goals)') as Array<{name: string}>).map((column) => column.name)
+      );
+      if (cols.has('health_context_json')) {
+        db.exec(`
+          UPDATE goals
+          SET
+            health_category = NULL,
+            health_baseline = NULL,
+            health_target = NULL,
+            health_unit = NULL,
+            health_weight_dir = NULL,
+            health_anchor_habit = NULL,
+            health_anchor_time = NULL,
+            health_why_important = NULL,
+            health_why_now = NULL,
+            health_what_lost = NULL,
+            plan_source = NULL,
+            health_context_json = NULL
+          WHERE domain = 'health';
+        `);
+      }
+      db.exec(`DROP TABLE IF EXISTS health_phases;`);
+    },
+  },
+  {
+    version: 6,
+    name: 'drop_unused_support_tables',
+    up: (db) => {
       db.exec(`
-        UPDATE goals
-        SET
-          health_category = NULL,
-          health_baseline = NULL,
-          health_target = NULL,
-          health_unit = NULL,
-          health_weight_dir = NULL,
-          health_anchor_habit = NULL,
-          health_anchor_time = NULL,
-          health_why_important = NULL,
-          health_why_now = NULL,
-          health_what_lost = NULL,
-          plan_source = NULL,
-          health_context_json = NULL
-        WHERE domain = 'health';
-
-        DELETE FROM health_phases;
+        DROP TABLE IF EXISTS content_audit_events;
+        DROP TABLE IF EXISTS content_eval_cases;
+        DROP TABLE IF EXISTS content_governance_checks;
+        DROP TABLE IF EXISTS content_item_versions;
+        DROP TABLE IF EXISTS content_items;
+        DROP TABLE IF EXISTS health_phases;
+        DROP TABLE IF EXISTS push_subscriptions;
+        DROP TABLE IF EXISTS subscriptions;
       `);
+    },
+  },
+  {
+    version: 7,
+    name: 'drop_goal_legacy_health_and_freestyle_columns',
+    transactional: false,
+    up: (db) => rebuildGoalsWithoutLegacyColumns(db),
+  },
+  {
+    version: 8,
+    name: 'formulation_support_links',
+    up: (db) => {
+      addColumn(db, 'formulation_sessions', 'suggested_domain', 'TEXT');
+      addColumn(db, 'formulation_sessions', 'created_goal_id', 'TEXT');
     },
   },
 ];

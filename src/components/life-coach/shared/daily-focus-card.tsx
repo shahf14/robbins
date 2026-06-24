@@ -1,7 +1,6 @@
 'use client';
 
-import {useLocale, useTranslations} from 'next-intl';
-import type {AppLocale} from '@/i18n/config';
+import {useTranslations} from 'next-intl';
 import type {DailyFocusContext} from '@/lib/daily-focus-context';
 import {DOMAIN_ICONS} from '@/lib/life-coach/domain-icons';
 import type {LifeDomain} from '@/lib/life-coach/types';
@@ -15,7 +14,6 @@ type Props = {
 
 export function DailyFocusCard({focus, domain, onCreateMissionStep, creating = false}: Props) {
   const t = useTranslations();
-  const locale = useLocale() as AppLocale;
 
   if (!focus?.suggestedAction && !focus?.morningMission && !focus?.activeDomainId) return null;
 
@@ -39,16 +37,12 @@ export function DailyFocusCard({focus, domain, onCreateMissionStep, creating = f
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-200/80">
-            {locale === 'he' ? 'פוקוס היום' : "Today's focus"}
+            {t('lifeCoach.dailyFocusCard.eyebrow')}
           </p>
           <h2 className="mt-2 text-xl font-black leading-7 txt-strong">
             {focus.morningMission
-              ? locale === 'he'
-                ? 'משימת הבוקר מחוברת לתוכנית שלך'
-                : 'Your morning mission is connected'
-              : locale === 'he'
-                ? `${DOMAIN_ICONS[focus.activeDomainId ?? domain]} ${domainLabel}`
-                : `${DOMAIN_ICONS[focus.activeDomainId ?? domain]} ${domainLabel}`}
+              ? t('lifeCoach.dailyFocusCard.missionConnected')
+              : `${DOMAIN_ICONS[focus.activeDomainId ?? domain]} ${domainLabel}`}
           </h2>
         </div>
         {focus.activeDomainScore != null && (
@@ -68,12 +62,8 @@ export function DailyFocusCard({focus, domain, onCreateMissionStep, creating = f
         <div className="mt-4 rounded-xl border border-[color:var(--color-border)] fill-2 px-4 py-3">
           <p className="text-xs font-bold uppercase tracking-[0.14em] txt-muted">
             {focus.linkedStepId
-              ? locale === 'he'
-                ? 'הצעד המחובר'
-                : 'Linked step'
-              : locale === 'he'
-                ? 'הצעה לצעד קטן'
-                : 'Suggested small step'}
+              ? t('lifeCoach.dailyFocusCard.linkedStep')
+              : t('lifeCoach.dailyFocusCard.suggestedStep')}
           </p>
           <p className="mt-2 text-base font-bold leading-7 txt-strong">{suggested.title}</p>
           {suggested.description && (
@@ -84,9 +74,9 @@ export function DailyFocusCard({focus, domain, onCreateMissionStep, creating = f
 
       {focus.weakestDomainId && focus.weakestDomainId !== domain && (
         <p className="mt-3 text-sm leading-6 text-sky-100/65">
-          {locale === 'he'
-            ? `ברקע, התחום שעדיין מבקש תשומת לב: ${t(`lifeCoach.domains.${focus.weakestDomainId}.label`)}.`
-            : `In the background, ${t(`lifeCoach.domains.${focus.weakestDomainId}.label`)} still needs attention.`}
+          {t('lifeCoach.dailyFocusCard.backgroundDomain', {
+            domain: t(`lifeCoach.domains.${focus.weakestDomainId}.label`),
+          })}
         </p>
       )}
 
@@ -98,12 +88,8 @@ export function DailyFocusCard({focus, domain, onCreateMissionStep, creating = f
           onClick={onCreateMissionStep}
         >
           {creating
-            ? locale === 'he'
-              ? 'יוצר צעד...'
-              : 'Creating step...'
-            : locale === 'he'
-              ? 'הפוך לצעד יומי'
-              : 'Turn into today’s step'}
+            ? t('lifeCoach.dailyFocusCard.creating')
+            : t('lifeCoach.dailyFocusCard.turnIntoStep')}
         </button>
       )}
     </section>

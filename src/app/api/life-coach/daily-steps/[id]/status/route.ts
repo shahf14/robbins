@@ -1,19 +1,18 @@
 import {refreshToneEffectiveness} from '@/lib/coach-tone';
 import {
   buildAutoSkipCoachOutcome,
-  buildSkipAdaptationContext,
   type SkipEventInput,
 } from '@/lib/formulation/skip-adaptation-routing';
 import {recordNewSkipBarrier} from '@/lib/formulation/skip-adaptation-server';
 import {saveSkipCoachAdjustment} from '@/lib/skip-coach-loop/repository';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {
-  getLatestCompletedFormulation,
   getUserParticipantProfile,
   listDailyBabyStepsForDate,
   updateDailyBabyStepStatus,
   upsertDailyReflection,
 } from '@/lib/life-coach/repository';
+import {getSupportContextForUser} from '@/lib/support-context/formulation-support-context';
 import type {CoachingStyle, PreferredActionWindow} from '@/lib/user-preferences';
 import {jsonError, jsonOk, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {dailyStepStatusUpdateSchema} from '@/lib/life-coach/schemas';
@@ -79,8 +78,8 @@ export async function PATCH(
       profile &&
       (parsed.data.status === 'skipped' || parsed.data.status === 'partial')
     ) {
-      const formulation = await getLatestCompletedFormulation(current.user.id).catch(() => null);
-      const skipCtx = formulation ? buildSkipAdaptationContext(formulation, locale) : null;
+      const {formulation} = await getSupportContextForUser(current.user.id);
+      const skipCtx = formulation.skip_adaptation;
       if (skipCtx) {
         const skipInput: SkipEventInput = {
           status: parsed.data.status,

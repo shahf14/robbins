@@ -95,6 +95,7 @@ export {
   listRecentDailyBabySteps,
   replaceDailyBabyStepWithCuratedContent,
   rescheduleDailyBabyStep,
+  updateDailyBabyStep,
   updateDailyBabyStepContent,
   updateDailyBabyStepStatus,
 } from './daily-step-repository';
@@ -478,7 +479,6 @@ export async function deleteGoal(id: string, userId?: string): Promise<void> {
   db.transaction(() => {
     dbRun(`DELETE FROM milestones WHERE goal_id = ?`, [id]);
     dbRun(`DELETE FROM daily_steps WHERE goal_id = ?`, [id]);
-    dbRun(`DELETE FROM health_phases WHERE goal_id = ?`, [id]);
     dbRun(userId ? `DELETE FROM goals WHERE id = ? AND user_id = ?` : `DELETE FROM goals WHERE id = ?`, userId ? [id, userId] : [id]);
   })();
 }
@@ -642,6 +642,8 @@ function emptyFormulationSession(userId: string, locale: 'he' | 'en'): Formulati
     user_edited_formulation: false,
     formulation_approved_at: null,
     coach_handoff: null,
+    suggested_domain: null,
+    created_goal_id: null,
     checkin_prefill: null,
     phases_skipped: [],
     prior_question_key: null,
@@ -705,6 +707,19 @@ export async function getLatestCompletedFormulation(
     [userId]
   );
   return row ? rowToFormulationSession(row) : null;
+}
+
+export function linkFormulationCreatedGoal(
+  userId: string,
+  formulationSessionId: string,
+  goalId: string
+): void {
+  dbRun(
+    `UPDATE formulation_sessions
+     SET created_goal_id = ?, updated_at = ?
+     WHERE id = ? AND user_id = ?`,
+    [goalId, new Date().toISOString(), formulationSessionId, userId]
+  );
 }
 
 async function hasCompletedFormulation(userId: string): Promise<boolean> {
@@ -915,6 +930,7 @@ export async function patchFormulationSession(
 
     case 'goal':
       session.coach_handoff = (patch.coach_handoff as CoachHandoff) ?? session.coach_handoff;
+      session.suggested_domain = (session.coach_handoff?.suggested_domain as FormulationSession['suggested_domain']) ?? null;
       session.current_phase = patch.next_phase ?? 'complete';
       break;
 

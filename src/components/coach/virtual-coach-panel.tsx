@@ -62,11 +62,7 @@ export function VirtualCoachPanel() {
 
       const focusText = focusResult.dailyFocus?.suggestedAction?.title ?? focusResult.dailyFocus?.morningMission;
       if (focusText) {
-        setUserText(
-          locale === 'he'
-            ? `אני תקוע עם הפוקוס של היום: ${focusText}`
-            : `I am stuck with today’s focus: ${focusText}`
-        );
+        setUserText(t('stuckWithFocus', {focus: focusText}));
         setPrefilled(true);
       }
     })();
@@ -76,7 +72,7 @@ export function VirtualCoachPanel() {
         window.clearTimeout(copyResetTimeoutRef.current);
       }
     };
-  }, [locale]);
+  }, [locale, t]);
 
   async function handleSubmit(textOverride?: string) {
     const text = (textOverride ?? userText).trim();
@@ -171,7 +167,7 @@ export function VirtualCoachPanel() {
         {dailyFocus?.suggestedAction || dailyFocus?.morningMission ? (
           <div className="mt-4 rounded-xl border border-sky-400/20 bg-sky-500/6 px-4 py-3 text-sm leading-6 text-sky-100/80">
             <p className="font-bold text-sky-100">
-              {locale === 'he' ? 'המאמן מסונכרן עם הפוקוס היומי' : 'Coach is synced with today’s focus'}
+              {t('coachSyncedWithFocus')}
             </p>
             <p className="mt-1 line-clamp-2">
               {dailyFocus.suggestedAction?.title ?? dailyFocus.morningMission}

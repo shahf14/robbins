@@ -23,8 +23,7 @@ import {
   resolveSchedulingActionWindow,
 } from '@/lib/behavior-profile/skip-windows';
 import {refreshUserBehaviorProfile} from '@/lib/behavior-profile/repository';
-import {getUserGenerationContext, getUserParticipantProfile, getLatestCompletedFormulation, getLatestWeeklyReview, insertDailyBabySteps, markWeeklyPlanAdjustmentsApplied} from '@/lib/life-coach/repository';
-import {buildPersonalizedChallenge} from '@/lib/formulation/personalized-challenge';
+import {getUserGenerationContext, getUserParticipantProfile, getLatestWeeklyReview, insertDailyBabySteps, markWeeklyPlanAdjustmentsApplied} from '@/lib/life-coach/repository';
 import {
   anchorStepsToTriggers,
   buildHabitTriggerContext,
@@ -40,10 +39,7 @@ import {
   applyLoadAdaptationToCalibration,
   applyLoadAdaptationToSteps,
   applyLoadAdaptationToTaskCount,
-  buildLoadAdaptationContext,
-  shouldHidePersonalizedChallenge,
 } from '@/lib/formulation/load-adaptation-routing';
-import {buildAccountabilityContext} from '@/lib/formulation/accountability-routing';
 import {
   buildRealLifeAlignmentContext,
 } from '@/lib/formulation/real-life-alignment-routing';
@@ -54,9 +50,9 @@ import {
 } from '@/lib/formulation/first-win-routing';
 import {
   avoidSkippedPatternOnSteps,
-  buildSkipAdaptationContext,
   skipAdaptationForPrompt,
 } from '@/lib/formulation/skip-adaptation-routing';
+import {getSupportContextForUser} from '@/lib/support-context/formulation-support-context';
 import {getActiveWeeklyPlanAdjustments} from '@/lib/life-coach/weekly-pattern-mining';
 import {extractWeeklyReviewContext} from '@/lib/life-coach/weekly-review-context';
 import {
@@ -354,17 +350,15 @@ export async function generateDailyStepsForUser(
   domainScope?: import('@/lib/life-coach/types').LifeDomain
 ) {
   refreshUserBehaviorProfile(userId, preferredActionWindow);
-  const [context, profile, latestWeeklyReview, formulation] = await Promise.all([
+  const [context, profile, latestWeeklyReview, supportContext] = await Promise.all([
     getUserGenerationContext(userId),
     getUserParticipantProfile(userId),
     getLatestWeeklyReview(userId),
-    getLatestCompletedFormulation(userId).catch(() => null),
+    getSupportContextForUser(userId),
   ]);
-  const loadAdaptation = formulation ? buildLoadAdaptationContext(formulation, locale) : null;
-  const personalizedChallenge =
-    formulation && !shouldHidePersonalizedChallenge(loadAdaptation)
-      ? buildPersonalizedChallenge(formulation, locale)
-      : null;
+  const formulation = supportContext.latestFormulation;
+  const loadAdaptation = supportContext.formulation.load_adaptation;
+  const personalizedChallenge = supportContext.formulation.challenge;
   const habitTrigger = formulation
     ? buildHabitTriggerContext(formulation, locale, {
         wake_time: wakeTime,
@@ -381,13 +375,11 @@ export async function generateDailyStepsForUser(
     (s) => s.scheduled_date >= weekStartStr
   );
   const domainRivalry = computeDomainRivalry(weekStepsForRivalry);
-  const accountability = formulation ? buildAccountabilityContext(formulation, locale) : null;
+  const accountability = supportContext.formulation.accountability;
   const realLifeAlignment = formulation
     ? buildRealLifeAlignmentContext(formulation, locale)
     : null;
-  const skipAdaptation = formulation
-    ? buildSkipAdaptationContext(formulation, locale)
-    : null;
+  const skipAdaptation = supportContext.formulation.skip_adaptation;
   const latestRitual = resolveLatestRitualAdaptation(userId, date);
   const dailyFocus = await resolveDailyFocusContext(userId, date);
   const morningMission = dailyFocus.morningMission

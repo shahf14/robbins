@@ -37,6 +37,29 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const start = url.searchParams.get('start');
   const end = url.searchParams.get('end');
+  const domainParam = url.searchParams.get('domain');
+  const isGeneralParam = url.searchParams.get('is_general');
+  const domainFilter = domainParam ? lifeDomainSchema.safeParse(domainParam) : null;
+  if (domainFilter && !domainFilter.success) {
+    return jsonError('Unsupported domain.', 400);
+  }
+  if (
+    isGeneralParam !== null &&
+    isGeneralParam !== 'true' &&
+    isGeneralParam !== 'false'
+  ) {
+    return jsonError('Invalid is_general. Expected true or false.', 400);
+  }
+  const isGeneralFilter =
+    isGeneralParam === null ? null : isGeneralParam === 'true';
+
+  function applyFilters(steps: Awaited<ReturnType<typeof listDailyBabyStepsForDate>>) {
+    return steps.filter((step) => {
+      if (domainFilter?.success && step.domain !== domainFilter.data) return false;
+      if (isGeneralFilter !== null && step.is_general !== isGeneralFilter) return false;
+      return true;
+    });
+  }
 
   if (start || end) {
     if (!start || !end || !isIsoDate(start) || !isIsoDate(end)) {
@@ -48,7 +71,7 @@ export async function GET(request: Request) {
 
     try {
       const steps = await listDailyBabyStepsForRange(start, end, current.user.id);
-      return jsonOk({start, end, steps});
+      return jsonOk({start, end, steps: applyFilters(steps)});
     } catch (error) {
       return jsonError('Could not load daily steps.', 500, String(error));
     }
@@ -62,7 +85,7 @@ export async function GET(request: Request) {
   try {
     await ensureAllActiveCommitmentSteps(current.user.id);
     const steps = await listDailyBabyStepsForDate(date, current.user.id);
-    return jsonOk({date, steps});
+    return jsonOk({date, steps: applyFilters(steps)});
   } catch (error) {
     return jsonError('Could not load daily steps.', 500, String(error));
   }

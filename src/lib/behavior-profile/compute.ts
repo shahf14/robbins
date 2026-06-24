@@ -78,8 +78,8 @@ function bestActionWindow(
 function completionRate(steps: DailyBabyStep[]): number {
   const actionable = steps.filter((s) => s.status !== 'pending');
   if (actionable.length === 0) return 0;
-  const showUps = steps.filter((s) => s.status === 'completed' || s.status === 'partial').length;
-  return Math.round((showUps / steps.length) * 100) / 100;
+  const showUps = actionable.filter((s) => s.status === 'completed' || s.status === 'partial').length;
+  return Math.round((showUps / actionable.length) * 100) / 100;
 }
 
 function avgActualMinutes(steps: DailyBabyStep[]): number | null {

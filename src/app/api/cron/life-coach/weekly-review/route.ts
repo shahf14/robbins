@@ -6,16 +6,12 @@ import {
   tonePersonalizationForPrompt,
 } from '@/lib/coach-tone';
 import {computeWeeklyPatternMining} from '@/lib/life-coach/weekly-pattern-mining';
-import {buildAccountabilityContext} from '@/lib/formulation/accountability-routing';
 import {
   analyzeWeekBehaviorChange,
-  buildBehaviorChangeContext,
 } from '@/lib/formulation/behavior-change-tracking';
 import {
   analyzeReturningBarrierWeek,
-  buildSkipAdaptationContext,
 } from '@/lib/formulation/skip-adaptation-routing';
-import {buildLoadAdaptationContext} from '@/lib/formulation/load-adaptation-routing';
 import {openaiLifeCoachService} from '@/lib/ai-life-coach/openai-life-coach-service';
 import type {CoachingStyle} from '@/lib/user-preferences';
 import type {AppLocale} from '@/i18n/config';
@@ -23,11 +19,11 @@ import {
   createAiInsight,
   getUserGenerationContext,
   getUserParticipantProfile,
-  getLatestCompletedFormulation,
   hasWeeklyReviewForPeriod,
   listActiveGoalUsers,
 } from '@/lib/life-coach/repository';
 import {currentWeekWindow, jsonError, jsonOk, verifyCronRequest} from '@/lib/life-coach/server';
+import {getSupportContextForUser} from '@/lib/support-context/formulation-support-context';
 
 export async function POST(request: Request) {
   const unauthorized = verifyCronRequest(request);
@@ -45,10 +41,10 @@ export async function POST(request: Request) {
 
     for (const userId of userIds) {
       try {
-        const [context, profile, formulation] = await Promise.all([
+        const [context, profile, supportContext] = await Promise.all([
           getUserGenerationContext(userId),
           getUserParticipantProfile(userId),
-          getLatestCompletedFormulation(userId).catch(() => null),
+          getSupportContextForUser(userId),
         ]);
 
         if (context.goals.length === 0) {
@@ -79,18 +75,10 @@ export async function POST(request: Request) {
           profile.ai_personalization_summary
         );
 
-        const loadAdaptation = formulation
-          ? buildLoadAdaptationContext(formulation, locale)
-          : null;
-        const accountability = formulation
-          ? buildAccountabilityContext(formulation, locale)
-          : null;
-        const behavior_change = formulation
-          ? buildBehaviorChangeContext(formulation, locale)
-          : null;
-        const skip_adaptation = formulation
-          ? buildSkipAdaptationContext(formulation, locale)
-          : null;
+        const loadAdaptation = supportContext.formulation.load_adaptation;
+        const accountability = supportContext.formulation.accountability;
+        const behavior_change = supportContext.formulation.behavior_change;
+        const skip_adaptation = supportContext.formulation.skip_adaptation;
         let behavior_change_analysis = behavior_change
           ? analyzeWeekBehaviorChange({
               context: behavior_change,

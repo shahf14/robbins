@@ -10,6 +10,9 @@ const db = new Database(dbPath, {readonly: true});
 const dailyStepColumns = new Set(
   db.pragma('table_info(daily_steps)').map((column) => column.name)
 );
+const goalColumns = new Set(
+  db.pragma('table_info(goals)').map((column) => column.name)
+);
 const isGeneralSql = dailyStepColumns.has('is_general')
   ? 'COALESCE(is_general, 0)'
   : 'CASE WHEN goal_id IS NULL THEN 1 ELSE 0 END';
@@ -93,44 +96,21 @@ const checks = [
         AND m.goal_id <> w.goal_id
     `,
   },
-  {
-    name: 'health_phases_with_orphan_goal',
-    sql: `
-      SELECT hp.id, hp.user_id, hp.goal_id, hp.phase_index
-      FROM health_phases hp
-      LEFT JOIN goals g ON g.id = hp.goal_id AND g.user_id = hp.user_id
-      WHERE g.id IS NULL
-    `,
-  },
-  {
-    name: 'health_goals_with_legacy_health_context',
-    sql: `
-      SELECT id, user_id, title, health_context_json, plan_source
-      FROM goals
-      WHERE domain = 'health'
-        AND (
-          health_context_json IS NOT NULL
-          OR plan_source IS NOT NULL
-          OR health_category IS NOT NULL
-          OR health_baseline IS NOT NULL
-          OR health_target IS NOT NULL
-          OR health_unit IS NOT NULL
-          OR health_weight_dir IS NOT NULL
-          OR health_anchor_habit IS NOT NULL
-          OR health_anchor_time IS NOT NULL
-          OR health_why_important IS NOT NULL
-          OR health_why_now IS NOT NULL
-          OR health_what_lost IS NOT NULL
-        )
-    `,
-  },
-  {
-    name: 'health_phases_remaining',
-    sql: `
-      SELECT id, user_id, goal_id, phase_index
-      FROM health_phases
-    `,
-  },
+  ...(goalColumns.has('health_context_json') || goalColumns.has('plan_source')
+    ? [{
+        name: 'health_goals_with_legacy_health_context',
+        sql: `
+          SELECT id, user_id, title
+          FROM goals
+          WHERE domain = 'health'
+            AND (
+              ${goalColumns.has('health_context_json') ? 'health_context_json IS NOT NULL OR' : ''}
+              ${goalColumns.has('plan_source') ? 'plan_source IS NOT NULL OR' : ''}
+              0
+            )
+        `,
+      }]
+    : []),
 ];
 
 let failures = 0;

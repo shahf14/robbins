@@ -39,7 +39,7 @@ function seed(
   return {minutes, he, en};
 }
 
-/** kind → domain → proven action template */
+/** kind → domain → curated action template */
 const PATTERN_LIBRARY: Record<ActionPatternKind, Record<LifeDomain, PatternSeed>> = {
   no_time: {
     health: seed(5,
@@ -248,7 +248,7 @@ export function listPatternsForKind(
 
 export const ACTION_PATTERNS_PROMPT_BLOCK = [
   '## Action Patterns toolbox (REQUIRED):',
-  'The payload includes action_pattern_toolbox — proven templates by domain + blocker.',
+  'The payload includes action_pattern_toolbox — curated templates by domain + blocker.',
   'Do NOT invent tasks from scratch when a matching pattern exists.',
   'Pick the best pattern for the user\'s primary_blocker, adapt title/description to their active goal, and fill pain_addressed.',
   'Blocker → strategy mapping:',

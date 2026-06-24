@@ -2,12 +2,12 @@ import {NextResponse} from 'next/server';
 import {isClerkConfigured, resolveClerkDbUser} from '@/lib/auth/clerk-user';
 import type {LocalAuthContext} from '@/lib/auth/local-auth-context';
 
+export {assertLocalAuthConfigured} from '@/lib/auth/assert-local-auth-configured';
 export type {LocalAuthContext} from '@/lib/auth/local-auth-context';
 
 const LOCAL_USER_ID = process.env.LOCAL_USER_ID ?? 'local-user';
 const LOCAL_USER_EMAIL = process.env.LOCAL_USER_EMAIL ?? '';
 const LOCAL_AUTH_TOKEN = process.env.LOCAL_AUTH_TOKEN ?? '';
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const ALLOW_LOCAL_AUTH = process.env.ALLOW_LOCAL_AUTH === 'true';
 
 type LocalUser = {id: string; email: string};
@@ -41,7 +41,7 @@ function hasValidLocalToken(request: Request) {
 }
 
 function allowsLoopbackOpenAccess(request: Request): boolean {
-  return !IS_PRODUCTION && ALLOW_LOCAL_AUTH && isLoopbackHost(request);
+  return ALLOW_LOCAL_AUTH && isLoopbackHost(request);
 }
 
 export function getLocalAuthContext(request: Request): LocalAuthContext {
@@ -57,23 +57,6 @@ export function getLocalAuthContext(request: Request): LocalAuthContext {
 
 function localUser(): LocalUser {
   return {id: LOCAL_USER_ID, email: LOCAL_USER_EMAIL};
-}
-
-export function assertLocalAuthConfigured() {
-  if (!IS_PRODUCTION) return;
-
-  if (isClerkConfigured()) return;
-
-  if (LOCAL_AUTH_TOKEN) return;
-
-  const message =
-    'LOCAL_AUTH_TOKEN must be set in production when Clerk is not configured. Generate one with: openssl rand -hex 32';
-
-  if (process.env.STRICT_AUTH_BOOT === 'true') {
-    throw new Error(message);
-  }
-
-  console.warn(`[auth] ${message}`);
 }
 
 export async function requireCurrentUser(request: Request): Promise<CurrentUserResult> {

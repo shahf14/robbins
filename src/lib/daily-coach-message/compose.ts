@@ -88,7 +88,7 @@ function pickTemplate(inputs: DailyCoachMessageInputs, locale: AppLocale): Templ
       : {
           sentence: 'Energy is trending down — today matches a slower pace.',
           action: minutes
-            ? `Focus on the first ${minutes} step.`
+            ? `Focus on a first step of about ${minutes}.`
             : 'Focus on the first step only.',
         };
   }

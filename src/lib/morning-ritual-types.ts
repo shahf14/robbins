@@ -73,6 +73,10 @@ export type AffirmationItem = {
   weight: number;
   lastUsedAt: string | null;
   createdAt: string;
+  /** Last admin edit timestamp (falls back to createdAt in UI). */
+  updatedAt?: string | null;
+  /** Display name or source label for the last editor. */
+  updatedBy?: string | null;
   isDefault?: boolean;
   /** Hidden from ritual library (defaults are hidden, not deleted). */
   hiddenFromLibrary?: boolean;

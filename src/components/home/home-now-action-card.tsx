@@ -166,7 +166,7 @@ export function HomeNowActionCard({
                 <DomainStepBadge domain={action.step.domain as LifeDomain} />
                 {action.estimatedMinutes ? (
                   <span className="text-sm font-semibold text-white/58">
-                    ~{action.estimatedMinutes} min
+                    ~{action.estimatedMinutes} {t('lifeCoach.minutes')}
                   </span>
                 ) : null}
                 {action.stepIndex != null && action.stepCount ? (
@@ -193,7 +193,7 @@ export function HomeNowActionCard({
                 <DomainStepBadge domain={action.dailyFocusSuggestion.domainId as LifeDomain} />
                 {action.estimatedMinutes ? (
                   <span className="text-sm font-semibold text-white/58">
-                    ~{action.estimatedMinutes} min
+                    ~{action.estimatedMinutes} {t('lifeCoach.minutes')}
                   </span>
                 ) : null}
               </div>

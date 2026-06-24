@@ -25,3 +25,11 @@ Each line includes:
 - `userAgent`
 
 The date is calculated in the `Asia/Jerusalem` timezone. The `logs/` directory is ignored by git.
+
+Admins can read logs for a date via:
+
+```txt
+GET /api/logs?date=YYYY-MM-DD&limit=200
+```
+
+Requires the same tokens as other admin DB routes (`LOCAL_AUTH_TOKEN`, `ADMIN_API_TOKEN`, and `ADMIN_EMAIL` in production).

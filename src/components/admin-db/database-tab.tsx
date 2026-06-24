@@ -5,6 +5,7 @@ import {useTranslations} from 'next-intl';
 import {
   dbApi,
   DbApiError,
+  ensureAdminSession,
   getStoredAdminApiToken,
   getStoredLocalAuthToken,
   setStoredAdminApiToken,
@@ -33,13 +34,28 @@ function readLocalStorageArray(key: string): unknown[] {
 export function DatabaseTab({
   onActivity,
   onSubCrumbChange,
+  activeView,
+  onActiveViewChange,
 }: {
   onActivity: (key: AdminActivityKey) => void;
   onSubCrumbChange: (segment: string | null) => void;
+  activeView?: View;
+  onActiveViewChange?: (view: View) => void;
 }) {
   const t = useTranslations('admin.database');
   const {confirm} = useConfirm();
-  const [view, setView] = useState<View>('tables');
+  const [internalView, setInternalView] = useState<View>('tables');
+  const view = activeView ?? internalView;
+  const setView = useCallback(
+    (next: View) => {
+      if (onActiveViewChange) {
+        onActiveViewChange(next);
+      } else {
+        setInternalView(next);
+      }
+    },
+    [onActiveViewChange],
+  );
   const [tables, setTables] = useState<TableSummary[]>([]);
   const [loadingTables, setLoadingTables] = useState(true);
   const [tablesError, setTablesError] = useState<string | null>(null);
@@ -58,6 +74,7 @@ export function DatabaseTab({
     setLoadingTables(true);
     setTablesError(null);
     try {
+      await ensureAdminSession();
       const res = await dbApi.listTables();
       setTables(res.tables);
       onActivity('dbConnectionOk');
@@ -66,22 +83,20 @@ export function DatabaseTab({
       setTables([]);
       if (err instanceof DbApiError) {
         if (err.status === 401 || err.status === 403) {
-          setTablesError(
-            'Authentication failed. Enter LOCAL_AUTH_TOKEN and ADMIN_API_TOKEN above, then click Save tokens.'
-          );
+          setTablesError(t('authError'));
         } else if (err.status === 503) {
-          setTablesError('Admin API is not configured on the server (ADMIN_API_TOKEN missing).');
+          setTablesError(err.message || t('serverError'));
         } else {
           setTablesError(err.message);
         }
       } else {
-        setTablesError(err instanceof Error ? err.message : 'Could not load tables.');
+        setTablesError(err instanceof Error ? err.message : t('genericError'));
       }
       return [];
     } finally {
       setLoadingTables(false);
     }
-  }, [onActivity]);
+  }, [onActivity, t]);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => void fetchTables(), 0);
@@ -98,11 +113,11 @@ export function DatabaseTab({
       if (!result.ok) {
         setSavingTokens(false);
         if (result.reason === 'missing' || result.reason === 'unauthorized') {
-          setTablesError('LOCAL_AUTH_TOKEN was rejected. Paste the value from .env.local exactly.');
+          setTablesError(t('localTokenRejected'));
         } else if (result.reason === 'offline') {
-          setTablesError('Could not reach the server to verify LOCAL_AUTH_TOKEN.');
+          setTablesError(t('localTokenOffline'));
         } else {
-          setTablesError('Could not verify LOCAL_AUTH_TOKEN right now. Try again.');
+          setTablesError(t('localTokenVerifyFailed'));
         }
         return;
       }
@@ -112,6 +127,11 @@ export function DatabaseTab({
     setStoredLocalAuthToken(localAuthToken);
     onActivity('tokenSave');
     setSavingTokens(false);
+    try {
+      await dbApi.establishAdminSession();
+    } catch {
+      // Session cookie is optional when the admin API token header is sent.
+    }
     void fetchTables();
   }
 
@@ -148,7 +168,8 @@ export function DatabaseTab({
   const totalRows = tables.reduce((s, table) => s + table.row_count, 0);
 
   return (
-    <div className="grid gap-6">
+    <div className="grid min-w-0 gap-6">
+      <p className="admin-danger-zone__label">{t('dangerZoneLabel')}</p>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="eyebrow">{t('eyebrow')}</p>

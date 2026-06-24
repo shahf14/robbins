@@ -2,11 +2,20 @@ import type {AppLocale} from '@/i18n/config';
 import {defaultEveningMode} from '@/lib/life-context-content';
 import type {EveningMode} from '@/lib/evening-reset-types';
 import type {LifeContextStatus} from '@/lib/life-coach/types';
-import type {HealthAnchorHabit} from '@/lib/life-coach/types';
 import type {PreferredActionWindow} from '@/lib/user-preferences';
 
 export type PersonalDayPhase = 'pre_wake' | 'morning' | 'afternoon' | 'evening' | 'night';
 export type ToolsBarFocus = 'morning' | 'daytime' | 'evening' | 'night';
+type AnchorHabit =
+  | 'morning_coffee'
+  | 'commute'
+  | 'before_shower'
+  | 'before_sleep'
+  | 'lunch_break'
+  | 'after_kids_school'
+  | 'before_evening_meal'
+  | 'after_work'
+  | 'custom';
 
 const DEFAULT_WAKE = '07:00';
 const DEFAULT_SLEEP = '22:30';
@@ -50,9 +59,8 @@ export function getPersonalDayPhase(
   if (currentMinutes < windDownStart) {
     return 'evening';
   }
-  if (currentMinutes < sleep) {
-    return 'evening';
-  }
+  // Wind-down window (the ~90 minutes before bedtime) and anything after
+  // bedtime both use the calmer night messaging.
   return 'night';
 }
 
@@ -272,7 +280,7 @@ export function inferPreferredActionWindow(
 }
 
 export function defaultAnchorTimeForHabit(
-  habit: HealthAnchorHabit,
+  habit: AnchorHabit,
   wakeTime = DEFAULT_WAKE,
   sleepTime = DEFAULT_SLEEP
 ): string {

@@ -59,14 +59,19 @@
     "streakLabel": "Streak",
     "checkInsLabel": "Check-Ins",
     "sectionMain": "Navigation",
-    "sectionTools": "Tools"
+    "sectionTools": "Tools",
+    "openMenu": "Open navigation",
+    "closeMenu": "Close navigation",
+    "mySpace": "My space",
+    "settingsTooltip": "Settings — {name}",
+    "onboardingPromise": "A few minutes from now you will have a goal, a first step, and a clear reason to return tomorrow."
   },
   "language": {
     "label": "Language",
     "english": "English",
     "hebrew": "Hebrew",
     "switchConfirmTitle": "Switch language?",
-    "switchConfirmMessage": "You have unsaved progress in a wizard or draft. Your work stays on this device, but switching language reloads this page.",
+    "switchConfirmMessage": "You have unsaved progress in a wizard or draft. Your work stays on this device, but switching language re-opens this page in the new language.",
     "switchConfirmAction": "Switch anyway",
     "switchConfirmCancel": "Stay here"
   },
@@ -79,7 +84,7 @@
   "settings": {
     "eyebrow": "Personal space",
     "title": "Settings",
-    "subtitle": "Keep this space yours. Everything here is stored only on this device for now.",
+    "subtitle": "Keep this space yours. Your profile and preferences are saved to your account and synced across your devices.",
     "displayName": "Display name",
     "displayNamePlaceholder": "How should the app greet you?",
     "save": "Save changes",
@@ -88,7 +93,7 @@
     "savedSynced": "Saved and synced.",
     "syncFailed": "Saved locally, but server sync failed: {detail}",
     "retrySync": "Retry sync",
-    "localOnly": "Stored locally only.",
+    "localOnly": "Saved to your account and synced when you're online.",
     "themeTitle": "Appearance",
     "themeHelp": "Choose light or dark mode. Your preference is saved on this device.",
     "languageTitle": "Language",
@@ -196,7 +201,7 @@
     "sectionBody": "Define a simple task and tick it off each time you do it. A day only counts once you've completed every time — missed days simply don't advance.",
     "empty": "No daily tasks yet. Add one to get started.",
     "addTask": "Add daily task",
-    "addTaskExplainer": "Opens a quick form to add a one-off task to today's list — without going through goal building.",
+    "addTaskExplainer": "Opens a quick form to add a repeating daily task — choose how many times a day and for how many days — without building a full goal.",
     "newTaskTitle": "New daily task",
     "stepName": "What's the task?",
     "stepNamePlaceholder": "Write a short, clear task…",
@@ -219,7 +224,26 @@
     "delete": "Delete",
     "deleteConfirm": "Delete this task?",
     "domainOptional": "Domain (optional)",
-    "domainNone": "No domain"
+    "domainNone": "No domain",
+    "generalManager": {
+      "eyebrow": "Tasks without a goal",
+      "title": "Manage general daily tasks",
+      "body": "Edit tasks that are not tied to a specific goal, but still belong to this life domain. They stay general and do not receive a goal.",
+      "count": "{count} tasks",
+      "empty": "There are no general tasks in this domain yet.",
+      "generalBadge": "General task",
+      "edit": "Edit",
+      "save": "Save",
+      "saving": "Saving...",
+      "deleteConfirm": "Delete this general task?",
+      "titleLabel": "Title",
+      "descriptionLabel": "Description",
+      "domainLabel": "Domain",
+      "dateLabel": "Date",
+      "minutesLabel": "Minutes",
+      "difficultyLabel": "Difficulty",
+      "statusLabel": "Status"
+    }
   },
   "lifeWheel": {
     "bands": {
@@ -546,7 +570,7 @@
     "cancel": "Cancel",
     "minutes": "minutes",
     "markCompleted": "Completed",
-    "markPartial": "Partial",
+    "markPartial": "Partial (add a note)",
     "markSkipped": "Skipped",
     "stepStatusCoachHint": "Even partial counts as important information for the coach.",
     "stepSkipCoachHint": "Skipping teaches the coach to better adapt the next step.",
@@ -568,6 +592,16 @@
     "aiInsightsWeeklyReviewRole": "the week",
     "aiInsightsInsightsLabel": "Insights",
     "aiInsightsInsightsRole": "ongoing patterns and recommendations",
+    "aiGeneratedNote": "AI-generated suggestion — it can be wrong, and it isn't professional advice.",
+    "dailyFocusCard": {
+      "eyebrow": "Today's focus",
+      "missionConnected": "Your morning mission is connected",
+      "linkedStep": "Linked step",
+      "suggestedStep": "Suggested small step",
+      "backgroundDomain": "In the background, {domain} still needs attention.",
+      "creating": "Creating step…",
+      "turnIntoStep": "Turn into today’s step"
+    },
     "insightsEmpty": "Insights will appear after you build some task and reflection history.",
     "insightsEmptyDomain": "No insights yet for this area. Tap below and the AI will generate an initial analysis from your existing data.",
     "generateInitialInsight": "Generate first insight",
@@ -859,7 +893,7 @@
     "step3Title": "Set milestones for 30, 60 and 90 days",
     "step4Title": "Dig deeper: why does this matter?",
     "step5Title": "Which existing habit can anchor the new step?",
-    "step5Body": "Research shows anchoring to an existing habit increases success by 65%. Pick something you already do every day.",
+    "step5Body": "Anchoring a new habit to one you already do every day makes it much easier to stick. Pick something you already do every day.",
     "day30": "Day 30",
     "day60": "Day 60",
     "day90": "Day 90",
@@ -980,7 +1014,7 @@
     "noDescription": "No extra details for this task.",
     "confirmSkip": "Confirm and save",
     "daysStreak": "day streak",
-    "consistencyRate": "Consistency",
+    "consistencyRate": "Consistency Rate",
     "longestStreak": "Best streak",
     "totalCompleted": "Total completed",
     "graceDayUsed": "Grace day",
@@ -988,7 +1022,7 @@
     "streakMilestone3": "3 days in a row — you're on a roll!",
     "streakMilestone7": "A full week! Incredible streak — keep it up!",
     "streakMilestone14": "Two weeks straight! This habit is becoming part of you.",
-    "streakMilestone21": "21 days! Research shows the habit is now locked in.",
+    "streakMilestone21": "21 days in a row — you've built real momentum!",
     "streakMilestone30": "30 days in a row! An extraordinary achievement!",
     "streakMilestoneGeneric": "{count} days in a row — your momentum is strong!",
     "whyThisStep": "Why this step?"
@@ -1016,12 +1050,12 @@
     "scoreLevelGood": "Good — keep it up",
     "scoreLevelExcellent": "Excellent — maintain the pace",
     "scoreTipLow": "Set one small goal — even a tiny change will move the needle.",
-    "scoreTipMedium": "Daily consistency is the fastest way to raise this score.",
+    "scoreTipMedium": "Showing up consistently each day tends to raise this score.",
     "scoreTipGood": "You're on the right track — maintenance is as valuable as improvement.",
-    "scoreTipExcellent": "Outstanding — your current habits are working.",
+    "scoreTipExcellent": "Outstanding — your recent consistency is paying off.",
     "healthScoreInfo": "Your self-assessed rating (1–10) of this area, taken from the assessment you filled in. Update the assessment to change it.",
     "goalProgressInfo": "Progress percent measures how many of your goal's steps you've completed — this differs from the health score, which is an overall self-assessment of the area.",
-    "consistencyRateInfo": "The share of planned daily steps you completed over the last 30 days. The more consistently you follow through, the higher it climbs.",
+    "consistencyRateInfo": "The share of your planned daily steps over the last 30 days that you followed through on — fully or partially. The more consistently you show up, the higher it climbs.",
     "vsLastMonthInfo": "The difference in completed steps this month compared to last month.",
     "timelineTitle": "90-Day Timeline",
     "timelineDayLabel": "Day {day}",
@@ -1033,10 +1067,11 @@
     "questMapDay": "Checkpoint: day {day}"
   },
   "weeklyReviewEmotional": {
-    "title": "What this says about you",
+    "title": "A possible read on your week",
     "identityProof": "What you proved to yourself",
     "comebackEvidence": "Coming back on track",
-    "nextIdentityAction": "A small step that reinforces your new identity"
+    "nextIdentityAction": "A small step that reinforces your new identity",
+    "aiNote": "An AI-generated reflection based on your week — one way to read it, not a verdict."
   },
   "weeklyReviewRecurringPattern": {
     "title": "The recurring pattern"
@@ -1203,6 +1238,7 @@
       "title": "Stopping here",
       "body": "What you described is outside what this app can handle. We will not continue with questions.",
       "guidance": "Consider reaching out to someone you trust — a therapist, doctor, or someone close to you.",
+      "resources": "If you are in immediate danger, contact your local emergency number right now. In the US you can call or text 988 (Suicide & Crisis Lifeline). Elsewhere, look up a crisis line for your country.",
       "exit": "Back to home"
     },
     "risk": {
@@ -1722,6 +1758,8 @@
   },
   "coach": {
     "eyebrow": "Coaching space",
+    "stuckWithFocus": "I am stuck with today’s focus: {focus}",
+    "coachSyncedWithFocus": "Coach is synced with today’s focus",
     "page": {
       "title": "Virtual personal coach",
       "subtitle": "One honest question, a sharp reflection, and one move — no long chat.",
@@ -1785,7 +1823,7 @@
     "copied": "Copied",
     "share": "Share",
     "export": "Export JSON",
-    "responsePreview": "A clear read on what is happening, and one grounded next move.",
+    "responsePreview": "A possible read on what is happening, and one grounded next move.",
     "momentDismiss": "Take this with you",
     "languageBadgeHelp": "This shows the response language selected for coaching.",
     "mixedContent": "Your reflection will appear here after your next check-in.",
@@ -1854,7 +1892,7 @@
     "faq": [
       {
         "q": "Where is my data stored?",
-        "a": "All data is stored locally on this device. Nothing is sent to a server. You can export or clear it at any time from the Admin page."
+        "a": "Your profile, goals, steps, check-ins, and rituals are saved to your account on the server and synced to this device. Some drafts and preferences are also cached locally on this device. You can reset everything from the Reset data section at the bottom of this Help page."
       },
       {
         "q": "What is the Life Coach section?",
@@ -1874,7 +1912,7 @@
       },
       {
         "q": "How do I reset or delete my data?",
-        "a": "At the bottom of the Help page, use Reset data — it clears everything saved about you on this device and returns you to first-time onboarding. You can also manage individual records under Admin → Database."
+        "a": "At the bottom of the Help page, use Reset data — it permanently deletes everything saved about you, both on this device and on your account on the server, and returns you to first-time onboarding."
       }
     ],
     "contactTitle": "Still need help?",
@@ -2165,12 +2203,12 @@
   },
   "privacy": {
     "title": "Privacy note",
-    "body": "This prototype stores check-ins locally in your browser. A production version must add encrypted storage, privacy policy, terms, and clear consent before saving sensitive emotional data to a server.",
+    "body": "This app saves your check-ins, goals, and coaching history to your account on the server, and sends your inputs to an AI service to generate coaching content. A production version must add encrypted storage, a privacy policy, terms, and clear consent before handling sensitive emotional data.",
     "pageTitle": "Privacy Policy",
-    "intro": "This prototype handles emotionally sensitive information with a local-first posture.",
-    "local": "Check-ins, drafts, reminder preferences, and coaching history are stored locally on this device through browser storage and the app's local database.",
-    "analyticsControl": "Optional behavioral insights can be disabled in Settings. Core coaching continues without passive writing, editing, task-view, and locally inferred text-pattern analytics.",
-    "server": "The current coach API returns a local fallback response. If cloud AI is connected later, consent, retention rules, and deletion controls must be added before launch.",
+    "intro": "This app handles emotionally sensitive information. Your data is saved to your account on the server and synced to your device.",
+    "local": "Some drafts, reminder preferences, and recent content are cached locally on this device through browser storage; your profile, goals, steps, check-ins, and coaching history are saved to your account on the server.",
+    "analyticsControl": "Optional behavioral insights can be disabled in Settings. Core coaching continues without passive writing, editing, task-view, and inferred text-pattern analytics.",
+    "server": "Your inputs are sent to an AI service (OpenAI) to generate goals, steps, insights, and reviews. Consent, retention rules, and deletion controls must be finalized before a public launch.",
     "security": "Production must use HTTPS, encrypted storage, access controls, audit logging, and clear data deletion flows.",
     "contact": "This page is product guidance, not legal advice. Final launch needs reviewed legal text."
   },
@@ -2329,8 +2367,8 @@
       "ctaContinue": "Feel it in your body and continue",
       "ctaFinish": "I feel it. Keep going",
       "ctaBackEntry": "Back to the previous moment",
-      "integrationMessage": "Your nervous system is being wired for success today.",
-      "integrationEyebrow": "Neural wiring",
+      "integrationMessage": "You're training your focus and building momentum for today.",
+      "integrationEyebrow": "Integration",
       "prep": {
         "eyebrow": "Body first",
         "title": "Wake the body before you write.",
@@ -2533,7 +2571,7 @@
     "winReview": {
       "eyebrow": "Win Review",
       "question": "What was your biggest win today?",
-      "subtitle": "The brain remembers failures. Train it to notice success.",
+      "subtitle": "It's easy to dwell on what went wrong — this trains you to notice what went right.",
       "placeholder": "Today I...",
       "examplesLabel": "Examples",
       "example1": "Worked out",
@@ -2615,7 +2653,8 @@
     "complete": {
       "eyebrow": "Evening Complete",
       "title": "You're set for tomorrow.",
-      "readinessLabel": "Tomorrow Readiness Score",
+      "readinessLabel": "Evening Reset Score",
+      "readinessHint": "How complete tonight's reset is — the more you reflect and plan, the higher it goes.",
       "biggestWin": "Today's win",
       "tomorrowsWin": "Tomorrow's win",
       "tomorrowTakeaway": "One sentence for tomorrow",
@@ -2652,6 +2691,7 @@
     "securityNotice": "This page is for internal use only. Changes here affect all app data.",
     "tabs": {
       "content": "Content",
+      "identities": "Identities",
       "contentStudio": "Content Studio",
       "database": "Database",
       "data": "Data",
@@ -2663,16 +2703,27 @@
       "tabs": {
         "content-studio": "Content Studio",
         "content": "Content",
+        "identities": "Identities",
         "logs": "Logs",
         "settings": "Settings",
         "database": "Database"
       },
       "tabHint": {
         "content-studio": "View and sync all content sources across the app.",
-        "content": "Edit affirmations and identities used in the morning ritual.",
+        "content": "Edit affirmations and default goals for the morning ritual.",
+        "identities": "Add and remove identity declarations shown in the ritual picker.",
         "logs": "Inspect client and server errors for a chosen date.",
         "settings": "Adjust display name and language for this device.",
         "database": "Run read-only queries and manage admin tokens — writes are high risk."
+      },
+      "sectionHint": {
+        "domain-goals": "Edit default goals by life domain — for the morning ritual and coach.",
+        "affirmations": "Search, filter, edit, and manage the morning ritual affirmation library.",
+        "goalless-tasks": "Manage the goalless daily task pool users pick from during task selection."
+      },
+      "nav": {
+        "main": "Main areas",
+        "contentTools": "Ritual content"
       },
       "overview": {
         "title": "What can you do here?",
@@ -2703,6 +2754,7 @@
       "setup": {
         "title": "First-time setup",
         "subtitle": "Complete these steps before relying on admin tools.",
+        "configuredBadge": "✓ Configured",
         "go": "Go",
         "steps": {
           "localToken": "Save LOCAL_AUTH_TOKEN",
@@ -2716,7 +2768,39 @@
         "contentStudioSync": "Last Content Studio sync",
         "dbSync": "Last DB import",
         "export": "Last export",
-        "settingsSave": "Last saved setting"
+        "settingsSave": "Last saved setting",
+        "goalsSave": "Last goals save",
+        "identitiesSave": "Last identities update",
+        "affirmationsSave": "Last affirmations update",
+        "goallessTasksSave": "Last goalless tasks update"
+      },
+      "dashboard": {
+        "eyebrow": "At a glance",
+        "title": "Welcome",
+        "subtitle": "Quick snapshot of ritual content and recent activity.",
+        "securityNote": "Internal use only — changes affect all users.",
+        "activeAffirmations": "Active affirmations",
+        "publishedGoals": "Published goals",
+        "lastAction": "Last action",
+        "noActivity": "No actions yet",
+        "quickActions": "Quick actions",
+        "actionAffirmations": "Manage affirmations",
+        "actionGoals": "Default goals",
+        "actionGoallessTasks": "Goalless tasks",
+        "actionIdentities": "Manage identities",
+        "lastActions": {
+          "dbSync": "Database import",
+          "dbCheck": "Database check",
+          "export": "Data export",
+          "settingsSave": "Settings saved",
+          "tokenSave": "Tokens saved",
+          "logsRefresh": "Logs refreshed",
+          "dbConnectionOk": "DB connection OK",
+          "goalsSave": "Goals saved",
+          "identitiesSave": "Identities updated",
+          "affirmationsSave": "Affirmations updated",
+          "goallessTasksSave": "Goalless tasks updated"
+        }
       },
       "buttons": {
         "view": "View",
@@ -2742,10 +2826,17 @@
         },
         "content": {
           "title": "Content help",
-          "what": "Manage affirmations and identity declarations for the morning ritual.",
+          "what": "Manage affirmations and default goals for the morning ritual.",
           "when": "When curating ritual content for yourself or test users.",
           "avoid": "Deletes are undoable briefly but affect the ritual library immediately.",
           "buttons": "Add = creates content. Delete = removes after confirm."
+        },
+        "identities": {
+          "title": "Identities help",
+          "what": "Add and remove identity declarations shown in the ritual picker.",
+          "when": "When adding or removing identities users can choose during the ritual.",
+          "avoid": "Deletes are undoable briefly but remove the identity from the library immediately.",
+          "buttons": "Add identity = creates a new declaration. Delete = removes after confirm."
         },
         "logs": {
           "title": "Logs help",
@@ -2772,6 +2863,7 @@
       "risk": {
         "content-studio": {"label": "Safe"},
         "content": {"label": "Changes ritual"},
+        "identities": {"label": "Changes ritual"},
         "logs": {"label": "Read-only"},
         "settings": {"label": "Local"},
         "database": {"label": "High risk"}
@@ -2815,6 +2907,12 @@
       "viewMode": "Compact is for quick scanning; Detailed shows more context without opening each asset."
     },
     "content": {
+      "sections": {
+        "domain-goals": "Default goals",
+        "affirmations": "Affirmation manager",
+        "goalless-tasks": "Goalless tasks",
+        "identities": "Identity manager"
+      },
       "affirmationsTitle": "Affirmation Manager",
       "affirmationsDescription": "Add, edit, and remove affirmations used in the morning ritual.",
       "identitiesTitle": "Identity Manager",
@@ -2827,8 +2925,58 @@
       "emptyIdentitiesTitle": "No custom identities yet",
       "emptyIdentitiesDetail": "Add an identity declaration above. It will appear in the morning ritual picker.",
       "identityPlaceholder": "I am a person who...",
+      "identityAddedToast": "Identity added",
       "gratitudeTitle": "Gratitude Triggers",
       "gratitudeDescription": "View the default gratitude triggers. Editing will be available in a future update."
+    },
+    "goallessTasks": {
+      "title": "Goalless tasks",
+      "description": "Manage the daily task pool users pick from — not tied to a specific goal.",
+      "add": "Add task",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "duplicate": "Duplicate",
+      "export": "Export JSON",
+      "reset": "Reset domain",
+      "searchPlaceholder": "Search by title, tag, or id…",
+      "statusAll": "All statuses",
+      "statuses": {
+        "draft": "Draft",
+        "published": "Published",
+        "archived": "Archived"
+      },
+      "publishedCount": "{count} published",
+      "emptyTitle": "No tasks in this domain",
+      "emptyDetail": "Add a new task or pick another life domain.",
+      "selectHint": "Select a task from the list to edit.",
+      "untitled": "Untitled",
+      "builtinBadge": "Built-in",
+      "hiddenBadge": "Hidden",
+      "savedToast": "Task saved",
+      "deletedToast": "Task removed",
+      "exportToast": "JSON file downloaded",
+      "resetToast": "Domain reset to defaults",
+      "deleteConfirmTitle": "Delete this task?",
+      "deleteConfirmMessage": "Built-in tasks are hidden from the pool. Custom tasks are removed entirely.",
+      "resetConfirmTitle": "Reset this domain?",
+      "resetConfirmMessage": "All local changes for tasks in this domain will be replaced with built-in defaults.",
+      "localNote": "Changes are saved locally in the browser. To deploy for all users, export JSON and update src/data/daily-tasks/ files.",
+      "titleHe": "Title (Hebrew)",
+      "titleEn": "Title (English)",
+      "descriptionHe": "Description (Hebrew)",
+      "descriptionEn": "Description (English)",
+      "domainLabel": "Domain",
+      "statusLabel": "Status",
+      "minutesLabel": "Minutes",
+      "difficultyLabel": "Difficulty",
+      "energyLabel": "Energy",
+      "typeLabel": "Type",
+      "tagsLabel": "Tags",
+      "idLabel": "ID",
+      "repeatableLabel": "Repeatable",
+      "hiddenLabel": "Hide from pool"
     },
     "affirmations": {
       "title": "Affirmation library",
@@ -2882,6 +3030,15 @@
       "groupByTag": "Group by tag",
       "resetFilters": "Reset filters",
       "showing": "Showing {shown} of {total}",
+      "showingPairs": "Showing {pairs} pairs ({items} affirmations) of {total}",
+      "pairBadge": "HE/EN pair",
+      "meta": {
+        "created": "Created: {date}",
+        "updated": "Updated: {date} · {by}",
+        "system": "System",
+        "admin": "Admin",
+        "user": "User"
+      },
       "selected": "{count} selected",
       "selectVisible": "Select visible",
       "clearSelection": "Clear selection",
@@ -2910,6 +3067,8 @@
         "custom": "Custom"
       },
       "filters": {
+        "panelTitle": "Filters",
+        "activeCount": "{count} active",
         "language": "Language",
         "type": "Type",
         "active": "Status",
@@ -2950,6 +3109,8 @@
         "active": "Active",
         "draft": "Save as draft",
         "createdAt": "Created",
+        "updatedAt": "Updated",
+        "updatedBy": "Updated by",
         "lastUsedAt": "Last used",
         "selectedCount": "Selected in ritual",
         "lastSelectedAt": "Last selected in ritual"
@@ -2993,6 +3154,10 @@
       "emptyTitle": "No logs to show",
       "loadErrorTitle": "Could not load logs",
       "authError": "Authentication failed. Open the Database tab, enter LOCAL_AUTH_TOKEN and ADMIN_API_TOKEN, then click Save tokens.",
+      "openDatabaseTab": "Open database tab",
+      "tokenStatus": "LOCAL_AUTH_TOKEN: {local} · ADMIN_API_TOKEN: {admin}",
+      "tokenOk": "set",
+      "tokenMissing": "missing",
       "serverError": "Admin API is not configured on the server (ADMIN_API_TOKEN missing).",
       "genericError": "Could not load logs.",
       "loading": "Loading…",
@@ -3002,13 +3167,14 @@
     },
     "database": {
       "eyebrow": "Database",
+      "dangerZoneLabel": "High-risk zone",
       "title": "Local SQLite — life-coach.db",
       "loading": "Loading…",
       "tableSummary": "{tables} tables · {rows} total rows",
       "import": "Import legacy localStorage",
       "importing": "Importing…",
       "tokenTitle": "Admin access tokens",
-      "tokenHelp": "Stored in this browser tab session only. Production DB routes require ADMIN_API_TOKEN.",
+      "tokenHelp": "On localhost with ALLOW_LOCAL_AUTH=true you can skip tokens. Otherwise enter LOCAL_AUTH_TOKEN (and optionally ADMIN_API_TOKEN) and save.",
       "saveTokens": "Save tokens",
       "checking": "Checking…",
       "syncComplete": "Sync complete",
@@ -3017,8 +3183,28 @@
       "noTablesTitle": "No tables found",
       "noTablesDetail": "Use Import legacy localStorage or run migrations to populate the database.",
       "loadErrorTitle": "Could not load database tables",
+      "authError": "Authentication failed. Ensure LOCAL_AUTH_TOKEN matches .env.local, or set ALLOW_LOCAL_AUTH=true on localhost.",
+      "serverError": "Admin API is not configured on the server.",
+      "genericError": "Could not load tables.",
+      "localTokenRejected": "LOCAL_AUTH_TOKEN was rejected. Paste the value from .env.local exactly.",
+      "localTokenOffline": "Could not reach the server to verify LOCAL_AUTH_TOKEN.",
+      "localTokenVerifyFailed": "Could not verify LOCAL_AUTH_TOKEN right now. Try again.",
       "retry": "Retry",
-      "loadingTables": "Loading tables…"
+      "loadingTables": "Loading tables…",
+      "browser": {
+        "tablesLabel": "Tables",
+        "searchPlaceholder": "Search…",
+        "exportCsv": "↓ Export CSV",
+        "refresh": "↺ Refresh",
+        "loading": "Loading data…",
+        "loadError": "Could not load table data.",
+        "selectTable": "Select a table from the list.",
+        "noRows": "No rows in table {table}.",
+        "paginationEmpty": "0 rows in table {table}",
+        "pagination": "{total} rows · page {page} of {pages}",
+        "prev": "Prev",
+        "next": "Next"
+      }
     },
     "settings": {
       "title": "App Settings",
@@ -3432,9 +3618,9 @@
         "body": "You are building momentum across more than one life area."
       }
     },
-    "personalBestsTitle": "Personal bests",
+    "personalBestsTitle": "Your snapshot",
     "personalBests": {
-      "bestMomentum": "Best momentum",
+      "bestMomentum": "Current momentum",
       "bestWeek": "This week",
       "bestRitual": "Ritual streak",
       "strongestDomain": "Strongest area",
@@ -3505,7 +3691,7 @@
       "eyebrow": "Your recommended step right now",
       "whyLabel": "Why this fits you today",
       "reasons": {
-        "morningRitual": "You haven't started your morning routine yet — this is the highest-impact move right now.",
+        "morningRitual": "You haven't started your morning ritual yet — this is the highest-impact move right now.",
         "dailyStep": "You have a pending step — this is the highest-leverage move right now.",
         "dailyFocus": "Your morning mission and daily focus are clear — turn them into one doable step now.",
         "dailyFocusLinked": "Your morning mission is already linked to a daily step — open that move now.",
@@ -3524,7 +3710,7 @@
         "eveningReset": "Start evening reset",
         "generateSteps": "Generate today's steps",
         "setGoal": "Set a goal",
-        "viewSteps": "View goals",
+        "viewSteps": "View all steps",
         "adaptDay": "Adapt for today"
       },
       "cards": {
@@ -3574,7 +3760,7 @@
       "title": "Your next step for today",
       "nowPrefer": "Right now, {tool} works best",
       "tools": {
-        "checkin": "check-in",
+        "morningRitual": "morning ritual",
         "dailyStep": "daily step",
         "evening": "evening reset"
       },

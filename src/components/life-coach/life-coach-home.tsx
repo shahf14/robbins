@@ -44,13 +44,8 @@ import {StepFilterChips, type StepStatusFilter} from './step-filter-chips';
 import {FeatureHint} from '@/components/feedback/feature-hint';
 import {NextActionBar} from '@/components/feedback/next-action-bar';
 import {markFeatureSeen} from '@/lib/feature-discovery';
-import {computeComebackChain} from '@/lib/gamification/comeback-chain';
-import {deriveIdentityTitle} from '@/lib/gamification/identity-titles';
-import {computeRecoveryRate} from '@/lib/behavior-profile/compute';
-import {computeMysteryUnlock} from '@/lib/gamification/mystery-unlocks';
 import {HomeGamificationStrip} from '@/components/gamification/home-gamification-strip';
-import {computeDomainRivalry} from '@/lib/gamification/domain-rivalry';
-import {deriveStreakHealth} from '@/lib/gamification/streak-health';
+import {buildGamificationState} from '@/lib/gamification/state';
 import {
   BehaviorScoreChip,
   EarlyWarningBanner,
@@ -206,41 +201,33 @@ function LifeCoachHomeContent() {
       ? t('home.nextAction.generateSteps')
       : t('home.nextAction.setGoal');
   const weeklyDone = weekSteps.filter((s) => s.status === 'completed').length;
-  const comebackChain = computeComebackChain(weekSteps, todayYMD());
-  const identityTitle = deriveIdentityTitle({
-    weeklyDone,
-    allDoneToday: todaySteps.length > 0 && todaySteps.every((s) => s.status !== 'pending'),
-    comebackChain,
-    activeDomains: new Set(weekSteps.filter((s) => s.status === 'completed').map((s) => s.domain)).size,
-    pendingEvening: todaySteps.filter((s) => s.status === 'pending').length,
-    recoveryRate: computeRecoveryRate(weekSteps),
+  const gamificationState = buildGamificationState({
+    today: todayYMD(),
+    todaySteps,
+    weekSteps,
+    ritualStreak,
+    sleepTime: loadUserPreferences().sleep_time,
+    hasTodayRitual: false,
+    latestEnergy: latestRitualEnergy,
+    hasWeeklyReview: !!weeklyReview,
   });
+  const identityTitle = gamificationState.identityTitle;
   useEffect(() => {
     if (identityTitle) {
       lifeCoachApi
-        .saveGamificationUnlock({kind: 'identity_title', reward_key: identityTitle})
-        .catch(() => {});
+        .recordGamificationEvent({kind: 'identity_title', reward_key: identityTitle})
+      .catch(() => {});
     }
   }, [identityTitle]);
-  const domainRivalry = computeDomainRivalry(weekSteps);
-  const mysteryUnlock = computeMysteryUnlock(weeklyDone, !!weeklyReview);
   useEffect(() => {
     if (weeklyDone > 0 && weeklyDone % 3 === 0) {
       const {start} = currentWeekRange();
       const rewardKey = weeklyDone >= 9 ? 'weeklyPattern' : weeklyDone >= 6 ? 'domainTip' : 'newInsight';
       lifeCoachApi
-        .saveGamificationUnlock({kind: 'mystery_unlock', reward_key: rewardKey, week_start: start})
+        .recordGamificationEvent({kind: 'mystery_unlock', reward_key: rewardKey, week_start: start})
         .catch(() => {});
     }
   }, [weeklyDone]);
-  const streakHealth = deriveStreakHealth(
-    ritualStreak,
-    todaySteps.filter((s) => s.status === 'pending').length,
-    loadUserPreferences().sleep_time,
-    false,
-    new Date(),
-    latestRitualEnergy
-  );
   const behaviorScore = computeWeeklyBehaviorScore(weekSteps);
   const weeklyTarget = Math.max(3, Math.min(weekSteps.length, Math.ceil(weekSteps.length * WEEKLY_TARGET_RATIO)));
   const weeklyComplete = weeklyDone >= weeklyTarget;
@@ -618,12 +605,12 @@ function LifeCoachHomeContent() {
           {/* Zone D — gamification, behavior stats, social share */}
           <div className="mt-8 grid gap-4">
             <HomeGamificationStrip
-              streakHealth={streakHealth}
+              streakHealth={gamificationState.streakHealth}
               streak={ritualStreak}
-              comebackChain={comebackChain}
-              identityTitle={identityTitle}
-              domainRivalry={domainRivalry}
-              mysteryUnlock={mysteryUnlock}
+              comebackChain={gamificationState.comebackChain}
+              identityTitle={gamificationState.identityTitle}
+              domainRivalry={gamificationState.domainRivalry}
+              mysteryUnlock={gamificationState.mysteryUnlock}
             />
             <div className="grid gap-3 sm:grid-cols-2">
               <BehaviorScoreChip score={behaviorScore} />

@@ -1,126 +1,58 @@
-export const LIFE_DOMAINS = [
-  'health', 'time', 'wealth', 'career', 'relationships', 'mind', 'spirit', 'house_family',
-] as const;
+// Value constants live in the zero-import leaf `./constants`; imported here so
+// the union types below can derive from them, and re-exported so existing
+// `@/lib/life-coach/types` consumers keep working unchanged.
+import {
+  LIFE_DOMAINS,
+  AVAILABLE_TIME_OPTIONS,
+  INTENSITY_PREFERENCES,
+  GOAL_STATUSES,
+  GOAL_CREATED_BY,
+  MILESTONE_STATUSES,
+  DAILY_STEP_STATUSES,
+  DAILY_STEP_DIFFICULTIES,
+  REFLECTION_BLOCKER_REASONS,
+  STEP_VALUE_FEEDBACK_OPTIONS,
+  INSIGHT_TYPES,
+  DOMAIN_BLOCKERS,
+  FORMULATION_SESSION_STATUSES,
+  FORMULATION_PHASES,
+  LIFE_CONTEXT_STATUSES,
+  RISK_LEVELS,
+  RISK_ACTIONS,
+} from './constants';
+
+export {
+  LIFE_DOMAINS,
+  AVAILABLE_TIME_OPTIONS,
+  INTENSITY_PREFERENCES,
+  GOAL_STATUSES,
+  GOAL_CREATED_BY,
+  MILESTONE_STATUSES,
+  DAILY_STEP_STATUSES,
+  DAILY_STEP_DIFFICULTIES,
+  REFLECTION_BLOCKER_REASONS,
+  STEP_VALUE_FEEDBACK_OPTIONS,
+  INSIGHT_TYPES,
+  DOMAIN_BLOCKERS,
+  FORMULATION_SESSION_STATUSES,
+  FORMULATION_PHASES,
+  LIFE_CONTEXT_STATUSES,
+  RISK_LEVELS,
+  RISK_ACTIONS,
+};
+
 export type LifeDomain = (typeof LIFE_DOMAINS)[number];
-
-export const AVAILABLE_TIME_OPTIONS = [5, 10, 20, 30] as const;
 export type AvailableTimePerDay = (typeof AVAILABLE_TIME_OPTIONS)[number];
-
-export const INTENSITY_PREFERENCES = ['gentle', 'balanced', 'intense'] as const;
 export type IntensityPreference = (typeof INTENSITY_PREFERENCES)[number];
-
-export const GOAL_STATUSES = ['active', 'completed', 'paused', 'archived'] as const;
 type GoalStatus = (typeof GOAL_STATUSES)[number];
-
-export const GOAL_CREATED_BY = ['user', 'ai'] as const;
 type GoalCreatedBy = (typeof GOAL_CREATED_BY)[number];
-
-export const MILESTONE_STATUSES = ['pending', 'completed'] as const;
 type MilestoneStatus = (typeof MILESTONE_STATUSES)[number];
-
-export const DAILY_STEP_STATUSES = ['pending', 'completed', 'skipped', 'partial'] as const;
 export type DailyStepStatus = (typeof DAILY_STEP_STATUSES)[number];
-
-export const DAILY_STEP_DIFFICULTIES = ['easy', 'medium', 'hard'] as const;
 export type DailyStepDifficulty = (typeof DAILY_STEP_DIFFICULTIES)[number];
-
-export const REFLECTION_BLOCKER_REASONS = [
-  'no_time', 'forgot', 'low_energy', 'unclear_task', 'emotional_resistance', 'family_chaos', 'other',
-] as const;
 export type ReflectionBlockerReason = (typeof REFLECTION_BLOCKER_REASONS)[number];
-
-/** Post-completion value check — did the step actually help? */
-export const STEP_VALUE_FEEDBACK_OPTIONS = [
-  'felt_progress',
-  'too_small',
-  'too_generic',
-  'missed_problem',
-] as const;
 export type StepValueFeedback = (typeof STEP_VALUE_FEEDBACK_OPTIONS)[number];
-
-export const INSIGHT_TYPES = ['pattern', 'recommendation', 'weekly_review'] as const;
 type InsightType = (typeof INSIGHT_TYPES)[number];
-
-export const DOMAIN_BLOCKERS = [
-  'low_energy', 'kids', 'no_time', 'money_pressure', 'lack_of_clarity', 'self_doubt', 'environment', 'consistency',
-] as const;
 export type DomainBlocker = (typeof DOMAIN_BLOCKERS)[number];
-
-export const WEIGHT_DIRECTIONS = ['gain', 'loss', 'maintain'] as const;
-export type WeightDirection = (typeof WEIGHT_DIRECTIONS)[number];
-
-export const HEALTH_SECONDARY_FOCUSES = ['weight_gain', 'weight_loss'] as const;
-export type HealthSecondaryFocus = (typeof HEALTH_SECONDARY_FOCUSES)[number];
-
-export const HEALTH_PLAN_SOURCES = ['ai', 'fallback'] as const;
-export type HealthPlanSource = (typeof HEALTH_PLAN_SOURCES)[number];
-
-export const HEALTH_ANCHOR_HABITS = [
-  'morning_coffee', 'commute', 'before_shower', 'before_sleep',
-  'lunch_break', 'after_kids_school', 'before_evening_meal', 'after_work', 'custom',
-] as const;
-export type HealthAnchorHabit = (typeof HEALTH_ANCHOR_HABITS)[number];
-
-export const HEALTH_CATEGORIES = [
-  'fitness', 'sleep', 'nutrition', 'weight', 'energy', 'specific_illness',
-] as const;
-export type HealthCategory = (typeof HEALTH_CATEGORIES)[number];
-
-// ---------------------------------------------------------------------------
-// Health plan types
-// ---------------------------------------------------------------------------
-
-type HealthPlanTaskTemplate = {
-  title: string;
-  description: string;
-  estimated_minutes: number;
-  difficulty: DailyStepDifficulty;
-  day_of_week?: number;
-};
-
-export type HealthPlanPhase = {
-  start_day: number;
-  end_day: number;
-  focus: string;
-  task_templates: HealthPlanTaskTemplate[];
-  weigh_in?: boolean;
-};
-
-export type HealthExecutionPlan = {
-  phases: HealthPlanPhase[];
-};
-
-export type HealthGoalAnchor = {
-  habit_key: HealthAnchorHabit;
-  time?: string;
-  custom_label?: string;
-};
-
-export type HealthGoalContext = {
-  category: HealthCategory;
-  metrics: {
-    category: HealthCategory;
-    baseline_value: number;
-    target_value: number;
-  };
-  weight_direction?: WeightDirection;
-  secondary_focus?: HealthSecondaryFocus;
-  current_kg?: number;
-  target_kg?: number;
-  timeline: {
-    days_30: string;
-    days_60: string;
-    days_90: string;
-  };
-  why_deep: {
-    why_important: string;
-    why_now: string;
-    what_lost: string;
-  };
-  anchor?: HealthGoalAnchor;
-  execution_plan?: HealthExecutionPlan;
-  plan_source?: HealthPlanSource;
-};
 
 // ---------------------------------------------------------------------------
 // Core domain types
@@ -173,7 +105,6 @@ export type Goal = {
   commitment_started_at?: string | null;
   status: GoalStatus;
   created_by: GoalCreatedBy;
-  health_context: HealthGoalContext | null;
   created_at: string;
   updated_at: string;
   // Raw behavioral metrics
@@ -330,8 +261,6 @@ export type StructuredGoalPlan = {
   deadline: string | null;
   milestones: StructuredGoalMilestone[];
   daily_baby_steps: Array<Omit<StructuredDailyBabyStep, 'domain' | 'goal_id'>>;
-  execution_plan?: HealthExecutionPlan | null;
-  plan_source?: HealthPlanSource;
   realism_check?: GoalRealismCheck | null;
   next_best_action?: NextBestAction | null;
 };
@@ -466,42 +395,10 @@ export type StreakInfo = {
 // Formulation session (therapeutic clarification)
 // ---------------------------------------------------------------------------
 
-export const FORMULATION_SESSION_STATUSES = [
-  'draft',
-  'completed',
-  'abandoned',
-  'crisis_stopped',
-  'skipped_after_consent',
-] as const;
 type FormulationSessionStatus = (typeof FORMULATION_SESSION_STATUSES)[number];
-
-export const FORMULATION_PHASES = [
-  'consent',
-  'risk',
-  'open',
-  'dimensions',
-  'exploration',
-  'formulation',
-  'goal',
-  'complete',
-] as const;
 export type FormulationPhase = (typeof FORMULATION_PHASES)[number];
-
-export const LIFE_CONTEXT_STATUSES = [
-  'student',
-  'new_parent',
-  'manager',
-  'caregiver',
-  'between_jobs',
-  'other',
-  'prefer_not',
-] as const;
 export type LifeContextStatus = (typeof LIFE_CONTEXT_STATUSES)[number];
-
-export const RISK_LEVELS = ['none', 'elevated', 'crisis'] as const;
 export type RiskLevel = (typeof RISK_LEVELS)[number];
-
-export const RISK_ACTIONS = ['continue', 'resources', 'stop'] as const;
 export type RiskAction = (typeof RISK_ACTIONS)[number];
 
 type RiskAnswer = 0 | 1 | null;
@@ -623,6 +520,8 @@ export type FormulationSession = {
   user_edited_formulation: boolean;
   formulation_approved_at: string | null;
   coach_handoff: CoachHandoff | null;
+  suggested_domain: LifeDomain | null;
+  created_goal_id: string | null;
   checkin_prefill: FormulationCheckinPrefill | null;
   phases_skipped: string[];
   prior_question_key: string | null;

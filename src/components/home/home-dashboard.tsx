@@ -64,13 +64,8 @@ import {
 import {analyzeReturningBarrierWeek} from '@/lib/formulation/skip-adaptation-routing';
 import {BehaviorChangeInsightCard} from '@/components/behavior-science/behavior-change-insight-card';
 import {shouldEmphasizeSurvivalMode, isSoftSurvivalMode, shouldHidePersonalizedChallenge} from '@/lib/formulation/load-adaptation-routing';
-import {computeComebackChain} from '@/lib/gamification/comeback-chain';
-import {computeDomainRivalry} from '@/lib/gamification/domain-rivalry';
-import {deriveIdentityTitle} from '@/lib/gamification/identity-titles';
-import {computeRecoveryRate} from '@/lib/behavior-profile/compute';
-import {deriveStreakHealth} from '@/lib/gamification/streak-health';
-import {computeMysteryUnlock} from '@/lib/gamification/mystery-unlocks';
 import {detectEnergyMatchBonus} from '@/lib/gamification/energy-match';
+import {buildGamificationState} from '@/lib/gamification/state';
 import {HomeGamificationStrip} from '@/components/gamification/home-gamification-strip';
 import {
 
@@ -303,17 +298,16 @@ export function HomeDashboard() {
 
   const weeklyDoneForUnlock = data?.weeklyDone ?? 0;
   const identityUnlockTitle = data
-    ? deriveIdentityTitle({
-        weeklyDone: data.weeklyDone,
-        allDoneToday:
-          data.todaySteps.length > 0 && data.todaySteps.every((s) => s.status !== 'pending'),
-        comebackChain: computeComebackChain(data.weekSteps, todayYMD()),
-        activeDomains: new Set(
-          data.weekSteps.filter((s) => s.status === 'completed').map((s) => s.domain)
-        ).size,
-        pendingEvening: data.todaySteps.filter((s) => s.status === 'pending').length,
-        recoveryRate: computeRecoveryRate(data.weekSteps),
-      })
+    ? buildGamificationState({
+        today: todayYMD(),
+        todaySteps: data.todaySteps,
+        weekSteps: data.weekSteps,
+        ritualStreak: data.ritualStreak,
+        sleepTime: loadUserPreferences().sleep_time,
+        hasTodayRitual: data.hasTodayRitual,
+        latestEnergy: ritualEnergy(completedRitualSessions(data.ritualSessions)[0]),
+        hasWeeklyReview: false,
+      }).identityTitle
     : null;
 
   useEffect(() => {
@@ -322,14 +316,14 @@ export function HomeDashboard() {
     const rewardKey =
       weeklyDoneForUnlock >= 9 ? 'weeklyPattern' : weeklyDoneForUnlock >= 6 ? 'domainTip' : 'newInsight';
     lifeCoachApi
-      .saveGamificationUnlock({kind: 'mystery_unlock', reward_key: rewardKey, week_start: start})
+      .recordGamificationEvent({kind: 'mystery_unlock', reward_key: rewardKey, week_start: start})
       .catch(() => {});
   }, [weeklyDoneForUnlock]);
 
   useEffect(() => {
     if (identityUnlockTitle) {
       lifeCoachApi
-        .saveGamificationUnlock({kind: 'identity_title', reward_key: identityUnlockTitle})
+        .recordGamificationEvent({kind: 'identity_title', reward_key: identityUnlockTitle})
         .catch(() => {});
     }
   }, [identityUnlockTitle]);
@@ -404,28 +398,16 @@ export function HomeDashboard() {
   const weeklyComplete = data.weeklyDone >= weeklyTarget;
 
   const today = todayYMD();
-  const comebackChain = computeComebackChain(data.weekSteps, today);
-  const domainRivalry = computeDomainRivalry(data.weekSteps);
-  const activeDomains = new Set(
-    data.weekSteps.filter((s) => s.status === 'completed').map((s) => s.domain)
-  ).size;
-  const identityTitle = deriveIdentityTitle({
-    weeklyDone: data.weeklyDone,
-    allDoneToday: allDone,
-    comebackChain,
-    activeDomains,
-    pendingEvening: pendingSteps.length,
-    recoveryRate: computeRecoveryRate(data.weekSteps),
+  const gamificationState = buildGamificationState({
+    today,
+    todaySteps: data.todaySteps,
+    weekSteps: data.weekSteps,
+    ritualStreak: data.ritualStreak,
+    sleepTime: prefs.sleep_time,
+    hasTodayRitual: data.hasTodayRitual,
+    latestEnergy,
+    hasWeeklyReview: false,
   });
-  const streakHealth = deriveStreakHealth(
-    data.ritualStreak,
-    pendingSteps.length,
-    prefs.sleep_time,
-    data.hasTodayRitual,
-    new Date(),
-    latestEnergy
-  );
-  const mysteryUnlock = computeMysteryUnlock(data.weeklyDone, false);
   const behaviorScore = computeWeeklyBehaviorScore(data.weekSteps);
   const lifeContextMode = resolveLifeContextMode(prefs.life_context_statuses);
   const atRisk = detectEarlyWarning({
@@ -714,12 +696,12 @@ export function HomeDashboard() {
         )}
 
         <HomeGamificationStrip
-          streakHealth={streakHealth}
+          streakHealth={gamificationState.streakHealth}
           streak={data.ritualStreak}
-          comebackChain={comebackChain}
-          identityTitle={identityTitle}
-          domainRivalry={domainRivalry}
-          mysteryUnlock={mysteryUnlock}
+          comebackChain={gamificationState.comebackChain}
+          identityTitle={gamificationState.identityTitle}
+          domainRivalry={gamificationState.domainRivalry}
+          mysteryUnlock={gamificationState.mysteryUnlock}
         />
         <HomeBadgesPanel badges={badges} t={t} />
 

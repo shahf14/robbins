@@ -1,37 +1,13 @@
-import healthTasks from '@/data/daily-tasks/health.json';
-import timeTasks from '@/data/daily-tasks/time.json';
-import wealthTasks from '@/data/daily-tasks/wealth.json';
-import careerTasks from '@/data/daily-tasks/career.json';
-import relationshipsTasks from '@/data/daily-tasks/relationships.json';
-import mindTasks from '@/data/daily-tasks/mind.json';
-import spiritTasks from '@/data/daily-tasks/spirit.json';
-import houseFamilyTasks from '@/data/daily-tasks/house_family.json';
 import type {AppLocale} from '@/i18n/config';
 import {dateToYMD} from '@/lib/date-utils';
+import {
+  filterActiveCuratedTasksForDomain,
+  findActiveCuratedTask,
+} from './curated-task-library';
+import {CURATED_TASKS_BY_DOMAIN, type CuratedDailyTask} from './curated-task-data';
 import type {DailyStepDifficulty, LifeDomain, StructuredDailyBabyStep} from './types';
 
-type LocalizedText = {
-  he: string;
-  en: string;
-};
-
-export type CuratedDailyTask = {
-  id: string;
-  world: LifeDomain;
-  title: LocalizedText;
-  description: LocalizedText;
-  difficulty: 1 | 2 | 3;
-  durationMinutes: number;
-  type: string;
-  energy: 'low' | 'medium' | 'high';
-  emotionalDepth: 1 | 2 | 3;
-  tags: string[];
-  repeatable: boolean;
-  origin: {
-    kind: 'curated';
-    version: string;
-  };
-};
+export type {CuratedDailyTask} from './curated-task-data';
 
 export type CuratedDailyTaskOption = {
   id: string;
@@ -61,16 +37,25 @@ export function isCuratedStepReasoning(reasoning?: string | null): boolean {
   return curatedIdFromStepReasoning(reasoning) !== null;
 }
 
-const TASKS_BY_DOMAIN: Record<LifeDomain, CuratedDailyTask[]> = {
-  health: healthTasks as CuratedDailyTask[],
-  time: timeTasks as CuratedDailyTask[],
-  wealth: wealthTasks as CuratedDailyTask[],
-  career: careerTasks as CuratedDailyTask[],
-  relationships: relationshipsTasks as CuratedDailyTask[],
-  mind: mindTasks as CuratedDailyTask[],
-  spirit: spiritTasks as CuratedDailyTask[],
-  house_family: houseFamilyTasks as CuratedDailyTask[],
-};
+const TASKS_BY_DOMAIN = CURATED_TASKS_BY_DOMAIN;
+
+function tasksForDomain(domain: LifeDomain): CuratedDailyTask[] {
+  if (typeof window !== 'undefined') {
+    return filterActiveCuratedTasksForDomain(domain);
+  }
+  return TASKS_BY_DOMAIN[domain] ?? [];
+}
+
+function findTaskById(taskId: string): CuratedDailyTask | null {
+  if (typeof window !== 'undefined') {
+    return findActiveCuratedTask(taskId);
+  }
+  for (const tasks of Object.values(TASKS_BY_DOMAIN)) {
+    const task = tasks.find((item) => item.id === taskId);
+    if (task) return task;
+  }
+  return null;
+}
 
 function difficultyFromRank(rank: CuratedDailyTask['difficulty']): DailyStepDifficulty {
   if (rank === 1) return 'easy';
@@ -78,7 +63,7 @@ function difficultyFromRank(rank: CuratedDailyTask['difficulty']): DailyStepDiff
   return 'hard';
 }
 
-function localizeText(value: LocalizedText, locale: AppLocale): string {
+function localizeText(value: CuratedDailyTask['title'], locale: AppLocale): string {
   return value[locale] || value.he || value.en;
 }
 
@@ -104,18 +89,15 @@ export function listCuratedDailyTaskOptions(
   domain: LifeDomain,
   locale: AppLocale = 'he'
 ): CuratedDailyTaskOption[] {
-  return (TASKS_BY_DOMAIN[domain] ?? []).map((task) => toOption(task, locale));
+  return tasksForDomain(domain).map((task) => toOption(task, locale));
 }
 
 export function getCuratedDailyTaskOption(
   taskId: string,
   locale: AppLocale = 'he'
 ): CuratedDailyTaskOption | null {
-  for (const tasks of Object.values(TASKS_BY_DOMAIN)) {
-    const task = tasks.find((item) => item.id === taskId);
-    if (task) return toOption(task, locale);
-  }
-  return null;
+  const task = findTaskById(taskId);
+  return task ? toOption(task, locale) : null;
 }
 
 export function suggestCuratedDailyTasks(input: {

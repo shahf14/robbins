@@ -14,7 +14,17 @@ import {
   type DomainDefaultGoalIssue,
   type DomainDefaultGoalStatus,
 } from '@/lib/domain-default-goals';
-import {AdminActionButton, AdminEmptyState, AdminViewButton} from '@/components/admin/admin-shell';
+import {recordAdminActivity, type AdminActivityKey} from '@/lib/admin/admin-activity';
+import {useToast} from '@/components/feedback/toast-provider';
+import {
+  AdminActionButton,
+  AdminCreateButton,
+  AdminDestructiveButton,
+  AdminEmptyState,
+  AdminMetaItem,
+  AdminPrimaryButton,
+  AdminViewButton,
+} from '@/components/admin/admin-shell';
 
 const GOAL_STATUSES: DomainDefaultGoalStatus[] = ['draft', 'needs_review', 'published', 'archived'];
 
@@ -92,6 +102,9 @@ const COPY = {
     unsaved: 'יש שינויים לא שמורים',
     active: 'פעיל',
     inactive: 'לא פעיל',
+    activity: 'פעילות',
+    yes: 'כן',
+    versionLabel: 'גרסה',
     ready: 'מוכן',
     needsWork: 'דורש השלמה',
     missingContent: 'חסר תוכן',
@@ -110,6 +123,14 @@ const COPY = {
     },
     confirmDiscard: 'יש שינויים שלא נשמרו. לצאת בלי לשמור?',
     search: 'חיפוש לפי כותרת, קטגוריה או תגית',
+    completionLabel: 'השלמת פרסום',
+    completionHint: '{published} מפורסמים מתוך {total} יעדים',
+    toastSaved: 'היעד נשמר',
+    toastPublished: 'היעד פורסם',
+    toastArchived: 'היעד הועבר לארכיון',
+    toastBulkPublished: 'היעדים שנבחרו פורסמו',
+    toastBulkReview: 'היעדים שנבחרו סומנו לבדיקה',
+    toastBulkArchived: 'היעדים שנבחרו הועברו לארכיון',
     statuses: {draft: 'טיוטה', needs_review: 'דורש בדיקה', published: 'מפורסם', archived: 'בארכיון'},
     issues: {
       missing_title: 'חסרה כותרת',
@@ -171,6 +192,9 @@ const COPY = {
     unsaved: 'Unsaved changes',
     active: 'Active',
     inactive: 'Inactive',
+    activity: 'Activity',
+    yes: 'Yes',
+    versionLabel: 'Version',
     ready: 'Ready',
     needsWork: 'Needs work',
     missingContent: 'Missing content',
@@ -189,6 +213,14 @@ const COPY = {
     },
     confirmDiscard: 'You have unsaved changes. Leave without saving?',
     search: 'Search by title, category, or tag',
+    completionLabel: 'Publish completion',
+    completionHint: '{published} published of {total} goals',
+    toastSaved: 'Goal saved',
+    toastPublished: 'Goal published',
+    toastArchived: 'Goal archived',
+    toastBulkPublished: 'Selected goals published',
+    toastBulkReview: 'Selected goals marked for review',
+    toastBulkArchived: 'Selected goals archived',
     statuses: {draft: 'Draft', needs_review: 'Needs review', published: 'Published', archived: 'Archived'},
     issues: {
       missing_title: 'Missing title',
@@ -240,8 +272,9 @@ function qualityLabel(issueCount: number, copy: DomainGoalsCopy): string {
   return copy.missingContent;
 }
 
-export function AdminDomainDefaultGoalsPanel() {
+export function AdminDomainDefaultGoalsPanel({onActivity}: {onActivity?: (key: AdminActivityKey) => void}) {
   const locale = useLocale() as AppLocale;
+  const toast = useToast();
   const copy = COPY[locale] ?? COPY.en;
   const labels = DOMAIN_LABELS[locale] ?? DOMAIN_LABELS.en;
   const [goals, setGoals] = useState<DomainDefaultGoal[]>([]);
@@ -290,12 +323,13 @@ export function AdminDomainDefaultGoalsPanel() {
         published: domainGoals.filter((goal) => goal.status === 'published').length,
         needsReview: domainGoals.filter((goal) => goal.status === 'needs_review').length,
         drafts: domainGoals.filter((goal) => goal.status === 'draft').length,
+        archived: domainGoals.filter((goal) => goal.status === 'archived').length,
       };
       return stats;
-    }, {} as Record<LifeDomain, {total: number; published: number; needsReview: number; drafts: number}>);
+    }, {} as Record<LifeDomain, {total: number; published: number; needsReview: number; drafts: number; archived: number}>);
   }, [goals]);
 
-  const selectedStats = domainStats[domain] ?? {total: 0, published: 0, needsReview: 0, drafts: 0};
+  const selectedStats = domainStats[domain] ?? {total: 0, published: 0, needsReview: 0, drafts: 0, archived: 0};
 
   const selected = goals.find((goal) => goal.id === selectedId) ?? filtered[0] ?? null;
   const checkedVisibleCount = filtered.filter((goal) => checkedIds.has(goal.id)).length;
@@ -304,9 +338,11 @@ export function AdminDomainDefaultGoalsPanel() {
   function persist(next: DomainDefaultGoal[]) {
     setGoals(next);
     saveDomainDefaultGoals(next);
+    if (onActivity) onActivity('goalsSave');
+    else recordAdminActivity('goalsSave');
   }
 
-  function saveGoal(goal: DomainDefaultGoal) {
+  function saveGoal(goal: DomainDefaultGoal, intent: 'saved' | 'published' = 'saved') {
     const timestamp = new Date().toISOString();
     const exists = goals.some((entry) => entry.id === goal.id);
     const nextGoal = {...goal, updatedAt: timestamp, version: exists ? goal.version + 1 : goal.version};
@@ -314,6 +350,7 @@ export function AdminDomainDefaultGoalsPanel() {
     setSelectedId(nextGoal.id);
     setEditing(null);
     setEditingSnapshot(null);
+    toast.success(intent === 'published' ? copy.toastPublished : copy.toastSaved);
   }
 
   function duplicateGoal(goal: DomainDefaultGoal) {
@@ -326,6 +363,7 @@ export function AdminDomainDefaultGoalsPanel() {
 
   function archiveGoal(goal: DomainDefaultGoal) {
     persist(goals.map((entry) => entry.id === goal.id ? {...entry, status: 'archived', active: false, updatedAt: new Date().toISOString()} : entry));
+    toast.success(copy.toastArchived);
   }
 
   function startEditing(goal: DomainDefaultGoal) {
@@ -363,6 +401,9 @@ export function AdminDomainDefaultGoalsPanel() {
         : goal
     )));
     setCheckedIds(new Set());
+    if (patch.status === 'published') toast.success(copy.toastBulkPublished);
+    else if (patch.status === 'needs_review') toast.success(copy.toastBulkReview);
+    else if (patch.status === 'archived') toast.success(copy.toastBulkArchived);
   }
 
   return (
@@ -372,7 +413,7 @@ export function AdminDomainDefaultGoalsPanel() {
           <h3 className="text-lg font-black txt-strong">{copy.title}</h3>
           <p className="mt-1 max-w-3xl text-sm leading-7 text-[var(--muted)]">{copy.description}</p>
         </div>
-        <AdminActionButton onClick={() => startEditing(newGoal(domain, locale))}>{copy.add}</AdminActionButton>
+        <AdminCreateButton onClick={() => startEditing(newGoal(domain, locale))}>{copy.add}</AdminCreateButton>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -394,15 +435,7 @@ export function AdminDomainDefaultGoalsPanel() {
         ))}
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-black/10 p-4">
-        <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/45">{copy.domainSummary}</p>
-        <div className="mt-3 grid gap-2 sm:grid-cols-4">
-          <SummaryStat label={copy.goals} value={selectedStats.total} />
-          <SummaryStat label={copy.published} value={selectedStats.published} />
-          <SummaryStat label={copy.needsReview} value={selectedStats.needsReview} />
-          <SummaryStat label={copy.drafts} value={selectedStats.drafts} />
-        </div>
-      </div>
+      <DomainSummaryVisual stats={selectedStats} copy={copy} />
 
       <div className="flex flex-wrap gap-2">
         <StatusChip active={status === 'all'} label={copy.all} onClick={() => setStatus('all')} />
@@ -482,13 +515,14 @@ export function AdminDomainDefaultGoalsPanel() {
                     {quality}
                   </span>
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2 text-xs text-white/55">
-                  <span>{goal.locale}</span>
-                  <span>{copy.statuses[goal.status]}</span>
-                  <span>{goal.active ? copy.active : copy.inactive}</span>
-                  {goal.isDefault ? <span>{copy.originalDefault}</span> : null}
-                  <span>{goal.category || copy.category}</span>
-                  <span>v{goal.version}</span>
+                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+                  <AdminMetaItem label={copy.locale} value={goal.locale} />
+                  <AdminMetaItem label={copy.status} value={copy.statuses[goal.status]} />
+                  <AdminMetaItem label={copy.activity} value={goal.active ? copy.active : copy.inactive} />
+                  {goal.isDefault ? <AdminMetaItem label={copy.originalDefault} value={copy.yes} /> : null}
+                  <AdminMetaItem label={copy.category} value={goal.category || '—'} />
+                  <AdminMetaItem label={copy.risk} value={goal.riskLevel} />
+                  <AdminMetaItem label={copy.versionLabel} value={String(goal.version)} />
                 </div>
               </div>
             );
@@ -514,7 +548,7 @@ export function AdminDomainDefaultGoalsPanel() {
               onEdit={() => startEditing(selected)}
               onDuplicate={() => duplicateGoal(selected)}
               onArchive={() => archiveGoal(selected)}
-              onPublish={() => saveGoal({...selected, status: 'published', active: true})}
+              onPublish={() => saveGoal({...selected, status: 'published', active: true}, 'published')}
             />
           ) : (
             <p className="text-sm text-[var(--muted)]">{copy.empty}</p>
@@ -558,11 +592,11 @@ function GoalDetail({
         <DetailRow label={copy.status} value={copy.statuses[goal.status]} />
         <DetailRow label={copy.risk} value={goal.riskLevel} />
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="admin-action-toolbar">
+        <AdminPrimaryButton onClick={onPublish}>{copy.publish}</AdminPrimaryButton>
         <AdminViewButton onClick={onEdit}>{copy.edit}</AdminViewButton>
         <AdminViewButton onClick={onDuplicate}>{copy.duplicate}</AdminViewButton>
-        <AdminActionButton onClick={onPublish}>{copy.publish}</AdminActionButton>
-        <AdminActionButton destructive onClick={onArchive}>{copy.archive}</AdminActionButton>
+        <AdminDestructiveButton onClick={onArchive}>{copy.archive}</AdminDestructiveButton>
       </div>
     </div>
   );
@@ -689,7 +723,7 @@ function GoalEditor({
       <Preview goal={goal} copy={copy} />
       <Quality issues={issues} copy={copy} />
       <div className="flex flex-wrap gap-2">
-        <AdminActionButton onClick={() => onSave(goal)}>{copy.save}</AdminActionButton>
+        <AdminPrimaryButton onClick={() => onSave(goal)}>{copy.save}</AdminPrimaryButton>
         <AdminViewButton onClick={onCancel}>{copy.cancel}</AdminViewButton>
       </div>
     </div>
@@ -705,11 +739,55 @@ function Field({label, value, onChange}: {label: string; value: string; onChange
   );
 }
 
-function SummaryStat({label, value}: {label: string; value: number}) {
+function DomainSummaryVisual({
+  stats,
+  copy,
+}: {
+  stats: {total: number; published: number; needsReview: number; drafts: number; archived: number};
+  copy: DomainGoalsCopy;
+}) {
+  const total = Math.max(stats.total, 1);
+  const publishedPct = Math.round((stats.published / total) * 100);
+  const segments = [
+    {key: 'published', count: stats.published, className: 'admin-domain-summary__seg--published', label: copy.published},
+    {key: 'needsReview', count: stats.needsReview, className: 'admin-domain-summary__seg--review', label: copy.needsReview},
+    {key: 'drafts', count: stats.drafts, className: 'admin-domain-summary__seg--draft', label: copy.drafts},
+    {key: 'archived', count: stats.archived, className: 'admin-domain-summary__seg--archived', label: copy.statuses.archived},
+  ];
+
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-      <p className="text-xs font-bold text-white/45">{label}</p>
-      <p className="mt-1 text-2xl font-black txt-strong">{value}</p>
+    <div className="admin-domain-summary rounded-2xl border border-white/10 bg-black/10 p-4">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/45">{copy.domainSummary}</p>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            {copy.completionHint.replace('{published}', String(stats.published)).replace('{total}', String(stats.total))}
+          </p>
+        </div>
+        <p className="text-2xl font-black txt-strong">{publishedPct}%</p>
+      </div>
+      <div className="admin-domain-summary__bar mt-3" aria-hidden>
+        {segments.map((segment) => (
+          <div
+            key={segment.key}
+            className={`admin-domain-summary__seg ${segment.className}`}
+            style={{width: `${(segment.count / total) * 100}%`}}
+          />
+        ))}
+      </div>
+      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+        {segments.map((segment) => (
+          <span key={segment.key} className="inline-flex items-center gap-2 text-xs text-[var(--muted)]">
+            <span className={`admin-domain-summary__dot ${segment.className}`} aria-hidden />
+            <span>{segment.label}:</span>
+            <span className="font-bold txt-soft">{segment.count}</span>
+          </span>
+        ))}
+        <span className="inline-flex items-center gap-2 text-xs text-[var(--muted)]">
+          <span>{copy.goals}:</span>
+          <span className="font-bold txt-soft">{stats.total}</span>
+        </span>
+      </div>
     </div>
   );
 }
@@ -793,9 +871,8 @@ function Quality({issues, copy}: {issues: DomainDefaultGoalIssue[]; copy: Domain
 
 function DetailRow({label, value}: {label: string; value: string}) {
   return (
-    <div className="flex items-start justify-between gap-3 border-b border-white/6 pb-2">
-      <dt className="text-white/45">{label}</dt>
-      <dd className="text-end font-medium txt-soft">{value}</dd>
+    <div className="border-b border-white/6 pb-2">
+      <AdminMetaItem label={label} value={value} />
     </div>
   );
 }

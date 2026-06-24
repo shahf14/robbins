@@ -1,85 +1,128 @@
 'use client';
 
 import {useLocale, useTranslations} from 'next-intl';
-import {type FormEvent, useCallback, useEffect, useRef, useState} from 'react';
+import {type FormEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import type {AppLocale} from '@/i18n/config';
-import type {IdentityOption} from '@/lib/morning-ritual-types';
-import {
-  fetchRitualContent,
-  saveIdentities,
-} from '@/lib/morning-ritual-storage';
 import {loadUserPreferences, saveUserPreferences} from '@/lib/user-preferences';
 import {LanguageSwitcher} from './language-switcher';
-import {useConfirm} from '@/components/feedback/confirm-provider';
-import {useToast} from '@/components/feedback/toast-provider';
-import {scheduleDeferredRitualCommit} from '@/lib/morning-ritual/deferred-ritual-persist';
 import {DatabaseTab} from './admin-db/database-tab';
-import {dbApi, DbApiError, type LogLine} from './admin-db/use-db-api';
+import {
+  dbApi,
+  DbApiError,
+  ensureAdminSession,
+  getStoredAdminApiToken,
+  getStoredLocalAuthToken,
+  type LogLine,
+} from './admin-db/use-db-api';
 import {dateToYMD} from '@/lib/date-utils';
 import {
-  AdminActivityBar,
+  AdminBreadcrumbBar,
   AdminButtonLegend,
   AdminEmptyState,
   AdminHelpDrawer,
-  AdminOverviewCard,
-  AdminRiskBadge,
   AdminSetupChecklist,
-  AdminTabChrome,
+  AdminSidebar,
   AdminViewButton,
   AdminActionButton,
+  AdminWelcomeDashboard,
+  type AdminContentSection,
   type AdminShellTab,
+  type BreadcrumbSegment,
 } from './admin/admin-shell';
 import {AdminAffirmationsPanel} from './admin/admin-affirmations-panel';
 import {AdminDomainDefaultGoalsPanel} from './admin/admin-domain-default-goals-panel';
+import {AdminGoallessTasksPanel} from './admin/admin-goalless-tasks-panel';
+import {AdminIdentitiesPanel} from './admin/admin-identities-panel';
 import {recordAdminActivity, type AdminActivityKey} from '@/lib/admin/admin-activity';
-import {AdminTooltip} from '@/components/admin/admin-tooltip';
-
 type AdminTab = AdminShellTab;
+type DatabaseView = 'tables' | 'query';
 
 export function AdminPanel() {
   const t = useTranslations();
   const locale = useLocale() as AppLocale;
   const [tab, setTab] = useState<AdminTab>('content');
+  const [contentSection, setContentSection] = useState<AdminContentSection>('domain-goals');
+  const [databaseView, setDatabaseView] = useState<DatabaseView>('tables');
   const [subCrumb, setSubCrumb] = useState<string | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const [activityVersion, setActivityVersion] = useState(0);
+  const [adminSessionReady, setAdminSessionReady] = useState(false);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void ensureAdminSession().then((status) => {
+        setAdminSessionReady(status.active || status.canBootstrap);
+      });
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const bumpActivity = useCallback((key: AdminActivityKey) => {
     recordAdminActivity(key);
     setActivityVersion((value) => value + 1);
   }, []);
 
-  useEffect(() => {
-    if (tab === 'database') {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setSubCrumb(tab === 'content' ? t('admin.shell.subCrumbs.content') : null);
-    }, 0);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [tab, t]);
-
-  const tabs: {key: AdminTab; label: string; tip?: string}[] = [
-    {key: 'content', label: t('admin.tabs.content')},
-    {key: 'logs', label: t('admin.tabs.logs')},
-    {key: 'settings', label: t('admin.tabs.settings')},
-    {key: 'database', label: t('admin.tabs.database'), tip: t('admin.tooltips.tabs.database')},
-  ];
-
   function selectTab(next: AdminTab) {
     setTab(next);
-    setSubCrumb(null);
+    if (next !== 'database') {
+      setSubCrumb(null);
+      setDatabaseView('tables');
+    }
     setHelpOpen(false);
   }
 
+  function selectContentSection(section: AdminContentSection) {
+    setTab('content');
+    setContentSection(section);
+    setHelpOpen(false);
+  }
+
+  const breadcrumbSegments = useMemo((): BreadcrumbSegment[] => {
+    const root: BreadcrumbSegment = {
+      label: t('admin.shell.breadcrumbRoot'),
+      onClick: () => {
+        setTab('content');
+        setContentSection('domain-goals');
+        setSubCrumb(null);
+        setDatabaseView('tables');
+      },
+    };
+    const segments: BreadcrumbSegment[] = [root];
+
+    if (tab === 'content') {
+      segments.push({
+        label: t('admin.tabs.content'),
+        onClick:
+          contentSection !== 'domain-goals'
+            ? () => setContentSection('domain-goals')
+            : undefined,
+      });
+      segments.push({label: t(`admin.content.sections.${contentSection}`)});
+      return segments;
+    }
+
+    if (tab === 'database' && subCrumb && databaseView === 'query') {
+      segments.push({
+        label: t('admin.tabs.database'),
+        onClick: () => setDatabaseView('tables'),
+      });
+      segments.push({label: subCrumb});
+      return segments;
+    }
+
+    segments.push({label: t(`admin.tabs.${tab}`)});
+    return segments;
+  }, [contentSection, databaseView, subCrumb, t, tab]);
+
+  const breadcrumbHint =
+    tab === 'content'
+      ? t(`admin.shell.sectionHint.${contentSection}`)
+      : tab === 'identities'
+        ? t('admin.shell.tabHint.identities')
+        : t(`admin.shell.tabHint.${tab}`);
+
   return (
     <section className="panel-surface p-6 sm:p-8">
-      <div className="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-amber-400/20 bg-amber-400/6 px-4 py-3">
-        <p className="text-sm font-semibold text-amber-200/80">{t('admin.securityNotice')}</p>
-      </div>
-
       <div>
         <p className="eyebrow txt-soft">{t('admin.title')}</p>
         <h1 className="mt-4 text-3xl font-black sm:text-4xl">{t('admin.pageTitle')}</h1>
@@ -87,39 +130,50 @@ export function AdminPanel() {
       </div>
 
       <div className="mt-6 grid gap-4">
-        <AdminSetupChecklist activityVersion={activityVersion} onGoToTab={selectTab} />
-        <AdminActivityBar locale={locale} activityVersion={activityVersion} />
-        <AdminOverviewCard activeTab={tab} onSelectTab={selectTab} />
+        <AdminWelcomeDashboard
+          locale={locale}
+          activityVersion={activityVersion}
+          onGoToTab={selectTab}
+          onGoToContentSection={selectContentSection}
+        />
+        <AdminSetupChecklist
+          activityVersion={activityVersion}
+          adminSessionReady={adminSessionReady}
+          onGoToTab={selectTab}
+        />
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2 border-b border-[color:var(--color-border)] pb-3">
-        {tabs.map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            className={`focus-ring flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
-              tab === item.key ? 'fill-3 txt-strong' : 'txt-soft hover:txt-strong'
-            }`}
-            onClick={() => selectTab(item.key)}
-            title={item.tip}
-          >
-            <span>{item.label}</span>
-            {item.tip ? <AdminTooltip tip={item.tip} className="ms-1" /> : null}
-            <AdminRiskBadge tab={item.key} />
-          </button>
-        ))}
-      </div>
+      <div className="admin-shell mt-6">
+        <AdminSidebar
+          tab={tab}
+          contentSection={contentSection}
+          onSelectTab={selectTab}
+          onSelectContentSection={selectContentSection}
+        />
 
-      <div className="mt-6">
-        <AdminTabChrome tab={tab} subCrumb={subCrumb} onOpenHelp={() => setHelpOpen(true)} />
-        <AdminButtonLegend />
-        <div className="mt-4">
-          {tab === 'content' && <ContentTab locale={locale} />}
-          {tab === 'logs' && <LogsTab onActivity={bumpActivity} />}
-          {tab === 'settings' && <SettingsTab onActivity={bumpActivity} />}
-          {tab === 'database' && (
-            <DatabaseTab onActivity={bumpActivity} onSubCrumbChange={setSubCrumb} />
-          )}
+        <div className="admin-shell__main min-w-0">
+          <AdminBreadcrumbBar
+            segments={breadcrumbSegments}
+            hint={breadcrumbHint}
+            onOpenHelp={() => setHelpOpen(true)}
+          />
+          <AdminButtonLegend />
+          <div className="mt-4">
+            {tab === 'content' && <ContentTab section={contentSection} onActivity={bumpActivity} />}
+            {tab === 'identities' && <AdminIdentitiesPanel onActivity={bumpActivity} />}
+            {tab === 'logs' && <LogsTab onActivity={bumpActivity} onGoToDatabase={() => selectTab('database')} />}
+            {tab === 'settings' && <SettingsTab onActivity={bumpActivity} />}
+            {tab === 'database' && (
+              <div className="admin-danger-zone">
+                <DatabaseTab
+                  activeView={databaseView}
+                  onActiveViewChange={setDatabaseView}
+                  onActivity={bumpActivity}
+                  onSubCrumbChange={setSubCrumb}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -128,122 +182,48 @@ export function AdminPanel() {
   );
 }
 
-function ContentTab({locale: _locale}: {locale: AppLocale}) {
-  const t = useTranslations();
-  const tRitual = useTranslations('morningRitual');
-  const {confirm} = useConfirm();
-  const toast = useToast();
-
-  const [identities, setIdentities] = useState<IdentityOption[]>([]);
-  const [newIdentity, setNewIdentity] = useState('');
-
-  useEffect(() => {
-    let cancelled = false;
-    const id = window.setTimeout(() => {
-      void fetchRitualContent().then(({identities: savedIdentities}) => {
-        if (cancelled) return;
-        setIdentities(savedIdentities);
-      }).catch(() => {});
-    }, 0);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(id);
-    };
-  }, []);
-
-  function addIdentity(e: FormEvent) {
-    e.preventDefault();
-    if (!newIdentity.trim()) return;
-    const item: IdentityOption = {
-      id: crypto.randomUUID(),
-      text: newIdentity.trim(),
-      createdAt: new Date().toISOString(),
-    };
-    const next = [item, ...identities];
-    setIdentities(next);
-    saveIdentities(next);
-    setNewIdentity('');
-  }
-
-  async function deleteIdentity(id: string) {
-    const ok = await confirm({
-      title: t('admin.content.deleteIdentityConfirmTitle'),
-      message: t('admin.content.deleteIdentityConfirmMessage'),
-      confirmLabel: t('admin.content.deleteIdentity'),
-      destructive: true,
-    });
-    if (!ok) return;
-    const previous = identities;
-    const next = identities.filter((i) => i.id !== id);
-    setIdentities(next);
-    scheduleDeferredRitualCommit({
-      key: 'admin-identities',
-      commit: () => saveIdentities(next),
-      undo: () => setIdentities(previous),
-      toast,
-      message: tRitual('identity.deletedUndo'),
-      undoLabel: tRitual('common.undo'),
-    });
-  }
-
-  return (
-    <div className="grid gap-8">
-      <AdminDomainDefaultGoalsPanel />
-      <AdminAffirmationsPanel />
-
-      <div>
-        <h3 className="text-lg font-bold">{t('admin.content.identitiesTitle')}</h3>
-        <p className="mt-1 text-sm text-[var(--muted)]">{t('admin.content.identitiesDescription')}</p>
-
-        <form className="mt-4 flex gap-2" onSubmit={addIdentity}>
-          <input
-            className="focus-ring input-base flex-1"
-            value={newIdentity}
-            placeholder={t('admin.content.identityPlaceholder')}
-            onChange={(e) => setNewIdentity(e.target.value)}
-          />
-          <AdminActionButton className="shrink-0 disabled:opacity-60" type="submit" disabled={!newIdentity.trim()}>
-            {t('admin.content.addIdentity')}
-          </AdminActionButton>
-        </form>
-
-        <div className="mt-3 grid gap-2">
-          {identities.length === 0 ? (
-            <AdminEmptyState
-              title={t('admin.content.emptyIdentitiesTitle')}
-              description={t('admin.content.emptyIdentitiesDetail')}
-            />
-          ) : null}
-          {identities.map((identity) => (
-            <div key={identity.id} className="panel-surface flex items-center justify-between gap-3 p-3">
-              <p className="min-w-0 truncate text-sm">{identity.text}</p>
-              <AdminActionButton
-                className="shrink-0 text-xs"
-                destructive
-                onClick={() => void deleteIdentity(identity.id)}
-              >
-                {t('admin.content.deleteIdentity')}
-              </AdminActionButton>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+function ContentTab({
+  section,
+  onActivity,
+}: {
+  section: AdminContentSection;
+  onActivity: (key: AdminActivityKey) => void;
+}) {
+  if (section === 'domain-goals') return <AdminDomainDefaultGoalsPanel onActivity={onActivity} />;
+  if (section === 'goalless-tasks') return <AdminGoallessTasksPanel onActivity={onActivity} />;
+  return <AdminAffirmationsPanel onActivity={onActivity} />;
 }
 
 type LogEntry = LogLine;
 
-function LogsTab({onActivity}: {onActivity: (key: AdminActivityKey) => void}) {
+function LogsTab({
+  onActivity,
+  onGoToDatabase,
+}: {
+  onActivity: (key: AdminActivityKey) => void;
+  onGoToDatabase: () => void;
+}) {
   const t = useTranslations('admin.logs');
   const [date, setDate] = useState(() => dateToYMD(new Date()));
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [logsError, setLogsError] = useState<string | null>(null);
+  const [hasLocalToken, setHasLocalToken] = useState(false);
+  const [hasAdminToken, setHasAdminToken] = useState(false);
+  const [authErrorStatus, setAuthErrorStatus] = useState<number | null>(null);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setHasLocalToken(Boolean(getStoredLocalAuthToken().trim()));
+      setHasAdminToken(Boolean(getStoredAdminApiToken().trim()));
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [logsError, logs.length]);
 
   const fetchLogs = useCallback(async (dateStr: string) => {
     setLoading(true);
     setLogsError(null);
+    setAuthErrorStatus(null);
     try {
       const data = await dbApi.listLogs(dateStr);
       setLogs(data.lines ?? []);
@@ -251,6 +231,7 @@ function LogsTab({onActivity}: {onActivity: (key: AdminActivityKey) => void}) {
     } catch (err) {
       setLogs([]);
       if (err instanceof DbApiError) {
+        setAuthErrorStatus(err.status);
         if (err.status === 401 || err.status === 403) {
           setLogsError(t('authError'));
         } else if (err.status === 503) {
@@ -288,9 +269,18 @@ function LogsTab({onActivity}: {onActivity: (key: AdminActivityKey) => void}) {
         <div className="mt-4 rounded-[16px] border border-red-500/20 bg-red-500/10 p-4">
           <p className="text-sm font-semibold text-red-300">{t('loadErrorTitle')}</p>
           <p className="mt-2 text-sm text-red-400">{logsError}</p>
-          <AdminViewButton className="mt-4" onClick={() => void fetchLogs(date)}>
-            {t('retry')}
-          </AdminViewButton>
+          {authErrorStatus === 401 || authErrorStatus === 403 ? (
+            <p className="mt-2 text-sm text-red-300">
+              {t('tokenStatus', {
+                local: hasLocalToken ? t('tokenOk') : t('tokenMissing'),
+                admin: hasAdminToken ? t('tokenOk') : t('tokenMissing'),
+              })}
+            </p>
+          ) : null}
+          <div className="mt-4 flex flex-wrap gap-2">
+            <AdminViewButton onClick={() => void fetchLogs(date)}>{t('retry')}</AdminViewButton>
+            <AdminActionButton onClick={onGoToDatabase}>{t('openDatabaseTab')}</AdminActionButton>
+          </div>
         </div>
       ) : null}
 

@@ -856,6 +856,7 @@ export function DailyBabyStepsList({
 
               <StepStatusButtonsHint className="mt-5" />
               <div className="mt-2 flex flex-wrap gap-2">
+                {step.status !== 'completed' && (
                 <BusyButton
                   className="focus-ring btn-small"
                   type="button"
@@ -897,6 +898,7 @@ export function DailyBabyStepsList({
                 >
                   {t('lifeCoach.markCompleted')}
                 </BusyButton>
+                )}
                 {step.status === 'pending' && (
                   <>
                     <BusyButton
@@ -1109,7 +1111,7 @@ export function DailyBabyStepsList({
             }
 
             lifeCoachApi
-              .saveGamificationUnlock({kind: 'reflection_loot', reward_key: loot})
+              .recordGamificationEvent({kind: 'reflection_loot', reward_key: loot})
               .catch(() => {});
 
             if (action === 'skipped') {

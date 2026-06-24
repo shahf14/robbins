@@ -6,15 +6,11 @@ import {
   tonePersonalizationForPrompt,
 } from '@/lib/coach-tone';
 import {computeWeeklyPatternMining} from '@/lib/life-coach/weekly-pattern-mining';
-import {buildLoadAdaptationContext} from '@/lib/formulation/load-adaptation-routing';
-import {buildAccountabilityContext} from '@/lib/formulation/accountability-routing';
 import {
   analyzeWeekBehaviorChange,
-  buildBehaviorChangeContext,
 } from '@/lib/formulation/behavior-change-tracking';
 import {
   analyzeReturningBarrierWeek,
-  buildSkipAdaptationContext,
 } from '@/lib/formulation/skip-adaptation-routing';
 import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
 import {openaiLifeCoachService} from '@/lib/ai-life-coach/openai-life-coach-service';
@@ -24,9 +20,9 @@ import {
   createAiInsight,
   getUserGenerationContext,
   getUserParticipantProfile,
-  getLatestCompletedFormulation,
   hasWeeklyReviewForPeriod,
 } from '@/lib/life-coach/repository';
+import {getSupportContextForUser} from '@/lib/support-context/formulation-support-context';
 import {currentWeekWindow, jsonError, jsonOk, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
 import {listMorningRitualSessions} from '@/lib/db/repositories/morning-rituals';
 import {summarizeMorningRitualsForWeek} from '@/lib/life-coach/morning-ritual-weekly-summary';
@@ -48,10 +44,10 @@ export async function POST(request: Request) {
 
   try {
     const locale = resolveLocale(typeof body.locale === 'string' ? body.locale : null);
-    const [context, profile, formulation] = await Promise.all([
+    const [context, profile, supportContext] = await Promise.all([
       getUserGenerationContext(current.user.id),
       getUserParticipantProfile(current.user.id),
-      getLatestCompletedFormulation(current.user.id).catch(() => null),
+      getSupportContextForUser(current.user.id),
     ]);
     const week = currentWeekWindow();
     const morningRitualSessions = listMorningRitualSessions(current.user.id, 14);
@@ -109,18 +105,10 @@ export async function POST(request: Request) {
       profile.ai_personalization_summary
     );
 
-    const loadAdaptation = formulation
-      ? buildLoadAdaptationContext(formulation, locale)
-      : null;
-    const accountability = formulation
-      ? buildAccountabilityContext(formulation, locale)
-      : null;
-    const behavior_change = formulation
-      ? buildBehaviorChangeContext(formulation, locale)
-      : null;
-    const skip_adaptation = formulation
-      ? buildSkipAdaptationContext(formulation, locale)
-      : null;
+    const loadAdaptation = supportContext.formulation.load_adaptation;
+    const accountability = supportContext.formulation.accountability;
+    const behavior_change = supportContext.formulation.behavior_change;
+    const skip_adaptation = supportContext.formulation.skip_adaptation;
     let behavior_change_analysis = behavior_change
       ? analyzeWeekBehaviorChange({
           context: behavior_change,

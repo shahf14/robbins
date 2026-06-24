@@ -74,7 +74,6 @@ export async function POST(request: Request) {
       deadline: parsed.data.deadline,
       motivation: parsed.data.motivation,
       constraints: parsed.data.constraints,
-      health_wizard_context: undefined,
       life_context_statuses: profile.life_context_statuses,
       coaching_style: dynamicTone.effective_style,
       preferred_tone: mergedTone.preferred_tone,
@@ -103,8 +102,6 @@ export async function POST(request: Request) {
         domain: parsed.data.domain,
         goal_id: null,
       })),
-      execution_plan: null,
-      plan_source: undefined,
       realism_check: plan.realism_check ?? null,
       next_best_action: plan.next_best_action ?? null,
     });

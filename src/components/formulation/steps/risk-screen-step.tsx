@@ -31,6 +31,9 @@ export function RiskScreenStep({loading, crisisStopped, needsFollowUp, onSubmit}
           <h3 className="text-xl font-black txt-strong">{t('crisis.title')}</h3>
           <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{t('crisis.body')}</p>
           <p className="mt-3 text-sm leading-7 txt-soft">{t('crisis.guidance')}</p>
+          <p className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-semibold leading-7 txt-strong">
+            {t('crisis.resources')}
+          </p>
         </div>
         <Link className="focus-ring btn-primary text-center" href="/">
           {t('crisis.exit')}

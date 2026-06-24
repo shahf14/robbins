@@ -1,19 +1,37 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, type ButtonHTMLAttributes, type ReactNode} from 'react';
 import {
   formatAdminActivityTime,
   getAdminActivity,
+  getLatestAdminActivity,
   type AdminActivityKey,
   type AdminActivityState,
 } from '@/lib/admin/admin-activity';
-import {getStoredAdminApiToken, getStoredLocalAuthToken} from '@/components/admin-db/use-db-api';
+import {dbApi, getStoredAdminApiToken, getStoredLocalAuthToken} from '@/components/admin-db/use-db-api';
+import {AdminHoverTip} from '@/components/admin/admin-tooltip';
+import {DEFAULT_AFFIRMATIONS} from '@/lib/default-affirmations';
+import {loadDomainDefaultGoals} from '@/lib/domain-default-goals';
+import {isAffirmationVisibleInRitual, mergeAffirmationLibrary} from '@/lib/morning-ritual/affirmation-library';
+import {fetchRitualContent} from '@/lib/morning-ritual-storage';
 import type {AppLocale} from '@/i18n/config';
 
-export type AdminShellTab = 'content' | 'logs' | 'settings' | 'database';
+export type AdminShellTab = 'content' | 'identities' | 'logs' | 'settings' | 'database';
 
-type RiskTone = 'safe' | 'medium' | 'high';
+export type AdminContentSection = 'domain-goals' | 'affirmations' | 'goalless-tasks';
+
+const MAIN_TABS: AdminShellTab[] = ['content', 'identities', 'database', 'logs', 'settings'];
+
+const CONTENT_SECTIONS: AdminContentSection[] = ['domain-goals', 'affirmations', 'goalless-tasks'];
+
+const TAB_ICONS: Record<AdminShellTab, string> = {
+  content: '◈',
+  identities: '◎',
+  database: '▦',
+  logs: '≣',
+  settings: '⚙',
+};
 
 const RISK_CLASS: Record<RiskTone, string> = {
   safe: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-100',
@@ -21,14 +39,14 @@ const RISK_CLASS: Record<RiskTone, string> = {
   high: 'border-red-400/30 bg-red-400/10 text-red-100',
 };
 
-const OVERVIEW_TABS: AdminShellTab[] = ['content', 'database', 'logs', 'settings'];
+type RiskTone = 'safe' | 'medium' | 'high';
 
 export function AdminRiskBadge({tab}: {tab: AdminShellTab}) {
   const t = useTranslations('admin.shell.risk');
   const tone: RiskTone =
     tab === 'database'
       ? 'high'
-      : tab === 'content'
+      : tab === 'content' || tab === 'identities'
         ? 'medium'
         : 'safe';
   return (
@@ -38,40 +56,249 @@ export function AdminRiskBadge({tab}: {tab: AdminShellTab}) {
   );
 }
 
-export function AdminOverviewCard({
-  activeTab,
-  onSelectTab,
+export type BreadcrumbSegment = {
+  label: string;
+  onClick?: () => void;
+};
+
+export function AdminMetaItem({label, value}: {label: string; value: ReactNode}) {
+  return (
+    <span className="admin-meta-item">
+      <span className="admin-meta-item__label">{label}:</span>{' '}
+      <span className="admin-meta-item__value">{value}</span>
+    </span>
+  );
+}
+
+export function AdminWelcomeDashboard({
+  locale,
+  activityVersion,
+  onGoToTab,
+  onGoToContentSection,
 }: {
-  activeTab: AdminShellTab;
-  onSelectTab: (tab: AdminShellTab) => void;
+  locale: AppLocale;
+  activityVersion: number;
+  onGoToTab: (tab: AdminShellTab) => void;
+  onGoToContentSection: (section: AdminContentSection) => void;
 }) {
-  const t = useTranslations('admin.shell.overview');
+  const t = useTranslations('admin.shell.dashboard');
+  const never = t('noActivity');
+  const [activeAffirmations, setActiveAffirmations] = useState<number | null>(null);
+  const [publishedGoals, setPublishedGoals] = useState<number | null>(null);
+  const [activity, setActivity] = useState<AdminActivityState>({});
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setActivity(getAdminActivity());
+      void fetchRitualContent()
+        .then(({affirmations}) => {
+          const merged = mergeAffirmationLibrary(affirmations, DEFAULT_AFFIRMATIONS);
+          setActiveAffirmations(merged.filter(isAffirmationVisibleInRitual).length);
+        })
+        .catch(() => setActiveAffirmations(0));
+      try {
+        const goals = loadDomainDefaultGoals();
+        setPublishedGoals(goals.filter((goal) => goal.status === 'published').length);
+      } catch {
+        setPublishedGoals(0);
+      }
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [activityVersion]);
+
+  const latest = getLatestAdminActivity(activity);
+  const lastActionLabel = latest ? t(`lastActions.${latest.key}`) : never;
+  const lastActionTime = latest
+    ? formatAdminActivityTime(latest.at, locale, never)
+    : null;
 
   return (
-    <div className="rounded-2xl border border-[var(--blue)]/20 bg-[var(--blue)]/6 p-5 sm:p-6">
-      <h2 className="text-lg font-black txt-strong">{t('title')}</h2>
-      <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{t('subtitle')}</p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        {OVERVIEW_TABS.map((key) => (
-          <button
-            key={key}
-            type="button"
-            className={`focus-ring rounded-2xl border p-4 text-start transition ${
-              activeTab === key
-                ? 'border-white/30 bg-white/10'
-                : 'border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06]'
-            }`}
-            onClick={() => onSelectTab(key)}
-          >
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-black txt-strong">{t(`actions.${key}.title`)}</span>
-              <AdminRiskBadge tab={key} />
-            </div>
-            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{t(`actions.${key}.hint`)}</p>
-            <p className="mt-2 text-xs font-semibold text-white/45">{t(`actions.${key}.access`)}</p>
-          </button>
-        ))}
+    <div className="admin-dashboard rounded-2xl border border-[var(--blue)]/20 bg-[var(--blue)]/6 p-5">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--blue)]">{t('eyebrow')}</p>
+          <h2 className="mt-1 text-lg font-black txt-strong">{t('title')}</h2>
+          <p className="mt-1 text-sm text-[var(--muted)]">{t('subtitle')}</p>
+        </div>
+        <p className="text-xs text-amber-200/75">{t('securityNote')}</p>
       </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div className="admin-dashboard__stat rounded-xl border border-white/10 bg-black/10 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-white/45">{t('activeAffirmations')}</p>
+          <p className="mt-2 text-3xl font-black txt-strong">
+            {activeAffirmations === null ? '—' : activeAffirmations}
+          </p>
+        </div>
+        <div className="admin-dashboard__stat rounded-xl border border-white/10 bg-black/10 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-white/45">{t('publishedGoals')}</p>
+          <p className="mt-2 text-3xl font-black txt-strong">
+            {publishedGoals === null ? '—' : publishedGoals}
+          </p>
+        </div>
+        <div className="admin-dashboard__stat rounded-xl border border-white/10 bg-black/10 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-white/45">{t('lastAction')}</p>
+          <p className="mt-2 text-sm font-bold txt-strong">{lastActionLabel}</p>
+          {lastActionTime ? <p className="mt-1 text-xs text-[var(--muted)]">{lastActionTime}</p> : null}
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <p className="w-full text-xs font-bold uppercase tracking-[0.1em] text-white/45">{t('quickActions')}</p>
+        <button
+          type="button"
+          className="focus-ring btn-admin-view text-sm"
+          onClick={() => {
+            onGoToTab('content');
+            onGoToContentSection('affirmations');
+          }}
+        >
+          {t('actionAffirmations')}
+        </button>
+        <button
+          type="button"
+          className="focus-ring btn-admin-view text-sm"
+          onClick={() => {
+            onGoToTab('content');
+            onGoToContentSection('domain-goals');
+          }}
+        >
+          {t('actionGoals')}
+        </button>
+        <button
+          type="button"
+          className="focus-ring btn-admin-view text-sm"
+          onClick={() => {
+            onGoToTab('content');
+            onGoToContentSection('goalless-tasks');
+          }}
+        >
+          {t('actionGoallessTasks')}
+        </button>
+        <button type="button" className="focus-ring btn-admin-view text-sm" onClick={() => onGoToTab('identities')}>
+          {t('actionIdentities')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function AdminSidebar({
+  tab,
+  contentSection,
+  onSelectTab,
+  onSelectContentSection,
+}: {
+  tab: AdminShellTab;
+  contentSection: AdminContentSection;
+  onSelectTab: (tab: AdminShellTab) => void;
+  onSelectContentSection: (section: AdminContentSection) => void;
+}) {
+  const t = useTranslations('admin');
+
+  return (
+    <nav className="admin-shell__sidebar" aria-label={t('shell.nav.main')}>
+      <p className="admin-shell__nav-label">{t('shell.nav.main')}</p>
+      <ul className="admin-shell__nav-list">
+        {MAIN_TABS.map((key) => {
+          const active = tab === key;
+          return (
+            <li key={key}>
+              <button
+                type="button"
+                className={`admin-shell__nav-item ${active ? 'admin-shell__nav-item--active' : ''} ${
+                  key === 'database' ? 'admin-shell__nav-item--danger' : ''
+                }`}
+                onClick={() => onSelectTab(key)}
+              >
+                <AdminHoverTip
+                  tip={t(`shell.tabHint.${key}`)}
+                  className="flex min-w-0 flex-1 items-center justify-between gap-2"
+                >
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span className="admin-shell__nav-icon" aria-hidden>
+                      {TAB_ICONS[key]}
+                    </span>
+                    <span className="truncate">{t(`tabs.${key}`)}</span>
+                  </span>
+                  <AdminRiskBadge tab={key} />
+                </AdminHoverTip>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      {tab === 'content' ? (
+        <div className="admin-shell__subnav">
+          <p className="admin-shell__nav-label">{t('shell.nav.contentTools')}</p>
+          <ul className="admin-shell__nav-list">
+            {CONTENT_SECTIONS.map((section) => (
+              <li key={section}>
+                <button
+                  type="button"
+                  className={`admin-shell__nav-item admin-shell__nav-item--sub ${
+                    contentSection === section ? 'admin-shell__nav-item--active' : ''
+                  }`}
+                  onClick={() => onSelectContentSection(section)}
+                  title={t(`shell.sectionHint.${section}`)}
+                >
+                  {t(`content.sections.${section}`)}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </nav>
+  );
+}
+
+export function AdminBreadcrumbBar({
+  segments,
+  hint,
+  onOpenHelp,
+}: {
+  segments: BreadcrumbSegment[];
+  hint: string;
+  onOpenHelp: () => void;
+}) {
+  const t = useTranslations('admin.shell');
+
+  return (
+    <div className="admin-shell__breadcrumb">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <nav aria-label="breadcrumb" className="flex flex-wrap items-center gap-1.5 text-sm font-medium">
+          {segments.map((segment, index) => {
+            const isLast = index === segments.length - 1;
+            return (
+              <span key={`${segment.label}-${index}`} className="flex items-center gap-1.5">
+                {index > 0 ? <span className="txt-faint" aria-hidden>/</span> : null}
+                {segment.onClick && !isLast ? (
+                  <button
+                    type="button"
+                    className="focus-ring rounded-md text-[var(--blue)] hover:underline"
+                    onClick={segment.onClick}
+                  >
+                    {segment.label}
+                  </button>
+                ) : (
+                  <span className={isLast ? 'txt-soft' : 'text-[var(--blue)]'}>{segment.label}</span>
+                )}
+              </span>
+            );
+          })}
+        </nav>
+        <button
+          type="button"
+          className="focus-ring btn-admin-view h-9 w-9 shrink-0 rounded-full p-0"
+          onClick={onOpenHelp}
+          aria-label={t('help.open')}
+        >
+          ?
+        </button>
+      </div>
+      <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{hint}</p>
     </div>
   );
 }
@@ -79,38 +306,85 @@ export function AdminOverviewCard({
 export function AdminSetupChecklist({
   onGoToTab,
   activityVersion,
+  adminSessionReady = false,
 }: {
   onGoToTab: (tab: AdminShellTab) => void;
   activityVersion: number;
+  adminSessionReady?: boolean;
 }) {
   const t = useTranslations('admin.shell.setup');
   const [hasLocal, setHasLocal] = useState(false);
   const [hasAdmin, setHasAdmin] = useState(false);
+  const [hasAdminSession, setHasAdminSession] = useState(false);
   const [activity, setActivity] = useState<AdminActivityState>({});
+  const [expanded, setExpanded] = useState(true);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setHasLocal(Boolean(getStoredLocalAuthToken().trim()));
       setHasAdmin(Boolean(getStoredAdminApiToken().trim()));
+      setHasAdminSession(adminSessionReady);
+      void dbApi.getAdminSession()
+        .then((status) => setHasAdminSession(status.active))
+        .catch(() => {});
       setActivity(getAdminActivity());
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
-  }, [activityVersion]);
+  }, [activityVersion, adminSessionReady]);
 
   const dbOk = Boolean(activity.dbConnectionOk);
-  const allDone = hasLocal && hasAdmin && dbOk;
+  const adminAccessOk = hasAdmin || hasAdminSession || adminSessionReady;
+  const localOk = hasLocal || adminSessionReady;
+  const allDone = localOk && adminAccessOk && dbOk;
 
-  if (allDone) return null;
+  useEffect(() => {
+    if (allDone) {
+      setExpanded(false);
+    } else {
+      setExpanded(true);
+    }
+  }, [allDone]);
 
   const steps = [
     {done: hasLocal, label: t('steps.localToken'), tab: 'database' as const},
-    {done: hasAdmin, label: t('steps.adminToken'), tab: 'database' as const},
+    {done: adminAccessOk, label: t('steps.adminToken'), tab: 'database' as const},
     {done: dbOk, label: t('steps.dbConnection'), tab: 'database' as const},
   ];
 
+  if (allDone) {
+    return (
+      <div className="admin-setup admin-setup--done">
+        <button
+          type="button"
+          className="admin-setup__toggle focus-ring"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((open) => !open)}
+        >
+          <span className="admin-setup__badge">{t('configuredBadge')}</span>
+          <span className="admin-setup__title">{t('title')}</span>
+          <span className="admin-setup__chevron" aria-hidden>
+            {expanded ? '▴' : '▾'}
+          </span>
+        </button>
+        {expanded ? (
+          <ol className="admin-setup__list mt-3 grid gap-2">
+            {steps.map((step) => (
+              <li key={step.label} className="admin-setup__step admin-setup__step--done flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-black/10 px-3 py-2.5">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/20 text-xs font-black text-emerald-100" aria-hidden>
+                  ✓
+                </span>
+                <span className="flex-1 text-sm text-white/55 line-through">{step.label}</span>
+              </li>
+            ))}
+          </ol>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-2xl border border-amber-400/25 bg-amber-400/8 p-5">
+    <div className="admin-setup admin-setup--pending rounded-2xl border border-amber-400/25 bg-amber-400/8 p-5">
       <h2 className="text-base font-black text-amber-100">{t('title')}</h2>
       <p className="mt-1 text-sm leading-6 text-amber-100/75">{t('subtitle')}</p>
       <ol className="mt-4 grid gap-2">
@@ -281,9 +555,35 @@ export function AdminViewButton({
   children,
   className = '',
   ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button type="button" className={`focus-ring btn-admin-view ${className}`} {...props}>
+      {children}
+    </button>
+  );
+}
+
+export function AdminCreateButton({
+  children,
+  className = '',
+  type = 'button',
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button type={type} className={`focus-ring btn-admin-create ${className}`} {...props}>
+      {children}
+    </button>
+  );
+}
+
+export function AdminPrimaryButton({
+  children,
+  className = '',
+  type = 'button',
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button type={type} className={`focus-ring btn-admin-primary ${className}`} {...props}>
       {children}
     </button>
   );
@@ -295,13 +595,26 @@ export function AdminActionButton({
   destructive,
   type = 'button',
   ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement> & {destructive?: boolean}) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & {destructive?: boolean}) {
   return (
     <button
       type={type}
-      className={`focus-ring ${destructive ? 'btn-admin-action-danger' : 'btn-admin-action'} ${className}`}
+      className={`focus-ring ${destructive ? 'btn-admin-action-danger' : 'btn-admin-primary'} ${className}`}
       {...props}
     >
+      {children}
+    </button>
+  );
+}
+
+export function AdminDestructiveButton({
+  children,
+  className = '',
+  type = 'button',
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button type={type} className={`focus-ring btn-admin-action-danger ${className}`} {...props}>
       {children}
     </button>
   );

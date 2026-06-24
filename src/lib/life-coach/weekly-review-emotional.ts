@@ -6,6 +6,12 @@ import type {
   WeeklyReviewEmotionalReflection,
 } from '@/lib/life-coach/types';
 
+/** "1 step" / "3 steps" / "צעד אחד" / "3 צעדים" — keeps count and noun in agreement. */
+function stepsWord(count: number, he: boolean): string {
+  if (he) return count === 1 ? 'צעד אחד' : `${count} צעדים`;
+  return count === 1 ? '1 step' : `${count} steps`;
+}
+
 export type WeeklyExecutionSnapshot = {
   completed: Array<{date: string; title: string; minutes: number}>;
   skipped: Array<{date: string; title: string}>;
@@ -68,11 +74,6 @@ export function collectIdentityPhrases(goals: Goal[]): string[] {
   for (const goal of goals) {
     if (goal.description?.trim()) phrases.push(goal.description.trim());
     if (goal.success_metric?.trim()) phrases.push(goal.success_metric.trim());
-
-    const why = goal.health_context?.why_deep;
-    if (why?.why_important?.trim()) phrases.push(why.why_important.trim());
-    if (why?.why_now?.trim()) phrases.push(why.why_now.trim());
-    if (why?.what_lost?.trim()) phrases.push(why.what_lost.trim());
   }
 
   return [...new Set(phrases)].slice(0, 8);
@@ -228,8 +229,8 @@ export function buildEmotionalReflectionFallback(input: {
   if (comeback) {
     return {
       identity_proof: he
-        ? `השלמת ${snapshot.totals.completed} צעדים השבוע — כולל "${comeback.returnTitle}" אחרי יום קשה.`
-        : `You completed ${snapshot.totals.completed} steps this week — including "${comeback.returnTitle}" after a hard day.`,
+        ? `השלמת ${stepsWord(snapshot.totals.completed, true)} השבוע — כולל "${comeback.returnTitle}" אחרי יום קשה.`
+        : `You completed ${stepsWord(snapshot.totals.completed, false)} this week — including "${comeback.returnTitle}" after a hard day.`,
       comeback_evidence: he
         ? `ביום ${comeback.hardDate} הופיע ${comeback.hardSignal || 'קושי'}, וב-${comeback.returnDate} בכל זאת חזרת לפעולה.`
         : `On ${comeback.hardDate} you faced ${comeback.hardSignal || 'a struggle'}, and on ${comeback.returnDate} you still took action.`,
@@ -268,10 +269,10 @@ export function buildEmotionalReflectionFallback(input: {
         : 'You showed up this week even when it was not easy — that is already proof of commitment.',
     comeback_evidence: he
       ? snapshot.totals.skipped > 0
-        ? `גם כשדילגת על ${snapshot.totals.skipped} צעדים, לא ויתרת על השבוע כולו.`
+        ? `גם כשדילגת על ${stepsWord(snapshot.totals.skipped, true)}, לא ויתרת על השבוע כולו.`
         : 'כל יום שבו ניסית — גם חלקית — הוא חזרה למסלול.'
       : snapshot.totals.skipped > 0
-        ? `Even when you skipped ${snapshot.totals.skipped} steps, you did not abandon the whole week.`
+        ? `Even when you skipped ${stepsWord(snapshot.totals.skipped, false)}, you did not abandon the whole week.`
         : 'Every day you tried — even partially — is a return to the path.',
     meaning_statement: he
       ? snapshot.totals.completed > 0
