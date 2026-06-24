@@ -38,11 +38,3 @@ export function getLifeWheelRatingKeys(domain: LifeDomain, score: number): LifeW
     descriptionKey: `lifeWheel.domains.${domain}.${bandId}`,
   };
 }
-
-export function getLifeWheelBandColor(score: number): string {
-  const value = clampLifeWheelScore(score);
-  if (value <= 3) return '#ef4444';
-  if (value <= 5) return '#f59e0b';
-  if (value <= 7) return '#3b82f6';
-  return '#10b981';
-}

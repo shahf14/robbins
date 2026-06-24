@@ -365,8 +365,6 @@ export type {
 // Domain goal wizard types
 // ---------------------------------------------------------------------------
 
-export type NonHealthDomain = Exclude<LifeDomain, 'health'>;
-
 export const DOMAIN_CATEGORIES: Record<LifeDomain, string[]> = {
   health: ['fitness', 'sleep', 'nutrition', 'energy', 'weight', 'recovery', 'medical_routine'],
   time: ['morning_routine', 'deep_work', 'priorities', 'delegation', 'digital_detox', 'weekly_planning', 'procrastination', 'work_life_balance'],

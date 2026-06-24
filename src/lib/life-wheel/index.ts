@@ -1,4 +1,1 @@
-export {
-  getLifeWheelBandColor,
-  getLifeWheelRatingKeys,
-} from './rating-definitions';
+export {getLifeWheelRatingKeys} from './rating-definitions';

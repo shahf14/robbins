@@ -458,8 +458,6 @@ const MIGRATIONS: Migration[] = [
   },
 ];
 
-export const LATEST_SCHEMA_VERSION = MIGRATIONS[MIGRATIONS.length - 1]?.version ?? 0;
-
 /**
  * Run all pending migrations against `db`, gated by `PRAGMA user_version`.
  * Each step runs at most once per database and bumps the version on success,
