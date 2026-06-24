@@ -500,8 +500,8 @@ test('admin database import confirms before upserting legacy localStorage', () =
 
 test('confirm dialog dismisses on Escape and bottom sheets respect safe area', () => {
   const confirm = readFileSync(join(here, '..', 'components', 'feedback', 'confirm-provider.tsx'), 'utf8');
-  const deepDive = readFileSync(
-    join(here, '..', 'components', 'onboarding', 'domain-deep-dive-sheet.tsx'),
+  const reflectionModal = readFileSync(
+    join(here, '..', 'components', 'life-coach', 'daily-reflection-modal.tsx'),
     'utf8'
   );
   const survival = readFileSync(
@@ -511,7 +511,7 @@ test('confirm dialog dismisses on Escape and bottom sheets respect safe area', (
 
   assert.match(confirm, /event\.key === 'Escape'/);
   assert.match(confirm, /safe-area-inset-bottom/);
-  assert.match(deepDive, /safe-area-inset-bottom/);
+  assert.match(reflectionModal, /safe-area-inset-bottom/);
   assert.match(survival, /safe-area-inset-bottom/);
 });
 

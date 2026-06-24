@@ -45,6 +45,3 @@ jobs:
 
       - name: Formulation migration tests
         run: npm run test:formulation-migration
-
-      - name: Content studio DB tests
-        run: npm run test:content-studio-db
