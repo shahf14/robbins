@@ -8,7 +8,6 @@ export type ConsentLiveDraft = {
   life_context_status_note?: string;
   gender: ParticipantGender | null;
   age: number | null;
-  age_prefer_not?: boolean;
 };
 
 export type WizardLiveDraft = {

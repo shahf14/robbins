@@ -52,7 +52,6 @@ export type UserPreferences = {
   family_status?: FamilyStatus;
   gender?: ParticipantGender | null;
   age?: number | null;
-  age_prefer_not?: boolean;
   life_context_statuses?: LifeContextStatus[];
   life_context_note?: string;
   physical_considerations?: PhysicalConsideration[];
@@ -133,7 +132,6 @@ function normalizeUserPreferences(value: Partial<UserPreferences>): UserPreferen
     gender:
       value.gender && isParticipantGender(value.gender) ? value.gender : undefined,
     age: normalizeParticipantAge(value.age) ?? undefined,
-    age_prefer_not: value.age_prefer_not === true ? true : undefined,
     life_context_statuses: Array.isArray(value.life_context_statuses)
       ? (value.life_context_statuses as LifeContextStatus[])
       : undefined,
@@ -154,7 +152,7 @@ export function participantProfileLocksFromPreferences(
   return {
     life_context_statuses: (prefs.life_context_statuses?.length ?? 0) > 0,
     gender: prefs.gender != null,
-    age: prefs.age != null || prefs.age_prefer_not === true,
+    age: prefs.age != null,
   };
 }
 

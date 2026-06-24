@@ -361,7 +361,6 @@ const formulationPatchConsentSchema = z.object({
   life_context_status_note: z.string().trim().max(200).optional(),
   gender: participantGenderSchema,
   age: z.number().int().min(16).max(120).nullable(),
-  age_prefer_not: z.boolean().optional(),
   boundaries_ack: boundariesAckSchema,
   consent_version: z.string().trim().min(1).max(20),
   next_phase: z.literal('risk'),

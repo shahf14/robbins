@@ -797,7 +797,7 @@ export async function patchFormulationSession(
       session.life_context_status = statuses[0] ?? null;
       session.life_context_status_note = patch.life_context_status_note ?? null;
       session.participant_gender = patch.gender ?? null;
-      session.participant_age = patch.age_prefer_not ? null : (patch.age ?? null);
+      session.participant_age = patch.age ?? null;
       session.boundaries_ack = patch.boundaries_ack;
       session.consent_version = patch.consent_version;
       session.consent_accepted_at = now;

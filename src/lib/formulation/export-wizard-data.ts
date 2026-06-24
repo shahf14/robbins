@@ -144,13 +144,11 @@ export function buildFormulationExportDocument(
   const gender =
     draft?.consent?.gender ?? session.participant_gender;
   const age =
-    draft?.consent?.age_prefer_not
-      ? m.consent.agePreferNot
-      : draft?.consent?.age != null
-        ? String(draft.consent.age)
-        : session.participant_age != null
-          ? String(session.participant_age)
-          : '—';
+    draft?.consent?.age != null
+      ? String(draft.consent.age)
+      : session.participant_age != null
+        ? String(session.participant_age)
+        : '—';
 
   const ratings = mergePassiveRatings(session, draft ?? undefined, locale);
   const followUps = mergeFollowUpDraft(session, draft ?? undefined);

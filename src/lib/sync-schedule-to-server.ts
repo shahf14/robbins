@@ -9,7 +9,7 @@ export async function syncUserPreferencesToServer(prefs: UserPreferences): Promi
     life_context_statuses: prefs.life_context_statuses ?? [],
     life_context_note: prefs.life_context_note?.trim() || null,
     gender: prefs.gender ?? null,
-    age: prefs.age_prefer_not ? null : (prefs.age ?? null),
+    age: prefs.age ?? null,
     wake_time: prefs.wake_time,
     sleep_time: prefs.sleep_time,
     preferred_action_window: prefs.preferred_action_window,

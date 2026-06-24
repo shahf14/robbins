@@ -115,7 +115,6 @@
     "genderHelp": "Locks in clarification step 1 after you save.",
     "age": "Age",
     "ageHelp": "Locks in clarification step 1 after you save.",
-    "agePreferNot": "Prefer not to say age",
     "agePlaceholder": "16–120",
     "reminderTitle": "Daily reminder",
     "reminderHelp": "Get a reminder at a fixed time to check in. This setting is saved on this device.",
@@ -1222,7 +1221,6 @@
       },
       "age": "Age",
       "agePlaceholder": "e.g. 28",
-      "agePreferNot": "Prefer not to say age",
       "lockedFromSettings": "Set in Settings — change it there"
     },
     "crisis": {

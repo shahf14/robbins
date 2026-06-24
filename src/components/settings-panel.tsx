@@ -46,7 +46,6 @@ export function SettingsPanel() {
   const [lifeContextNote, setLifeContextNote] = useState('');
   const [gender, setGender] = useState<ParticipantGender | null>(null);
   const [age, setAge] = useState('');
-  const [agePreferNot, setAgePreferNot] = useState(false);
   const [wakeTime, setWakeTime] = useState('07:00');
   const [sleepTime, setSleepTime] = useState('22:30');
   const [familyStatus, setFamilyStatus] = useState<FamilyStatus | ''>('');
@@ -77,7 +76,6 @@ export function SettingsPanel() {
       setLifeContexts(prefs.life_context_statuses ?? []);
       setLifeContextNote(prefs.life_context_note ?? '');
       setGender(prefs.gender ?? null);
-      setAgePreferNot(prefs.age_prefer_not === true);
       setAge(prefs.age != null ? String(prefs.age) : '');
       void formulationApi.getParticipantProfile().then((profile) => {
         if (cancelled) return;
@@ -195,8 +193,7 @@ export function SettingsPanel() {
       coaching_style: coachingStyle as 'supportive' | 'direct' | 'motivational',
       behavioral_analytics_enabled: behavioralAnalyticsRef.current?.checked ?? true,
       gender: gender ?? undefined,
-      age: agePreferNot ? undefined : (parsedAge ?? undefined),
-      age_prefer_not: agePreferNot || undefined,
+      age: parsedAge ?? undefined,
       life_context_statuses: contexts.length > 0 ? contexts : undefined,
       life_context_note: lifeContextNote.trim() || undefined,
     });
@@ -337,24 +334,11 @@ export function SettingsPanel() {
                   inputMode="numeric"
                   min={16}
                   max={120}
-                  value={agePreferNot ? '' : age}
-                  disabled={agePreferNot}
+                  value={age}
                   aria-label={t('settings.age')}
                   onChange={(e) => setAge(e.target.value)}
                   placeholder={t('settings.agePlaceholder')}
                 />
-                <label className="flex items-center gap-2 text-xs txt-soft">
-                  <input
-                    type="checkbox"
-                    className="focus-ring accent-[var(--blue)]"
-                    checked={agePreferNot}
-                    onChange={(e) => {
-                      setAgePreferNot(e.target.checked);
-                      if (e.target.checked) setAge('');
-                    }}
-                  />
-                  {t('settings.agePreferNot')}
-                </label>
               </div>
               <div className="grid gap-2">
                 <span className="field-label mb-0">{t('settings.lifeContext')}</span>

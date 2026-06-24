@@ -20,7 +20,6 @@ type Props = {
     life_context_status_note?: string;
     gender: ParticipantGender | null;
     age: number | null;
-    age_prefer_not: boolean;
   };
   onDraftChange?: (draft: ConsentLiveDraft) => void;
   onSubmit: (input: {
@@ -28,7 +27,6 @@ type Props = {
     life_context_status_note?: string;
     gender: ParticipantGender;
     age: number | null;
-    age_prefer_not?: boolean;
     boundaries_ack: {can_stop: boolean; can_skip: boolean; can_edit_summary: boolean};
   }) => void;
 };
@@ -51,7 +49,6 @@ export function ConsentStep({loading, locks, initial, onDraftChange, onSubmit}: 
   const [age, setAge] = useState<string>(
     initial.age != null ? String(initial.age) : ''
   );
-  const [agePreferNot, setAgePreferNot] = useState(initial.age_prefer_not);
 
   function toggle(status: LifeContextStatus) {
     if (locks.life_context_statuses) return;
@@ -77,15 +74,14 @@ export function ConsentStep({loading, locks, initial, onDraftChange, onSubmit}: 
       life_context_statuses: contexts,
       life_context_status_note: showNote ? note : undefined,
       gender,
-      age: agePreferNot ? null : parsedAge,
-      age_prefer_not: agePreferNot,
+      age: parsedAge,
     });
-  }, [selected, note, gender, age, agePreferNot, parsedAge, locks.life_context_statuses, onDraftChange]);
+  }, [selected, note, gender, age, parsedAge, locks.life_context_statuses, onDraftChange]);
 
   const profileComplete =
     normalized.length > 0 &&
     gender != null &&
-    (agePreferNot || parsedAge != null);
+    parsedAge != null;
 
   return (
     <div className="grid gap-6">
@@ -170,42 +166,21 @@ export function ConsentStep({loading, locks, initial, onDraftChange, onSubmit}: 
         {locks.age ? (
           <LockedValue
             label={t('consent.age')}
-            value={
-              agePreferNot
-                ? t('consent.agePreferNot')
-                : parsedAge != null
-                  ? String(parsedAge)
-                  : '—'
-            }
+            value={parsedAge != null ? String(parsedAge) : '—'}
             hint={t('consent.lockedFromSettings')}
           />
         ) : (
-          <>
-            <input
-              className="focus-ring input-base w-32"
-              type="number"
-              inputMode="numeric"
-              min={16}
-              max={120}
-              value={agePreferNot ? '' : age}
-              disabled={agePreferNot}
-              aria-label={t('consent.age')}
-              onChange={(e) => setAge(e.target.value)}
-              placeholder={t('consent.agePlaceholder')}
-            />
-            <label className="flex items-center gap-2 text-xs txt-soft">
-              <input
-                type="checkbox"
-                className="focus-ring accent-[var(--blue)]"
-                checked={agePreferNot}
-                onChange={(e) => {
-                  setAgePreferNot(e.target.checked);
-                  if (e.target.checked) setAge('');
-                }}
-              />
-              {t('consent.agePreferNot')}
-            </label>
-          </>
+          <input
+            className="focus-ring input-base w-32"
+            type="number"
+            inputMode="numeric"
+            min={16}
+            max={120}
+            value={age}
+            aria-label={t('consent.age')}
+            onChange={(e) => setAge(e.target.value)}
+            placeholder={t('consent.agePlaceholder')}
+          />
         )}
       </div>
 
@@ -220,8 +195,7 @@ export function ConsentStep({loading, locks, initial, onDraftChange, onSubmit}: 
             life_context_statuses: normalized,
             life_context_status_note: showOtherNote ? note : undefined,
             gender,
-            age: agePreferNot ? null : parsedAge,
-            age_prefer_not: agePreferNot,
+            age: parsedAge,
             boundaries_ack: {can_stop: true, can_skip: true, can_edit_summary: true},
           });
         }}

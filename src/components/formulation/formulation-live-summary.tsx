@@ -319,21 +319,14 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
       (session.participant_gender && isParticipantGender(session.participant_gender)
         ? session.participant_gender
         : null);
-    const age =
-      c?.age_prefer_not
-        ? null
-        : c?.age != null
-          ? c.age
-          : session.participant_age;
-    const agePreferNot = c?.age_prefer_not === true;
+    const age = c?.age != null ? c.age : session.participant_age;
     const note = c?.life_context_status_note ?? session.life_context_status_note;
     const hasProfile =
       contexts.length > 0 ||
       gender != null ||
       age != null ||
-      agePreferNot ||
       !!note;
-    return {contexts, gender, age, agePreferNot, note, hasProfile};
+    return {contexts, gender, age, note, hasProfile};
   }, [draft.consent, session]);
 
   /* ── Ratings data ── */
@@ -523,10 +516,10 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
                   value={t(`consent.genderOptions.${profile.gender}`)}
                 />
               )}
-              {(profile.age != null || profile.agePreferNot) && (
+              {profile.age != null && (
                 <DataRow
                   label={t('liveSummary.age')}
-                  value={profile.agePreferNot ? t('consent.agePreferNot') : String(profile.age)}
+                  value={String(profile.age)}
                 />
               )}
               {profile.note && (

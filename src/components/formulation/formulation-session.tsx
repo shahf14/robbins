@@ -376,10 +376,9 @@ export function FormulationSessionWizard() {
                     : serverProfile.gender && isParticipantGender(serverProfile.gender)
                       ? serverProfile.gender
                       : prefs.gender ?? null;
-              const agePreferNot = prefs.age_prefer_not === true;
               const age =
-                locks.age && (prefs.age != null || agePreferNot)
-                  ? prefs.age ?? null
+                locks.age && prefs.age != null
+                  ? prefs.age
                   : session.participant_age ?? serverProfile.age ?? prefs.age ?? null;
               const contexts =
                 session.life_context_statuses.length > 0
@@ -393,8 +392,7 @@ export function FormulationSessionWizard() {
                 life_context_statuses: contexts,
                 life_context_status_note: session.life_context_status_note ?? undefined,
                 gender,
-                age: agePreferNot && locks.age ? null : age,
-                age_prefer_not: agePreferNot,
+                age,
               };
               if (!liveDraft.consent) return base;
               return {
@@ -402,7 +400,6 @@ export function FormulationSessionWizard() {
                 life_context_status_note: liveDraft.consent.life_context_status_note,
                 gender: liveDraft.consent.gender,
                 age: liveDraft.consent.age,
-                age_prefer_not: liveDraft.consent.age_prefer_not ?? base.age_prefer_not,
               };
             })()}
             onDraftChange={onConsentDraft}
@@ -413,7 +410,6 @@ export function FormulationSessionWizard() {
                 life_context_status_note: input.life_context_status_note,
                 gender: input.gender,
                 age: input.age,
-                age_prefer_not: input.age_prefer_not,
                 boundaries_ack: input.boundaries_ack,
                 consent_version: 'v1',
                 next_phase: 'risk',
