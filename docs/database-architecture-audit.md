@@ -19,7 +19,6 @@ erDiagram
   users ||--o{ goals : owns
   goals ||--o{ milestones : contains
   goals ||--o{ daily_steps : plans
-  goals ||--o{ health_phases : projects
   users ||--o{ daily_reflections : writes
   users ||--o{ ai_insights : receives
   ai_insights ||--o| weekly_reviews : projects
@@ -34,7 +33,7 @@ erDiagram
 - Added foreign keys with cascade behavior for new SQLite databases.
 - Added compatibility triggers for relationship validation and cascade cleanup in existing SQLite files.
 - Added placeholder `users` rows automatically for local-first writes that occur before profile setup.
-- Added indexes for ritual history, gratitude children, goal status feeds, milestone order, goal-step lookups, health phase uniqueness, and insight timelines.
+- Added indexes for ritual history, gratitude children, goal status feeds, milestone order, goal-step lookups, and insight timelines.
 - Replaced goal `INSERT OR REPLACE` with `ON CONFLICT DO UPDATE`; `REPLACE` can delete child rows when cascades are active.
 - Scoped repository reads and ID-based mutations by `user_id`.
 - Removed the `|| true` single-user shortcuts from generation context.
@@ -56,11 +55,13 @@ erDiagram
 
 | Fields or tables | Decision |
 | --- | --- |
-| `goals.health_context_json` plus flattened health columns | Keep temporarily as canonical snapshot plus analytics projection. Rebuild flattened values from JSON during migrations. |
 | `morning_rituals.session_json` plus flattened ritual columns | Keep temporarily as canonical session snapshot plus admin/reporting projection. |
 | `checkins.entry_json` plus flattened check-in columns | Keep as canonical UI payload plus analytics projection. |
-| `health_phases` | Treat as a rebuildable projection of goal health context. Keep only if phase-level reporting or indexed lookup is used. |
 | `weekly_reviews` | Treat as a rebuildable projection of `ai_insights.metadata`. Prefer a SQL view in production unless measured query volume justifies materialization. |
+
+> The `health_phases` table and the flattened `goals.health_*` columns / `health_context_json`
+> were removed in migrations v5–v7 when the dedicated health-plan flow was retired. Health is now
+> handled as a standard life domain, so no health-specific projection remains.
 | JSON arrays such as `main_blockers`, `selected_tags`, and `domain_progress` | Keep as JSON while they are read as a whole and not independently filtered. |
 
 ## Recommended next migrations
@@ -73,4 +74,4 @@ erDiagram
 
 ## Existing local database verification
 
-The migrated local database contained `5` goals, `8` milestones, `32` daily steps, and `10` health phases. Integrity checks found no orphaned goal, ritual, or projection children and no cross-user child mismatches.
+At the time of this audit the migrated local database contained `5` goals, `8` milestones, and `32` daily steps (plus `10` health phases, since dropped in migration v6). Integrity checks found no orphaned goal, ritual, or projection children and no cross-user child mismatches.

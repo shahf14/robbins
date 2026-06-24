@@ -4,7 +4,6 @@ import {runMigrations} from './migrate';
 import {SCHEMA_SQL} from './schema';
 
 // The DB file lives at <project-root>/data/life-coach.db
-// It is excluded from git via .gitignore
 const DB_PATH = path.join(process.cwd(), 'data', 'life-coach.db');
 
 let _db: Database.Database | null = null;

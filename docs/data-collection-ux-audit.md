@@ -66,21 +66,20 @@ Change made: admin sync preserves original ritual dates and stable ritual IDs, s
 | `intensity_preference` | Gentle / balanced / intense chips | Efficient and directly useful for plan generation. |
 | `id`, `user_id`, `created_at`, `updated_at` | System generated | No user input. |
 
-## Goals, milestones, health phases
+## Goals, milestones
 
 | Fields | Collection method | UX decision |
 | --- | --- | --- |
 | `title`, `description`, `success_metric`, `deadline` | Goal wizard with AI-assisted structure | Efficient: ask for a rough goal, then let the user review structured output. |
 | `domain`, `domain_category` | Page context or wizard selection | Infer whenever the entry point already establishes domain. |
-| `status`, `completed_at`, `revision_count`, `abandoned_before_first_step`, `success_metric_specificity`, `created_by`, `plan_source` | Passive, derived, or system generated | Never ask the user. |
-| `health_category`, `health_baseline`, `health_target`, `health_weight_dir`, `health_anchor_habit`, `health_anchor_time`, `health_why_important`, `health_why_now`, `health_what_lost` | Progressive health wizard | Efficient: show only fields relevant to the selected health category. |
-| `health_unit`, `health_context_json` | Derived from the selected health category and wizard context | Never ask directly. |
+| `status`, `completed_at`, `revision_count`, `abandoned_before_first_step`, `success_metric_specificity`, `created_by` | Passive, derived, or system generated | Never ask the user. |
 | Milestone `title`, `description`, `target_date`, `day_marker` | AI suggestion with user review | Avoid asking users to author a complete roadmap from scratch. |
 | Milestone `status`, `completed_at` | One compact action beside the milestone on the progress timeline | Efficient: capture achievement where the user already reviews progress, with an undo action for mistakes. |
-| Health phase `phase_index`, `start_day`, `end_day`, `focus`, `task_templates`, `weigh_in` | Generated plan with review | Never ask as a raw form. |
 | IDs, timestamps, sync flags | System generated | No user input. |
 
-Change made: weight direction is inferred from baseline and target instead of being asked separately. Kilogram milestone inputs now appear only for weight goals, and health metric setup requires both a baseline and a target.
+> The dedicated health-goal wizard and its `health_*` columns / health-phase generation were
+> retired (migrations v5–v7). Health goals now flow through the same goal → milestone → daily-step
+> structure as every other domain.
 
 Change made: non-health goal categories selected in the wizard now persist with the goal instead of being used only during AI generation.
 

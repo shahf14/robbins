@@ -1,4 +1,5 @@
 import type {AppLocale} from '@/i18n/config';
+import {FALLBACK_WEEKLY_COPY, pickFallbackCopy} from '@/lib/life-coach/fallback-copy';
 import type {
   DailyBabyStep,
   DailyReflection,
@@ -288,8 +289,9 @@ export function buildEmotionalReflectionFallback(input: {
       : primaryWhy
         ? `What matters to you — "${primaryWhy.slice(0, 80)}${primaryWhy.length > 80 ? '…' : ''}" — is starting to connect to small actions you already took.`
         : 'Your small actions are starting to look like identity choices, not just tasks.',
-    next_identity_action: he
-      ? 'מחר, צעד אחד קטן של 5 דקות — כדי לחזק את הזהות של מי שממשיך, לא של מי שמושלם.'
-      : 'Tomorrow, one small 5-minute step — to reinforce the identity of someone who continues, not someone who is perfect.',
+    next_identity_action: pickFallbackCopy(
+      FALLBACK_WEEKLY_COPY.nextIdentityFiveMinuteStep,
+      input.locale
+    ),
   };
 }

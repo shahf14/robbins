@@ -8,10 +8,9 @@ import {loadUserPreferences} from '@/lib/user-preferences';
 import {WeeklyReviewEmotionalLayer} from '@/components/life-coach/shared/weekly-review-emotional-layer';
 import {WeeklyReviewProgressEvidenceCard} from '@/components/life-coach/shared/weekly-review-progress-evidence';
 import {WeeklyReviewRecurringPatternSection} from '@/components/life-coach/shared/weekly-review-recurring-pattern';
-import {WeeklyReviewExplainer} from '@/components/life-coach/shared/weekly-review-explainer';
-import {WeeklyReviewLockedExplainer} from '@/components/life-coach/shared/weekly-review-locked-explainer';
+import {InfoNote} from '@/components/life-coach/shared/info-note';
 import {NextBestActionCta} from '@/components/next-best-action/next-best-action-cta';
-import {computeWeeklyReviewReadiness} from '@/lib/life-coach/weekly-review-readiness';
+import {computeWeeklyReviewReadiness, WEEKLY_REVIEW_MIN_ACTIVE_DAYS, WEEKLY_REVIEW_MIN_STEPS} from '@/lib/life-coach/weekly-review-readiness';
 import type {DailyBabyStep} from '@/lib/life-coach/types';
 
 function useWeekendSignal() {
@@ -59,8 +58,29 @@ export function WeeklyReviewCard({
             )}
           </div>
         </div>
-        <WeeklyReviewExplainer className="mt-4" />
-        <WeeklyReviewLockedExplainer readiness={readiness} className="mt-3" />
+        <InfoNote
+          variant="info"
+          titleKey="lifeCoach.weeklyReviewWhenWhyTitle"
+          bodyKey="lifeCoach.weeklyReviewWhenWhyExplainer"
+          className="mt-4"
+        />
+        {!readiness.isReady ? (
+          <InfoNote
+            id="weekly-review-locked-hint"
+            variant="warning"
+            titleKey="lifeCoach.weeklyReviewLockedWhyTitle"
+            bodyKey="lifeCoach.weeklyReviewLockedExplainer"
+            bodyValues={{minSteps: WEEKLY_REVIEW_MIN_STEPS, minDays: WEEKLY_REVIEW_MIN_ACTIVE_DAYS}}
+            detailKey="lifeCoach.weeklyReviewLockedProgress"
+            detailValues={{
+              steps: readiness.loggedSteps,
+              minSteps: WEEKLY_REVIEW_MIN_STEPS,
+              days: readiness.activeDays,
+              minDays: WEEKLY_REVIEW_MIN_ACTIVE_DAYS,
+            }}
+            className="mt-3"
+          />
+        ) : null}
         {readiness.isReady ? (
           <p className="mt-3 text-sm leading-7 text-[var(--muted)]">{t(weeklyReviewEmptyKey(lifeContexts))}</p>
         ) : null}
@@ -102,7 +122,12 @@ export function WeeklyReviewCard({
           </span>
         )}
       </div>
-      <WeeklyReviewExplainer className="mt-4" />
+      <InfoNote
+        variant="info"
+        titleKey="lifeCoach.weeklyReviewWhenWhyTitle"
+        bodyKey="lifeCoach.weeklyReviewWhenWhyExplainer"
+        className="mt-4"
+      />
       <p className="mt-3 text-lg font-bold txt-strong">{insight.content}</p>
       {metadata ? (
         <>

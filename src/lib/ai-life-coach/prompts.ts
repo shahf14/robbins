@@ -1,4 +1,5 @@
 import type { AppLocale } from '@/i18n/config';
+import { JSON_OUTPUT_LANGUAGE_INSTRUCTION } from '@/lib/llm/language-instruction';
 import { buildLifeContextAdaptationHint, lifeContextForPrompt } from '@/lib/life-context-labels';
 import type {
   DailyBabyStep,
@@ -467,10 +468,6 @@ function buildAgeCoachingToneAugment(
   return `${header}\n- ${hint}`;
 }
 
-const languageInstruction: Record<AppLocale, string> = {
-  en: 'CRITICAL: Write EVERY string value in the JSON output (titles, descriptions, metrics, summaries, recommendations) in English only. Do not mix in any other language.',
-  he: 'קריטי: כל ערך טקסטואלי בפלט ה-JSON (כותרות, תיאורים, מדדים, סיכומים, המלצות) חייב להיכתב בעברית בלבד, בניסוח טבעי ומודרני. אסור לערבב אנגלית או כל שפה אחרת — גם לא מילה בודדת. אם מצוטט טקסט של המשתמש, תרגם אותו לעברית.',
-};
 
 function buildToneInstruction(
   coachingStyle: string,
@@ -502,7 +499,7 @@ export function buildGoalStructuringSystemPrompt(
   const lifeStageHint = domain ? buildAgeLifeStageHint(age, gender, domain, locale) : '';
   const base = [
     'You are an AI executive life coach inspired by Tony Robbins RPM methodology.',
-    languageInstruction[locale],
+    JSON_OUTPUT_LANGUAGE_INSTRUCTION[locale],
     styleInstruction,
     toneAugment,
     'Your job is to convert vague life goals into clear, realistic, measurable goals, milestones, and small daily actions.',
@@ -627,7 +624,7 @@ export function buildDailyStepsSystemPrompt(
 
   const lines = [
     'You generate daily baby steps for a user\'s life goals.',
-    languageInstruction[locale],
+    JSON_OUTPUT_LANGUAGE_INSTRUCTION[locale],
     buildToneInstruction(coachingStyle, preferredTone, avoidTone),
     toneAugment,
     lifeHint,
@@ -873,7 +870,7 @@ export function buildReflectionAnalysisSystemPrompt(
   const lifeHint = buildLifeContextAdaptationHint(lifeContextStatuses, locale);
   return [
     'You analyze execution patterns.',
-    languageInstruction[locale],
+    JSON_OUTPUT_LANGUAGE_INSTRUCTION[locale],
     'Identify why the user is not completing tasks and suggest practical adjustments.',
     'Do not be generic.',
     'Do not over-motivate.',
@@ -943,7 +940,7 @@ export function buildWeeklyReviewSystemPrompt(
   const lifeHint = buildLifeContextAdaptationHint(lifeContextStatuses, locale);
   return [
     'You generate a short weekly review for a life coaching app inspired by Tony Robbins.',
-    languageInstruction[locale],
+    JSON_OUTPUT_LANGUAGE_INSTRUCTION[locale],
     buildToneInstruction(coachingStyle, preferredTone, avoidTone),
     'Be practical, concise, and motivating without being generic.',
     'Summarize completed steps, strongest and weakest domain, main blocker, and one adjustment for next week.',
@@ -1086,7 +1083,7 @@ export function buildWeeklyReviewUserPrompt(input: {
 export function buildSkipRecoverySystemPrompt(locale: AppLocale) {
   return [
     'You rewrite a skipped daily baby step into a lighter 3-minute version the user can finish today.',
-    languageInstruction[locale],
+    JSON_OUTPUT_LANGUAGE_INSTRUCTION[locale],
     'Return JSON only: { title, description, estimated_minutes, difficulty }.',
     'Rules:',
     '- estimated_minutes MUST be 3.',

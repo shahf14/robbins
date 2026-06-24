@@ -1,4 +1,3 @@
-import type {ZodType} from 'zod';
 import type {AppLocale} from '@/i18n/config';
 import {buildFallbackExplorationQuestions} from '@/lib/formulation/exploration-fallback';
 import {buildFallbackFormulationFromInsights} from '@/lib/formulation/formulation-insights';
@@ -11,8 +10,8 @@ import {
   guardExplorationQuestions,
   guardFormulationDraft,
 } from '@/lib/formulation/output-guard';
-import {parseJsonOr} from '@/lib/safe-json';
-import {formulationApprovedSchema} from '@/lib/life-coach/schemas';
+import {explorationQuestionsResponseSchema, formulationDraftLlmResponseSchema, microGoalLlmResponseSchema} from '@/lib/life-coach/schemas';
+import type {MicroGoalLlmResponse} from '@/lib/life-coach/schemas';
 import type {
   CoachHandoff,
   FormulationApproved,
@@ -20,7 +19,6 @@ import type {
   LlmExplorationQuestion,
 } from '@/lib/life-coach/types';
 import {getFormulationFlags, getLifeCoachModelConfig} from '@/lib/life-coach/env';
-import {z} from 'zod';
 import {
   buildDraftFormulationSystemPrompt,
   buildDraftFormulationUserPrompt,
@@ -31,39 +29,11 @@ import {
   buildMicroGoalUserPrompt,
   type MicroGoalSuggestion,
 } from './prompts';
-import {callOpenAiResponses, type AiCallMetrics} from '@/lib/llm/client';
-
-const explorationQuestionSchema = z.object({
-  id: z.string().regex(/^q\d{2}$/),
-  text: z.string().trim().min(8).max(600),
-  focus_area: z.string().trim().max(80).optional(),
-});
-const explorationQuestionsSchema = z.object({
-  questions: z.array(explorationQuestionSchema).length(15),
-});
-const microGoalOptionSchema = z.object({
-  id: z.string().trim().min(1).max(40),
-  goal_type: z.enum(['practical', 'mindset', 'freestyle']).optional(),
-  title: z.string().trim().min(1).max(120),
-  value: z.string().trim().min(1).max(500),
-  micro_goal_week: z.string().trim().min(1).max(500),
-  anticipated_barrier: z.string().trim().max(500).optional(),
-  plan_b: z.string().trim().max(500).optional(),
-  why_this_exercise: z.string().trim().max(300).optional(),
-  mindset_exercise_id: z.string().trim().max(40).optional(),
-});
-
-const microGoalSchema = z.object({
-  burning_focus: z.string().trim().min(8).max(400),
-  goal_options: z.array(microGoalOptionSchema).length(5),
-  value: z.string().trim().max(500).optional(),
-  micro_goal_week: z.string().trim().max(500).optional(),
-  anticipated_barrier: z.string().trim().max(500).optional(),
-  plan_b: z.string().trim().max(500).optional(),
-});
+import type {AiCallMetrics} from '@/lib/llm/client';
+import {requestStructuredJson, tryRequestStructuredJson} from '@/lib/llm/request-structured-json';
 
 function llmGoalOptionsValid(
-  data: z.infer<typeof microGoalSchema>,
+  data: MicroGoalLlmResponse,
   session: FormulationSession,
   locale: AppLocale
 ): boolean {
@@ -72,7 +42,7 @@ function llmGoalOptionsValid(
 }
 
 function microGoalSuggestionFromLlm(
-  data: z.infer<typeof microGoalSchema>,
+  data: MicroGoalLlmResponse,
   session: FormulationSession,
   locale: AppLocale
 ): MicroGoalSuggestion {
@@ -111,94 +81,12 @@ function normalizeExplorationQuestionIds(
   });
 }
 
-function parseJsonFromText<T>(text: string, schema: ZodType<T>): T | null {
-  const trimmed = text.trim();
-  const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const candidate = fenced?.[1]?.trim() ?? trimmed;
-  try {
-    const parsed = parseJsonOr<unknown>(candidate, null);
-    const result = schema.safeParse(parsed);
-    return result.success ? result.data : null;
-  } catch {
-    return null;
-  }
-}
-
-async function requestJsonFromLlm<T>({
-  systemPrompt,
-  userPrompt,
-  schema,
-  maxOutputTokens = 800,
-  jsonObject = false,
-  model: modelOverride,
-}: {
-  systemPrompt: string;
-  userPrompt: string;
-  schema: ZodType<T>;
-  maxOutputTokens?: number;
-  jsonObject?: boolean;
-  model?: string;
-}): Promise<{data: T | null; metrics: AiCallMetrics}> {
-  const nullMetrics: AiCallMetrics = {tokens_used: null, generation_duration_ms: null, model_used: null};
-  const model = modelOverride ?? modelConfig.structuring;
-
-  const result = await callOpenAiResponses({
-    model,
-    instructions: systemPrompt,
-    input: userPrompt,
-    maxOutputTokens,
-    jsonObject,
-  });
-  if (!result) {
-    return {data: null, metrics: nullMetrics};
-  }
-
-  const parsed = result.text ? parseJsonFromText(result.text, schema) : null;
-
-  return {
-    data: parsed,
-    metrics: {
-      tokens_used: result.tokensUsed,
-      generation_duration_ms: result.durationMs,
-      model_used: model,
-    },
-  };
-}
-
-async function requestJson<T>({
-  systemPrompt,
-  userPrompt,
-  schema,
-  fallback,
-  maxOutputTokens = 800,
-  jsonObject = false,
-  model,
-}: {
-  systemPrompt: string;
-  userPrompt: string;
-  schema: ZodType<T>;
-  fallback: T;
-  maxOutputTokens?: number;
-  jsonObject?: boolean;
-  model?: string;
-}): Promise<{data: T; metrics: AiCallMetrics}> {
-  const {data, metrics} = await requestJsonFromLlm({
-    systemPrompt,
-    userPrompt,
-    schema,
-    maxOutputTokens,
-    jsonObject,
-    model,
-  });
-  return {data: data ?? fallback, metrics};
-}
-
 export const openaiFormulationService = {
   async generateExplorationQuestions(session: FormulationSession, locale: AppLocale) {
     const fallback = buildFallbackExplorationQuestions(session, locale);
     const flags = getFormulationFlags();
 
-    // Step 16: Deterministic mode — skip LLM entirely, use rule-based questions
+    // Deterministic mode — skip LLM entirely, use rule-based questions
     if (flags.deterministicExploration) {
       return {
         questions: fallback,
@@ -207,10 +95,10 @@ export const openaiFormulationService = {
       };
     }
 
-    const {data, metrics} = await requestJson({
+    const {data, metrics} = await requestStructuredJson({
       systemPrompt: buildGenerateExplorationQuestionsSystemPrompt(locale),
       userPrompt: buildGenerateExplorationQuestionsUserPrompt(session, locale),
-      schema: explorationQuestionsSchema,
+      schema: explorationQuestionsResponseSchema,
       fallback: {questions: fallback},
       maxOutputTokens: 2800,
       jsonObject: true,
@@ -247,12 +135,10 @@ export const openaiFormulationService = {
   async draftFormulation(session: FormulationSession, locale: AppLocale) {
     const fallback = buildFallbackFormulationFromInsights(session, locale);
 
-    const wrapperSchema = z.object({formulation: formulationApprovedSchema});
-
-    const {data, metrics} = await requestJson({
+    const {data, metrics} = await requestStructuredJson({
       systemPrompt: buildDraftFormulationSystemPrompt(locale),
       userPrompt: buildDraftFormulationUserPrompt({locale, session}),
-      schema: wrapperSchema,
+      schema: formulationDraftLlmResponseSchema,
       fallback: {formulation: fallback},
       maxOutputTokens: 2000,
       jsonObject: true,
@@ -300,10 +186,10 @@ export const openaiFormulationService = {
 
     for (let attempt = 0; attempt < 3; attempt++) {
       const userPrompt = baseUserPrompt + buildMicroGoalRetryHint(locale, attempt);
-      const {data, metrics} = await requestJsonFromLlm({
+      const {data, metrics} = await tryRequestStructuredJson({
         systemPrompt,
         userPrompt,
-        schema: microGoalSchema,
+        schema: microGoalLlmResponseSchema,
         maxOutputTokens: 3200,
         jsonObject: true,
         model: modelConfig.microGoal,

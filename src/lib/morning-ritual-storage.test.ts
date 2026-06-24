@@ -609,11 +609,88 @@ test('dead-code cleanup files stay removed', () => {
     'components/simple-tasks/freestyle-task-creator.tsx',
     'lib/ai-life-coach/health-goal-fallback.ts',
     'lib/ai-life-coach/resolve-daily-step.ts',
+    'components/life-coach/shared/milestones-why-explainer.tsx',
+    'components/life-coach/shared/regenerate-steps-hint.tsx',
+    'components/life-coach/shared/domain-score-explainer.tsx',
+    'components/life-coach/shared/weekly-review-explainer.tsx',
+    'components/life-coach/shared/weekly-review-locked-explainer.tsx',
+    'components/life-coach/shared/step-skip-hint.tsx',
+    'components/life-coach/shared/step-status-buttons-hint.tsx',
   ];
 
   for (const rel of removed) {
     assert.equal(existsSync(join(root, rel)), false, `expected removed: ${rel}`);
   }
+});
+
+test('InfoNote consolidates life-coach note cards', () => {
+  const root = join(here, '..');
+  const infoNote = readFileSync(join(root, 'components', 'life-coach', 'shared', 'info-note.tsx'), 'utf8');
+
+  assert.match(infoNote, /export function InfoNote/);
+  assert.match(infoNote, /role="note"/);
+  assert.match(infoNote, /layout === 'plain'/);
+  assert.match(infoNote, /layout === 'inline'/);
+
+  for (const consumer of [
+    'components/life-coach/domain-goal-wizard.tsx',
+    'components/life-coach/life-coach-home.tsx',
+    'components/life-coach/domain-assessment-form.tsx',
+    'components/life-coach/daily-baby-steps-list.tsx',
+    'components/life-coach/shared/enhanced-weekly-review.tsx',
+    'components/life-coach/weekly-review-card.tsx',
+  ]) {
+    const source = readFileSync(join(root, consumer), 'utf8');
+    assert.match(source, /from ['"].*info-note['"]/);
+    assert.match(source, /<InfoNote/);
+  }
+
+  for (const kept of [
+    'components/life-coach/shared/goal-hierarchy-explainer.tsx',
+    'components/life-coach/shared/ai-insights-vs-weekly-review-explainer.tsx',
+  ]) {
+    assert.equal(existsSync(join(root, kept)), true, `expected kept: ${kept}`);
+  }
+});
+
+test('language instructions are centralized for life-coach LLM prompts', () => {
+  const root = join(here, '..');
+  const shared = readFileSync(join(root, 'lib', 'llm', 'language-instruction.ts'), 'utf8');
+
+  assert.match(shared, /export const TEXT_RESPONSE_LANGUAGE_INSTRUCTION/);
+  assert.match(shared, /export const JSON_OUTPUT_LANGUAGE_INSTRUCTION/);
+  assert.match(shared, /native, natural Hebrew/);
+
+  for (const consumer of [
+    'lib/ai-life-coach/prompts.ts',
+    'app/api/life-coach/ai/expand-text/route.ts',
+    'app/api/life-coach/ai/inspire-goal/route.ts',
+  ]) {
+    const source = readFileSync(join(root, consumer), 'utf8');
+    assert.doesNotMatch(source, /const languageInstruction: Record<AppLocale/);
+    assert.match(source, /from '@\/lib\/llm\/language-instruction'/);
+  }
+});
+
+test('formulation LLM response schemas live in life-coach/schemas.ts', () => {
+  const root = join(here, '..');
+  const schemas = readFileSync(join(root, 'lib', 'life-coach', 'schemas.ts'), 'utf8');
+  const service = readFileSync(join(root, 'lib', 'ai-formulation', 'openai-formulation-service.ts'), 'utf8');
+
+  for (const symbol of [
+    'explorationQuestionsResponseSchema',
+    'microGoalLlmResponseSchema',
+    'formulationDraftLlmResponseSchema',
+    'llmExplorationQuestionSchema',
+  ]) {
+    assert.match(schemas, new RegExp(`export const ${symbol}`));
+  }
+
+  assert.doesNotMatch(service, /const explorationQuestionSchema = z\.object/);
+  assert.doesNotMatch(service, /const microGoalSchema = z\.object/);
+  assert.match(service, /explorationQuestionsResponseSchema/);
+  assert.match(service, /microGoalLlmResponseSchema/);
+  assert.match(service, /formulationDraftLlmResponseSchema/);
 });
 
 test('CI and package scripts cover the full test suite', () => {
@@ -628,6 +705,11 @@ test('CI and package scripts cover the full test suite', () => {
     'test:admin-session',
     'test:clerk-config',
     'test:domain-detail-url-state',
+    'test:llm-structured-json',
+    'test:schemas-ai-request',
+    'test:week-window',
+    'test:fallback-copy',
+    'test:as-enum',
   ]) {
     assert.ok(pkg.scripts[script], `missing npm script: ${script}`);
     assert.match(ci, new RegExp(`npm run ${script.replace(':', '\\:')}`));

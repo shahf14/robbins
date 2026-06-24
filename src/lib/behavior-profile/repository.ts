@@ -1,6 +1,7 @@
 import {dbAll, dbGet, dbRun} from '@/lib/db/sqlite';
 import {parseJsonArrayOr} from '@/lib/safe-json';
-import type {DailyBabyStep, DailyReflection} from '@/lib/life-coach/types';
+import {asEnum} from '@/lib/as-enum';
+import {STEP_VALUE_FEEDBACK_OPTIONS, type DailyBabyStep, type DailyReflection} from '@/lib/life-coach/types';
 import type {PreferredActionWindow} from '@/lib/user-preferences';
 import {computeUserBehaviorProfile} from './compute';
 import {EMPTY_BEHAVIOR_PROFILE, type FailedActionPattern, type UserBehaviorProfile} from './types';
@@ -74,13 +75,7 @@ function mapStepRow(row: Record<string, unknown>): DailyBabyStep {
     actual_minutes: (row.actual_minutes as number) ?? null,
     reattempt_same_day: !!row.reattempt_same_day,
     blocker_reason: (row.blocker_reason as DailyBabyStep['blocker_reason']) ?? null,
-    value_feedback:
-      row.value_feedback === 'felt_progress' ||
-      row.value_feedback === 'too_small' ||
-      row.value_feedback === 'too_generic' ||
-      row.value_feedback === 'missed_problem'
-        ? (row.value_feedback as DailyBabyStep['value_feedback'])
-        : null,
+    value_feedback: asEnum(row.value_feedback, STEP_VALUE_FEEDBACK_OPTIONS),
     created_at: row.created_at as string,
     updated_at: row.updated_at as string,
   };

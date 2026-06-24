@@ -18,8 +18,7 @@ import {WeeklyAccountabilityCheckin} from '@/components/behavior-science/weekly-
 import {WeeklyReviewEmotionalLayer} from '@/components/life-coach/shared/weekly-review-emotional-layer';
 import {WeeklyReviewProgressEvidenceCard} from '@/components/life-coach/shared/weekly-review-progress-evidence';
 import {WeeklyReviewRecurringPatternSection} from '@/components/life-coach/shared/weekly-review-recurring-pattern';
-import {WeeklyReviewExplainer} from '@/components/life-coach/shared/weekly-review-explainer';
-import {WeeklyReviewLockedExplainer} from '@/components/life-coach/shared/weekly-review-locked-explainer';
+import {InfoNote} from '@/components/life-coach/shared/info-note';
 import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microcopy';
 import {useToast} from '@/components/feedback/toast-provider';
 import {resolveWeeklyReviewErrorMessage} from '@/lib/life-coach/api-error';
@@ -150,8 +149,29 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
 
       <AiActionHelpMicrocopy kind="weeklyReview" className="mt-3" />
 
-      <WeeklyReviewExplainer className="mt-4" />
-      {!insight ? <WeeklyReviewLockedExplainer readiness={readiness} className="mt-3" /> : null}
+      <InfoNote
+        variant="info"
+        titleKey="lifeCoach.weeklyReviewWhenWhyTitle"
+        bodyKey="lifeCoach.weeklyReviewWhenWhyExplainer"
+        className="mt-4"
+      />
+      {!insight && !readiness.isReady ? (
+        <InfoNote
+          id="weekly-review-locked-hint"
+          variant="warning"
+          titleKey="lifeCoach.weeklyReviewLockedWhyTitle"
+          bodyKey="lifeCoach.weeklyReviewLockedExplainer"
+          bodyValues={{minSteps: WEEKLY_REVIEW_MIN_STEPS, minDays: WEEKLY_REVIEW_MIN_ACTIVE_DAYS}}
+          detailKey="lifeCoach.weeklyReviewLockedProgress"
+          detailValues={{
+            steps: readiness.loggedSteps,
+            minSteps: WEEKLY_REVIEW_MIN_STEPS,
+            days: readiness.activeDays,
+            minDays: WEEKLY_REVIEW_MIN_ACTIVE_DAYS,
+          }}
+          className="mt-3"
+        />
+      ) : null}
 
       {/* AI Review Summary */}
       {insight && metadata && (

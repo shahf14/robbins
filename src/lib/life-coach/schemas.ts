@@ -94,7 +94,7 @@ const structuredDailyBabyStepSchema = z.object({
     .string()
     .trim()
     .max(1000)
-    .transform((value) => value || 'Small clear step from your health plan.'),
+    .transform((value) => value || 'Small clear step from your plan.'),
   estimated_minutes: z.coerce.number().int().min(5).max(20),
   difficulty: dailyStepDifficultySchema,
   reasoning: z.string().trim().max(140).optional(),
@@ -136,6 +136,12 @@ export const aiStructureGoalRequestSchema = z.object({
   motivation: z.string().trim().max(2000).optional().default(''),
   constraints: z.string().trim().max(1000).optional().default(''),
 });
+
+export {
+  expandTextRequestSchema,
+  inspireGoalMilestonesResponseSchema,
+  inspireGoalRequestSchema,
+} from './ai-request-schemas';
 
 const goalRealismRiskLevelSchema = z.enum(['low', 'medium', 'high']);
 
@@ -327,6 +333,10 @@ export const formulationApprovedSchema = z.object({
   }),
 });
 
+export const formulationDraftLlmResponseSchema = z.object({
+  formulation: formulationApprovedSchema,
+});
+
 const coachHandoffSchema = z.object({
   value: z.string().trim().min(1).max(500),
   micro_goal_week: z.string().trim().min(1).max(500),
@@ -397,7 +407,7 @@ const formulationPatchDimensionsSchema = z.object({
   next_phase: z.literal('exploration'),
 });
 
-const llmExplorationQuestionSchema = z.object({
+export const llmExplorationQuestionSchema = z.object({
   id: z
     .string()
     .trim()
@@ -405,6 +415,33 @@ const llmExplorationQuestionSchema = z.object({
   text: z.string().trim().min(8).max(600),
   focus_area: z.string().trim().max(80).optional(),
 });
+
+export const explorationQuestionsResponseSchema = z.object({
+  questions: z.array(llmExplorationQuestionSchema).length(15),
+});
+
+export const microGoalOptionLlmSchema = z.object({
+  id: z.string().trim().min(1).max(40),
+  goal_type: z.enum(['practical', 'mindset', 'freestyle']).optional(),
+  title: z.string().trim().min(1).max(120),
+  value: z.string().trim().min(1).max(500),
+  micro_goal_week: z.string().trim().min(1).max(500),
+  anticipated_barrier: z.string().trim().max(500).optional(),
+  plan_b: z.string().trim().max(500).optional(),
+  why_this_exercise: z.string().trim().max(300).optional(),
+  mindset_exercise_id: z.string().trim().max(40).optional(),
+});
+
+export const microGoalLlmResponseSchema = z.object({
+  burning_focus: z.string().trim().min(8).max(400),
+  goal_options: z.array(microGoalOptionLlmSchema).length(5),
+  value: z.string().trim().max(500).optional(),
+  micro_goal_week: z.string().trim().max(500).optional(),
+  anticipated_barrier: z.string().trim().max(500).optional(),
+  plan_b: z.string().trim().max(500).optional(),
+});
+
+export type MicroGoalLlmResponse = z.infer<typeof microGoalLlmResponseSchema>;
 
 const llmExplorationAnswerSchema = z.object({
   key: z

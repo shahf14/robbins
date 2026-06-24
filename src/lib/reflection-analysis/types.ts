@@ -1,4 +1,5 @@
 import type {ReflectionBlockerReason} from '@/lib/life-coach/types';
+import {FALLBACK_WEEKLY_COPY} from '@/lib/life-coach/fallback-copy';
 
 type ReflectionRiskSignal = 'low' | 'medium' | 'high';
 
@@ -162,7 +163,7 @@ export const BLOCKER_REFLECTION_HINTS: Record<
       trigger: 'unclear friction',
       blocker: 'mixed friction',
       need: 'simpler plan',
-      recommended_adjustment: 'one small visible step tomorrow',
+      recommended_adjustment: FALLBACK_WEEKLY_COPY.oneVisibleStepTomorrow.en,
       risk_signal: 'medium',
     },
     he: {
@@ -170,7 +171,7 @@ export const BLOCKER_REFLECTION_HINTS: Record<
       trigger: 'חיכוך לא ברור',
       blocker: 'חיכוך מעורב',
       need: 'תוכנית פשוטה יותר',
-      recommended_adjustment: 'צעד קטן ונראה אחד מחר',
+      recommended_adjustment: FALLBACK_WEEKLY_COPY.oneVisibleStepTomorrow.he,
       risk_signal: 'medium',
     },
   },

@@ -23,7 +23,7 @@ import {AiGeneratingProgress} from './shared/ai-generating-progress';
 import {GoalCelebration} from './shared/goal-celebration';
 import {GoalHierarchyExplainer} from './shared/goal-hierarchy-explainer';
 import {GoalWizardAiBuildPreview} from './shared/goal-wizard-ai-build-preview';
-import {MilestonesWhyExplainer} from './shared/milestones-why-explainer';
+import {InfoNote} from './shared/info-note';
 
 type Props = {
   domain: LifeDomain;
@@ -411,7 +411,11 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
         {step === 3 && (
           <div className="grid gap-4">
             <p className="field-label mb-0">{t('domainWizard.step3Title')}</p>
-            <MilestonesWhyExplainer />
+            <InfoNote
+              layout="inline"
+              titleKey="goalWizard.milestonesWhyLabel"
+              bodyKey="goalWizard.milestonesWhyExplainer"
+            />
             <button
               type="button"
               className="focus-ring btn-ghost inline-flex items-center gap-2 self-start"

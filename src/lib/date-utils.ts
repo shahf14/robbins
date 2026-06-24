@@ -7,15 +7,7 @@ export function todayYMD(): string {
   return dateToYMD(new Date());
 }
 
-export function currentWeekRange(): {start: string; end: string} {
-  const now = new Date();
-  const day = now.getDay();
-  const monday = new Date(now);
-  monday.setDate(now.getDate() - ((day + 6) % 7));
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  return {start: dateToYMD(monday), end: dateToYMD(sunday)};
-}
+export {currentWeekRange} from './goal-decomposition-tree/week-window.ts';
 
 /** Add calendar days to a YYYY-MM-DD string (local calendar). */
 export function addDaysYMD(ymd: string, days: number): string {

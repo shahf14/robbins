@@ -1,4 +1,3 @@
-import type {ZodType, z} from 'zod';
 import type {AppLocale} from '@/i18n/config';
 import {
   aiGenerateDailyStepsResponseSchemaForMax,
@@ -9,7 +8,6 @@ import {
   type AiStructuredGoalResponse,
   type WeeklyReviewAiResponse,
 } from '@/lib/life-coach/schemas';
-import {parseJsonOr} from '@/lib/safe-json';
 import type {
   DailyBabyStep,
   DailyReflection,
@@ -35,6 +33,11 @@ import {buildReflectionAnalysisFallback} from '@/lib/reflection-analysis/fallbac
 import type {ReflectionAnalysis} from '@/lib/reflection-analysis/types';
 import {getLifeCoachModelConfig} from '@/lib/life-coach/env';
 import {
+  FALLBACK_STEP_COPY,
+  FALLBACK_WEEKLY_COPY,
+  pickFallbackCopy,
+} from '@/lib/life-coach/fallback-copy';
+import {
   buildDailyStepsSystemPrompt,
   buildDailyStepsUserPrompt,
   buildGoalStructuringSystemPrompt,
@@ -46,7 +49,8 @@ import {
   buildSkipRecoverySystemPrompt,
   buildSkipRecoveryUserPrompt,
 } from './prompts';
-import {callOpenAiResponses, type AiCallMetrics} from '@/lib/llm/client';
+import type {AiCallMetrics} from '@/lib/llm/client';
+import {requestStructuredJson} from '@/lib/llm/request-structured-json';
 import {
   buildEmotionalReflectionFallback,
   buildProgressEvidenceFallback,
@@ -433,43 +437,6 @@ export const openaiLifeCoachService = {
   },
 };
 
-async function requestStructuredJson<T>({
-  model,
-  systemPrompt,
-  userPrompt,
-  schema,
-  fallback,
-  maxOutputTokens,
-}: {
-  model: string;
-  systemPrompt: string;
-  userPrompt: string;
-  schema: ZodType<T>;
-  fallback: T;
-  maxOutputTokens: number;
-}): Promise<{ data: T; metrics: AiCallMetrics }> {
-  const nullMetrics: AiCallMetrics = { tokens_used: null, generation_duration_ms: null, model_used: null };
-
-  const result = await callOpenAiResponses({
-    model,
-    instructions: systemPrompt,
-    input: userPrompt,
-    maxOutputTokens,
-  });
-
-  if (!result || !result.text) {
-    return { data: fallback, metrics: nullMetrics };
-  }
-
-  const parsed = schema.safeParse(parseJsonOr<unknown>(result.text, null));
-  const metrics: AiCallMetrics = {
-    tokens_used: result.tokensUsed,
-    generation_duration_ms: result.durationMs,
-    model_used: result.model,
-  };
-  return { data: parsed.success ? parsed.data : fallback, metrics };
-}
-
 function mapAiStructuredGoalResponse(response: AiStructuredGoalResponse): StructuredGoalPlan {
   return {
     goal_title: response.goal_title,
@@ -524,8 +491,8 @@ function normalizeStructuredGoalResult(
   return {...finalPlan, realism_check};
 }
 
-// Keep the success metric short and readable (item 11). Strips trailing
-// punctuation and truncates at a sentence/word boundary under 120 chars.
+// Keep the success metric short and readable: strip trailing punctuation
+// and truncate at a sentence/word boundary under 120 chars.
 function capSuccessMetric(metric: string | null | undefined): string {
   const clean = (metric ?? '').trim();
   if (!clean) return clean;
@@ -591,9 +558,7 @@ function buildGenericStructuredGoalFallbackResponse(
     daily_baby_steps: [
       buildFallbackStepContract({
         title: stepTitle,
-        description: he
-          ? 'שומרים על צעד קטן מספיק כדי לסיים אותו גם ביום עמוס.'
-          : 'Keep it small enough to finish even on a busy day.',
+        description: pickFallbackCopy(FALLBACK_STEP_COPY.busyDayDescription, input.locale),
         estimated_minutes: Math.min(
           input.known_blockers?.max_initial_step_minutes ?? 10,
           10
@@ -627,9 +592,7 @@ function buildDailyStepsFallbackResponse(input: DailyStepGenerationInput): {
         {
           ...buildFallbackStepContract({
             title: mission.slice(0, 160),
-            description: he
-              ? 'זה מחובר למשימת הבוקר שלך — נשאיר את זה קטן ובר ביצוע היום.'
-              : 'This is connected to your morning mission — keep it small and doable today.',
+            description: pickFallbackCopy(FALLBACK_STEP_COPY.morningMissionDescription, input.locale),
             estimated_minutes: Math.min(defaultMinutes, cal?.max_minutes ?? 15),
             difficulty: cal?.difficulty_ceiling ?? 'easy',
             locale: input.locale,
@@ -647,9 +610,7 @@ function buildDailyStepsFallbackResponse(input: DailyStepGenerationInput): {
   const contracts: AiDailyStepContract[] = input.activeGoals.slice(0, maxSteps).map((goal) => {
     const contract = buildFallbackStepContract({
       title: fallbackStepTitle(goal.domain, goal.title, input.locale),
-      description: he
-        ? 'נשארים עם צעד אחד קטן ונראה לעין היום.'
-        : 'Stay with one small, visible move today.',
+      description: pickFallbackCopy(FALLBACK_STEP_COPY.oneVisibleMoveToday, input.locale),
       estimated_minutes: Math.min(
         resolveMinutesForGoal(goal.domain, input.domainStates),
         cal?.max_minutes ?? 20
@@ -669,9 +630,7 @@ function buildDailyStepsFallbackResponse(input: DailyStepGenerationInput): {
               title: he
                 ? 'להקדיש 10 דקות לצעד הבא והנראה לעין'
                 : 'Spend 10 minutes on the next visible step',
-              description: he
-                ? 'שומרים על זה מוחשי וקל להתחלה.'
-                : 'Keep it concrete and easy to start.',
+              description: pickFallbackCopy(FALLBACK_STEP_COPY.concreteEasyStart, input.locale),
               estimated_minutes: defaultMinutes,
               difficulty: cal?.difficulty_ceiling ?? 'easy',
               locale: input.locale,
@@ -710,6 +669,7 @@ function buildWeeklyReviewFallback(input: WeeklyReviewInput): WeeklyReviewAiResp
   };
   const pattern_insights = input.pattern_mining?.insights ?? [];
   const plan_adjustments = input.pattern_mining?.plan_adjustments;
+  const smallerPlanAdjustment = pickFallbackCopy(FALLBACK_WEEKLY_COPY.nextWeekSmallerPlan, input.locale);
 
   return {
     completed_steps_count: completed.length,
@@ -717,11 +677,7 @@ function buildWeeklyReviewFallback(input: WeeklyReviewInput): WeeklyReviewAiResp
     main_blocker: he ? (blockerHe[lastBlocker] ?? 'אחר') : lastBlocker.replaceAll('_', ' '),
     strongest_domain: strongest?.domain ?? null,
     weakest_domain: weakest?.domain ?? null,
-    recommended_adjustment:
-      pattern_insights[0] ??
-      (he
-        ? 'בשבוע הבא נשמור על תוכנית קטנה, מתוזמנת וקלה יותר להתחלה.'
-        : 'Keep next week smaller, more scheduled, and easier to start.'),
+    recommended_adjustment: pattern_insights[0] ?? smallerPlanAdjustment,
     summary: he
       ? pattern_insights.length > 0
         ? pattern_insights.join(' ')
@@ -747,11 +703,7 @@ function buildWeeklyReviewFallback(input: WeeklyReviewInput): WeeklyReviewAiResp
     }),
     next_best_action: buildWeeklyReviewNextBestAction({
       locale: input.locale,
-      recommended_adjustment:
-        pattern_insights[0] ??
-        (he
-          ? 'בשבוע הבא נשמור על תוכנית קטנה, מתוזמנת וקלה יותר להתחלה.'
-          : 'Keep next week smaller, more scheduled, and easier to start.'),
+      recommended_adjustment: pattern_insights[0] ?? smallerPlanAdjustment,
       next_identity_action: buildEmotionalReflectionFallback(input).next_identity_action,
     }),
   };

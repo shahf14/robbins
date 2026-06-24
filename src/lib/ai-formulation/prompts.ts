@@ -76,7 +76,7 @@ export function buildGenerateExplorationQuestionsUserPrompt(
   session: FormulationSession,
   locale: AppLocale
 ) {
-  // Step 4 & 13: Send slim context — only what the LLM needs
+  // Send slim context — only what the LLM needs
   const full = buildFormulationSessionContext(session, locale);
   return JSON.stringify({
     locale,
@@ -184,7 +184,7 @@ export function buildDraftFormulationUserPrompt(input: {
   locale: AppLocale;
   session: FormulationSession;
 }) {
-  // Step 4 & 13: Slim context — only what the LLM needs for formulation
+  // Slim context — only what the LLM needs for formulation
   return JSON.stringify(
     buildSlimFormulationContext(input.session, input.locale),
     null,
@@ -252,7 +252,7 @@ export function buildMicroGoalSystemPrompt(locale: AppLocale) {
   ].join('\n');
 }
 
-// Step 10: Better retry strategy — include what went wrong
+// Retry hint — tells the model what went wrong on the previous attempt
 export function buildMicroGoalRetryHint(locale: AppLocale, attempt: number): string {
   if (attempt === 0) return '';
   if (locale === 'he') {

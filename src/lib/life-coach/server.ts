@@ -52,7 +52,8 @@ export function isIsoDate(value: string): boolean {
 
 export const startOfToday = todayYMD;
 
-export function currentWeekWindow() {
+/** Inclusive trailing 7-day window ending today (today-6 … today). Not a calendar ISO week. */
+export function trailingSevenDayWindow() {
   const today = new Date();
   const end = dateToYMD(today);
   const start = new Date(today);

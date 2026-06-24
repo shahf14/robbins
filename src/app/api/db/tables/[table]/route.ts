@@ -32,7 +32,6 @@ export async function GET(
   const offset = (page - 1) * PAGE_SIZE;
 
   try {
-    // Get column names
     const colRows = getDb().pragma(`table_info("${table}")`) as Array<{name: string; type: string}>;
     const columns = colRows.map((c) => ({name: c.name, type: c.type}));
 

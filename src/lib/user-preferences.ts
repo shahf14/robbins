@@ -1,3 +1,4 @@
+import {asEnum, isEnumMember} from '@/lib/as-enum';
 import {defaultLocale, isLocale, type AppLocale} from '@/i18n/config';
 import {
   isParticipantGender,
@@ -71,15 +72,15 @@ export const defaultUserPreferences: UserPreferences = {
 };
 
 function isCoachingStyle(v: unknown): v is CoachingStyle {
-  return typeof v === 'string' && (COACHING_STYLES as readonly string[]).includes(v);
+  return isEnumMember(v, COACHING_STYLES);
 }
 
 function isFamilyStatus(v: unknown): v is FamilyStatus {
-  return typeof v === 'string' && (FAMILY_STATUSES as readonly string[]).includes(v as FamilyStatus);
+  return isEnumMember(v, FAMILY_STATUSES);
 }
 
 function isPreferredActionWindow(v: unknown): v is PreferredActionWindow {
-  return typeof v === 'string' && (PREFERRED_ACTION_WINDOWS as readonly string[]).includes(v as PreferredActionWindow);
+  return isEnumMember(v, PREFERRED_ACTION_WINDOWS);
 }
 
 function isAvailableTime(v: unknown): v is AvailableTimePerDay {

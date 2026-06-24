@@ -1,7 +1,13 @@
+import {asEnum} from '@/lib/as-enum';
 import {parseAiPersonalizationSummary} from '@/lib/ai-personalization-summary';
 import type {AiPersonalizationSummary} from '@/lib/ai-personalization-summary';
 import {parseJsonArrayOr, parseJsonObjectOr, parseJsonOr} from '@/lib/safe-json';
 import {parseLifeContextStatuses} from '@/lib/formulation/life-context';
+import {
+  COACHING_STYLES,
+  FAMILY_STATUSES,
+  PREFERRED_ACTION_WINDOWS,
+} from '@/lib/user-preferences';
 import type {
   AiCoachingInsight,
   DailyBabyStep,
@@ -10,6 +16,7 @@ import type {
   LifeDomainState,
   UserProfile,
 } from './types';
+import {STEP_VALUE_FEEDBACK_OPTIONS} from './types';
 
 export function rowToState(row: Record<string, unknown>): LifeDomainState {
   return {
@@ -62,20 +69,9 @@ export function rowToStep(row: Record<string, unknown>): DailyBabyStep {
     success_signal: (row.success_signal as string) ?? null,
     user_edited: !!row.user_edited,
     validation_fallback_applied: !!row.validation_fallback_applied,
-    coach_tone:
-      row.coach_tone === 'supportive' ||
-      row.coach_tone === 'direct' ||
-      row.coach_tone === 'motivational'
-        ? row.coach_tone
-        : null,
+    coach_tone: asEnum(row.coach_tone, COACHING_STYLES),
     weekly_focus_id: (row.weekly_focus_id as string) ?? null,
-    value_feedback:
-      row.value_feedback === 'felt_progress' ||
-      row.value_feedback === 'too_small' ||
-      row.value_feedback === 'too_generic' ||
-      row.value_feedback === 'missed_problem'
-        ? row.value_feedback
-        : null,
+    value_feedback: asEnum(row.value_feedback, STEP_VALUE_FEEDBACK_OPTIONS),
     created_at: row.created_at as string,
     updated_at: row.updated_at as string,
   };
@@ -148,20 +144,9 @@ export function rowToUserProfile(
       typeof row?.life_context_note === 'string' ? row.life_context_note : null,
     wake_time: typeof row?.wake_time === 'string' ? row.wake_time : null,
     sleep_time: typeof row?.sleep_time === 'string' ? row.sleep_time : null,
-    preferred_action_window:
-      row?.preferred_action_window === 'morning' ||
-      row?.preferred_action_window === 'midday' ||
-      row?.preferred_action_window === 'evening' ||
-      row?.preferred_action_window === 'flexible'
-        ? row.preferred_action_window
-        : null,
-    coaching_style:
-      row?.coaching_style === 'supportive' ||
-      row?.coaching_style === 'direct' ||
-      row?.coaching_style === 'motivational'
-        ? row.coaching_style
-        : null,
-    family_status: typeof row?.family_status === 'string' ? row.family_status as import('@/lib/user-preferences').FamilyStatus : null,
+    preferred_action_window: asEnum(row?.preferred_action_window, PREFERRED_ACTION_WINDOWS),
+    coaching_style: asEnum(row?.coaching_style, COACHING_STYLES),
+    family_status: asEnum(row?.family_status, FAMILY_STATUSES),
     physical_considerations: physicalConsiderations,
     ai_personalization_summary: aiPersonalizationSummary,
     created_at: (row?.created_at as string) ?? fallbackNow,

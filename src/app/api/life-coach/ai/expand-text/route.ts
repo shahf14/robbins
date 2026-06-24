@@ -1,21 +1,18 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
 import {jsonError, jsonOk, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
+import {expandTextRequestSchema} from '@/lib/life-coach/schemas';
 import {getLifeCoachModelConfig} from '@/lib/life-coach/env';
-import {callOpenAiResponses} from '@/lib/llm/client';
+import {requestLlmText} from '@/lib/llm/request-structured-json';
+import {TEXT_RESPONSE_LANGUAGE_INSTRUCTION} from '@/lib/llm/language-instruction';
 import type {AppLocale} from '@/i18n/config';
-
-const languageInstruction: Record<AppLocale, string> = {
-  en: 'Respond in English.',
-  he: 'Respond in native, natural Hebrew.',
-};
 
 async function expandText(text: string, context: string, locale: AppLocale): Promise<string> {
   const modelConfig = getLifeCoachModelConfig();
 
   const systemPrompt = [
     'You are a compassionate life coach helping someone articulate their inner motivation.',
-    languageInstruction[locale],
+    TEXT_RESPONSE_LANGUAGE_INSTRUCTION[locale],
     'Your job: take what the user wrote and expand it into 2-4 clear, emotionally honest sentences.',
     'Preserve the user\'s original meaning completely — do not add ideas they did not express.',
     'Make it more specific, vivid, and self-aware. Help them say what they meant but could not quite put into words.',
@@ -26,14 +23,15 @@ async function expandText(text: string, context: string, locale: AppLocale): Pro
 
   const userPrompt = `Context: ${context}\n\nWhat I wrote: ${text}`;
 
-  const result = await callOpenAiResponses({
+  const {text: expanded} = await requestLlmText({
     model: modelConfig.structuring,
-    instructions: systemPrompt,
-    input: userPrompt,
+    systemPrompt,
+    userPrompt,
     maxOutputTokens: 300,
+    fallback: fallbackExpand(text, locale),
   });
 
-  return result?.text || fallbackExpand(text, locale);
+  return expanded;
 }
 
 function fallbackExpand(text: string, locale: AppLocale): string {
@@ -50,21 +48,13 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  const bodyResult = await parseLifeCoachJsonBody<Record<string, unknown>>(request);
-  if (!bodyResult.ok) return bodyResult.response;
-  const body = (bodyResult.data ?? {}) as Record<string, unknown>;
-
-  const text = typeof body.text === 'string' ? body.text.trim() : '';
-  const context = typeof body.context === 'string' ? body.context : '';
-  const locale = resolveLocale(typeof body.locale === 'string' ? body.locale : null);
-
-  if (!text) {
-    return jsonError('text is required.', 400);
+  const parsed = await parseLifeCoachJsonBody(request, expandTextRequestSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
-  if (text.length > 2000 || context.length > 2000) {
-    return jsonError('text and context must be 2000 characters or fewer.', 400);
-  }
+  const {text, context} = parsed.data;
+  const locale = resolveLocale(parsed.data.locale ?? null);
 
   const limited = enforceAiRateLimit({
     action: 'life-coach:expand-text',

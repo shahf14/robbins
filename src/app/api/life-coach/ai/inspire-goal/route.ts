@@ -4,9 +4,9 @@ import {formatLifeContextLabels} from '@/lib/life-context-labels';
 import {getLifeCoachModelConfig} from '@/lib/life-coach/env';
 import {getUserParticipantProfile} from '@/lib/life-coach/repository';
 import {jsonError, jsonOk, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
-import {callOpenAiResponses} from '@/lib/llm/client';
-import {LIFE_DOMAINS} from '@/lib/life-coach/types';
-import {parseJsonObjectOr} from '@/lib/safe-json';
+import {inspireGoalMilestonesResponseSchema, inspireGoalRequestSchema} from '@/lib/life-coach/schemas';
+import {requestLlmText, requestStructuredJson} from '@/lib/llm/request-structured-json';
+import {TEXT_RESPONSE_LANGUAGE_INSTRUCTION} from '@/lib/llm/language-instruction';
 import type {AppLocale} from '@/i18n/config';
 import type {LifeContextStatus} from '@/lib/life-coach/types';
 
@@ -84,23 +84,8 @@ const DOMAIN_CATEGORY_PROMPTS: Record<string, Record<string, string>> = {
   },
 };
 
-const languageInstruction: Record<AppLocale, string> = {
-  en: 'Respond in English.',
-  he: 'Respond in Hebrew.',
-};
 
 type MilestonesResult = {days_30: string; days_60: string; days_90: string};
-
-async function callOpenAi(systemPrompt: string, userPrompt: string, maxTokens: number): Promise<string | null> {
-  const modelConfig = getLifeCoachModelConfig();
-  const result = await callOpenAiResponses({
-    model: modelConfig.structuring,
-    instructions: systemPrompt,
-    input: userPrompt,
-    maxOutputTokens: maxTokens,
-  });
-  return result?.text || null;
-}
 
 async function generateGoalInspiration(
   domain: string,
@@ -123,7 +108,7 @@ async function generateGoalInspiration(
       : '';
   const systemPrompt = [
     'You are a concise life coach assistant.',
-    languageInstruction[locale],
+    TEXT_RESPONSE_LANGUAGE_INSTRUCTION[locale],
     'Write one clear, specific, inspiring goal sentence for a busy adult.',
     'The goal must be personal, achievable in 90 days, and motivating.',
     lifeHint,
@@ -135,8 +120,15 @@ async function generateGoalInspiration(
     .join(' ');
   const userPrompt = `Domain: ${domain}. Focus area: ${categoryDescription}. Write one concrete goal.`;
 
-  const text = await callOpenAi(systemPrompt, userPrompt, 80);
-  return text ?? fallbackGoalInspiration(domain, category, locale);
+  const modelConfig = getLifeCoachModelConfig();
+  const {text} = await requestLlmText({
+    model: modelConfig.structuring,
+    systemPrompt,
+    userPrompt,
+    maxOutputTokens: 80,
+    fallback: fallbackGoalInspiration(domain, category, locale),
+  });
+  return text;
 }
 
 async function generateMilestonesInspiration(
@@ -155,7 +147,7 @@ async function generateMilestonesInspiration(
       : '';
   const systemPrompt = [
     'You are a life coach assistant that writes concrete 30/60/90-day milestones.',
-    languageInstruction[locale],
+    TEXT_RESPONSE_LANGUAGE_INSTRUCTION[locale],
     'Return ONLY a JSON object with keys: days_30, days_60, days_90.',
     'Each value is a short (max 15 words), specific, measurable milestone.',
     'Milestones must progressively build toward the 90-day goal.',
@@ -171,20 +163,19 @@ async function generateMilestonesInspiration(
     life_context_labels: lifeContextLabels,
   });
 
-  const text = await callOpenAi(systemPrompt, userPrompt, 200);
+  const modelConfig = getLifeCoachModelConfig();
+  const fallback = fallbackMilestonesInspiration(domain, category, locale);
+  const {data} = await requestStructuredJson({
+    model: modelConfig.structuring,
+    systemPrompt,
+    userPrompt,
+    schema: inspireGoalMilestonesResponseSchema,
+    fallback,
+    maxOutputTokens: 200,
+    jsonObject: true,
+  });
 
-  if (text) {
-    try {
-      const parsed = parseJsonObjectOr<Record<string, unknown>>(text, {});
-      if (typeof parsed.days_30 === 'string' && typeof parsed.days_60 === 'string' && typeof parsed.days_90 === 'string') {
-        return {days_30: parsed.days_30, days_60: parsed.days_60, days_90: parsed.days_90};
-      }
-    } catch {
-      // fall through to fallback
-    }
-  }
-
-  return fallbackMilestonesInspiration(domain, category, locale);
+  return data;
 }
 
 function fallbackGoalInspiration(domain: string, category: string, locale: AppLocale): string {
@@ -218,31 +209,13 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  const bodyResult = await parseLifeCoachJsonBody<Record<string, unknown>>(request);
-  if (!bodyResult.ok) return bodyResult.response;
-  const body = (bodyResult.data ?? {}) as Record<string, unknown>;
-
-  const domain = typeof body.domain === 'string' ? body.domain : '';
-  const category = typeof body.category === 'string' ? body.category : '';
-  const locale = resolveLocale(typeof body.locale === 'string' ? body.locale : null);
-  const mode = typeof body.mode === 'string' ? body.mode : 'goal';
-  const goalText = typeof body.goal_text === 'string' ? body.goal_text : '';
-
-  if (!domain || !category) {
-    return jsonError('domain and category are required.', 400);
+  const parsed = await parseLifeCoachJsonBody(request, inspireGoalRequestSchema);
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
-  if (!(LIFE_DOMAINS as readonly string[]).includes(domain)) {
-    return jsonError('Unsupported domain.', 400);
-  }
-
-  if (category.length > 120 || goalText.length > 1000) {
-    return jsonError('category or goal_text is too long.', 400);
-  }
-
-  if (mode !== 'goal' && mode !== 'milestones') {
-    return jsonError('Unsupported mode.', 400);
-  }
+  const {domain, category, mode, goal_text: goalText} = parsed.data;
+  const locale = resolveLocale(parsed.data.locale ?? null);
 
   const limited = enforceAiRateLimit({
     action: `life-coach:inspire-goal:${mode}`,

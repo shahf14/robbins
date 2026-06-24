@@ -12,7 +12,7 @@ import {
 import {defaultUserPreferences, loadUserPreferences} from '@/lib/user-preferences';
 import {useToast} from '@/components/feedback/toast-provider';
 import {resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
-import {DomainScoreExplainer} from './shared/domain-score-explainer';
+import {InfoNote} from './shared/info-note';
 
 type AssessmentInput = Omit<
   LifeDomainState,
@@ -172,7 +172,12 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
             onChange={setCurrentScore}
             scoreTierLabel={scoreTierLabel}
           />
-          <DomainScoreExplainer compact />
+          <InfoNote
+            layout="plain"
+            titleKey="lifeCoach.domainScoreLabel"
+            bodyKey="lifeCoach.domainScoreExplainer"
+            className="text-xs leading-5 txt-muted"
+          />
         </div>
 
         <div className="grid gap-2">

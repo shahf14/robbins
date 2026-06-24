@@ -1,3 +1,4 @@
+import {FALLBACK_STEP_COPY} from '@/lib/life-coach/fallback-copy';
 import {dateToYMD} from '@/lib/date-utils';
 import {resolveLatestRitualAdaptation} from '@/lib/morning-ritual-adaptation';
 import {listMorningRitualSessions} from '@/lib/db/repositories/morning-rituals';
@@ -185,7 +186,7 @@ function buildSuggestedAction(input: {
     const blocker = input.activeState.main_blockers[0];
     return {
       title: blocker ? `Reduce one friction point: ${blocker}` : 'Choose one small step for this area',
-      description: 'Keep it small enough to finish today.',
+      description: FALLBACK_STEP_COPY.finishToday.en,
       source: 'domain_assessment',
       domainId: input.activeState.domain,
       estimatedMinutes: 10,

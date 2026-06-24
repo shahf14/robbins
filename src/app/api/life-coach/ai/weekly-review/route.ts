@@ -23,7 +23,7 @@ import {
   hasWeeklyReviewForPeriod,
 } from '@/lib/life-coach/repository';
 import {getSupportContextForUser} from '@/lib/support-context/formulation-support-context';
-import {currentWeekWindow, jsonError, jsonOk, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
+import {trailingSevenDayWindow, jsonError, jsonOk, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
 import {listMorningRitualSessions} from '@/lib/db/repositories/morning-rituals';
 import {summarizeMorningRitualsForWeek} from '@/lib/life-coach/morning-ritual-weekly-summary';
 import {listCheckinRowsForPeriod} from '@/lib/db/repositories/checkins';
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       getUserParticipantProfile(current.user.id),
       getSupportContextForUser(current.user.id),
     ]);
-    const week = currentWeekWindow();
+    const week = trailingSevenDayWindow();
     const morningRitualSessions = listMorningRitualSessions(current.user.id, 14);
     const morning_ritual_summary = summarizeMorningRitualsForWeek(
       morningRitualSessions,

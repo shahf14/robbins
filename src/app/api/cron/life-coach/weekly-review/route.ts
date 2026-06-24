@@ -22,7 +22,7 @@ import {
   hasWeeklyReviewForPeriod,
   listActiveGoalUsers,
 } from '@/lib/life-coach/repository';
-import {currentWeekWindow, jsonError, jsonOk, verifyCronRequest} from '@/lib/life-coach/server';
+import {trailingSevenDayWindow, jsonError, jsonOk, verifyCronRequest} from '@/lib/life-coach/server';
 import {getSupportContextForUser} from '@/lib/support-context/formulation-support-context';
 
 export async function POST(request: Request) {
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     let generatedCount = 0;
     let failedCount = 0;
     const errors: {userId: string; error: string}[] = [];
-    const week = currentWeekWindow();
+    const week = trailingSevenDayWindow();
 
     for (const userId of userIds) {
       try {

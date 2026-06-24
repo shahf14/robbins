@@ -25,8 +25,7 @@ import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microc
 import {BusyButton} from '@/components/feedback/busy-button';
 import {DomainStepBadge} from './shared/domain-step-badge';
 import {StepExplainability} from './shared/step-explainability';
-import {StepStatusButtonsHint} from './shared/step-status-buttons-hint';
-import {StepSkipHint} from './shared/step-skip-hint';
+import {InfoNote} from './shared/info-note';
 import {DailyStepsEmptyState} from './shared/daily-steps-empty-state';
 import {parseHabitTriggerFromTitle} from '@/lib/formulation/habit-trigger-routing';
 import {fetchFormulationCoachContext} from '@/lib/formulation/personalized-challenge-storage';
@@ -854,7 +853,7 @@ export function DailyBabyStepsList({
                 </div>
               )}
 
-              <StepStatusButtonsHint className="mt-5" />
+              <InfoNote layout="plain" bodyKey="lifeCoach.stepStatusCoachHint" className="mt-5 text-xs leading-5 txt-muted" />
               <div className="mt-2 flex flex-wrap gap-2">
                 {step.status !== 'completed' && (
                 <BusyButton
@@ -967,7 +966,11 @@ export function DailyBabyStepsList({
                   >
                     {t('lifeCoach.markSkipped')}
                   </button>
-                  <StepSkipHint />
+                  <InfoNote
+                    layout="plain"
+                    bodyKey="lifeCoach.stepSkipCoachHint"
+                    className="max-w-[14rem] text-[11px] leading-4 txt-muted"
+                  />
                 </div>
                 <BusyButton
                   className="focus-ring btn-ghost"

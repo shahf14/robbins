@@ -61,8 +61,7 @@ import {buildSimplifiedStep} from '@/lib/life-coach/simplify-step';
 import {pickStartHereStep} from '@/lib/life-coach/step-priority';
 import {getPersonalDayPhase} from '@/lib/schedule-content';
 import {buildEndOfDayClosure} from '@/lib/behavior-science/end-of-day-closure';
-import {DomainScoreExplainer} from './shared/domain-score-explainer';
-import {RegenerateStepsHint} from './shared/regenerate-steps-hint';
+import {InfoNote} from './shared/info-note';
 import {currentWeekRange, todayYMD} from '@/lib/date-utils';
 import {WEEKLY_TARGET_RATIO} from '@/lib/life-coach/progress-constants';
 
@@ -370,7 +369,12 @@ function LifeCoachHomeContent() {
 
             <section id="domains" className="mt-6 scroll-mt-24">
               <DomainsSetupProgress configured={configuredCount} total={totalDomains} />
-              <DomainScoreExplainer className="mt-4" />
+              <InfoNote
+                layout="inline"
+                titleKey="lifeCoach.domainScoreLabel"
+                bodyKey="lifeCoach.domainScoreExplainer"
+                className="mt-4"
+              />
               <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 {domainCards.map((summary) => (
                   <LifeDomainCard key={summary.domain} summary={summary} />
@@ -422,7 +426,15 @@ function LifeCoachHomeContent() {
                 </a>
               </div>
             )}
-            {todaySteps.length > 0 && <RegenerateStepsHint className="mt-3" />}
+            {todaySteps.length > 0 && (
+              <InfoNote
+                variant="info"
+                titleKey="lifeCoach.regenerateSafeHintTitle"
+                bodyKey="lifeCoach.regenerateSafeHint"
+                detailKey="lifeCoach.regenerateSafeHintDetail"
+                className="mt-3"
+              />
+            )}
             {generating && (
               <div className="mt-4">
                 <AiGeneratingProgress variant="dailySteps" />

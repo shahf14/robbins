@@ -44,7 +44,7 @@ export async function POST(
     if (limited) return limited;
 
     if (parsed.data.action === 'generate_exploration_questions') {
-      // Step 7: Cache — skip LLM if session already has valid questions
+      // Cache — skip LLM if session already has valid questions
       if (session.llm_exploration_questions.length === 15) {
         return jsonOk({session, questions: session.llm_exploration_questions});
       }

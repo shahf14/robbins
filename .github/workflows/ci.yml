@@ -55,5 +55,17 @@ jobs:
       - name: Domain detail URL state tests
         run: npm run test:domain-detail-url-state
 
-      - name: Date utils tests
-        run: npm run test:date-utils
+      - name: LLM structured JSON tests
+        run: npm run test:llm-structured-json
+
+      - name: AI request schema tests
+        run: npm run test:schemas-ai-request
+
+      - name: Week window tests
+        run: npm run test:week-window
+
+      - name: Fallback copy tests
+        run: npm run test:fallback-copy
+
+      - name: asEnum tests
+        run: npm run test:as-enum
