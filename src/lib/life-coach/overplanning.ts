@@ -1,7 +1,6 @@
 import {dateToYMD} from '@/lib/date-utils';
 import {dbGet} from '@/lib/db/sqlite';
 import type {AdaptiveTaskCount} from '@/lib/life-coach/adaptive-task-count';
-import type {PersonalDifficultyCalibration} from '@/lib/life-coach/personal-difficulty-calibration';
 import type {DailyBabyStep, Goal} from '@/lib/life-coach/types';
 
 type OverplanningSignals = {
@@ -124,21 +123,6 @@ export function applyOverplanningToAdaptiveTaskCount(
     max_steps: Math.min(count.max_steps, max_steps),
     easy_only: true,
     reason: 'overplanning',
-  };
-}
-
-export function applyOverplanningToCalibration(
-  calibration: PersonalDifficultyCalibration,
-  overplanning: OverplanningContext | null | undefined
-): PersonalDifficultyCalibration {
-  if (!overplanning?.is_overplanned) return calibration;
-
-  return {
-    ...calibration,
-    difficulty_ceiling: 'easy',
-    target_minutes: Math.min(calibration.target_minutes, 8),
-    max_minutes: Math.min(calibration.max_minutes, 10),
-    ramp_mode: 'reduce',
   };
 }
 

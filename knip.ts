@@ -30,6 +30,9 @@ const config: KnipConfig = {
     // CSS-level imports, so it's flagged as unused even though the build
     // depends on it.
     'tailwindcss',
+    // Loaded via `@import` in src/app/globals.css — same CSS-level blind spot.
+    '@fontsource-variable/inter',
+    '@fontsource-variable/heebo',
   ],
   ignoreIssues: {
     // `SkipCoachAdjustment` is consumed exclusively via the inline

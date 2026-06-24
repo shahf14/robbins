@@ -4,7 +4,7 @@ out/
 .idea/
 tsconfig.tsbuildinfo
 tsconfig.typecheck.tsbuildinfo
-logs/
+/logs/
 
 .env
 .env*.local

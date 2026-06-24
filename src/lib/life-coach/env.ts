@@ -54,7 +54,5 @@ export function getFormulationFlags() {
   return {
     /** When true, exploration questions use deterministic fallback instead of LLM. */
     deterministicExploration: process.env.FORMULATION_DETERMINISTIC_EXPLORATION === 'true',
-    /** Provider: 'openai' | 'anthropic'. Default: 'openai'. */
-    llmProvider: (process.env.FORMULATION_LLM_PROVIDER || 'openai') as 'openai' | 'anthropic',
   };
 }

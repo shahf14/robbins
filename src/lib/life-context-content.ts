@@ -1,7 +1,5 @@
 import type {AppLocale} from '@/i18n/config';
 import {formatLifeContextLabels} from '@/lib/life-context-labels';
-import type {PersonalDayPhase} from '@/lib/schedule-content';
-import {personalDashboardSubtitleKey} from '@/lib/schedule-content';
 import type {CheckInEntry, CheckInTag} from '@/lib/check-in-types';
 import type {EveningMode} from '@/lib/evening-reset-types';
 import type {BreathingType, RitualMode} from '@/lib/morning-ritual-types';
@@ -106,62 +104,6 @@ export function reflectionBlockerHintKey(
   const profile = resolveLifeContextProfile(statuses);
   if (profile.type === 'none') return null;
   return contextScopedKey(profile, 'lifeContext.reflection.hint');
-}
-
-type Step2HintInput = {
-  statuses: LifeContextStatus[];
-  lowestDomain: LifeDomain | null;
-  domainScores: Record<LifeDomain, number>;
-};
-
-/** Returns i18n key + values for onboarding step 2 hint, or null for default. */
-export function onboardingStep2Hint(
-  input: Step2HintInput
-): {key: string; values: Record<string, string>} | null {
-  const {statuses, lowestDomain, domainScores} = input;
-  if (!lowestDomain) return null;
-
-  const domainLabelKey = `lifeCoach.domains.${lowestDomain}.label`;
-  const profile = resolveLifeContextProfile(statuses);
-  if (profile.type === 'combo') {
-    return {
-      key: `lifeContext.onboarding.step2.combo.${profile.key}`,
-      values: {domain: domainLabelKey},
-    };
-  }
-  if (profile.type === 'multi') {
-    return {
-      key: 'lifeContext.onboarding.step2.multi',
-      values: {domain: domainLabelKey},
-    };
-  }
-  const ctx = profile.type === 'single' ? profile.key : null;
-
-  if (!ctx) {
-    return {key: 'onboarding.step2SelectHint', values: {domain: domainLabelKey}};
-  }
-
-  const healthLow = domainScores.health <= 4;
-  const mindLow = domainScores.mind <= 4;
-  const careerLow = domainScores.career <= 4;
-
-  if (ctx === 'new_parent' && healthLow) {
-    return {key: 'lifeContext.onboarding.step2.newParentHealth', values: {domain: domainLabelKey}};
-  }
-  if (ctx === 'student' && mindLow) {
-    return {key: 'lifeContext.onboarding.step2.studentMind', values: {domain: domainLabelKey}};
-  }
-  if (ctx === 'between_jobs' && careerLow) {
-    return {key: 'lifeContext.onboarding.step2.betweenJobsCareer', values: {domain: domainLabelKey}};
-  }
-  if (ctx === 'manager' && domainScores.time <= 4) {
-    return {key: 'lifeContext.onboarding.step2.managerTime', values: {domain: domainLabelKey}};
-  }
-  if (ctx === 'caregiver' && domainScores.relationships <= 4) {
-    return {key: 'lifeContext.onboarding.step2.caregiverRelations', values: {domain: domainLabelKey}};
-  }
-
-  return {key: `lifeContext.onboarding.step2.${ctx}`, values: {domain: domainLabelKey}};
 }
 
 const CATEGORY_BOOST: Partial<

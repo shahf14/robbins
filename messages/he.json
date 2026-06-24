@@ -14,30 +14,22 @@
     "goalStructure": "ה-AI משתמש בתשובות שלך, בתחום ובזמן הפנוי כדי לנסח מטרה ואבני דרך.",
     "insight": "ה-AI מנתח צעדים, רפלקציות וחסמים כדי להציע תובנה מותאמת.",
     "weeklyReview": "ה-AI סוקר את השבוע — מה עבד, מה עצר, ומה כדאי לשנות.",
-    "onboardingInsight": "ה-AI משתמש בתשובות שלך כדי לנסח תובנה לפני בניית המטרה.",
-    "onboardingGoal": "ה-AI בונה מטרה ל-90 יום על בסיס מה שסיפרת.",
-    "onboardingFirstStep": "ה-AI מתרגם את המטרה לצעד קטן ראשון שאפשר לבצע.",
     "formulationQuestions": "ה-AI משתמש במטרה ובהקשר שלך כדי להציע שאלות המשך ממוקדות.",
     "lifeContextRegenerate": "ה-AI מעדכן את צעדי היום לפי ההקשר החדש — בלי למחוק התקדמות שסימנת.",
     "skipRecovery": "ה-AI מתאים צעד חלופי קטן יותר לפי מה שעצר אותך בצעד הקודם."
   },
   "nav": {
     "primary": "ניווט ראשי",
-    "dashboard": "היום",
     "today": "היום",
-    "checkin": "צ׳ק-אין יומי",
     "lifeCoach": "מאמן חיים",
-    "history": "היסטוריה",
     "privacy": "פרטיות",
     "terms": "תנאים",
     "help": "עזרה",
     "settings": "הגדרות",
     "admin": "ניהול",
-    "calmSpace": "מרחב הירגעות",
     "morningRitual": "טקס בוקר",
     "startHereShort": "התחל כאן",
     "todayShort": "היום",
-    "checkinShort": "צ׳ק-אין",
     "lifeCoachShort": "מטרות",
     "progressShort": "התקדמות",
     "profileShort": "פרופיל",
@@ -45,7 +37,6 @@
     "virtualCoachShort": "מאמן",
     "clarification": "הבהרה ויעד",
     "clarificationShort": "הבהרה",
-    "calmSpaceShort": "בוקר",
     "eveningResetShort": "ערב",
     "routinesShort": "שגרות",
     "morningRoutine": "שגרת בוקר",
@@ -1934,231 +1925,35 @@
   },
   "onboarding": {
     "stepCounter": "שלב {step} מתוך {total}",
-    "stepCounterWithLabel": "שלב {step} מתוך {total} · {label}",
-    "step1ProgressLabel": "התחלה מהירה",
     "step1Title": "באיזה עולם נתחיל היום?",
     "step1Body": "בחר עולם אחד, ואם יש משהו שמאפיין את התקופה שלך אפשר לסמן. אחר כך נבחר 1-3 משימות קטנות להיום.",
-    "step1TimeHint": "פחות מדקה.",
-    "step1ZoneIdentity": "מי אתה",
     "step1ZoneNow": "איפה אתה עכשיו",
-    "step1ZoneFit": "איך להתאים לך",
     "step1LifeContextHint": "עוזר לנו להתאים עומס, זמן פנוי וסוגי המלצות.",
-    "step1DetailsToggle": "פרטים נוספים להתאמה מדויקת יותר",
-    "step1BackgroundTitle": "פרטים להתאמה",
-    "step1BackgroundBody": "נשתמש בזה רק כדי לדייק את ההמלצות.",
-    "step1BackgroundHint": "משמש להתאמת עומס, זמן פנוי וסוגי המלצות.",
-    "step1SummaryAge": "גיל {age}",
-    "agePlaceholder": "34",
-    "genderPlaceholder": "בחר/י",
-    "familyPlaceholder": "בחר/י",
-    "sleepRoutineLabel": "שגרת שינה",
-    "skipFamily": "אפשר לדלג",
     "lifeContextQuestion": "יש משהו שמאפיין את התקופה שלך?",
     "lifeContextNotePlaceholder": "משפט קצר — אם תרצה/י",
     "quickStartDomainRequired": "בחר/י עולם אחד כדי להמשיך",
-    "scheduleQuestion": "מתי בדרך כלל קם/ה ומתי הולך/ת לישון?",
-    "genderHelpShort": "אופציונלי — משפיע על ניסוח בעברית",
-    "physicalHelpShort": "רק כדי לא להציע משהו לא מתאים",
-    "sleepLabel": "שעת שינה (בערך)",
-    "actionWindowLabel": "מתי הכי נוח לך לפעול?",
     "actionWindow": {
       "morning": "בוקר",
       "midday": "צהריים",
       "evening": "ערב",
       "flexible": "גמיש"
     },
-    "physicalLabel": "התחשבות פיזית",
     "physical": {
       "low_intensity": "מעדיף/ה עדין, לא אינטנסיבי",
       "physical_limitation": "יש מגבלה פיזית שחשוב לקחת בחשבון",
       "pregnancy_postpartum": "הריון / אחרי לידה"
     },
-    "moreOptions": "עוד אפשרויות (אופציונלי)",
-    "lessOptions": "פחות אפשרויות",
-    "nameLabel": "כיצד תרצה/י שנפנה אליך?",
-    "namePlaceholder": "השם שלך",
-    "nameRequired": "נא להזין שם כדי להמשיך",
-    "languageLabel": "באיזו שפה נוח לך?",
-    "wakeLabel": "קימה",
-    "familyLabel": "מצב משפחתי",
-    "optional": "אופציונלי",
     "step2Eyebrow": "תחום מיקוד",
-    "step2Title": "בוא נראה איפה אתה עומד היום.",
-    "step2InnerProgress": "דרגת {rated} מתוך {total} תחומים",
-    "step2GutHint": "תחושת בטן מספיקה. אפשר לדרג רק כמה תחומים ואז לבחור.",
-    "step2SkipRatings": "דלג על דירוגים ובחר תחום",
-    "step2ShowRatings": "חזור לדירוגים",
-    "step2MapEyebrow": "מפת חיים בזמן אמת",
-    "step2MapTitle": "כך נראית התמונה הכוללת שלך.",
-    "step2MapBody": "כל נקודה היא תחום חיים. ככל שהצורה מתרחבת, התחום מרגיש יציב יותר. חפש את המקום שבו צעד קטן יכול לפתוח הכי הרבה תנועה.",
-    "step2MapInsightTitle": "{domain} נראה כמו המקום הנכון להתחיל ממנו.",
-    "step2MapInsightBody": "הפער בין {low} לבין {strong} מראה איפה יש עומס ואיפה כבר יש לך כוח. המפה לא שופטת אותך — היא עוזרת לבחור צעד אחד ברור למחר.",
-    "step2MapStats": {
-      "average": "ממוצע",
-      "gap": "פער גבוה-נמוך",
-      "strongest": "תחום חזק"
-    },
-    "step2MapLowTitle": "3 התחומים שדורשים הכי הרבה תשומת לב",
-    "step2MapLegendTitle": "מקרא צבעים",
-    "step2MapLegend": {
-      "urgent": "דורש תשומת לב",
-      "unstable": "לא יציב",
-      "steady": "יציב",
-      "strong": "חזק"
-    },
-    "step2MapSource": "מבוסס על הדירוג העצמי שלך עכשיו. הסקאלה נשארת 1-10 כדי לא לנפח הבדלים.",
-    "step2MapConclusion": "נקודת הפתיחה המומלצת: {domain}. זה התחום הנמוך ביותר, ושיפור בו יכול להשפיע על שאר התחומים.",
-    "step2GapInsight": "הפער המרכזי: {gap} נקודות בין {low} לבין {high}.",
-    "step2BarTitle": "כך תחומי החיים שלך מדורגים כרגע",
-    "step2ScaleHint": "נמוך = להתחיל כאן",
-    "step2Scale": {
-      "low": "דורש שיפור",
-      "high": "חזק ומאוזן"
-    },
-    "step2RadarTitle": "מבט על",
-    "step2RadarHint": "התווית מופיעה למטה",
-    "step2RadarActive": "התחום שמוצג עכשיו",
-    "step2CurrentDomain": "דרג כאן — המפה מתעדכנת למטה",
-    "domainDeepDive": {
-      "button": "מה זה אומר?",
-      "eyebrow": "הבנת התחום",
-      "whyImportant": "למה זה חשוב?",
-      "includes": "מה התחום הזה כולל?",
-      "score1": "איך נראה 1/10?",
-      "score10": "איך נראה 10/10?",
-      "selfCheck": "שאלה לבדיקה עצמית",
-      "close": "סגור"
-    },
-    "step2LeverageBadge": "מנוף",
-    "step2LeverageTitle": "המנוף האפשרי",
-    "step2LeverageBody": "שיפור של נקודה אחת ב{domain} יכול לשנות איך כל שאר היום מרגיש. לא חייבים לבחור בו, אבל שווה לשים לב.",
-    "step2WhyOneTitle": "למה רק תחום אחד?",
-    "step2WhyOneBody": "כדי שמחר יהיה פשוט ולא עמוס. תחום אחד מאפשר צעד ברור, פוקוס, ומומנטום שאפשר לחזור אליו.",
-    "step2DecisionEyebrow": "בחירת הצעד של מחר",
-    "step2SelectTitle": "עכשיו בחר תחום אחד להתמקד בו.",
-    "step2SelectHint": "הציון הנמוך ביותר שלך הוא ב{domain}. לרוב שם נמצא המנוף הגדול ביותר.",
-    "domainPreview": {
-      "eyebrow": "Preview חי",
-      "body": "אם נבחר {domain}, נבנה למחר צעד קצר שמחבר בין פוקוס, מיינדסט והתקדמות אמיתית."
-    },
-    "step2SelectedConfirm": "בחירה טובה. עכשיו נעמיק ב{domain}.",
-    "step2ChooseToContinue": "בחר תחום כדי להמשיך.",
-    "step2DynamicCta": "בנה לי צעד ראשון ב{domain}",
-    "availableTimeLabel": "כמה זמן באמת פנוי לך ביום?",
     "availableTimeOption": "{mins} דק׳",
-    "intensityLabel": "באיזה קצב נוח לך להתקדם?",
     "intensity": {
       "gentle": "רגוע",
       "balanced": "מאוזן",
       "intense": "אינטנסיבי"
     },
-    "addInYourWords": "רוצה להוסיף במילים שלך? (אופציונלי)",
-    "qFreeTextPlaceholder": "הוסף/י פרטים אם תרצה/י…",
-    "q1LabelLowScore": "דירגת {domain} ב-{score}. מה מהדברים האלה מרגיש הכי נכון?",
-    "q1LabelNotLowest": "מה גרם לך לבחור ב{domain} למרות שיש תחומים עם ציון נמוך יותר?",
-    "q2WhenLabel": "מתי ביום האחרון הרגשת שהתחום הזה עמוס?",
-    "scoreContext": "הציון שלך כאן: {score}/10",
-    "scoreConfirmPrompt": "נראה שזה התחום הכי מאתגר שלך. זה מרגיש נכון?",
-    "scoreConfirm": {
-      "yes": "כן, בדיוק",
-      "partly": "חלקית",
-      "no": "לא ממש"
-    },
-    "situationPick": "איזו סיטואציה הכי מדויקת?",
-    "whenPick": "מתי זה קורה?",
-    "tagPick": "מה מרגיש הכי נכון? (אפשר כמה)",
-    "oneSentenceEnough": "מספיק — אפשר להמשיך",
-    "oneSentenceHint": "עוד קצת או בחר/י למעלה",
-    "voiceStart": "תגיד בקול — אני אסדר",
-    "voiceStop": "עצור הקלטה",
-    "helpMeExpress": "קשה לי לבטא — תעזור לי להמשיך",
-    "goalMetricLabel": "איך נדע שהצלחנו",
-    "firstTaskTomorrow": "אעשה מחר בבוקר",
-    "celebrateBodyDeferred": "הגדרת מטרה ב{domain} ותכננת את הפעולה הראשונה למחר. כך מתחיל שינוי, {name}.",
-    "celebrateScheduled": "מתוזמן למחר",
     "resumeBanner": "ממשיכים מאיפה שעצרת",
     "resumeStartOver": "התחל מחדש",
-    "aiError": "לא הצלחנו לייצר תשובה. נסה שוב.",
-    "genericError": "משהו השתבש. נסה שוב.",
-    "analyzing": "מנתח…",
-    "step3Eyebrow": "בוא נעמיק",
-    "step3Quick": {
-      "scoreLabel": "הציון שנתת בשלב הקודם",
-      "optionalNote": "רוצה להוסיף במילים שלך? (אופציונלי)",
-      "phraseHelpToggle": "קשה לי לנסח — תן לי משפטים מוכנים",
-      "phraseHelpHint": "זה בסדר. אפשר לבחור משפט מוכן ולערוך אותו.",
-      "reflectionEyebrow": "מה שאני שומע",
-      "buildInsight": "בנה את התובנה שלי"
-    },
-    "step3Aha": "נראה שהמנוף שלך כרגע הוא {domain}. מכאן נבנה צעד קטן למחר, לא עוד רשימת משימות.",
-    "q1Label": "למה {domain} דווקא?",
-    "q3Label": "מה יקרה אם שום דבר לא ישתנה עוד שנה?",
-    "q4Label": "מה יקרה אם תצליח?",
-    "nextQuestion": "הבא",
-    "skipQuestion": "דלג",
-    "insightLabel": "מה שאני שומע ממך",
-    "generating": "מייצר תובנה…",
-    "seeInsight": "ראה את התובנה שלך",
-    "continueToGoal": "המשך אל המטרה",
-    "step4Eyebrow": "המטרה שלך ל-90 יום",
-    "step4Title": "הנה מה שאני מציע.",
-    "step4Body": "על סמך כל מה שסיפרת לי. ערוך אם זה לא מרגיש נכון.",
-    "goalProposedLabel": "מטרה מוצעת",
-    "goalEditHint": "לחץ לעריכה. תעשה אותה שלך.",
-    "savingGoal": "שומר…",
-    "confirmGoal": "זו המטרה שלי",
-    "step5Eyebrow": "מתחילים עכשיו",
-    "step5Title": "מצוין. פעולה קטנה אחת, {name}.",
-    "step5Body": "עשה את הדבר הזה לפני שנכנס לאפליקציה. זה לוקח פחות מ-5 דקות.",
-    "tomorrowReasonMini": {
-      "eyebrow": "למה לחזור מחר",
-      "body": "כי אחרי הפעולה הזאת האפליקציה כבר לא מתחילה מאפס. מחר היא תמשיך מאותו כיוון ותציע את הצעד הבא."
-    },
-    "firstTaskLabel": "המשימה הראשונה שלך",
-    "firstTaskSaveError": "לא הצלחנו לשמור את המשימה הראשונה. נסה שוב.",
-    "firstTaskMissingError": "חסרים פרטי המשימה הראשונה. חזור לשלב הקודם או התחל מחדש.",
-    "goalCreateError": "לא הצלחנו ליצור את המטרה. נסה שוב.",
-    "firstTaskDone": "✓  סיימתי — עשיתי את זה",
     "saving": "שומר…",
-    "celebrateTitle": "כבר ניצחת.",
-    "celebrateBody": "הגדרת מטרה ב{domain} והשלמת את הפעולה הראשונה שלך. כך מתחיל שינוי, {name}.",
-    "celebrateFirstStep": "פעולה ראשונה הושלמה",
-    "celebrateDone": "הושלם",
-    "completionSummary": {
-      "accomplishmentsTitle": "מה עשינו עכשיו",
-      "goalSet": "הגדרת מטרה ב{domain}",
-      "firstStepCreated": "יצרנו צעד ראשון — מחכה לך בבית",
-      "firstStepCompleted": "השלמת את הצעד הראשון",
-      "intro": "הגדרת מטרה, יצרנו צעד ראשון — מכאן משתמשים באפליקציה כך:",
-      "title": "הלולאה היומית"
-    },
-    "returnTomorrow": {
-      "eyebrow": "למה לחזור מחר",
-      "title": "מחר בונים את החוליה השנייה.",
-      "completedBody": "כי כבר הוכחת שהצעד הראשון אפשרי. מחר האפליקציה תהפוך את זה לצעד הקטן הבא.",
-      "deferredBody": "כי הפעולה הראשונה כבר מחכה לך. מחר מתחיל מצעד ברור אחד, לא מעוד תהליך הגדרה."
-    },
-    "tomorrowHomePreview": {
-      "eyebrow": "כך ייראה הבוקר שלך מחר",
-      "title": "מסך הבית כבר יחכה עם כיוון ברור.",
-      "focusLabel": "הפעולה המרכזית",
-      "fallbackStep": "צעד קטן ראשון ב{domain}",
-      "metrics": {
-        "focus": {"value": "1", "label": "צעד"},
-        "streak": {"value": "0→1", "label": "רצף"},
-        "progress": {"value": "+", "label": "מומנטום"}
-      }
-    },
-    "identityClose": "אתה לא חוזר לאפליקציה. אתה חוזר לאדם שאמרת שאתה רוצה להיות מחר.",
-    "enterApp": "כנס לאפליקציה",
-    "back": "חזרה",
     "next": "המשך",
-    "eyebrow": "צ׳ק-אין ראשון",
-    "title": "שלוש דקות. קריאה כנה אחת. צעד הבא אחד שמותאם אליך.",
-    "step1": "דרג את המצב המנטלי והפיזי שלך בלי להציג הצגה.",
-    "step2": "בחר תגית אחת או שתיים כדי שהמנוע יקרא את הדפוס המדויק.",
-    "step3": "השתמש בהיגד ובהתערבות המותאמים כדי לזוז, לא כדי להסתבך בעוד מחשבות.",
-    "start": "להתחיל",
     "family": {
       "single": "רווק/רווקה",
       "in_relationship": "בזוגיות",
@@ -2692,16 +2487,13 @@
     "tabs": {
       "content": "תוכן",
       "identities": "ניהול זהויות",
-      "contentStudio": "Content Studio",
       "database": "מסד נתונים",
-      "data": "נתונים",
       "logs": "לוגים",
       "settings": "הגדרות"
     },
     "shell": {
       "breadcrumbRoot": "אדמין",
       "tabs": {
-        "content-studio": "Content Studio",
         "content": "תוכן",
         "identities": "ניהול זהויות",
         "logs": "לוגים",
@@ -2709,7 +2501,6 @@
         "database": "מסד נתונים"
       },
       "tabHint": {
-        "content-studio": "כאן רואים ומסנכרנים את כל מקורות התוכן באפליקציה.",
         "content": "כאן עורכים אמירות ויעדי ברירת מחדל לטקס הבוקר.",
         "identities": "הוספה ומחיקה של הצהרות זהות שמופיעות בבוחר הטקס.",
         "logs": "כאן בודקים שגיאות מהלקוח/שרת לפי תאריך.",
@@ -2759,13 +2550,11 @@
         "steps": {
           "localToken": "שמור LOCAL_AUTH_TOKEN",
           "adminToken": "שמור ADMIN_API_TOKEN",
-          "dbConnection": "בדוק חיבור ל־DB",
-          "contentStudioSync": "סנכרן Content Studio ל־DB"
+          "dbConnection": "בדוק חיבור ל־DB"
         }
       },
       "activity": {
         "never": "מעולם לא",
-        "contentStudioSync": "סנכרון Content Studio אחרון",
         "dbSync": "ייבוא DB אחרון",
         "export": "ייצוא אחרון",
         "settingsSave": "שמירת הגדרה אחרונה",
@@ -2817,13 +2606,6 @@
           "avoid": "מה לא לעשות",
           "buttons": "כפתורים מרכזיים"
         },
-        "content-studio": {
-          "title": "עזרה — Content Studio",
-          "what": "מלאי חי של תרגומים, JSON, פרומפטים ותוכן מ־DB עם תוויות סיכון.",
-          "when": "לפני שינוי טקסטים, פרומפטים או תכנון מיגרציית תוכן.",
-          "avoid": "סנכרון ל־DB לא משנה טקסט בזמן ריצה — רק מעתיק את ה־registry.",
-          "buttons": "בדוק DB = צפייה. סנכרן ל־DB = כתיבה. presets מבוססי משימה, לא שמות שדות."
-        },
         "content": {
           "title": "עזרה — תוכן",
           "what": "ניהול אמירות ויעדי ברירת מחדל לטקס הבוקר.",
@@ -2861,50 +2643,25 @@
         }
       },
       "risk": {
-        "content-studio": {"label": "בטוח"},
-        "content": {"label": "משנה טקס"},
-        "identities": {"label": "משנה טקס"},
-        "logs": {"label": "צפייה"},
-        "settings": {"label": "מקומי"},
-        "database": {"label": "סיכון גבוה"}
+        "content": {
+          "label": "משנה טקס"
+        },
+        "identities": {
+          "label": "משנה טקס"
+        },
+        "logs": {
+          "label": "צפייה"
+        },
+        "settings": {
+          "label": "מקומי"
+        },
+        "database": {
+          "label": "סיכון גבוה"
+        }
       },
       "subCrumbs": {
-        "content-studio": "רישום מקומי",
         "content": "תוכן טקס"
       }
-    },
-    "tooltips": {
-      "tabs": {
-        "contentStudio": "מפת כל מקורות התוכן באפליקציה: תרגומים, JSON, פרומפטים, חוקים ותוכן DB.",
-        "database": "כלי אדמין רגיש לצפייה ושאילתות DB. דורש ADMIN_API_TOKEN. מיועד לבדיקה ותיקון זהיר."
-      },
-      "risk": {
-        "high": "רמת סיכון לפי השפעה על משתמשים, פרסונליזציה, AI, ומורכבות rollback.",
-        "medium": "רמת סיכון לפי השפעה על משתמשים, פרסונליזציה, AI, ומורכבות rollback.",
-        "low": "רמת סיכון לפי השפעה על משתמשים, פרסונליזציה, AI, ומורכבות rollback."
-      },
-      "p1Priority": "P1 אומר שכדאי להעביר את הנכס לניהול גרסאות/אישור לפני נכסים אחרים.",
-      "migrationPriority": {
-        "p1": "P1 — עדיפות מיגרציה הגבוהה ביותר. לסקור ולהעביר לניהול תוכן גרסתי/מאושר לפני נכסים אחרים.",
-        "p2": "P2 — עדיפות בינונית. חשוב להעביר, אבל אחרי שכל נכסי P1 טופלו.",
-        "p3": "P3 — עדיפות נמוכה יותר. אפשר לדחות עד שעבודת המיגרציה של P1 ו־P2 בעיצומה."
-      },
-      "editableNow": "האם אפשר לערוך את התוכן דרך האפליקציה היום, בלי שינוי קוד.",
-      "promptOwned": "תוכן שמוטמע בקוד או בפרומפטים. שינוי שלו דורש deploy ולא רק עריכת DB.",
-      "syncDb": "מסנכרן את ה־registry הנוכחי לטבלאות Content Studio: assets, versions, governance checks ו־audit.",
-      "checkDb": "בודק כמה נכסי Content Studio, גרסאות, בדיקות ואירועי audit קיימים כרגע ב־DB.",
-      "exportSelected": "מייצא רק את הנכסים שסימנת, כדי לשלוח לבדיקה או לעבודת מיגרציה.",
-      "selectHighP1": "מסמן את כל הנכסים בעלי סיכון גבוה או עדיפות מיגרציה ראשונה בתוצאות הנוכחיות.",
-      "localeDelta": "פער במספר יחידות התוכן בין אנגלית לעברית. לא תמיד בעיה, אבל דורש בדיקת parity.",
-      "runtimeUse": "איפה הנכס מופעל בפועל באפליקציה או במסע המשתמש.",
-      "governance": "מה צריך לקרות לפני שינוי או פרסום בטוח: review, evals, rollback, telemetry.",
-      "evalSignals": "מדדים שיעזרו לדעת אם התוכן עובד: השלמה, דילוג, fallback, איכות פלט, locale purity.",
-      "simulatorInputs": "הפרמטרים שצריך לבחור בסימולטור כדי לבדוק איך התוכן מתנהג עבור משתמשים שונים.",
-      "dbLocalMode": "המסך משתמש כרגע ב־registry המקומי בקוד. DB sync זמין רק עם טוקן אדמין.",
-      "needsAttention": "נכס שסומן High risk או P1 ולכן כדאי לבדוק אותו ראשון.",
-      "stable": "לא זוהה כנכס High/P1, אבל עדיין ייתכן שיידרש review לפי שינוי ספציפי.",
-      "copyLink": "מעתיק קישור ישיר לנכס הזה בתוך Content Studio.",
-      "viewMode": "Compact מתאים לסריקה מהירה; Detailed מתאים להבנת ההקשר בלי לפתוח כל נכס."
     },
     "content": {
       "sections": {
@@ -3568,11 +3325,6 @@
     "dailyStepsTitle": "הצעד הבא שלך",
     "coachMessageEyebrow": "המאמן שלך היום",
     "dailyStepsProgress": "צעד {current}/{total}",
-    "dayMode": {
-      "light": "יום קל",
-      "execution": "יום ביצוע",
-      "recovery": "יום התאוששות"
-    },
     "weeklyMinutesInvested": "{minutes} דקות השקעה השבוע",
     "nextAction": {
       "markStep": "עכשיו: סמן צעד",
@@ -3948,28 +3700,6 @@
             "2": "אכין לפגישה ב…",
             "3": "אלמד 20 דקות ב…"
           }
-        }
-      }
-    },
-    "onboarding": {
-      "step2": {
-        "student": "הציון הנמוך ביותר שלך הוא ב{domain}. כסטודנט/ית, לימודים ולחץ מנטלי לרוב בוערים שם.",
-        "new_parent": "הציון הנמוך ביותר שלך הוא ב{domain}. כהורה חדש, שינה ואנרגיה לרוב מרגישים דחופים.",
-        "newParentHealth": "כהורה חדש, שינה ואנרגיה לרוב בוערים — שווה לבדוק את תחום הבריאות (הנמוך שלך: {domain}).",
-        "studentMind": "כסטודנט/ית, לחץ לימודים לרוב משפיע על המוח — תחום המוח עלה (הנמוך שלך: {domain}).",
-        "betweenJobsCareer": "במעבר תעסוקתי, קריירה לרוב מרגישה הכי דחופה (הנמוך שלך: {domain}).",
-        "managerTime": "כמנהל/ת, זמן וגבולות לרוב בוערים — שווה לבדוק את תחום הזמן (הנמוך שלך: {domain}).",
-        "caregiverRelations": "כמטפל/ת, יחסים ועומס רגשי לרוב בוערים (הנמוך שלך: {domain}).",
-        "manager": "הציון הנמוך ביותר שלך הוא ב{domain}. כמנהל/ת, עומס וזמן לרוב מרגישים דחופים.",
-        "caregiver": "הציון הנמוך ביותר שלך הוא ב{domain}. כמטפל/ת, עומס ואחריות לרוב בוערים שם.",
-        "between_jobs": "הציון הנמוך ביותר שלך הוא ב{domain}. במעבר, יציבות וזהות לרוב מרגישים דחופים.",
-        "other": "הציון הנמוך ביותר שלך הוא ב{domain}. לרוב שם נמצא המנוף הגדול ביותר.",
-        "multi": "כשיש כמה הקשרים ביחד, {domain} לרוב מרגיש הכי דחוף — שווה להתחיל משם.",
-        "combo": {
-          "studentNewParent": "בין לימודים להורות חדשה, {domain} לרוב בוער — שווה להתחיל משם.",
-          "newParentCaregiver": "בין הורות לטיפול, {domain} לרוב מרגיש הכי דחוף.",
-          "managerCaregiver": "בין ניהול לטיפול, {domain} לרוב דורש תשומת לב ראשונה.",
-          "studentManager": "בין לימודים לניהול, {domain} לרוב מרגיש הכי לחוץ."
         }
       }
     },

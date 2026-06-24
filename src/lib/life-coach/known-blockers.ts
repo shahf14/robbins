@@ -38,20 +38,6 @@ export type KnownBlockersProfile = {
   decomposition_hint: string | null;
 };
 
-export const BLOCKER_DECOMPOSITION_PROMPT_BLOCK = [
-  '## Blocker-aware goal decomposition (REQUIRED):',
-  'Use known_blockers from the payload — do NOT decompose goals generically.',
-  'Every milestone AND every daily_baby_steps item must address at least one known blocker:',
-  'time | energy | fear | family_overload | lack_of_clarity.',
-  'Map blockers to plan shape:',
-  '- time / family_overload → first steps 3-10 minutes, prep/decision patterns, easy difficulty.',
-  '- energy → short restorative steps, passive/environmental starts.',
-  '- fear → micro-experiments without commitment.',
-  '- lack_of_clarity → mapping/choice steps before big actions.',
-  'Milestone titles should name the friction they reduce (not generic "build habits").',
-  'why_this_step must cite which blocker the step addresses.',
-].join('\n');
-
 const NO_TIME_TEXT = [
   /אין לי זמן/,
   /אין זמן/,

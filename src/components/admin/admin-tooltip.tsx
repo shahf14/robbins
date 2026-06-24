@@ -15,15 +15,6 @@ export function AdminTooltip({tip, className = ''}: {tip: string; className?: st
   );
 }
 
-export function AdminTipLabel({label, tip}: {label: ReactNode; tip: string}) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      {label}
-      <AdminTooltip tip={tip} />
-    </span>
-  );
-}
-
 export function AdminHoverTip({
   tip,
   children,

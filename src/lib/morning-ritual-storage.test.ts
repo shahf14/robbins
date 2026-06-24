@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {readdirSync, readFileSync, statSync} from 'node:fs';
+import {existsSync, readdirSync, readFileSync, statSync} from 'node:fs';
 import {dirname, join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import test from 'node:test';
@@ -560,4 +560,78 @@ test('@types/better-sqlite3 is a dev-only dependency', () => {
 
   assert.ok(pkg.devDependencies['@types/better-sqlite3']);
   assert.equal(pkg.dependencies['@types/better-sqlite3'], undefined);
+});
+
+test('dead-code cleanup removed content-studio i18n and stale env vars', () => {
+  const root = join(here, '..', '..');
+  const en = readFileSync(join(root, 'messages', 'en.json'), 'utf8');
+  const he = readFileSync(join(root, 'messages', 'he.json'), 'utf8');
+  const envExample = readFileSync(join(root, '.env.example'), 'utf8');
+  const envTs = readFileSync(join(here, 'life-coach', 'env.ts'), 'utf8');
+
+  for (const locale of [en, he]) {
+    assert.doesNotMatch(locale, /contentStudio|content-studio/);
+    assert.doesNotMatch(locale, /"tooltips"\s*:/);
+  }
+
+  for (const dead of [
+    'STRIPE_',
+    'TRIAL_DAYS',
+    'TRUST_PROXY',
+    'NEXT_PUBLIC_APP_URL',
+    'FORMULATION_LLM_PROVIDER',
+  ]) {
+    assert.doesNotMatch(envExample, new RegExp(dead));
+  }
+
+  for (const live of [
+    'OPENAI_FORMULATION_EXPLORATION_MODEL',
+    'OPENAI_FORMULATION_DRAFT_MODEL',
+    'OPENAI_FORMULATION_GOAL_MODEL',
+    'FORMULATION_DETERMINISTIC_EXPLORATION',
+  ]) {
+    assert.match(envExample, new RegExp(live));
+  }
+
+  assert.doesNotMatch(envTs, /llmProvider/);
+});
+
+test('dead-code cleanup files stay removed', () => {
+  const root = join(here, '..');
+  const removed = [
+    'lib/onboarding-clarification.ts',
+    'lib/onboarding-step3-content.ts',
+    'lib/onboarding-step3-content.json',
+    'lib/onboarding-ai-context.ts',
+    'app/api/onboarding/ai/route.ts',
+    'app/api/life-coach/behavior-profile/route.ts',
+    'components/onboarding/onboarding-step2-domain-scores.tsx',
+    'components/simple-tasks/freestyle-task-creator.tsx',
+    'lib/ai-life-coach/health-goal-fallback.ts',
+    'lib/ai-life-coach/resolve-daily-step.ts',
+  ];
+
+  for (const rel of removed) {
+    assert.equal(existsSync(join(root, rel)), false, `expected removed: ${rel}`);
+  }
+});
+
+test('CI and package scripts cover the full test suite', () => {
+  const ci = readFileSync(join(here, '..', '..', '.github', 'workflows', 'ci.yml'), 'utf8');
+  const pkg = JSON.parse(readFileSync(join(here, '..', '..', 'package.json'), 'utf8'));
+
+  for (const script of [
+    'test:frontend-audit',
+    'test:api-error',
+    'test:generate-daily-steps-scope',
+    'test:formulation-migration',
+    'test:admin-session',
+    'test:clerk-config',
+    'test:domain-detail-url-state',
+  ]) {
+    assert.ok(pkg.scripts[script], `missing npm script: ${script}`);
+    assert.match(ci, new RegExp(`npm run ${script.replace(':', '\\:')}`));
+  }
+
+  assert.doesNotMatch(ci, /content-studio|test:content-studio/);
 });

@@ -45,3 +45,12 @@ jobs:
 
       - name: Formulation migration tests
         run: npm run test:formulation-migration
+
+      - name: Admin session tests
+        run: npm run test:admin-session
+
+      - name: Clerk config tests
+        run: npm run test:clerk-config
+
+      - name: Domain detail URL state tests
+        run: npm run test:domain-detail-url-state

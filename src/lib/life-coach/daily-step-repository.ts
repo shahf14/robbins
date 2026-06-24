@@ -479,30 +479,6 @@ export async function replaceDailyBabyStepWithCuratedContent(
   return rowToStep(row);
 }
 
-export async function rescheduleDailyBabyStep(
-  id: string,
-  newDate: string,
-  rescheduledFrom?: string,
-  userId?: string
-): Promise<DailyBabyStep> {
-  const now = new Date().toISOString();
-  // Capture original date on first reschedule; increment reschedule_count each time
-  dbRun(
-    `UPDATE daily_steps
-     SET scheduled_date = ?, status = 'pending', updated_at = ?,
-         rescheduled_from = COALESCE(rescheduled_from, ?),
-         reschedule_count = reschedule_count + 1
-     WHERE id = ?${userId ? ' AND user_id = ?' : ''}`,
-    [newDate, now, rescheduledFrom ?? null, id, ...(userId ? [userId] : [])]
-  );
-  const row = dbGet<Record<string, unknown>>(
-    userId ? `SELECT * FROM daily_steps WHERE id = ? AND user_id = ?` : `SELECT * FROM daily_steps WHERE id = ?`,
-    userId ? [id, userId] : [id]
-  );
-  if (!row) throw new Error(`Step ${id} not found`);
-  return rowToStep(row);
-}
-
 export async function deleteDailyBabyStep(id: string, userId?: string): Promise<void> {
   const result = dbRun(
     userId ? `DELETE FROM daily_steps WHERE id = ? AND user_id = ?` : `DELETE FROM daily_steps WHERE id = ?`,

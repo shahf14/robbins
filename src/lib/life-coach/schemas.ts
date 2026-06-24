@@ -120,15 +120,6 @@ const goalCreateResponseSchema = z.object({
   goal: z.object({id: goalIdSchema}).passthrough(),
 });
 
-export function requireGoalId(
-  value: unknown,
-  message = 'Invalid goal id'
-): string {
-  const parsed = goalIdSchema.safeParse(value);
-  if (!parsed.success) throw new Error(message);
-  return parsed.data;
-}
-
 export function parseGoalCreateResponse(payload: unknown): {goal: {id: string}} {
   const parsed = goalCreateResponseSchema.safeParse(payload);
   if (!parsed.success) {

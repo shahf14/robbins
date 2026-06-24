@@ -64,19 +64,6 @@ export function getPersonalDayPhase(
   return 'night';
 }
 
-export function personalDashboardSubtitleKey(phase: PersonalDayPhase, beforeWake: boolean): string {
-  if (beforeWake) {
-    return 'schedule.dashboard.subtitle.beforeWake';
-  }
-  const phaseKey =
-    phase === 'pre_wake' ? 'preWake'
-    : phase === 'morning' ? 'morning'
-    : phase === 'afternoon' ? 'afternoon'
-    : phase === 'evening' ? 'evening'
-    : 'night';
-  return `schedule.dashboard.subtitle.${phaseKey}`;
-}
-
 export function assignSuggestedStepTimes(
   stepCount: number,
   wakeTime = DEFAULT_WAKE,

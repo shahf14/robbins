@@ -46,7 +46,3 @@ export function getLifeWheelBandColor(score: number): string {
   if (value <= 7) return '#3b82f6';
   return '#10b981';
 }
-
-export function getLifeWheelThumbPercent(score: number): number {
-  return ((clampLifeWheelScore(score) - 1) / 9) * 100;
-}

@@ -1,33 +1,7 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
-import {deleteGoal, getGoalById, listMilestonesForGoal, updateGoal} from '@/lib/life-coach/repository';
+import {deleteGoal, updateGoal} from '@/lib/life-coach/repository';
 import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {goalUpdateInputSchema} from '@/lib/life-coach/schemas';
-
-export async function GET(
-  request: Request,
-  {params}: {params: Promise<{id: string}>}
-) {
-  const current = await requireLifeCoachAccess(request);
-
-  if (!current.ok) {
-    return current.response;
-  }
-
-  const {id} = await params;
-
-  try {
-    const goal = await getGoalById(id, current.user.id);
-
-    if (!goal) {
-      return jsonError('Goal not found.', 404);
-    }
-
-    const milestones = await listMilestonesForGoal(id, current.user.id);
-    return jsonOk({goal, milestones});
-  } catch (error) {
-    return jsonError('Could not load goal.', 500, String(error));
-  }
-}
 
 export async function PATCH(
   request: Request,

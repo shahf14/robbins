@@ -100,7 +100,6 @@ import {resolveDailyFocusContext} from '@/lib/daily-focus-context';
 import {applyStepValueFeedbackToCalibration} from '@/lib/step-value-feedback/apply-calibration';
 import {
   applyOverplanningToAdaptiveTaskCount,
-  applyOverplanningToCalibration,
   detectOverplanning,
   type OverplanningContext,
 } from '@/lib/life-coach/overplanning';

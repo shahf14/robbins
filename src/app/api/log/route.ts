@@ -3,6 +3,7 @@ import {join} from 'node:path';
 import {NextResponse} from 'next/server';
 import {tooManyRequests, payloadTooLarge} from '@/lib/api-response';
 import {requireCurrentUser} from '@/lib/auth/get-current-user';
+import {formatJerusalemLogDate} from '@/lib/client-logs';
 import {dbGet, dbRun} from '@/lib/db/sqlite';
 import {redactLogFields} from '@/lib/log-redaction';
 import {parseJsonObjectOr} from '@/lib/safe-json';
@@ -86,21 +87,6 @@ function pruneRateLimit(now: number) {
   }
 }
 
-function formatJerusalemDate(value: Date) {
-  const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Jerusalem',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).formatToParts(value);
-
-  const year = parts.find((part) => part.type === 'year')?.value;
-  const month = parts.find((part) => part.type === 'month')?.value;
-  const day = parts.find((part) => part.type === 'day')?.value;
-
-  return `${year}-${month}-${day}`;
-}
-
 function stringValue(value: unknown) {
   return typeof value === 'string' ? value.slice(0, MAX_LOG_FIELD_LENGTH) : undefined;
 }
@@ -129,7 +115,7 @@ function buildLogLine(payload: ClientLogPayload) {
 }
 
 function canWriteLogBytes(userId: string, nextBytes: number) {
-  const logDate = formatJerusalemDate(new Date());
+  const logDate = formatJerusalemLogDate();
   const row = dbGet<{bytes_written: number}>(
     `SELECT bytes_written FROM client_log_usage WHERE user_id = ? AND log_date = ?`,
     [userId, logDate]
@@ -139,7 +125,7 @@ function canWriteLogBytes(userId: string, nextBytes: number) {
 }
 
 function recordLogBytes(userId: string, bytes: number) {
-  const logDate = formatJerusalemDate(new Date());
+  const logDate = formatJerusalemLogDate();
   dbRun(
     `INSERT INTO client_log_usage (user_id, log_date, bytes_written)
      VALUES (?, ?, ?)
@@ -151,7 +137,7 @@ function recordLogBytes(userId: string, bytes: number) {
 
 async function writeClientLog(userId: string, logLine: string) {
   const logsDir = join(process.cwd(), 'logs');
-  const fileName = `${formatJerusalemDate(new Date())}.log`;
+  const fileName = `${formatJerusalemLogDate()}.log`;
 
   await mkdir(logsDir, {recursive: true});
   await appendFile(join(logsDir, fileName), logLine, 'utf8');

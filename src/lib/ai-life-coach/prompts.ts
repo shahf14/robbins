@@ -24,7 +24,6 @@ import { recurringBlockerPatternsForPrompt } from '@/lib/blocker-patterns/detect
 import type { RecurringBlockerPattern } from '@/lib/blocker-patterns/types';
 import type {AdaptiveTaskCountReason} from '@/lib/life-coach/adaptive-task-count';
 import {STEP_CONTRACT_PROMPT_BLOCK} from '@/lib/life-coach/step-contract';
-import {BLOCKER_DECOMPOSITION_PROMPT_BLOCK} from '@/lib/life-coach/known-blockers';
 import type {KnownBlockersProfile} from '@/lib/life-coach/known-blockers';
 import {knownBlockersForPrompt} from '@/lib/life-coach/known-blockers';
 import {GOAL_REALISM_PROMPT_BLOCK} from '@/lib/life-coach/goal-realism-check';
@@ -107,7 +106,6 @@ import {
 } from '@/lib/step-value-feedback/summarize';
 import {VALUE_GATE_PROMPT_BLOCK} from '@/lib/life-coach/value-gate';
 import {
-  applyPersonalDifficultyCalibration,
   calibrationForPrompt,
   type PersonalDifficultyCalibration,
 } from '@/lib/life-coach/personal-difficulty-calibration';

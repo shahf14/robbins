@@ -7,9 +7,6 @@ type AiActionHelpKind =
   | 'goalStructure'
   | 'insight'
   | 'weeklyReview'
-  | 'onboardingInsight'
-  | 'onboardingGoal'
-  | 'onboardingFirstStep'
   | 'formulationQuestions'
   | 'lifeContextRegenerate'
   | 'skipRecovery';

@@ -65,7 +65,3 @@ export function currentWeekWindow() {
     end,
   };
 }
-
-export function openAiRequestSignal() {
-  return AbortSignal.timeout(15_000);
-}

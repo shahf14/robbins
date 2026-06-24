@@ -117,13 +117,3 @@ export function resetCuratedTasksForDomain(tasks: AdminCuratedTask[], domain: Li
   const other = tasks.filter((task) => task.world !== domain);
   return [...other, ...builtins];
 }
-
-export function resetCuratedTaskLibraryToBuiltin(): AdminCuratedTask[] {
-  const next = createDefaultCuratedTaskLibrary();
-  saveCuratedTaskLibrary(next);
-  return next;
-}
-
-export function builtinCountForDomain(domain: LifeDomain): number {
-  return getBuiltinCuratedTasksForDomain(domain).length;
-}

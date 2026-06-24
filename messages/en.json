@@ -14,30 +14,22 @@
     "goalStructure": "The AI uses your answers, domain, and available time to shape a goal and milestones.",
     "insight": "The AI analyzes steps, reflections, and blockers to suggest a tailored insight.",
     "weeklyReview": "The AI reviews your week — what worked, what blocked you, and what to adjust.",
-    "onboardingInsight": "The AI uses your answers to draft an insight before building your goal.",
-    "onboardingGoal": "The AI builds a 90-day goal based on what you shared.",
-    "onboardingFirstStep": "The AI turns your goal into a small first step you can act on.",
     "formulationQuestions": "The AI uses your goal and context to suggest focused follow-up questions.",
     "lifeContextRegenerate": "The AI refreshes today's steps for your new context — without erasing progress you marked.",
     "skipRecovery": "The AI adapts a smaller alternative step based on what blocked the previous one."
   },
   "nav": {
     "primary": "Primary navigation",
-    "dashboard": "Today",
     "today": "Today",
-    "checkin": "Daily Check-In",
     "lifeCoach": "Life Coach",
-    "history": "History",
     "privacy": "Privacy",
     "terms": "Terms",
     "help": "Help",
     "settings": "Settings",
     "admin": "Admin",
-    "calmSpace": "Calm Space",
     "morningRitual": "Morning Ritual",
     "startHereShort": "Start Here",
     "todayShort": "Today",
-    "checkinShort": "Check-In",
     "lifeCoachShort": "Goals",
     "progressShort": "Progress",
     "profileShort": "Profile",
@@ -45,7 +37,6 @@
     "virtualCoachShort": "Coach",
     "clarification": "Clarification & goal",
     "clarificationShort": "Clarify",
-    "calmSpaceShort": "Morning",
     "eveningResetShort": "Evening",
     "routinesShort": "Routines",
     "morningRoutine": "Morning routine",
@@ -1934,231 +1925,35 @@
   },
   "onboarding": {
     "stepCounter": "Step {step} of {total}",
-    "stepCounterWithLabel": "Step {step} of {total} · {label}",
-    "step1ProgressLabel": "Quick start",
     "step1Title": "Which area should we start with today?",
     "step1Body": "Choose one area, and optionally mark anything that describes this season of life. Then you'll choose 1-3 small tasks for today.",
-    "step1TimeHint": "Less than a minute.",
-    "step1ZoneIdentity": "Who you are",
     "step1ZoneNow": "Where you are now",
-    "step1ZoneFit": "How to tailor for you",
     "step1LifeContextHint": "Helps us match load, free time, and recommendation types.",
-    "step1DetailsToggle": "More details for finer tailoring",
-    "step1BackgroundTitle": "Details for tailoring",
-    "step1BackgroundBody": "We'll only use this to fine-tune recommendations.",
-    "step1BackgroundHint": "Used for load, free time, and recommendation types.",
-    "step1SummaryAge": "Age {age}",
-    "agePlaceholder": "34",
-    "genderPlaceholder": "Choose",
-    "familyPlaceholder": "Choose",
-    "sleepRoutineLabel": "Sleep routine",
-    "skipFamily": "Skip for now",
     "lifeContextQuestion": "Is anything shaping this season of life?",
     "lifeContextNotePlaceholder": "A short note — if you'd like",
     "quickStartDomainRequired": "Choose one area to continue",
-    "scheduleQuestion": "When do you usually wake up and go to sleep?",
-    "genderHelpShort": "Optional — affects Hebrew phrasing",
-    "physicalHelpShort": "So we don't suggest something that doesn't fit",
-    "sleepLabel": "Typical bedtime",
-    "actionWindowLabel": "When is easiest for you to take action?",
     "actionWindow": {
       "morning": "Morning",
       "midday": "Midday",
       "evening": "Evening",
       "flexible": "Flexible"
     },
-    "physicalLabel": "Physical considerations",
     "physical": {
       "low_intensity": "Prefer gentle, not intense",
       "physical_limitation": "A physical limitation to respect",
       "pregnancy_postpartum": "Pregnancy / postpartum"
     },
-    "moreOptions": "More options (optional)",
-    "lessOptions": "Fewer options",
-    "nameLabel": "What should we call you?",
-    "namePlaceholder": "Your name",
-    "nameRequired": "Please enter your name to continue",
-    "languageLabel": "Which language feels right?",
-    "wakeLabel": "Wake up",
-    "familyLabel": "Family situation",
-    "optional": "optional",
     "step2Eyebrow": "Focus area",
-    "step2Title": "Let's see where you stand today.",
-    "step2InnerProgress": "Rated {rated} of {total} areas",
-    "step2GutHint": "Gut feel is enough. You can rate only a few areas and then choose.",
-    "step2SkipRatings": "Skip ratings and choose an area",
-    "step2ShowRatings": "Back to ratings",
-    "step2MapEyebrow": "Live life map",
-    "step2MapTitle": "This is your full picture.",
-    "step2MapBody": "Each point is a life area. The wider the shape, the steadier that area feels. Look for where one small step could unlock the most movement.",
-    "step2MapInsightTitle": "{domain} looks like the right place to start.",
-    "step2MapInsightBody": "The gap between {low} and {strong} shows where life feels loaded and where you already have strength. The map is not judging you — it helps choose one clear step for tomorrow.",
-    "step2MapStats": {
-      "average": "Average",
-      "gap": "High-low gap",
-      "strongest": "Strong area"
-    },
-    "step2MapLowTitle": "3 areas needing the most attention",
-    "step2MapLegendTitle": "Color key",
-    "step2MapLegend": {
-      "urgent": "Needs attention",
-      "unstable": "Unstable",
-      "steady": "Steady",
-      "strong": "Strong"
-    },
-    "step2MapSource": "Based on your self-rating right now. The scale stays 1-10 so differences are not inflated.",
-    "step2MapConclusion": "Recommended starting point: {domain}. This is your lowest area, and improving it can influence the rest.",
-    "step2GapInsight": "Main gap: {gap} points between {low} and {high}.",
-    "step2BarTitle": "How your life areas rank right now",
-    "step2ScaleHint": "Low = start here",
-    "step2Scale": {
-      "low": "Needs work",
-      "high": "Strong and balanced"
-    },
-    "step2RadarTitle": "Overview",
-    "step2RadarHint": "label shown below",
-    "step2RadarActive": "Area shown now",
-    "step2CurrentDomain": "Rate here — the map updates below",
-    "domainDeepDive": {
-      "button": "What does this mean?",
-      "eyebrow": "Understanding this area",
-      "whyImportant": "Why does this matter?",
-      "includes": "What does this area include?",
-      "score1": "What does 1/10 look like?",
-      "score10": "What does 10/10 look like?",
-      "selfCheck": "A question to check yourself",
-      "close": "Close"
-    },
-    "step2LeverageBadge": "Leverage",
-    "step2LeverageTitle": "Possible leverage point",
-    "step2LeverageBody": "Improving {domain} by just 1 point could change how the rest of the day feels. You do not have to choose it, but it is worth noticing.",
-    "step2WhyOneTitle": "Why only one area?",
-    "step2WhyOneBody": "So tomorrow stays simple, not crowded. One area gives you a clear step, focus, and momentum to return to.",
-    "step2DecisionEyebrow": "Choose tomorrow's step",
-    "step2SelectTitle": "Now pick one area to focus on.",
-    "step2SelectHint": "Your lowest score is in {domain}. That's often where the biggest leverage is.",
-    "domainPreview": {
-      "eyebrow": "Live preview",
-      "body": "If we choose {domain}, tomorrow gets a short step that connects focus, mindset, and real progress."
-    },
-    "step2SelectedConfirm": "Great choice. Let's go deep on {domain}.",
-    "step2ChooseToContinue": "Choose an area to continue.",
-    "step2DynamicCta": "Build my first step in {domain}",
-    "availableTimeLabel": "How much time do you actually have each day?",
     "availableTimeOption": "{mins} min",
-    "intensityLabel": "What pace feels right for you?",
     "intensity": {
       "gentle": "Gentle",
       "balanced": "Balanced",
       "intense": "Intense"
     },
-    "addInYourWords": "Want to add in your own words? (optional)",
-    "qFreeTextPlaceholder": "Add details if you'd like…",
-    "q1LabelLowScore": "You rated {domain} {score}/10. Which of these feels most true?",
-    "q1LabelNotLowest": "What made you choose {domain} even though other areas scored lower?",
-    "q2WhenLabel": "When in the last day did this area feel most loaded?",
-    "scoreContext": "Your score here: {score}/10",
-    "scoreConfirmPrompt": "This looks like your most challenging area. Does that feel right?",
-    "scoreConfirm": {
-      "yes": "Yes, exactly",
-      "partly": "Partly",
-      "no": "Not really"
-    },
-    "situationPick": "Which situation fits best?",
-    "whenPick": "When does it happen?",
-    "tagPick": "What feels most true? (pick any)",
-    "oneSentenceEnough": "Enough — you can continue",
-    "oneSentenceHint": "A bit more, or pick above",
-    "voiceStart": "Say it out loud — I'll tidy it up",
-    "voiceStop": "Stop recording",
-    "helpMeExpress": "Hard to express — help me continue",
-    "firstTaskTomorrow": "I'll do it tomorrow morning",
-    "celebrateBodyDeferred": "You set a goal in {domain} and scheduled your first action for tomorrow. That's how change starts, {name}.",
-    "celebrateScheduled": "Scheduled for tomorrow",
     "resumeBanner": "Continuing where you left off",
     "resumeStartOver": "Start over",
-    "aiError": "Could not generate a response. Try again.",
-    "genericError": "Something went wrong. Try again.",
-    "analyzing": "Analysing…",
-    "step3Eyebrow": "Let's go deeper",
-    "step3Quick": {
-      "scoreLabel": "The rating you gave in the previous step",
-      "optionalNote": "Want to add in your own words? (optional)",
-      "phraseHelpToggle": "Hard to phrase — give me ready sentences",
-      "phraseHelpHint": "That's okay. Pick a ready sentence and edit it.",
-      "reflectionEyebrow": "What I'm hearing",
-      "buildInsight": "Build my insight"
-    },
-    "step3Aha": "It looks like {domain} is your current leverage point. From here we build tomorrow's small step, not another task list.",
-    "q1Label": "Why {domain} specifically?",
-    "q3Label": "What happens if nothing changes in a year?",
-    "q4Label": "What happens if you actually succeed?",
-    "nextQuestion": "Next",
-    "skipQuestion": "Skip",
-    "insightLabel": "What I hear from you",
-    "generating": "Generating insight…",
-    "seeInsight": "See your insight",
-    "continueToGoal": "Continue to your goal",
-    "step4Eyebrow": "Your 90-day goal",
-    "step4Title": "Here is what I propose.",
-    "step4Body": "Based on everything you've told me. Edit it if it doesn't feel right.",
-    "goalProposedLabel": "Proposed goal",
-    "goalEditHint": "Tap to edit. Make it yours.",
-    "goalMetricLabel": "How we'll know you succeeded",
-    "savingGoal": "Saving…",
-    "confirmGoal": "This is my goal",
-    "step5Eyebrow": "Let's start right now",
-    "step5Title": "Good. One small action, {name}.",
-    "step5Body": "Do this one thing before you enter the app. It takes less than 5 minutes.",
-    "tomorrowReasonMini": {
-      "eyebrow": "Why come back tomorrow",
-      "body": "Because after this action, the app no longer starts from zero. Tomorrow it continues from the same direction and gives you the next step."
-    },
-    "firstTaskLabel": "Your first task",
-    "firstTaskSaveError": "Could not save your first task. Please try again.",
-    "firstTaskMissingError": "First-task details are missing. Go back a step or start over.",
-    "goalCreateError": "Could not create your goal. Please try again.",
-    "firstTaskDone": "✓  Done — I did it",
     "saving": "Saving…",
-    "celebrateTitle": "You're already winning.",
-    "celebrateBody": "You set a goal in {domain} and completed your first action. That's how change starts, {name}.",
-    "celebrateFirstStep": "First action completed",
-    "celebrateDone": "Completed",
-    "completionSummary": {
-      "accomplishmentsTitle": "What we set up",
-      "goalSet": "You set a goal in {domain}",
-      "firstStepCreated": "We created a first step — waiting for you at home",
-      "firstStepCompleted": "You completed your first step",
-      "intro": "You set a goal and we created a first step — from here, use the app like this:",
-      "title": "Your daily loop"
-    },
-    "returnTomorrow": {
-      "eyebrow": "Why come back tomorrow",
-      "title": "Tomorrow we build the second link.",
-      "completedBody": "Because you already proved the first step is possible. Tomorrow the app will turn that into the next small move.",
-      "deferredBody": "Because the first action is waiting for you. Tomorrow starts with one clear move, not another setup flow."
-    },
-    "tomorrowHomePreview": {
-      "eyebrow": "Your morning tomorrow",
-      "title": "Home will already be waiting with a clear direction.",
-      "focusLabel": "Main action",
-      "fallbackStep": "One small first step in {domain}",
-      "metrics": {
-        "focus": {"value": "1", "label": "Step"},
-        "streak": {"value": "0→1", "label": "Streak"},
-        "progress": {"value": "+", "label": "Momentum"}
-      }
-    },
-    "identityClose": "You are not coming back to an app. You are coming back to the person you said you want to be tomorrow.",
-    "enterApp": "Enter the app",
-    "back": "Back",
     "next": "Continue",
-    "eyebrow": "First check-in",
-    "title": "Three minutes. One honest read. One optimized next move.",
-    "step1": "Rate your mental and physical state without performing.",
-    "step2": "Choose one or two state tags so the engine can read the pattern.",
-    "step3": "Use the personalized affirmation and intervention to move, not to ruminate.",
-    "start": "Start",
     "family": {
       "single": "Single",
       "in_relationship": "In a relationship",
@@ -2692,16 +2487,13 @@
     "tabs": {
       "content": "Content",
       "identities": "Identities",
-      "contentStudio": "Content Studio",
       "database": "Database",
-      "data": "Data",
       "logs": "Logs",
       "settings": "Settings"
     },
     "shell": {
       "breadcrumbRoot": "Admin",
       "tabs": {
-        "content-studio": "Content Studio",
         "content": "Content",
         "identities": "Identities",
         "logs": "Logs",
@@ -2709,7 +2501,6 @@
         "database": "Database"
       },
       "tabHint": {
-        "content-studio": "View and sync all content sources across the app.",
         "content": "Edit affirmations and default goals for the morning ritual.",
         "identities": "Add and remove identity declarations shown in the ritual picker.",
         "logs": "Inspect client and server errors for a chosen date.",
@@ -2759,13 +2550,11 @@
         "steps": {
           "localToken": "Save LOCAL_AUTH_TOKEN",
           "adminToken": "Save ADMIN_API_TOKEN",
-          "dbConnection": "Check DB connection",
-          "contentStudioSync": "Sync Content Studio to DB"
+          "dbConnection": "Check DB connection"
         }
       },
       "activity": {
         "never": "never",
-        "contentStudioSync": "Last Content Studio sync",
         "dbSync": "Last DB import",
         "export": "Last export",
         "settingsSave": "Last saved setting",
@@ -2817,13 +2606,6 @@
           "avoid": "What not to do",
           "buttons": "Main buttons"
         },
-        "content-studio": {
-          "title": "Content Studio help",
-          "what": "Live inventory of messages, JSON, prompts, and DB-backed content with risk labels.",
-          "when": "Before changing copy, prompts, or planning a content migration.",
-          "avoid": "Do not assume Sync to DB edits runtime text — it only mirrors the registry.",
-          "buttons": "Check DB = read-only status. Sync to DB = writes registry snapshot. Guided presets filter by task, not raw field names."
-        },
         "content": {
           "title": "Content help",
           "what": "Manage affirmations and default goals for the morning ritual.",
@@ -2861,50 +2643,25 @@
         }
       },
       "risk": {
-        "content-studio": {"label": "Safe"},
-        "content": {"label": "Changes ritual"},
-        "identities": {"label": "Changes ritual"},
-        "logs": {"label": "Read-only"},
-        "settings": {"label": "Local"},
-        "database": {"label": "High risk"}
+        "content": {
+          "label": "Changes ritual"
+        },
+        "identities": {
+          "label": "Changes ritual"
+        },
+        "logs": {
+          "label": "Read-only"
+        },
+        "settings": {
+          "label": "Local"
+        },
+        "database": {
+          "label": "High risk"
+        }
       },
       "subCrumbs": {
-        "content-studio": "Local registry",
         "content": "Ritual content"
       }
-    },
-    "tooltips": {
-      "tabs": {
-        "contentStudio": "Map of all app content sources: translations, JSON, prompts, rules, and DB content.",
-        "database": "Sensitive admin tool for DB viewing and queries. Requires ADMIN_API_TOKEN. For careful inspection and repair."
-      },
-      "risk": {
-        "high": "Risk level based on user impact, personalization, AI involvement, and rollback complexity.",
-        "medium": "Risk level based on user impact, personalization, AI involvement, and rollback complexity.",
-        "low": "Risk level based on user impact, personalization, AI involvement, and rollback complexity."
-      },
-      "p1Priority": "P1 means this asset should move to versioned/approved management before lower-priority assets.",
-      "migrationPriority": {
-        "p1": "P1 — highest migration priority. Review and move to versioned/approved content management before other assets.",
-        "p2": "P2 — medium priority. Important to migrate, but after all P1 assets are handled.",
-        "p3": "P3 — lower priority. Can wait until P1 and P2 migration work is underway."
-      },
-      "editableNow": "Whether this content can be edited in the app today without a code change.",
-      "promptOwned": "Content embedded in code or prompts. Changing it requires a deploy, not just a DB edit.",
-      "syncDb": "Syncs the current registry to Content Studio tables: assets, versions, governance checks, and audit.",
-      "checkDb": "Checks how many Content Studio assets, versions, governance checks, and audit events exist in DB now.",
-      "exportSelected": "Exports only the assets you selected, for review or migration work.",
-      "selectHighP1": "Selects all high-risk or P1 migration-priority assets in the current results.",
-      "localeDelta": "Gap in content unit count between English and Hebrew. Not always a problem, but needs parity review.",
-      "runtimeUse": "Where this asset actually runs in the app or user journey.",
-      "governance": "What must happen before a safe change or publish: review, evals, rollback, telemetry.",
-      "evalSignals": "Metrics to judge whether content works: completion, skip, fallback, output quality, locale purity.",
-      "simulatorInputs": "Parameters to set in the simulator to test how content behaves for different users.",
-      "dbLocalMode": "The screen uses the local in-code registry. DB sync is available only with an admin token.",
-      "needsAttention": "Flagged High risk or P1 — review this asset first.",
-      "stable": "Not flagged High/P1, but a specific change may still need review.",
-      "copyLink": "Copies a direct link to this asset inside Content Studio.",
-      "viewMode": "Compact is for quick scanning; Detailed shows more context without opening each asset."
     },
     "content": {
       "sections": {
@@ -3568,11 +3325,6 @@
     "dailyStepsTitle": "Your next step",
     "coachMessageEyebrow": "Your coach today",
     "dailyStepsProgress": "Step {current}/{total}",
-    "dayMode": {
-      "light": "Light day",
-      "execution": "Execution day",
-      "recovery": "Recovery day"
-    },
     "weeklyMinutesInvested": "{minutes} min invested this week",
     "nextAction": {
       "markStep": "Now: mark a step done",
@@ -3948,28 +3700,6 @@
             "2": "I will prep for a meeting on…",
             "3": "I will study 20 minutes on…"
           }
-        }
-      }
-    },
-    "onboarding": {
-      "step2": {
-        "student": "Your lowest score is in {domain}. As a student, study pressure often flares there.",
-        "new_parent": "Your lowest score is in {domain}. As a new parent, sleep and energy often feel urgent.",
-        "newParentHealth": "As a new parent, sleep and energy often flare — worth checking health (your lowest: {domain}).",
-        "studentMind": "As a student, academic pressure often hits the mind — mind domain flagged (lowest: {domain}).",
-        "betweenJobsCareer": "In a job transition, career often feels most urgent (lowest: {domain}).",
-        "managerTime": "As a manager, time and boundaries often flare — check the time domain (lowest: {domain}).",
-        "caregiverRelations": "As a caregiver, relationships and emotional load often flare (lowest: {domain}).",
-        "manager": "Your lowest score is in {domain}. As a manager, overload and time often feel urgent.",
-        "caregiver": "Your lowest score is in {domain}. As a caregiver, load and responsibility often flare there.",
-        "between_jobs": "Your lowest score is in {domain}. In transition, stability and identity often feel urgent.",
-        "other": "Your lowest score is in {domain}. That is often where the biggest lever lives.",
-        "multi": "With several contexts at once, {domain} often feels most urgent — worth starting there.",
-        "combo": {
-          "studentNewParent": "Between studies and new parenthood, {domain} often flares — worth starting there.",
-          "newParentCaregiver": "Between parenting and caregiving, {domain} often feels most urgent.",
-          "managerCaregiver": "Between management and caregiving, {domain} often needs attention first.",
-          "studentManager": "Between studies and management, {domain} often feels most pressured."
         }
       }
     },

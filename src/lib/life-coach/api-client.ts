@@ -192,9 +192,6 @@ export const lifeCoachApi = {
   listGoals() {
     return lifeCoachFetch<{goals: GoalWithMilestones[]}>('/api/life-coach/goals');
   },
-  getGoal(id: string) {
-    return lifeCoachFetch<{goal: Goal; milestones: Milestone[]}>(`/api/life-coach/goals/${id}`);
-  },
   updateGoal(id: string, input: Record<string, unknown>) {
     return lifeCoachFetch<{goal: Goal}>(`/api/life-coach/goals/${id}`, {
       method: 'PATCH',
@@ -278,13 +275,6 @@ export const lifeCoachApi = {
   },
   getDailySteps(date: string) {
     return lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>(`/api/life-coach/daily-steps?date=${date}`);
-  },
-  getGeneralDailySteps(input: {date: string; domain?: LifeDomain}) {
-    const params = new URLSearchParams({date: input.date, is_general: 'true'});
-    if (input.domain) params.set('domain', input.domain);
-    return lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>(
-      `/api/life-coach/daily-steps?${params.toString()}`
-    );
   },
   getDailyCoachMessage(date: string, locale?: string) {
     const params = new URLSearchParams({date});
@@ -407,14 +397,6 @@ export const lifeCoachApi = {
       '/api/life-coach/gamification-unlocks',
       {method: 'POST', body: JSON.stringify(input)}
     );
-  },
-  saveGamificationUnlock(input: {
-    kind: 'mystery_unlock' | 'reflection_loot' | 'identity_title';
-    reward_key: string;
-    week_start?: string | null;
-    context?: Record<string, unknown> | null;
-  }) {
-    return this.recordGamificationEvent(input);
   },
   listGamificationUnlocks() {
     return lifeCoachFetch<{unlocks: import('@/lib/db/repositories/gamification-unlocks').GamificationUnlock[]}>(
@@ -548,8 +530,5 @@ export const formulationApi = {
       method: 'PATCH',
       body: JSON.stringify(input),
     });
-  },
-  updateLifeContexts(statuses: LifeContextStatus[]) {
-    return this.updateParticipantProfile({life_context_statuses: statuses});
   },
 };

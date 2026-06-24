@@ -48,9 +48,6 @@ function restoreQuickDraft(base: WizardState, browserLocale: AppLocale): WizardS
     draftRestored: true,
     error: null,
     saving: false,
-    insightLoading: false,
-    goalLoading: false,
-    stepLoading: false,
   };
 }
 
