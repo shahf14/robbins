@@ -26,7 +26,7 @@ type Props = {
     life_context_statuses: LifeContextStatus[];
     life_context_status_note?: string;
     gender: ParticipantGender;
-    age: number | null;
+    age: number;
     boundaries_ack: {can_stop: boolean; can_skip: boolean; can_edit_summary: boolean};
   }) => void;
 };
@@ -190,7 +190,7 @@ export function ConsentStep({loading, locks, initial, onDraftChange, onSubmit}: 
         disabled={loading || !profileComplete}
         aria-busy={loading}
         onClick={() => {
-          if (!gender) return;
+          if (!gender || parsedAge == null) return;
           onSubmit({
             life_context_statuses: normalized,
             life_context_status_note: showOtherNote ? note : undefined,

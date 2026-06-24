@@ -5,14 +5,12 @@ import {useLocale, useTranslations} from 'next-intl';
 import {useSearchParams} from 'next/navigation';
 import type {AppLocale} from '@/i18n/config';
 import {ConsentStep} from '@/components/formulation/steps/consent-step';
-import {RiskScreenStep} from '@/components/formulation/steps/risk-screen-step';
 import {PassiveRatingsStep} from '@/components/formulation/steps/passive-ratings-step';
 import {FollowUpStep} from '@/components/formulation/steps/follow-up-step';
 import {ExplorationStep} from '@/components/formulation/steps/exploration-step';
 import {FormulationEditStep} from '@/components/formulation/steps/formulation-edit-step';
 import {MicroGoalStep} from '@/components/formulation/steps/micro-goal-step';
 import {CompleteStep} from '@/components/formulation/steps/complete-step';
-import {FormulationExportMenu} from '@/components/formulation/formulation-export-menu';
 import {FormulationLiveSummary} from '@/components/formulation/formulation-live-summary';
 import {WizardBusyOverlay} from '@/components/formulation/wizard-busy-overlay';
 import {WizardStepNav} from '@/components/formulation/wizard-step-nav';
@@ -38,8 +36,8 @@ import {
   loadUserPreferences,
   participantProfileLocksFromPreferences,
 } from '@/lib/user-preferences';
-import {previousWizardPhase, wizardPhaseNumber} from '@/lib/formulation/phase-nav';
-import {formulationApi} from '@/lib/life-coach/api-client';
+import {normalizeWizardPhase, previousWizardPhase, WIZARD_PHASES, wizardPhaseNumber} from '@/lib/formulation/phase-nav';
+import {formulationApi, LifeCoachApiError} from '@/lib/life-coach/api-client';
 import {classifyLoadFailure, type ApiLoadFailureKind} from '@/lib/life-coach/api-error';
 import type {FormulationSession} from '@/lib/life-coach/types';
 import {FeatureHint} from '@/components/feedback/feature-hint';
@@ -48,7 +46,35 @@ import {useConfirm} from '@/components/feedback/confirm-provider';
 import {useFeatureVisit} from '@/hooks/use-feature-visit';
 
 function resolveWizardPhase(session: FormulationSession): string {
-  return session.status === 'crisis_stopped' ? 'risk' : session.current_phase;
+  return normalizeWizardPhase(session.current_phase, session.status);
+}
+
+function formatWizardError(
+  error: unknown,
+  fallback: string,
+  updateSessionFailed: string
+): string {
+  if (error instanceof LifeCoachApiError) {
+    const detail =
+      typeof error.details === 'string'
+        ? error.details
+        : error.details != null
+          ? JSON.stringify(error.details)
+          : null;
+    const base =
+      error.message === 'Could not update session.' ? updateSessionFailed : error.message;
+    if (detail) {
+      console.error('[formulation]', base, detail);
+      return `${base} (${detail})`;
+    }
+    console.error('[formulation]', base, error);
+    return base;
+  }
+  if (error instanceof Error && error.message) {
+    console.error('[formulation]', error);
+    return error.message;
+  }
+  return fallback;
 }
 
 export function FormulationSessionWizard() {
@@ -63,7 +89,6 @@ export function FormulationSessionWizard() {
   const [loading, setLoading] = useState(true);
   const [loadFailure, setLoadFailure] = useState<ApiLoadFailureKind | null>(null);
   const [saving, setSaving] = useState(false);
-  const [riskNeedsFollowUp, setRiskNeedsFollowUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [serverProfile, setServerProfile] = useState<{
     life_context_statuses: FormulationSession['life_context_statuses'];
@@ -166,8 +191,9 @@ export function FormulationSessionWizard() {
   }, []);
 
   const progress = useMemo(() => {
-    if (!session) return {current: 1, total: 7};
-    return {current: wizardPhaseNumber(session.current_phase), total: 7};
+    if (!session) return {current: 1, total: WIZARD_PHASES.length};
+    const normalized = normalizeWizardPhase(session.current_phase, session.status);
+    return {current: wizardPhaseNumber(normalized), total: WIZARD_PHASES.length};
   }, [session]);
 
   const guidedQuestions = useMemo(() => {
@@ -203,10 +229,9 @@ export function FormulationSessionWizard() {
     setBusy('saving');
     setError(null);
     try {
-      const {session: updated, risk_needs_follow_up} = await formulationApi.patch(id, body);
+      const {session: updated} = await formulationApi.patch(id, body);
       setSession(updated);
       saveFormulationDraftPointer({sessionId: updated.id, phase: updated.current_phase});
-      if (risk_needs_follow_up) setRiskNeedsFollowUp(true);
       setLiveDraft((d) => {
         const next = {...d};
         if (body.phase === 'consent') {
@@ -229,8 +254,16 @@ export function FormulationSessionWizard() {
       });
       return updated;
     } catch (e) {
-      const message = e instanceof Error ? e.message : t('progressState.errorGeneric');
-      setError(message);
+      const message = formatWizardError(
+        e,
+        t('progressState.errorGeneric'),
+        t('progressState.updateSessionFailed')
+      );
+      const withHint =
+        body.phase === 'consent' && message.includes(t('progressState.updateSessionFailed'))
+          ? `${message} — ${t('progressState.errorConsentHint')}`
+          : message;
+      setError(withHint);
       return null;
     } finally {
       setSaving(false);
@@ -250,7 +283,11 @@ export function FormulationSessionWizard() {
       if (updated) setSession(updated);
       return questions ?? updated?.llm_exploration_questions ?? null;
     } catch (e) {
-      const message = e instanceof Error ? e.message : t('progressState.errorGeneric');
+      const message = formatWizardError(
+        e,
+        t('progressState.errorGeneric'),
+        t('progressState.updateSessionFailed')
+      );
       setError(message);
       return null;
     } finally {
@@ -275,7 +312,7 @@ export function FormulationSessionWizard() {
   }
 
   const sessionId = session.id;
-  const phase = session.status === 'crisis_stopped' ? 'risk' : session.current_phase;
+  const phase = normalizeWizardPhase(session.current_phase, session.status);
   const prevPhase = previousWizardPhase(phase);
   const showWizardNav = phase !== 'complete' && session.status !== 'completed';
 
@@ -301,7 +338,6 @@ export function FormulationSessionWizard() {
 
     const result = await patchAndSet(sessionId, {phase: 'navigate', action});
     if (action === 'restart' && result) {
-      setRiskNeedsFollowUp(false);
       setLiveDraft({});
       hydratedPhaseRef.current = `${sessionId}:consent`;
       setError(null);
@@ -349,7 +385,6 @@ export function FormulationSessionWizard() {
             {error}
           </p>
         )}
-        <FormulationExportMenu session={session} liveDraft={liveDraft} />
       </header>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -412,30 +447,13 @@ export function FormulationSessionWizard() {
                 age: input.age,
                 boundaries_ack: input.boundaries_ack,
                 consent_version: 'v1',
-                next_phase: 'risk',
+                next_phase: 'open',
               });
             }}
           />
         )}
 
-        {phase === 'risk' && (
-          <RiskScreenStep
-            loading={saving}
-            crisisStopped={session.status === 'crisis_stopped'}
-            needsFollowUp={riskNeedsFollowUp}
-            onSubmit={async (input) => {
-              const updated = await patchAndSet(session.id, {
-                phase: 'risk',
-                ...input,
-              });
-              if (updated && updated.status !== 'crisis_stopped') {
-                setRiskNeedsFollowUp(false);
-              }
-            }}
-          />
-        )}
-
-        {phase === 'open' && session.status !== 'crisis_stopped' && (
+        {phase === 'open' && (
           <PassiveRatingsStep
             loading={saving}
             questions={guidedQuestions}
@@ -520,7 +538,11 @@ export function FormulationSessionWizard() {
                 }
                 return null;
               } catch (e) {
-                const message = e instanceof Error ? e.message : t('progressState.errorGeneric');
+                const message = formatWizardError(
+        e,
+        t('progressState.errorGeneric'),
+        t('progressState.updateSessionFailed')
+      );
                 setError(message);
                 return null;
               } finally {
@@ -569,7 +591,11 @@ export function FormulationSessionWizard() {
                 clearFormulationDraftPointer();
                 clearFormulationLiveDraftsForSession(session.id);
               } catch (e) {
-                const message = e instanceof Error ? e.message : t('progressState.errorGeneric');
+                const message = formatWizardError(
+        e,
+        t('progressState.errorGeneric'),
+        t('progressState.updateSessionFailed')
+      );
                 setError(message);
               } finally {
                 setSaving(false);

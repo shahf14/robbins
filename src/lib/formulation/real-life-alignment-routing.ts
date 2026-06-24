@@ -327,7 +327,7 @@ function pickRepairAnchor(ctx: RealLifeAlignmentContext): string {
     ctx.central_difficulty ??
     ctx.life_context_labels[0] ??
     ctx.contexts[0] ??
-    (ctx.locale === 'he' ? 'מה שבוער אצלך' : 'what is flaring for you')
+    (ctx.locale === 'he' ? 'מה שנראה משמעותי אצלך כרגע' : 'what looks significant for you right now')
   );
 }
 

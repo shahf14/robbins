@@ -29,12 +29,12 @@ export type MicroGoalOption = {
   mindset_exercise_id?: string;
 };
 
-/** What hurts most this week — headline for step 7 (until LLM returns burning_focus). */
+/** Main clarified focus for step 7 (until LLM returns burning_focus). */
 export function burningFocusHeadline(session: FormulationSession, locale: AppLocale): string {
   const insights = buildFormulationInsights(session, locale);
   const top = insights.burning_now_themes[0];
   if (top) return goalReadyLabel(top, locale);
   const core = session.formulation_approved?.presenting_concern_user_words?.trim();
   if (core) return core.slice(0, 160);
-  return locale === 'he' ? 'מה שבוער עכשיו לפי הנתונים' : 'What is flaring now per your data';
+  return locale === 'he' ? 'מה שנראה משמעותי כרגע לפי הנתונים' : 'What looks significant right now from your data';
 }

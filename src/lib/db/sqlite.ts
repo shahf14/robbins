@@ -1,7 +1,7 @@
 import path from 'path';
 import Database from 'better-sqlite3';
-import {runMigrations} from './migrate';
-import {SCHEMA_SQL} from './schema';
+import {repairSchemaDrift, runMigrations} from './migrate.ts';
+import {SCHEMA_SQL} from './schema.ts';
 
 // The DB file lives at <project-root>/data/life-coach.db
 const DB_PATH = path.join(process.cwd(), 'data', 'life-coach.db');
@@ -40,7 +40,10 @@ export function setDbForTesting(db: Database.Database | null): void {
 }
 
 export function getDb(): Database.Database {
-  if (_db) return _db;
+  if (_db) {
+    repairSchemaDrift(_db);
+    return _db;
+  }
 
   _db = new Database(DB_PATH);
   initializeDatabaseConnection(_db);

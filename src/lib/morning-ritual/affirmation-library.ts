@@ -316,52 +316,6 @@ export function groupAffirmationsByTag(items: AffirmationItem[]): Map<string, Af
   return new Map([...groups.entries()].sort(([a], [b]) => a.localeCompare(b)));
 }
 
-export function exportAffirmationsJson(items: AffirmationItem[]): string {
-  return JSON.stringify({version: 1, exportedAt: new Date().toISOString(), affirmations: items}, null, 2);
-}
-
-export function exportAffirmationsCsv(items: AffirmationItem[]): string {
-  const header = [
-    'id',
-    'title',
-    'type',
-    'textContent',
-    'youtubeUrl',
-    'tags',
-    'language',
-    'active',
-    'weight',
-    'isDefault',
-    'hiddenFromLibrary',
-    'isDraft',
-    'isAdminManaged',
-    'createdAt',
-    'lastUsedAt',
-  ];
-  const rows = items.map((item) =>
-    [
-      item.id,
-      item.title,
-      item.type,
-      item.textContent,
-      item.youtubeUrl ?? '',
-      item.tags.join('|'),
-      item.language,
-      String(item.active),
-      String(item.weight),
-      String(Boolean(item.isDefault)),
-      String(Boolean(item.hiddenFromLibrary)),
-      String(Boolean(item.isDraft)),
-      String(Boolean(item.isAdminManaged)),
-      item.createdAt,
-      item.lastUsedAt ?? '',
-    ]
-      .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
-      .join(',')
-  );
-  return [header.join(','), ...rows].join('\n');
-}
-
 export function parseAffirmationsImport(raw: string): AffirmationItem[] {
   const trimmed = raw.trim();
   if (!trimmed) return [];

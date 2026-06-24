@@ -288,8 +288,6 @@ export const lifeContextStatusSchema = z.enum(LIFE_CONTEXT_STATUSES);
 const riskLevelSchema = z.enum(RISK_LEVELS);
 const riskActionSchema = z.enum(RISK_ACTIONS);
 
-const riskAnswerSchema = z.union([z.literal(0), z.literal(1)]).nullable();
-
 export const formulationSessionCreateSchema = z.object({
   locale: z.enum(['he', 'en']).optional(),
 });
@@ -360,18 +358,10 @@ const formulationPatchConsentSchema = z.object({
   life_context_statuses: z.array(lifeContextStatusSchema).min(1).max(6),
   life_context_status_note: z.string().trim().max(200).optional(),
   gender: participantGenderSchema,
-  age: z.number().int().min(16).max(120).nullable(),
+  age: z.coerce.number().int().min(16).max(120),
   boundaries_ack: boundariesAckSchema,
   consent_version: z.string().trim().min(1).max(20),
-  next_phase: z.literal('risk'),
-});
-
-const formulationPatchRiskSchema = z.object({
-  phase: z.literal('risk'),
-  risk_q1: riskAnswerSchema,
-  risk_q2: riskAnswerSchema,
-  risk_follow_up_confirmed: z.boolean().nullable().optional(),
-  presenting_concern_raw: z.string().trim().max(2000).optional(),
+  next_phase: z.literal('open'),
 });
 
 const passiveRatingItemSchema = z.object({
@@ -478,7 +468,6 @@ const formulationPatchNavigateSchema = z.object({
 
 export const formulationSessionPatchSchema = z.discriminatedUnion('phase', [
   formulationPatchConsentSchema,
-  formulationPatchRiskSchema,
   formulationPatchOpenSchema,
   formulationPatchDimensionsSchema,
   formulationPatchExplorationSchema,

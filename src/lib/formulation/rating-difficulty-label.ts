@@ -12,7 +12,7 @@ const INVERTED_DIFFICULTY_HE: Record<string, string> = {
   focus: 'קושי להתרכז במה שחשוב לי',
   sense_of_control: 'קושי לשמור על תחושת שליטה על מה שקורה',
   motivation: 'חוסר מוטיבציה לעשות דברים',
-  sleep_quality: 'השינה לא מספקת השבוע',
+  sleep_quality: 'השינה לא מספקת לאחרונה',
 };
 
 const INVERTED_DIFFICULTY_EN: Record<string, string> = {
@@ -20,7 +20,7 @@ const INVERTED_DIFFICULTY_EN: Record<string, string> = {
   focus: 'Difficulty focusing on what matters to me',
   sense_of_control: 'Difficulty feeling in control of what happens',
   motivation: 'Lack of motivation to do things',
-  sleep_quality: 'Sleep has not been restorative this week',
+  sleep_quality: 'Sleep has not been restorative lately',
 };
 
 /**

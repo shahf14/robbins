@@ -13,8 +13,6 @@ import {
   buildAffirmationUsageStats,
   buildDuplicateAffirmationIds,
   collectAffirmationTags,
-  exportAffirmationsCsv,
-  exportAffirmationsJson,
   extractYoutubeVideoId,
   filterAffirmations,
   getAffirmationPairMembers,
@@ -432,20 +430,6 @@ export function AdminAffirmationsPanel({onActivity}: {onActivity?: (key: AdminAc
     );
   }
 
-  function exportItems(format: 'json' | 'csv') {
-    const items = selectedIds.size > 0
-      ? affirmations.filter((item) => selectedIds.has(item.id))
-      : filtered;
-    const blob = format === 'json' ? exportAffirmationsJson(items) : exportAffirmationsCsv(items);
-    const url = URL.createObjectURL(new Blob([blob], {type: 'text/plain;charset=utf-8'}));
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `affirmations.${format}`;
-    anchor.click();
-    URL.revokeObjectURL(url);
-    toast.success(t('exported'));
-  }
-
   async function handleImport(file: File) {
     try {
       const text = await file.text();
@@ -508,7 +492,6 @@ export function AdminAffirmationsPanel({onActivity}: {onActivity?: (key: AdminAc
             <AdminCreateButton onClick={() => startCreate(false)}>{t('add')}</AdminCreateButton>
             <AdminViewButton onClick={() => startCreate(true)}>{t('addDraft')}</AdminViewButton>
             <AdminViewButton onClick={() => setShowTagManager((value) => !value)}>{t('manageTags')}</AdminViewButton>
-            <AdminViewButton onClick={() => exportItems('json')}>{t('export')}</AdminViewButton>
             <AdminViewButton onClick={() => importRef.current?.click()}>{t('import')}</AdminViewButton>
             <input
               ref={importRef}
@@ -623,7 +606,6 @@ export function AdminAffirmationsPanel({onActivity}: {onActivity?: (key: AdminAc
             <input className="focus-ring admin-affirmations__input max-w-[10rem]" value={bulkTag} placeholder={t('bulkTagPlaceholder')} onChange={(e) => setBulkTag(e.target.value)} />
             <AdminViewButton onClick={() => applyBulk('tag')}>{t('bulkAddTag')}</AdminViewButton>
             <AdminActionButton destructive onClick={() => applyBulk('delete')}>{t('bulkDelete')}</AdminActionButton>
-            <AdminViewButton onClick={() => exportItems('csv')}>{t('bulkExport')}</AdminViewButton>
             <AdminViewButton onClick={clearSelection}>{t('clearSelection')}</AdminViewButton>
           </div>
         ) : (

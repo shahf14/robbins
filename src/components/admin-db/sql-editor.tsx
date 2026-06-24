@@ -1,6 +1,5 @@
 'use client';
 
-import {downloadCsv, rowsToCsv} from '@/lib/csv-export';
 import {useState} from 'react';
 import {dbApi, type QueryResult} from './use-db-api';
 
@@ -112,14 +111,6 @@ export function SqlEditor() {
     setLoading(false);
   }
 
-  function exportCsv() {
-    if (!result?.rows?.length) return;
-    downloadCsv(
-      'query-result.csv',
-      rowsToCsv(result.columns, result.rows as Record<string, unknown>[])
-    );
-  }
-
   return (
     <div className="grid gap-5">
       {/* Quick query chips */}
@@ -195,15 +186,6 @@ export function SqlEditor() {
               {' · '}
               {result.duration_ms}ms
             </p>
-            {result.rows.length > 0 && (
-              <button
-                type="button"
-                className="focus-ring text-xs font-semibold text-[var(--blue)] hover:underline"
-                onClick={exportCsv}
-              >
-                ↓ Export CSV
-              </button>
-            )}
           </div>
 
           {result.rows.length > 0 && (

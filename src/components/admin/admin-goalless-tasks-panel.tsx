@@ -7,7 +7,6 @@ import type {AdminActivityKey} from '@/lib/admin/admin-activity';
 import {recordAdminActivity} from '@/lib/admin/admin-activity';
 import {
   duplicateCuratedTask,
-  exportCuratedTasksForDomain,
   isCuratedTaskVisibleInPicker,
   loadCuratedTaskLibrary,
   newCuratedTask,
@@ -133,18 +132,6 @@ export function AdminGoallessTasksPanel({onActivity}: {onActivity?: (key: AdminA
     toast.success(t('admin.goallessTasks.resetToast'));
   }
 
-  function exportDomainJson() {
-    const payload = exportCuratedTasksForDomain(tasks, domain);
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `${domain}.json`;
-    anchor.click();
-    URL.revokeObjectURL(url);
-    toast.success(t('admin.goallessTasks.exportToast'));
-  }
-
   return (
     <section className="grid gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -153,7 +140,6 @@ export function AdminGoallessTasksPanel({onActivity}: {onActivity?: (key: AdminA
           <p className="mt-1 max-w-3xl text-sm leading-7 text-[var(--muted)]">{t('admin.goallessTasks.description')}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <AdminViewButton onClick={exportDomainJson}>{t('admin.goallessTasks.export')}</AdminViewButton>
           <AdminCreateButton onClick={startCreate}>{t('admin.goallessTasks.add')}</AdminCreateButton>
         </div>
       </div>

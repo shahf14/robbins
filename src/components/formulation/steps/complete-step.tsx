@@ -10,7 +10,6 @@ import {LIFE_DOMAINS} from '@/lib/life-coach/types';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
 import {isFirstWinStep, firstWinDisplayReasoning} from '@/lib/formulation/first-win-routing';
 import {loadUserPreferences} from '@/lib/user-preferences';
-import {FormulationExportMenu} from '@/components/formulation/formulation-export-menu';
 import {PersonalizedChallengeCard} from '@/components/formulation/personalized-challenge-card';
 import {buildPersonalizedChallenge} from '@/lib/formulation/personalized-challenge';
 
@@ -185,8 +184,6 @@ export function CompleteStep({session}: Props) {
         </Link>
       </div>
 
-      {/* ── Export / secondary actions ────────────────────────────────────── */}
-      <FormulationExportMenu session={session} />
     </div>
   );
 }

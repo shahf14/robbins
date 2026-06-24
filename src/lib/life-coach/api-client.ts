@@ -71,10 +71,14 @@ async function lifeCoachFetch<T>(path: string, init?: RequestInit): Promise<T> {
     if (response.status === 401) {
       notifyLocalAuthRequired();
     }
+    const nestedDetails =
+      payload && typeof payload === 'object'
+        ? (payload as {details?: unknown}).details
+        : undefined;
     const payloadDetails =
       payload && typeof payload === 'object'
         ? (() => {
-            const {error: _error, details: nestedDetails, offline, ...rest} = payload as {
+            const {error: _error, details: _details, offline, ...rest} = payload as {
               error?: string;
               details?: unknown;
               offline?: boolean;
@@ -88,7 +92,11 @@ async function lifeCoachFetch<T>(path: string, init?: RequestInit): Promise<T> {
             return Object.keys(merged).length > 0 ? merged : undefined;
           })()
         : undefined;
-    throw new LifeCoachApiError(message, response.status, payloadDetails);
+    throw new LifeCoachApiError(
+      message,
+      response.status,
+      typeof nestedDetails === 'string' ? nestedDetails : payloadDetails
+    );
   }
 
   if (payload === null) {
@@ -448,10 +456,7 @@ export const formulationApi = {
     return lifeCoachFetch<{session: FormulationSession}>(`/api/life-coach/formulation-sessions/${id}`);
   },
   patch(id: string, body: z.infer<typeof formulationSessionPatchSchema>) {
-    return lifeCoachFetch<{
-      session: FormulationSession;
-      risk_needs_follow_up?: boolean;
-    }>(`/api/life-coach/formulation-sessions/${id}`, {
+    return lifeCoachFetch<{session: FormulationSession}>(`/api/life-coach/formulation-sessions/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(body),
     });

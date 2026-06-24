@@ -6,7 +6,7 @@ import {
 import {jsonError, jsonOk} from '@/lib/life-coach/server';
 
 export async function GET(request: Request) {
-  const current = await requireLifeCoachAccess(request);
+  const current = await requireLifeCoachAccess(request, {allowDuringOnboarding: true});
   if (!current.ok) return current.response;
 
   try {

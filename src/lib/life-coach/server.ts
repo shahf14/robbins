@@ -17,9 +17,17 @@ export async function parseLifeCoachJsonBody<T = unknown>(
   });
 }
 
-export function jsonError(message: string, status = 400, details?: unknown) {
+export function jsonError(
+  message: string,
+  status = 400,
+  details?: unknown,
+  options?: {exposeDetails?: boolean}
+) {
   const payload: {error: string; details?: unknown} = {error: message};
-  if (details !== undefined && process.env.NODE_ENV !== 'production') {
+  const shouldExpose =
+    options?.exposeDetails === true ||
+    (details !== undefined && process.env.NODE_ENV !== 'production');
+  if (shouldExpose && details !== undefined) {
     payload.details = details;
   }
   return NextResponse.json(payload, {status});

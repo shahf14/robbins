@@ -41,7 +41,6 @@ import {
   validatePassiveRatingsForProfile,
 } from '@/lib/formulation/guided-questions';
 import {previousWizardPhase} from '@/lib/formulation/phase-nav';
-import {evaluateRiskScreen} from '@/lib/formulation/risk-screen';
 import type {z} from 'zod';
 import type {
   AiCoachingInsight,
@@ -80,6 +79,7 @@ import {
 } from './daily-step-repository';
 import {listRecentReflections} from './reflection-insight-repository';
 import {
+  ensureUserProfile,
   getOnboardingServerStatus,
   updateUserParticipantProfileSync,
 } from './user-profile-repository';
@@ -561,6 +561,18 @@ export {detectRecurringBlockers};
 // Formulation sessions
 // ---------------------------------------------------------------------------
 
+function applySkippedRiskScreenDefaults(session: FormulationSession): void {
+  session.risk_q1 = null;
+  session.risk_q2 = null;
+  session.risk_follow_up_confirmed = null;
+  session.risk_level = 'none';
+  session.risk_action = 'continue';
+  session.risk_screen_at = null;
+  if (session.status === 'crisis_stopped') {
+    session.status = 'draft';
+  }
+}
+
 /** Clears all wizard answers on the session; keeps id, user, locale, started_at. */
 function resetFormulationSessionWizardData(session: FormulationSession): void {
   const blank = emptyFormulationSession(session.user_id, session.locale);
@@ -666,7 +678,7 @@ export async function createFormulationSession(
   locale: 'he' | 'en' = 'he'
 ): Promise<FormulationSession> {
   const existing = dbGet<Record<string, unknown>>(
-    `SELECT id FROM formulation_sessions WHERE user_id = ? AND status = 'draft' LIMIT 1`,
+    `SELECT id FROM formulation_sessions WHERE user_id = ? AND status = 'draft' ORDER BY updated_at DESC LIMIT 1`,
     [userId]
   );
   if (existing) {
@@ -776,14 +788,13 @@ export async function patchFormulationSession(
   userId: string,
   id: string,
   patch: z.infer<typeof formulationSessionPatchSchema>
-): Promise<{session: FormulationSession; risk_needs_follow_up?: boolean}> {
+): Promise<{session: FormulationSession}> {
   const session = await getFormulationSession(userId, id);
   if (!session) {
     throw new Error('Session not found.');
   }
 
   const now = new Date().toISOString();
-  let riskNeedsFollowUp = false;
   // Profile write is deferred so it commits in the same transaction as the
   // session update at the end (consent writes both the user profile and session).
   let pendingProfileUpdate:
@@ -792,6 +803,7 @@ export async function patchFormulationSession(
 
   switch (patch.phase) {
     case 'consent': {
+      await ensureUserProfile({id: userId});
       const statuses = normalizeLifeContextSelection(patch.life_context_statuses);
       session.life_context_statuses = statuses;
       session.life_context_status = statuses[0] ?? null;
@@ -802,46 +814,12 @@ export async function patchFormulationSession(
       session.consent_version = patch.consent_version;
       session.consent_accepted_at = now;
       session.current_phase = patch.next_phase;
+      applySkippedRiskScreenDefaults(session);
       pendingProfileUpdate = {
         gender: session.participant_gender,
         age: session.participant_age,
         life_context_statuses: session.life_context_statuses,
       };
-      break;
-    }
-
-    case 'risk': {
-      session.risk_q1 = patch.risk_q1;
-      session.risk_q2 = patch.risk_q2;
-      session.risk_follow_up_confirmed =
-        patch.risk_follow_up_confirmed === undefined
-          ? session.risk_follow_up_confirmed
-          : patch.risk_follow_up_confirmed
-            ? 1
-            : 0;
-      if (patch.presenting_concern_raw) {
-        session.presenting_concern_raw = patch.presenting_concern_raw;
-      }
-      const risk = evaluateRiskScreen({
-        q1: patch.risk_q1,
-        q2: patch.risk_q2,
-        followUpConfirmed:
-          patch.risk_follow_up_confirmed === undefined
-            ? null
-            : patch.risk_follow_up_confirmed,
-        presentingConcernRaw: session.presenting_concern_raw ?? undefined,
-      });
-      session.risk_level = risk.level;
-      session.risk_action = risk.action;
-      session.risk_screen_at = now;
-      riskNeedsFollowUp = risk.needsFollowUp;
-
-      if (risk.action === 'stop') {
-        session.status = 'crisis_stopped';
-        session.current_phase = 'risk';
-      } else {
-        session.current_phase = 'open';
-      }
       break;
     }
 
@@ -945,22 +923,30 @@ export async function patchFormulationSession(
           throw new Error('Already at first step.');
         }
         session.current_phase = prev;
-        if (session.status === 'crisis_stopped' && prev !== 'risk') {
-          session.status = 'draft';
-        }
       }
       break;
     }
   }
 
   session.updated_at = now;
-  getDb().transaction(() => {
+  const runPersist = () => {
     if (pendingProfileUpdate) {
       updateUserParticipantProfileSync(userId, pendingProfileUpdate);
     }
     updateFormulationSession(session);
-  })();
-  return {session, risk_needs_follow_up: riskNeedsFollowUp};
+  };
+
+  try {
+    getDb().transaction(runPersist)();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (/SQLITE_BUSY|database is locked/i.test(message)) {
+      getDb().transaction(runPersist)();
+    } else {
+      throw error;
+    }
+  }
+  return {session};
 }
 
 export async function completeFormulationSession(

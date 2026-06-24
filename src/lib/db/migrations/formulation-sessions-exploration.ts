@@ -13,6 +13,14 @@ export function migrateFormulationSessionsExplorationPhase(db: Database.Database
     return;
   }
 
+  const legacyColumns = new Set(
+    (db.pragma('table_info(formulation_sessions)') as Array<{name: string}>).map((column) => column.name)
+  );
+  const suggestedDomainSelect = legacyColumns.has('suggested_domain')
+    ? 'suggested_domain'
+    : 'NULL';
+  const createdGoalSelect = legacyColumns.has('created_goal_id') ? 'created_goal_id' : 'NULL';
+
   db.exec('BEGIN');
   try {
     db.exec(`
@@ -49,6 +57,8 @@ export function migrateFormulationSessionsExplorationPhase(db: Database.Database
         user_edited_formulation       INTEGER DEFAULT 0 CHECK (user_edited_formulation IN (0, 1)),
         formulation_approved_at       TEXT,
         coach_handoff_json            TEXT,
+        suggested_domain              TEXT,
+        created_goal_id               TEXT,
         checkin_prefill_json          TEXT,
         phases_skipped_json           TEXT,
         prior_question_key            TEXT,
@@ -78,6 +88,7 @@ export function migrateFormulationSessionsExplorationPhase(db: Database.Database
         passive_ratings_json, rating_follow_ups_json,
         dimensions_json, formulation_draft_json, formulation_approved_json,
         user_edited_formulation, formulation_approved_at, coach_handoff_json,
+        suggested_domain, created_goal_id,
         checkin_prefill_json, phases_skipped_json,
         prior_question_key, prior_question_answer, prior_question_answers_json,
         llm_exploration_questions_json, llm_exploration_answers_json,
@@ -94,6 +105,7 @@ export function migrateFormulationSessionsExplorationPhase(db: Database.Database
         passive_ratings_json, rating_follow_ups_json,
         dimensions_json, formulation_draft_json, formulation_approved_json,
         user_edited_formulation, formulation_approved_at, coach_handoff_json,
+        ${suggestedDomainSelect}, ${createdGoalSelect},
         checkin_prefill_json, phases_skipped_json,
         prior_question_key, prior_question_answer, prior_question_answers_json,
         llm_exploration_questions_json, llm_exploration_answers_json,

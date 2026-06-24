@@ -17,7 +17,7 @@ export async function POST(
   request: Request,
   {params}: {params: Promise<{id: string}>}
 ) {
-  const current = await requireLifeCoachAccess(request);
+  const current = await requireLifeCoachAccess(request, {allowDuringOnboarding: true});
   if (!current.ok) return current.response;
 
   const {id} = await params;
@@ -30,9 +30,6 @@ export async function POST(
     const session = await getFormulationSession(current.user.id, id);
     if (!session) {
       return jsonError('Session not found.', 404);
-    }
-    if (session.status === 'crisis_stopped') {
-      return jsonError('AI unavailable after crisis screen.', 403);
     }
 
     const locale = resolveLocale(parsed.data.locale ?? session.locale);

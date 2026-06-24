@@ -10,7 +10,7 @@ export async function GET(
   request: Request,
   {params}: {params: Promise<{id: string}>}
 ) {
-  const current = await requireLifeCoachAccess(request);
+  const current = await requireLifeCoachAccess(request, {allowDuringOnboarding: true});
   if (!current.ok) return current.response;
 
   const {id} = await params;
@@ -29,7 +29,7 @@ export async function PATCH(
   request: Request,
   {params}: {params: Promise<{id: string}>}
 ) {
-  const current = await requireLifeCoachAccess(request);
+  const current = await requireLifeCoachAccess(request, {allowDuringOnboarding: true});
   if (!current.ok) return current.response;
 
   const {id} = await params;
@@ -43,19 +43,14 @@ export async function PATCH(
     if (!existing) {
       return jsonError('Session not found.', 404);
     }
-    if (existing.status === 'crisis_stopped' && parsed.data.phase !== 'navigate') {
-      return jsonError('Session stopped for safety.', 403);
-    }
     if (existing.status === 'completed') {
       return jsonError('Session already completed.', 403);
     }
 
     const result = await patchFormulationSession(current.user.id, id, parsed.data);
-    return jsonOk({
-      session: result.session,
-      risk_needs_follow_up: result.risk_needs_follow_up ?? false,
-    });
+    return jsonOk({session: result.session});
   } catch (error) {
-    return jsonError('Could not update session.', 500, String(error));
+    console.error('[formulation-session] PATCH failed:', error);
+    return jsonError('Could not update session.', 500, String(error), {exposeDetails: true});
   }
 }

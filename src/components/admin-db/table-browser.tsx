@@ -1,7 +1,6 @@
 'use client';
 
 import {BackArrow, NavArrow} from '@/components/directional-arrow';
-import {downloadCsv, rowsToCsv} from '@/lib/csv-export';
 import {useEffect, useState, useCallback, useMemo} from 'react';
 import {useTranslations} from 'next-intl';
 import {dbApi, DbApiError, ensureAdminSession, type TableSummary, type TableData} from './use-db-api';
@@ -76,12 +75,6 @@ export function TableBrowser({tables, onRefresh}: Props) {
     setPage(1);
   }
 
-  function exportCsv() {
-    if (!data) return;
-    const columns = data.columns.map((c) => c.name);
-    downloadCsv(`${data.table}-page${page}.csv`, rowsToCsv(columns, data.rows as Record<string, unknown>[]));
-  }
-
   const totalPages = data ? Math.max(1, data.total_pages) : 1;
 
   return (
@@ -124,14 +117,6 @@ export function TableBrowser({tables, onRefresh}: Props) {
             value={search}
             onChange={handleSearchChange}
           />
-          <button
-            type="button"
-            className="focus-ring btn-ghost h-9 shrink-0 text-sm"
-            onClick={exportCsv}
-            disabled={!data || data.rows.length === 0}
-          >
-            {t('exportCsv')}
-          </button>
           <button
             type="button"
             className="focus-ring btn-ghost h-9 shrink-0 text-sm"

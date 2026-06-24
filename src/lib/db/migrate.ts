@@ -1,5 +1,11 @@
 import type Database from 'better-sqlite3';
-import {migrateFormulationSessionsExplorationPhase} from './migrations/formulation-sessions-exploration';
+import {migrateFormulationSessionsExplorationPhase} from './migrations/formulation-sessions-exploration.ts';
+import {
+  INCREMENTAL_COLUMN_REPAIRS,
+  INCREMENTAL_INDEX_REPAIRS,
+  listTableColumns,
+  tableExists,
+} from './schema-drift-repairs.ts';
 
 type MigrationDb = Database.Database;
 
@@ -18,6 +24,23 @@ function addColumn(db: MigrationDb, table: string, column: string, definition: s
   db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
 }
 
+function ensureIncrementalColumns(db: MigrationDb): void {
+  for (const {table, column, definition} of INCREMENTAL_COLUMN_REPAIRS) {
+    if (tableExists(db, table)) {
+      addColumn(db, table, column, definition);
+    }
+  }
+}
+
+function ensureIncrementalIndexes(db: MigrationDb): void {
+  for (const {table, columns, sql} of INCREMENTAL_INDEX_REPAIRS) {
+    if (!tableExists(db, table)) continue;
+    const existing = listTableColumns(db, table);
+    if (!columns.every((column) => existing.includes(column))) continue;
+    db.exec(sql);
+  }
+}
+
 /**
  * Baseline migration: every column / table / index / backfill that was
  * historically applied by the inline block in `getDb()`. It is fully
@@ -28,47 +51,7 @@ function addColumn(db: MigrationDb, table: string, column: string, definition: s
  * Runs inside a single transaction (see `runMigrations`).
  */
 function applyBaseline(db: MigrationDb): void {
-  addColumn(db, 'morning_rituals', 'session_json', 'TEXT');
-
-  // ── Raw behavioral metrics (2025) ─────────────────────────────────────
-  addColumn(db, 'gratitude_entries', 'trigger_key', 'TEXT');
-  addColumn(db, 'gratitude_entries', 'entry_duration_sec', 'INTEGER');
-  addColumn(db, 'gratitude_entries', 'was_edited', 'INTEGER DEFAULT 0');
-  addColumn(db, 'morning_rituals', 'mode', 'TEXT');
-  addColumn(db, 'morning_rituals', 'selected_affirmation_id', 'TEXT');
-  addColumn(db, 'morning_rituals', 'breathing_rounds_done', 'INTEGER');
-  addColumn(db, 'morning_rituals', 'skipped_steps', 'TEXT');
-  addColumn(db, 'morning_rituals', 'visualization_duration_sec', 'INTEGER');
-  addColumn(db, 'checkins', 'session_duration_sec', 'INTEGER');
-  addColumn(db, 'checkins', 'slider_adjustments', 'INTEGER');
-  addColumn(db, 'checkins', 'opened_coach_support', 'INTEGER DEFAULT 0');
-  addColumn(db, 'checkins', 'entry_json', 'TEXT');
-  addColumn(db, 'daily_steps', 'completed_at', 'TEXT');
-  addColumn(db, 'daily_steps', 'actual_minutes', 'INTEGER');
-  addColumn(db, 'daily_steps', 'rescheduled_from', 'TEXT');
-  addColumn(db, 'daily_steps', 'reschedule_count', 'INTEGER DEFAULT 0');
-  addColumn(db, 'daily_steps', 'first_viewed_at', 'TEXT');
-  addColumn(db, 'daily_steps', 'read_description', 'INTEGER DEFAULT 0');
-  addColumn(db, 'daily_steps', 'fallback_title', 'TEXT');
-  addColumn(db, 'daily_steps', 'fallback_description', 'TEXT');
-  addColumn(db, 'daily_steps', 'fallback_estimated_minutes', 'INTEGER');
-  addColumn(db, 'daily_steps', 'coach_message_impression_at', 'TEXT');
-  addColumn(db, 'daily_steps', 'primary_cta_clicked_at', 'TEXT');
-  addColumn(db, 'daily_steps', 'reasoning', 'TEXT');
-  addColumn(db, 'daily_steps', 'expected_resistance', 'TEXT');
-  addColumn(db, 'daily_steps', 'pain_addressed', 'TEXT');
-  addColumn(db, 'daily_steps', 'success_signal', 'TEXT');
-  addColumn(db, 'daily_steps', 'user_edited', 'INTEGER DEFAULT 0');
-  addColumn(db, 'daily_steps', 'validation_fallback_applied', 'INTEGER DEFAULT 0');
-  addColumn(db, 'daily_steps', 'coach_tone', 'TEXT');
-  addColumn(db, 'daily_steps', 'weekly_focus_id', 'TEXT');
-  addColumn(db, 'daily_steps', 'value_feedback', 'TEXT');
-  addColumn(db, 'daily_steps', 'is_general', 'INTEGER DEFAULT 0');
-  addColumn(db, 'user_behavior_profile', 'tone_effectiveness', 'TEXT');
-  addColumn(db, 'user_behavior_profile', 'avoid_windows', "TEXT DEFAULT '[]'");
-  addColumn(db, 'user_behavior_profile', 'best_windows', "TEXT DEFAULT '[]'");
-  addColumn(db, 'user_behavior_profile', 'weekday_skip_patterns', "TEXT DEFAULT '[]'");
-  addColumn(db, 'user_behavior_profile', 'failed_action_patterns', "TEXT DEFAULT '[]'");
+  ensureIncrementalColumns(db);
 
   // weekly_goal_focus
   db.exec(`
@@ -108,85 +91,9 @@ function applyBaseline(db: MigrationDb): void {
   `);
   db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_skip_coach_user_date ON skip_coach_adjustments(user_id, skip_date)`);
 
-  // daily_reflections
-  addColumn(db, 'daily_reflections', 'writing_duration_sec', 'INTEGER');
-  addColumn(db, 'daily_reflections', 'analysis_json', 'TEXT');
-  addColumn(db, 'daily_reflections', 'analyzed_at', 'TEXT');
-  addColumn(db, 'daily_reflections', 'adjustment_applied_at', 'TEXT');
-  // goals
-  addColumn(db, 'goals', 'completed_at', 'TEXT');
-  addColumn(db, 'goals', 'revision_count', 'INTEGER DEFAULT 0');
-  // milestones
-  addColumn(db, 'milestones', 'completed_at', 'TEXT');
-  // ai_insights
-  addColumn(db, 'ai_insights', 'tokens_used', 'INTEGER');
-  addColumn(db, 'ai_insights', 'generation_duration_ms', 'INTEGER');
-  addColumn(db, 'ai_insights', 'model_used', 'TEXT');
-
-  // ── Psychological metrics (2025) ──────────────────────────────────────────
-  addColumn(db, 'checkins', 'priority_action_word_count', 'INTEGER');
-  addColumn(db, 'checkins', 'rewrote_priority_action_count', 'INTEGER DEFAULT 0');
-  addColumn(db, 'checkins', 'tag_valence_shift', 'INTEGER');
-  addColumn(db, 'checkins', 'energy_focus_divergence', 'INTEGER');
-  addColumn(db, 'checkins', 'physical_complaint_mentioned', 'INTEGER DEFAULT 0');
-  addColumn(db, 'checkins', 'help_engagement_depth', 'TEXT');
-  addColumn(db, 'checkins', 'stated_action_completed', 'INTEGER');
-  addColumn(db, 'morning_rituals', 'gratitude_generic_flags', 'TEXT');
-  addColumn(db, 'morning_rituals', 'gratitude_target_types', 'TEXT');
-  addColumn(db, 'morning_rituals', 'mission_changed_from_yesterday', 'INTEGER DEFAULT 0');
-  addColumn(db, 'morning_rituals', 'breathing_full_pattern_done', 'INTEGER DEFAULT 0');
-  addColumn(db, 'morning_rituals', 'visualization_content_type', 'TEXT');
-  addColumn(db, 'daily_reflections', 'reflection_word_count', 'INTEGER');
-  addColumn(db, 'daily_reflections', 'self_blame_language', 'INTEGER DEFAULT 0');
-  addColumn(db, 'daily_steps', 'blocker_category', 'TEXT');
-  addColumn(db, 'daily_steps', 'reattempt_same_day', 'INTEGER DEFAULT 0');
-  addColumn(db, 'goals', 'abandoned_before_first_step', 'INTEGER DEFAULT 0');
-  addColumn(db, 'goals', 'success_metric_specificity', 'TEXT');
-
-  // users — formulation profile fields
-  addColumn(db, 'users', 'life_context_status', 'TEXT');
-  addColumn(db, 'users', 'last_completed_formulation_at', 'TEXT');
-  addColumn(db, 'users', 'formulation_gate_dismissed', 'INTEGER DEFAULT 0');
-  addColumn(db, 'users', 'gender', 'TEXT');
-  addColumn(db, 'users', 'age', 'INTEGER');
-  addColumn(db, 'formulation_sessions', 'participant_gender', 'TEXT');
-  addColumn(db, 'formulation_sessions', 'participant_age', 'INTEGER');
-  addColumn(db, 'formulation_sessions', 'life_context_statuses_json', 'TEXT');
-  addColumn(db, 'formulation_sessions', 'prior_question_answers_json', 'TEXT');
-  addColumn(db, 'formulation_sessions', 'passive_ratings_json', 'TEXT');
-  addColumn(db, 'formulation_sessions', 'rating_follow_ups_json', 'TEXT');
-  addColumn(db, 'formulation_sessions', 'llm_exploration_questions_json', 'TEXT');
-  addColumn(db, 'formulation_sessions', 'llm_exploration_answers_json', 'TEXT');
-  addColumn(db, 'formulation_sessions', 'suggested_domain', 'TEXT');
-  addColumn(db, 'formulation_sessions', 'created_goal_id', 'TEXT');
-
-  // formulation_sessions indexes (table created via SCHEMA_SQL)
-  db.exec(`CREATE INDEX IF NOT EXISTS idx_formulation_user_status ON formulation_sessions(user_id, status)`);
-  db.exec(`CREATE INDEX IF NOT EXISTS idx_formulation_user_completed ON formulation_sessions(user_id, completed_at DESC)`);
-
   // Drop the deprecated parallel simple-task tables (unified into goals/daily_steps).
   db.exec(`DROP TABLE IF EXISTS simple_task_logs`);
   db.exec(`DROP TABLE IF EXISTS simple_tasks`);
-
-  // ── Phase 0: Auth + Payments fields ──────────────────────────────────────
-  addColumn(db, 'users', 'stripe_customer_id', 'TEXT');
-  addColumn(db, 'users', 'trial_ends_at', 'TEXT');
-  addColumn(db, 'users', 'wake_time', 'TEXT');
-  addColumn(db, 'users', 'sleep_time', 'TEXT');
-  addColumn(db, 'users', 'preferred_action_window', 'TEXT');
-  addColumn(db, 'users', 'coaching_style', 'TEXT');
-  addColumn(db, 'users', 'family_status', 'TEXT');
-  addColumn(db, 'users', 'physical_considerations', 'TEXT');
-  addColumn(db, 'users', 'life_context_note', 'TEXT');
-  addColumn(db, 'users', 'onboarding_completed_at', 'TEXT');
-  addColumn(db, 'users', 'onboarding_primary_domain', 'TEXT');
-  addColumn(db, 'users', 'ai_personalization_summary', 'TEXT');
-  // SQLite cannot ADD COLUMN with a UNIQUE constraint, so existing DBs get a
-  // plain column (the previous `… TEXT UNIQUE` ALTER always threw and was
-  // swallowed); uniqueness on fresh DBs comes from SCHEMA_SQL. Lookups use the
-  // index below.
-  addColumn(db, 'users', 'clerk_id', 'TEXT');
-  db.exec(`CREATE INDEX IF NOT EXISTS idx_users_clerk_id ON users(clerk_id)`);
 
   // ── Evening Reset (2026) ──────────────────────────────────────────────────
   db.exec(`CREATE TABLE IF NOT EXISTS evening_resets (
@@ -206,13 +113,6 @@ function applyBaseline(db: MigrationDb): void {
   )`);
   db.exec(`CREATE INDEX IF NOT EXISTS idx_evening_resets_date ON evening_resets(date)`);
   db.exec(`CREATE INDEX IF NOT EXISTS idx_evening_resets_user_date ON evening_resets(user_id, date DESC, created_at DESC)`);
-  addColumn(db, 'evening_resets', 'tomorrow_constraint', 'TEXT');
-  addColumn(db, 'evening_resets', 'what_worked', 'TEXT');
-  addColumn(db, 'evening_resets', 'what_failed', 'TEXT');
-  addColumn(db, 'evening_resets', 'energy_forecast', 'TEXT');
-  addColumn(db, 'evening_resets', 'tomorrow_takeaway', 'TEXT');
-  addColumn(db, 'goals', 'commitment_days', 'INTEGER DEFAULT 30');
-  addColumn(db, 'goals', 'commitment_started_at', 'TEXT');
   db.exec(`UPDATE goals SET commitment_days = 30 WHERE commitment_days IS NULL`);
   db.exec(`UPDATE goals SET commitment_started_at = date(created_at) WHERE commitment_started_at IS NULL`);
 
@@ -229,12 +129,7 @@ function applyBaseline(db: MigrationDb): void {
     reset_at INTEGER NOT NULL
   )`);
 
-  addColumn(db, 'goals', 'create_idempotency_key', 'TEXT');
-  db.exec(
-    `CREATE UNIQUE INDEX IF NOT EXISTS idx_goals_create_idempotency
-       ON goals(user_id, create_idempotency_key)
-       WHERE create_idempotency_key IS NOT NULL`
-  );
+  ensureIncrementalIndexes(db);
 }
 
 function rebuildGoalsWithoutLegacyColumns(db: MigrationDb): void {
@@ -478,4 +373,15 @@ export function runMigrations(db: MigrationDb): void {
 
     db.pragma(`user_version = ${migration.version}`);
   }
+
+  repairSchemaDrift(db);
+}
+
+/**
+ * Idempotent repairs for columns dropped by older table rebuilds (e.g. v2
+ * exploration migration) or missed when the dev server kept a warm DB handle.
+ */
+export function repairSchemaDrift(db: MigrationDb): void {
+  ensureIncrementalColumns(db);
+  ensureIncrementalIndexes(db);
 }

@@ -11,8 +11,7 @@ import {
   type GuidedQuestionEntry,
 } from '@/lib/formulation/guided-questions';
 import {isParticipantGender} from '@/lib/formulation/participant-profile';
-import {FormulationExportMenu} from '@/components/formulation/formulation-export-menu';
-import {WIZARD_PHASES} from '@/lib/formulation/phase-nav';
+import {normalizeWizardPhase, WIZARD_PHASES} from '@/lib/formulation/phase-nav';
 import type {WizardLiveDraft} from '@/lib/formulation/wizard-live-draft';
 import type {FormulationPhase, FormulationSession} from '@/lib/life-coach/types';
 
@@ -28,7 +27,6 @@ type Props = {
 
 const PHASE_ICONS: Record<string, string> = {
   consent: '✔',     // ✔
-  risk: '⚠',        // ⚠
   open: '⭐',        // ⭐
   dimensions: '⚙',  // ⚙
   exploration: '🔬', // 🔬
@@ -420,23 +418,10 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
     [explorationAnswers]
   );
 
-  /* ── Safety data ── */
-  const showRisk =
-    session.consent_accepted_at != null ||
-    phase !== 'consent' ||
-    session.risk_q1 != null ||
-    session.risk_q2 != null;
-
-  const riskQ1 =
-    session.risk_q1 === 1 ? t('risk.yes') : session.risk_q1 === 0 ? t('risk.no') : null;
-  const riskQ2 =
-    session.risk_q2 === 1 ? t('risk.yes') : session.risk_q2 === 0 ? t('risk.no') : null;
-
   /* ── Overall completion ── */
   const completedSections = useMemo(() => {
     let count = 0;
     if (profile.hasProfile) count++;
-    if (session.risk_q1 != null || session.risk_q2 != null) count++;
     if (ratingsEntries.length > 0) count++;
     if (followUps.length > 0 || session.phases_skipped?.includes('follow_ups')) count++;
     if (explorationAnswers.length > 0) count++;
@@ -450,9 +435,10 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
     ratingsEntries.length > 0 ||
     followUps.length > 0 ||
     explorationAnswers.length > 0 ||
-    (showRisk && (session.risk_q1 != null || session.risk_q2 != null)) ||
     session.formulation_approved != null ||
     session.coach_handoff != null;
+
+  const displayPhase = normalizeWizardPhase(phase, session.status);
 
   /* ── Phase labels ── */
   const phaseLabel = (p: FormulationPhase) => t(`liveSummary.phases.${p}`);
@@ -490,8 +476,8 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
         <SummarySection
           title={phaseLabel('consent')}
           icon={PHASE_ICONS.consent}
-          status={getPhaseStatus('consent', phase)}
-          defaultOpen={sectionDefaultOpen('consent', phase)}
+          status={getPhaseStatus('consent', displayPhase)}
+          defaultOpen={sectionDefaultOpen('consent', displayPhase)}
           badge={
             profile.hasProfile ? (
               <span className="text-[10px] text-emerald-400/70">
@@ -531,38 +517,12 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
           )}
         </SummarySection>
 
-        {/* 2. Safety */}
-        <SummarySection
-          title={phaseLabel('risk')}
-          icon={PHASE_ICONS.risk}
-          status={getPhaseStatus('risk', phase)}
-          defaultOpen={sectionDefaultOpen('risk', phase)}
-          badge={
-            session.risk_level === 'crisis' ? (
-              <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-[10px] font-bold text-red-300">
-                {t('liveSummary.riskCrisis')}
-              </span>
-            ) : riskQ1 != null || riskQ2 != null ? (
-              <span className="text-[10px] text-emerald-400/70">✔</span>
-            ) : undefined
-          }
-        >
-          {riskQ1 != null || riskQ2 != null ? (
-            <div className="grid gap-1">
-              {riskQ1 != null && <DataRow label={t('liveSummary.riskQ1')} value={riskQ1} />}
-              {riskQ2 != null && <DataRow label={t('liveSummary.riskQ2')} value={riskQ2} />}
-            </div>
-          ) : (
-            <p className="text-[10px] txt-faint">{t('liveSummary.notFilled')}</p>
-          )}
-        </SummarySection>
-
-        {/* 3. Ratings */}
+        {/* 2. Ratings */}
         <SummarySection
           title={phaseLabel('open')}
           icon={PHASE_ICONS.open}
-          status={getPhaseStatus('open', phase)}
-          defaultOpen={sectionDefaultOpen('open', phase)}
+          status={getPhaseStatus('open', displayPhase)}
+          defaultOpen={sectionDefaultOpen('open', displayPhase)}
           badge={
             ratingsProgress.total > 0 ? (
               <span className="text-[10px] tabular-nums txt-muted">
@@ -601,8 +561,8 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
         <SummarySection
           title={phaseLabel('dimensions')}
           icon={PHASE_ICONS.dimensions}
-          status={getPhaseStatus('dimensions', phase)}
-          defaultOpen={sectionDefaultOpen('dimensions', phase)}
+          status={getPhaseStatus('dimensions', displayPhase)}
+          defaultOpen={sectionDefaultOpen('dimensions', displayPhase)}
           badge={
             session.phases_skipped?.includes('follow_ups') ? (
               <span className="text-[10px] txt-faint">{t('liveSummary.skipped')}</span>
@@ -628,8 +588,8 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
         <SummarySection
           title={phaseLabel('exploration')}
           icon={PHASE_ICONS.exploration}
-          status={getPhaseStatus('exploration', phase)}
-          defaultOpen={sectionDefaultOpen('exploration', phase)}
+          status={getPhaseStatus('exploration', displayPhase)}
+          defaultOpen={sectionDefaultOpen('exploration', displayPhase)}
           badge={
             explorationProgress.total > 0 ? (
               <span className="text-[10px] tabular-nums txt-muted">
@@ -668,9 +628,9 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
         <SummarySection
           title={phaseLabel('formulation')}
           icon={PHASE_ICONS.formulation}
-          status={getPhaseStatus('formulation', phase)}
+          status={getPhaseStatus('formulation', displayPhase)}
           defaultOpen={
-            sectionDefaultOpen('formulation', phase) || session.formulation_approved != null
+            sectionDefaultOpen('formulation', displayPhase) || session.formulation_approved != null
           }
         >
           {session.formulation_approved ? (
@@ -684,8 +644,8 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
         <SummarySection
           title={phaseLabel('goal')}
           icon={PHASE_ICONS.goal}
-          status={getPhaseStatus('goal', phase)}
-          defaultOpen={sectionDefaultOpen('goal', phase) || session.coach_handoff != null}
+          status={getPhaseStatus('goal', displayPhase)}
+          defaultOpen={sectionDefaultOpen('goal', displayPhase) || session.coach_handoff != null}
         >
           {session.coach_handoff ? (
             <GoalCard session={session} t={t} />
@@ -695,10 +655,6 @@ export function FormulationLiveSummary({session, phase, locale, guidedQuestions,
         </SummarySection>
       </div>
 
-      {/* ── Footer: Export ── */}
-      <div className="border-t border-[color:var(--color-border)] px-4 py-3 md:px-5">
-        <FormulationExportMenu session={session} liveDraft={draft} compact />
-      </div>
     </aside>
   );
 }

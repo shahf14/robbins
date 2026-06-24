@@ -4,7 +4,7 @@ import {formulationSessionCreateSchema} from '@/lib/life-coach/schemas';
 import {jsonError, jsonOk, resolveLocale, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 export async function POST(request: Request) {
-  const current = await requireLifeCoachAccess(request);
+  const current = await requireLifeCoachAccess(request, {allowDuringOnboarding: true});
   if (!current.ok) return current.response;
 
   const parsed = await parseLifeCoachJsonBody(request, formulationSessionCreateSchema);

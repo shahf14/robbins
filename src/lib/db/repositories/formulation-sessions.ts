@@ -1,10 +1,17 @@
-import {getDb} from '../sqlite';
+import {dbGet, getDb} from '../sqlite';
 import {normalizeLlmExplorationAnswers} from '@/lib/formulation/exploration-answers';
 import {
   parseLifeContextStatuses,
   serializeLifeContextStatuses,
 } from '@/lib/formulation/life-context';
-import {parseJsonOr} from '@/lib/safe-json';
+import {
+  FORMULATION_PHASES,
+  FORMULATION_SESSION_STATUSES,
+  LIFE_DOMAINS,
+  RISK_ACTIONS,
+  RISK_LEVELS,
+} from '@/lib/life-coach/constants';
+import {parseJsonArrayOr, parseJsonOr} from '@/lib/safe-json';
 import type {FormulationSession, RatingFollowUpItem} from '@/lib/life-coach/types';
 
 function parseJson<T>(value: unknown, fallback: T): T {
@@ -41,8 +48,8 @@ export function rowToFormulationSession(row: Record<string, unknown>): Formulati
     presenting_concern_raw: (row.presenting_concern_raw as string) ?? null,
     presenting_concern_user_words: (row.presenting_concern_user_words as string) ?? null,
     reflection_llm_text: (row.reflection_llm_text as string) ?? null,
-    passive_ratings: parseJson(row.passive_ratings_json as string, []),
-    rating_follow_ups: parseJson<RatingFollowUpItem[]>(row.rating_follow_ups_json as string, []).map(
+    passive_ratings: parseJsonArrayOr(row.passive_ratings_json),
+    rating_follow_ups: parseJsonArrayOr<RatingFollowUpItem>(row.rating_follow_ups_json).map(
       (f) => ({...f, source_rating_key: f.source_rating_key ?? null})
     ),
     dimensions: parseJson(row.dimensions_json as string, null),
@@ -54,11 +61,11 @@ export function rowToFormulationSession(row: Record<string, unknown>): Formulati
     suggested_domain: (row.suggested_domain as FormulationSession['suggested_domain']) ?? null,
     created_goal_id: (row.created_goal_id as string) ?? null,
     checkin_prefill: parseJson(row.checkin_prefill_json as string, null),
-    phases_skipped: parseJson(row.phases_skipped_json as string, []),
+    phases_skipped: parseJsonArrayOr<string>(row.phases_skipped_json),
     prior_question_key: (row.prior_question_key as string) ?? null,
     prior_question_answer: (row.prior_question_answer as string) ?? null,
-    prior_question_answers: parseJson(row.prior_question_answers_json as string, []),
-    llm_exploration_questions: parseJson(row.llm_exploration_questions_json as string, []),
+    prior_question_answers: parseJsonArrayOr(row.prior_question_answers_json),
+    llm_exploration_questions: parseJsonArrayOr(row.llm_exploration_questions_json),
     llm_exploration_answers: normalizeLlmExplorationAnswers(
       parseJson(row.llm_exploration_answers_json as string, [])
     ),
@@ -198,7 +205,54 @@ export function insertFormulationSession(session: FormulationSession): void {
     .run(...values);
 }
 
+function sanitizeFormulationSessionForUpdate(session: FormulationSession): void {
+  if (session.created_goal_id) {
+    const goalExists = dbGet<{ok: number}>(
+      `SELECT 1 AS ok FROM goals WHERE id = ? AND user_id = ?`,
+      [session.created_goal_id, session.user_id]
+    );
+    if (!goalExists) {
+      session.created_goal_id = null;
+    }
+  }
+
+  if (
+    session.suggested_domain &&
+    !(LIFE_DOMAINS as readonly string[]).includes(session.suggested_domain)
+  ) {
+    session.suggested_domain = null;
+  }
+
+  if (
+    session.risk_level &&
+    !(RISK_LEVELS as readonly string[]).includes(session.risk_level)
+  ) {
+    session.risk_level = null;
+  }
+
+  if (
+    session.risk_action &&
+    !(RISK_ACTIONS as readonly string[]).includes(session.risk_action)
+  ) {
+    session.risk_action = null;
+  }
+
+  if (!(FORMULATION_SESSION_STATUSES as readonly string[]).includes(session.status)) {
+    session.status = 'draft';
+  }
+
+  if (!(FORMULATION_PHASES as readonly string[]).includes(session.current_phase)) {
+    session.current_phase = 'consent';
+  }
+
+  if (session.locale !== 'he' && session.locale !== 'en') {
+    session.locale = 'he';
+  }
+}
+
 export function updateFormulationSession(session: FormulationSession): void {
+  sanitizeFormulationSessionForUpdate(session);
+
   getDb()
     .prepare(
       `UPDATE formulation_sessions SET

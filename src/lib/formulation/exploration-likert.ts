@@ -5,7 +5,7 @@ import type {LlmExplorationQuestion} from '@/lib/life-coach/types';
 const ENGLISH_IN_HEBREW = /\b[a-z]{4,}(?:\s+[a-z]+){0,3}\b/i;
 const RATING_SLUG = /\b[a-z][a-z0-9]*(?:_[a-z0-9]+)+\b/;
 
-const HEBREW_FIRST_PERSON = /(אני|לי|שלי|אותי|השבוע|בשבוע)/u;
+const HEBREW_FIRST_PERSON = /(אני|לי|שלי|אותי|לאחרונה|בתקופה)/u;
 
 /** True when text is a first-person statement suitable for 1–5 agree/disagree rating. */
 export function isExplorationLikertStatement(text: string, locale: AppLocale): boolean {
@@ -28,7 +28,7 @@ export function isExplorationLikertStatement(text: string, locale: AppLocale): b
   if (/\b(how does|how do|affect your|impact on your|explain|describe)\b/i.test(t)) {
     return false;
   }
-  if (!/\b(i |i'm|my |me |this week|feel )\b/i.test(t)) {
+  if (!/\b(i |i'm|my |me |lately|recently|feel )\b/i.test(t)) {
     return false;
   }
   return true;

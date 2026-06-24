@@ -6,7 +6,7 @@ export async function POST(
   request: Request,
   {params}: {params: Promise<{id: string}>}
 ) {
-  const current = await requireLifeCoachAccess(request);
+  const current = await requireLifeCoachAccess(request, {allowDuringOnboarding: true});
   if (!current.ok) return current.response;
 
   const {id} = await params;
@@ -21,9 +21,6 @@ export async function POST(
     }
     if (existing.status === 'completed') {
       return jsonOk({session: existing});
-    }
-    if (existing.status === 'crisis_stopped') {
-      return jsonError('Session stopped for safety.', 403);
     }
 
     const session = await completeFormulationSession(current.user.id, id);

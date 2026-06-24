@@ -80,7 +80,7 @@ export function buildAccountabilityContext(
     commitment_phrase: commitment,
     micro_goal_week: handoff?.micro_goal_week?.trim() || null,
     value: handoff?.value?.trim() || null,
-    burning_focus: burning !== (locale === 'he' ? 'מה שבוער עכשיו לפי הנתונים' : 'What is flaring now per your data')
+    burning_focus: burning !== (locale === 'he' ? 'מה שנראה משמעותי כרגע לפי הנתונים' : 'What looks significant right now from your data')
       ? clip(burning, 90)
       : null,
     presenting_concern: approved?.presenting_concern_user_words?.trim() || null,

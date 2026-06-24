@@ -106,12 +106,6 @@ export function newCuratedTask(domain: LifeDomain): AdminCuratedTask {
   };
 }
 
-export function exportCuratedTasksForDomain(tasks: AdminCuratedTask[], domain: LifeDomain): CuratedDailyTask[] {
-  return tasks
-    .filter((task) => task.world === domain && isCuratedTaskVisibleInPicker(task))
-    .map(({status: _status, hiddenFromLibrary: _hidden, isDefault: _isDefault, isAdminManaged: _managed, updatedAt: _updatedAt, ...task}) => task);
-}
-
 export function resetCuratedTasksForDomain(tasks: AdminCuratedTask[], domain: LifeDomain): AdminCuratedTask[] {
   const builtins = createDefaultCuratedTaskLibrary().filter((task) => task.world === domain);
   const other = tasks.filter((task) => task.world !== domain);

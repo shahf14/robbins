@@ -158,7 +158,7 @@ function primaryGoalFocus(
     const ctx = contexts.length ? `בהקשר של ${contexts.join(' ו-')}: ` : '';
     const primary =
       themes[0] ??
-      (explore[0] ? explore[0] : 'מה שבוער עכשיו לפי הצ\'יפים והשאלות המעמיקות');
+      (explore[0] ? explore[0] : 'מה שנראה משמעותי לפי שאלות הדיוק וההעמקה');
     return {
       primary: `${ctx}${primary}`,
       secondary: [...themes.slice(1, 3), ...explore.slice(0, 1)],
@@ -167,7 +167,7 @@ function primaryGoalFocus(
 
   const ctx = contexts.length ? `Given ${contexts.join(' + ')}: ` : '';
   const primary =
-    themes[0] ?? (explore[0] ? explore[0] : 'what is flaring now per chips and exploration');
+    themes[0] ?? (explore[0] ? explore[0] : 'what looks significant from the accuracy check and deeper reflection');
   return {
     primary: `${ctx}${primary}`,
     secondary: [...themes.slice(1, 3), ...explore.slice(0, 1)],
@@ -210,9 +210,9 @@ export function buildReflectionFromInsights(
 
   const summary = themes.join(locale === 'he' ? ' · ' : ' · ');
   if (locale === 'he') {
-    return `מה שבוער אצלך עכשיו (אחרי הבהרה): ${summary}. זו נקודת פתיחה — לא אבחון.`;
+    return `מה שנראה משמעותי כרגע אחרי ההבהרה: ${summary}. זו נקודת פתיחה — לא אבחון.`;
   }
-  return `What is flaring for you now (after clarification): ${summary}. This is a starting point — not a diagnosis.`;
+  return `What looks significant right now after clarification: ${summary}. This is a starting point — not a diagnosis.`;
 }
 
 /** Sync one-line concern + reflection with chip-filtered synthesis (steps 4+). */
@@ -313,8 +313,8 @@ export function buildFormulationInsights(
 
   const chip_filter_rule =
     locale === 'he'
-      ? 'הסר מבוער/יעדים רק נושאים שנשאלו במפורש בשלב 4 (chip_follow_ups) וענו "בכלל לא". נושאים גבוהים בשלב 3 שלא נשאלו בשלב 4 — נשארים תקפים.'
-      : 'Remove from burning/goals only themes explicitly asked in Phase 4 (chip_follow_ups) with "not at all". High Phase-3 themes not asked in Phase 4 remain valid.';
+      ? 'הסר ממיקוד ויעדים רק נושאים שנשאלו במפורש בשלב 4 והמשתמש ענה עליהם "בכלל לא". נושאים גבוהים משלב 3 שלא נשאלו בשלב 4 נשארים תקפים.'
+      : 'Remove from focus and goals only themes explicitly checked in Phase 4 and answered "not at all". High Phase-3 themes not checked in Phase 4 remain valid.';
 
   const {primary, secondary} = primaryGoalFocus(
     burning_now_themes,
@@ -328,7 +328,7 @@ export function buildFormulationInsights(
         .slice(0, 4)
         .map((t) => goalReadyLabel(t, locale).replace(/\.$/, ''))
         .join(locale === 'he' ? ' · ' : ' · ')
-    : (locale === 'he' ? 'מה שבוער עכשיו לפי הנתונים' : 'What feels most pressing based on your data');
+    : (locale === 'he' ? 'מה שנראה משמעותי כרגע לפי הנתונים' : 'What feels most significant based on your data');
 
   const cross_cutting_narrative =
     locale === 'he'
@@ -341,12 +341,12 @@ export function buildFormulationInsights(
                 .join('; ')}.`
             : '',
           suppressed_by_chips.length
-            ? `שלב 4 — לא בוער עכשיו (צ'יפ "בכלל לא"): ${suppressed_by_chips
+            ? `שלב 4 — סומן כפחות רלוונטי עכשיו ("בכלל לא"): ${suppressed_by_chips
                 .map((s) => s.label)
                 .join('; ')}.`
             : '',
           burning_now_themes.length
-            ? `בוער עכשיו (אחרי סינון): ${burning_now_themes
+            ? `נראה משמעותי כרגע אחרי בדיקת דיוק: ${burning_now_themes
                 .slice(0, 5)
                 .map((t) => t.label)
                 .join('; ')}.`
@@ -369,12 +369,12 @@ export function buildFormulationInsights(
                 .join('; ')}.`
             : '',
           suppressed_by_chips.length
-            ? `Step 4 — not flaring now (chip "not at all"): ${suppressed_by_chips
+            ? `Step 4 — marked as less relevant right now ("not at all"): ${suppressed_by_chips
                 .map((s) => s.label)
                 .join('; ')}.`
             : '',
           burning_now_themes.length
-            ? `Burning now (after filter): ${burning_now_themes
+            ? `Looks significant right now after the accuracy check: ${burning_now_themes
                 .slice(0, 5)
                 .map((t) => t.label)
                 .join('; ')}.`
@@ -427,10 +427,10 @@ export function buildFallbackFormulationFromInsights(
     locale === 'he'
       ? coreParts.length >= 2
         ? `${coreParts[0]} — וגם ${(coreParts[1] ?? '').slice(0, 120)}`
-        : (coreParts[0] ?? 'מה שבוער עכשיו לפי הנתונים')
+        : (coreParts[0] ?? 'מה שנראה משמעותי כרגע לפי הנתונים')
       : coreParts.length >= 2
         ? `${coreParts[0]} — also ${(coreParts[1] ?? '').slice(0, 120)}`
-        : (coreParts[0] ?? 'What is flaring now based on your data');
+        : (coreParts[0] ?? 'What looks significant right now based on your data');
 
   const stressors =
     classified.triggers.length > 0
@@ -463,8 +463,8 @@ export function buildFallbackFormulationFromInsights(
     existing_strengths: [...new Set(strengths)],
     uncertainties:
       locale === 'he'
-        ? ['מה הכי מחזיק את הקושי אם נשנה רק דבר אחד השבוע', 'איזה צעד קטן ירגיש אפשרי']
-        : ['What matters most if only one thing changes this week', 'Which small step feels doable'],
+        ? ['מה הכי מחזיק את הקושי אם נשנה רק דבר אחד לאחרונה', 'איזה צעד קטן ירגיש אפשרי']
+        : ['What matters most if only one thing changes lately', 'Which small step feels doable'],
     risk_screen: {
       level: session.risk_level ?? 'none',
       action: session.risk_action ?? 'continue',
