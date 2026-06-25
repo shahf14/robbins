@@ -1,4 +1,5 @@
 import type {AppLocale} from '@/i18n/config';
+import {resolveGenderedDeep, resolveParticipantGender} from '@/lib/gendered-copy';
 import {distressWeight} from '@/lib/formulation/passive-ratings';
 import type {BreathingType} from '@/lib/morning-ritual-types';
 import type {
@@ -272,7 +273,7 @@ const MEDITATION_COPY: Record<
       max_rounds: {quick: 3, standard: 4, deep: 4},
       phase_guidance: {
         prepare: 'שים/י יד על הלב. זה קשה — וזה מובן.',
-        inhale: ['שאף/י חמלה, לא לחץ.', 'משפט אחד של רוך לעצמך.', 'את/ה לא 혼자/ה.'],
+        inhale: ['שאף/י חמלה, לא לחץ.', 'משפט אחד של רוך לעצמך.', 'את/ה לא לבד/ה.'],
         hold: ['מה עדיין חשוב לך?', 'רגע של משמעות — קטן.', 'אין צורך לתקן הכל.'],
         exhale: ['שחרר/י ביקורת.', 'נשוף/י את הקול הקשה.', 'רך — כמו לחבר/ה.'],
         complete: 'חמלה אחת — לא פתרון, אבל נשימה.',
@@ -378,7 +379,11 @@ export function buildMeditationRecommendation(
     }
   }
 
-  const copy = MEDITATION_COPY[type][locale === 'he' ? 'he' : 'en'];
+  const rawCopy = MEDITATION_COPY[type][locale === 'he' ? 'he' : 'en'];
+  const copy =
+    locale === 'he'
+      ? resolveGenderedDeep(rawCopy, resolveParticipantGender(session.participant_gender))
+      : rawCopy;
 
   return {
     meditation_type: type,

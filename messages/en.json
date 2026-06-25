@@ -36,7 +36,7 @@
     "moreMenuLabel": "More",
     "virtualCoachShort": "Coach",
     "clarification": "Clarification & goal",
-    "clarificationShort": "Clarify",
+    "clarificationShort": "Clarification",
     "eveningResetShort": "Evening",
     "routinesShort": "Routines",
     "morningRoutine": "Morning routine",
@@ -560,7 +560,7 @@
     "cancel": "Cancel",
     "minutes": "minutes",
     "markCompleted": "Completed",
-    "markPartial": "Partial (add a note)",
+    "markPartial": "Partially done (add a note)",
     "markSkipped": "Skipped",
     "stepStatusCoachHint": "Even partial counts as important information for the coach.",
     "stepSkipCoachHint": "Skipping teaches the coach to better adapt the next step.",
@@ -615,7 +615,7 @@
     },
     "stepStatus": {
       "none": "No step yet",
-      "pending": "Waiting",
+      "pending": "Pending",
       "completed": "Completed",
       "mixed": "Mixed progress"
     },
@@ -1181,7 +1181,7 @@
       "followUps": "Follow-up questions",
       "exploration": "Deeper reflection statements",
       "explorationProgress": "{answered} of {total}",
-      "formulation": "Formulation",
+      "formulation": "Summary",
       "central": "Central concern",
       "goal": "Goal",
       "microGoal": "Weekly micro-goal",
@@ -1193,7 +1193,7 @@
         "open": "Statement ratings",
         "dimensions": "Accuracy check",
         "exploration": "Deeper reflection",
-        "formulation": "Collaborative formulation",
+        "formulation": "Collaborative summary",
         "goal": "Weekly goal"
       }
     },

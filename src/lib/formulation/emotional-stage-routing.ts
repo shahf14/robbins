@@ -1,4 +1,5 @@
 import type {AppLocale} from '@/i18n/config';
+import {resolveGenderedDeep} from '@/lib/gendered-copy';
 import {buildFormulationInsights} from '@/lib/formulation/formulation-insights';
 import type {MindsetBlockerKind} from '@/lib/formulation/mindset-exercises';
 import type {BreathingType, RitualMode} from '@/lib/morning-ritual-types';
@@ -299,7 +300,7 @@ export function buildEmotionalStageRouting(
     modifiers.push('clarity_over_action');
   }
 
-  return {
+  const routing: EmotionalStageRouting = {
     intensity_0_10: intensity,
     intensity_band: band,
     content_profile: profile,
@@ -323,6 +324,10 @@ export function buildEmotionalStageRouting(
     exercises: exerciseAdjustments(profile, modifiers),
     content_rules: buildContentRules(profile, modifiers, locale),
   };
+
+  return locale === 'he'
+    ? resolveGenderedDeep(routing, session.participant_gender)
+    : routing;
 }
 
 export function emotionalStageForPrompt(routing: EmotionalStageRouting): Record<string, unknown> {

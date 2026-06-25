@@ -1,4 +1,5 @@
 import type {AppLocale} from '@/i18n/config';
+import {resolveGenderedHebrewText, resolveParticipantGender} from '@/lib/gendered-copy';
 import {buildFallbackExplorationQuestions} from '@/lib/formulation/exploration-fallback';
 import {buildFallbackFormulationFromInsights} from '@/lib/formulation/formulation-insights';
 import {MicroGoalLlmError, enrichMindsetGoalOptions, normalizeGoalOptions, validateLlmGoalOptions} from '@/lib/formulation/micro-goal-llm';
@@ -207,7 +208,10 @@ export const openaiFormulationService = {
 
     throw new MicroGoalLlmError(
       locale === 'he'
-        ? 'לא הצלחנו ליצור 5 יעדים מותאמים מהנתונים. נסה/י שוב בעוד רגע.'
+        ? resolveGenderedHebrewText(
+            'לא הצלחנו ליצור 5 יעדים מותאמים מהנתונים. נסה/י שוב בעוד רגע.',
+            resolveParticipantGender(session.participant_gender)
+          )
         : 'Could not generate 5 personalized goals from your data. Please try again.'
     );
   },

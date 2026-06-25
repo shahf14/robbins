@@ -1,4 +1,5 @@
 import type {AppLocale} from '@/i18n/config';
+import {resolveGenderedDeep, resolveGenderedHebrewText, resolveParticipantGender} from '@/lib/gendered-copy';
 import {activeLifeContexts} from '@/lib/life-context-content';
 import type {
   FormulationSession,
@@ -114,8 +115,9 @@ const CONTEXT_KEY_PRIORITY = [
   'with_people',
 ] as const;
 
-function pickCopy(copy: TriggerCopy, locale: AppLocale): string {
-  return locale === 'he' ? copy.he : copy.en;
+function pickCopy(copy: TriggerCopy, locale: AppLocale, gender?: string | null): string {
+  const text = locale === 'he' ? copy.he : copy.en;
+  return locale === 'he' ? resolveGenderedHebrewText(text, gender) : text;
 }
 
 function resolveDifficultyContexts(session: FormulationSession): string[] {
@@ -126,7 +128,8 @@ function resolveDifficultyContexts(session: FormulationSession): string[] {
 
 function selectLifeContextTrigger(
   statuses: LifeContextStatus[],
-  locale: AppLocale
+  locale: AppLocale,
+  gender?: string | null
 ): {phrase: string; status: LifeContextStatus} | null {
   const active = activeLifeContexts(statuses);
   if (active.length === 0) return null;
@@ -135,20 +138,21 @@ function selectLifeContextTrigger(
     if (!active.includes(status)) continue;
     const copy = LIFE_CONTEXT_TRIGGERS[status];
     if (!copy) continue;
-    return {phrase: pickCopy(copy, locale), status};
+    return {phrase: pickCopy(copy, locale, gender), status};
   }
   return null;
 }
 
 function selectContextKeyTrigger(
   contextKeys: string[],
-  locale: AppLocale
+  locale: AppLocale,
+  gender?: string | null
 ): {phrase: string; key: string} | null {
   for (const key of CONTEXT_KEY_PRIORITY) {
     if (!contextKeys.includes(key)) continue;
     const copy = CONTEXT_KEY_TRIGGERS[key];
     if (!copy) continue;
-    return {phrase: pickCopy(copy, locale), key};
+    return {phrase: pickCopy(copy, locale, gender), key};
   }
   return null;
 }
@@ -162,18 +166,19 @@ function buildSecondaryTriggers(
   statuses: LifeContextStatus[],
   contextKeys: string[],
   locale: AppLocale,
-  exclude: string
+  exclude: string,
+  gender?: string | null
 ): string[] {
   const out: string[] = [];
   for (const status of activeLifeContexts(statuses)) {
     const copy = LIFE_CONTEXT_TRIGGERS[status];
     if (!copy) continue;
-    const phrase = pickCopy(copy, locale);
+    const phrase = pickCopy(copy, locale, gender);
     if (phrase !== exclude) out.push(phrase);
   }
   for (const key of CONTEXT_KEY_PRIORITY) {
     if (!contextKeys.includes(key)) continue;
-    const phrase = pickCopy(CONTEXT_KEY_TRIGGERS[key], locale);
+    const phrase = pickCopy(CONTEXT_KEY_TRIGGERS[key], locale, gender);
     if (phrase !== exclude && !out.includes(phrase)) out.push(phrase);
   }
   return out.slice(0, 3);
@@ -201,8 +206,9 @@ export function buildHabitTriggerContext(
     return null;
   }
 
-  const lifeTrigger = selectLifeContextTrigger(statuses, locale);
-  const contextTrigger = selectContextKeyTrigger(difficultyContexts, locale);
+  const gender = resolveParticipantGender(session.participant_gender);
+  const lifeTrigger = selectLifeContextTrigger(statuses, locale, gender);
+  const contextTrigger = selectContextKeyTrigger(difficultyContexts, locale, gender);
   const window = prefs?.preferred_action_window ?? null;
 
   let primary_trigger: string;
@@ -230,10 +236,10 @@ export function buildHabitTriggerContext(
     primary_trigger = contextTrigger.phrase;
     trigger_source = 'difficulty_context';
   } else if (window && window !== 'flexible') {
-    primary_trigger = pickCopy(WINDOW_TRIGGERS[window], locale);
+    primary_trigger = pickCopy(WINDOW_TRIGGERS[window], locale, gender);
     trigger_source = 'action_window';
   } else {
-    primary_trigger = pickCopy(WINDOW_TRIGGERS.flexible, locale);
+    primary_trigger = pickCopy(WINDOW_TRIGGERS.flexible, locale, gender);
     trigger_source = 'default';
   }
 
@@ -244,7 +250,8 @@ export function buildHabitTriggerContext(
       statuses,
       difficultyContexts,
       locale,
-      primary_trigger
+      primary_trigger,
+      gender
     ),
     life_context_statuses: active,
     difficulty_contexts: difficultyContexts,

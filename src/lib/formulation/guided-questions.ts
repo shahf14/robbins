@@ -1,5 +1,7 @@
 import guidedQuestionsBank from '@/data/formulation-guided-questions.json';
 import type {AppLocale} from '@/i18n/config';
+import {resolveGenderedHebrewText, resolveParticipantGender} from '@/lib/gendered-copy';
+import {loadUserPreferences} from '@/lib/user-preferences';
 import type {FormulationSession, LifeContextStatus} from '@/lib/life-coach/types';
 
 /** Profile inputs for filtering step-3 questions (extend as step 1 grows). */
@@ -98,8 +100,16 @@ export function getGuidedQuestionById(id: string): GuidedQuestionEntry | undefin
   return questionById.get(id);
 }
 
-export function getGuidedQuestionBody(question: GuidedQuestionEntry, locale: AppLocale): string {
-  return locale === 'he' ? question.body_he : question.body_en;
+export function getGuidedQuestionBody(
+  question: GuidedQuestionEntry,
+  locale: AppLocale,
+  gender?: GuidedQuestionProfile['gender']
+): string {
+  if (locale !== 'he') return question.body_en;
+  const resolvedGender = resolveParticipantGender(
+    gender ?? loadUserPreferences().gender ?? null
+  );
+  return resolveGenderedHebrewText(question.body_he, resolvedGender);
 }
 
 export function getPolarityForQuestionId(id: string): GuidedQuestionPolarity {

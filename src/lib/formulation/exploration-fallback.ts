@@ -1,6 +1,7 @@
 import type {AppLocale} from '@/i18n/config';
 import {buildFormulationInsights} from '@/lib/formulation/formulation-insights';
 import {humanThemePhraseFromInsights} from '@/lib/formulation/theme-phrases';
+import {resolveGenderedHebrewText, resolveParticipantGender} from '@/lib/gendered-copy';
 import type {FormulationSession, LlmExplorationQuestion} from '@/lib/life-coach/types';
 
 /** First-person Likert statements — not interrogative questions. */
@@ -58,9 +59,16 @@ export function buildFallbackExplorationQuestions(
 
   return templates.map((tpl, i) => {
     const n = String(i + 1).padStart(2, '0');
+    const text =
+      locale === 'he'
+        ? resolveGenderedHebrewText(
+            tpl.replace(/\{theme\}/g, theme.slice(0, 80)),
+            resolveParticipantGender(session.participant_gender)
+          )
+        : tpl.replace(/\{theme\}/g, theme.slice(0, 80));
     return {
       id: `q${n}`,
-      text: tpl.replace(/\{theme\}/g, theme.slice(0, 80)),
+      text,
       focus_area: i < 5 ? 'angle' : i < 10 ? 'impact' : 'resources',
     };
   });

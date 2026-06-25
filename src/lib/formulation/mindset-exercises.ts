@@ -1,4 +1,5 @@
 import type {AppLocale} from '@/i18n/config';
+import {resolveGenderedDeep} from '@/lib/gendered-copy';
 import {
   buildEmotionalStageRouting,
   selectMindsetBlockerForEmotionalStage,
@@ -227,10 +228,12 @@ export function detectCentralBlocker(
 
 function getMindsetExercise(
   blocker: MindsetBlockerKind,
-  locale: AppLocale
+  locale: AppLocale,
+  gender?: string | null
 ): MindsetExercise {
   const entry = EXERCISES[blocker];
-  const copy = locale === 'he' ? entry.he : entry.en;
+  const copy =
+    locale === 'he' ? resolveGenderedDeep(entry.he, gender) : entry.en;
   return {
     id: entry.id,
     target_blocker: blocker,
@@ -249,7 +252,7 @@ export function selectMindsetExercise(
     selectMindsetBlockerForEmotionalStage(detection.scores, routing) ??
     detection.dominant_blocker ??
     'low_control';
-  return getMindsetExercise(blocker, locale);
+  return getMindsetExercise(blocker, locale, session.participant_gender);
 }
 
 /** Compact payload for micro-goal LLM context. */

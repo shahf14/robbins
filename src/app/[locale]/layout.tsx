@@ -1,9 +1,9 @@
 import type {Metadata} from 'next';
-import {NextIntlClientProvider} from 'next-intl';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import type {ReactNode} from 'react';
 import {AppHeader} from '@/components/app-header';
+import {GenderedIntlProvider} from '@/components/i18n/gendered-intl-provider';
 import {AppProviders} from '@/components/feedback/app-providers';
 import {PwaRegister} from '@/components/pwa-register';
 import {ScheduleReminderPoller} from '@/components/schedule-reminder-poller';
@@ -48,7 +48,7 @@ export default async function LocaleLayout({children, params}: Props) {
   const skipLabel = locale === 'he' ? 'דלג לתוכן הראשי' : 'Skip to main content';
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <GenderedIntlProvider locale={locale} messages={messages}>
       <AppProviders>
       {/* Skip-to-content — keyboard accessibility (#30) */}
       <a
@@ -64,6 +64,6 @@ export default async function LocaleLayout({children, params}: Props) {
       <PwaRegister />
       <ScheduleReminderPoller />
       </AppProviders>
-    </NextIntlClientProvider>
+    </GenderedIntlProvider>
   );
 }

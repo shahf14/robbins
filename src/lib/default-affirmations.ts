@@ -1,5 +1,7 @@
 import type {AffirmationItem} from './morning-ritual-types';
 import affirmationsData from '@/data/affirmations.json';
+import {resolveGenderedHebrewText, resolveParticipantGender} from '@/lib/gendered-copy';
+import {loadUserPreferences} from '@/lib/user-preferences';
 
 type RawAffirmation = (typeof affirmationsData.affirmations)[number] & {
   life_context_include?: string[];
@@ -29,3 +31,14 @@ export const DEFAULT_AFFIRMATIONS: AffirmationItem[] =
     makeDefault(entry, 'he'),
     makeDefault(entry, 'en'),
   ]);
+
+export function resolveAffirmationTextContent(
+  item: Pick<AffirmationItem, 'language' | 'textContent'>,
+  gender?: string | null
+): string {
+  if (item.language !== 'he') return item.textContent;
+  return resolveGenderedHebrewText(
+    item.textContent,
+    resolveParticipantGender(gender ?? loadUserPreferences().gender ?? null)
+  );
+}

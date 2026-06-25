@@ -1,5 +1,6 @@
 import type {AppLocale} from '@/i18n/config';
 import {buildFormulationInsights} from '@/lib/formulation/formulation-insights';
+import {resolveGenderedHebrewText} from '@/lib/gendered-copy';
 import type {FormulationSession} from '@/lib/life-coach/types';
 
 type VisualizationValueTheme =
@@ -87,23 +88,32 @@ function buildVisualizationPromptInput(
   };
 }
 
-function strengthStep(input: VisualizationPromptInput, locale: AppLocale): string | null {
+function strengthStep(
+  input: VisualizationPromptInput,
+  locale: AppLocale,
+  gender?: string | null
+): string | null {
   const strength = input.strengths[0];
   if (!strength) return null;
   return locale === 'he'
-    ? `יש לך כבר ${clip(strength, 90)} — תן/י לזה מקום ברגע הזה.`
+    ? resolveGenderedHebrewText(
+        `יש לך כבר ${clip(strength, 90)} — תן/י לזה מקום ברגע הזה.`,
+        gender
+      )
     : `You already have ${clip(strength, 90)} — let that show up in this moment.`;
 }
 
 function buildGuidedSteps(
   input: VisualizationPromptInput,
   theme: VisualizationValueTheme,
-  locale: AppLocale
+  locale: AppLocale,
+  gender?: string | null
 ): string[] {
   const pain = clip(input.current_pain, 95);
   const value = clip(input.desired_value, 70);
   const goal = clip(input.micro_goal_week, 110);
-  const strength = strengthStep(input, locale);
+  const strength = strengthStep(input, locale, gender);
+  const g = (text: string) => resolveGenderedHebrewText(text, gender);
 
   if (locale === 'he') {
     switch (theme) {
@@ -119,9 +129,9 @@ function buildGuidedSteps(
       case 'self_confidence':
         return [
           `היום ${pain}.`,
-          'דמיין רגע אחד השבוע שבו את/ה פועל/ת — בלי לדחות.',
+          g('דמיין רגע אחד השבוע שבו את/ה פועל/ת — בלי לדחות.'),
           goal,
-          `את/ה עושה את זה מתוך ${value}, לא מתוך פחד.`,
+          g(`את/ה עושה את זה מתוך ${value}, לא מתוך פחד.`),
           ...(strength ? [strength] : []),
           'איך זה מרגיש בגוף?',
         ];
@@ -130,7 +140,7 @@ function buildGuidedSteps(
           `היום ${pain}.`,
           `דמיין רגע אחד השבוע שבו יש קצת יותר שקט — גם אם רק לרגע.`,
           goal,
-          `את/ה פועל/ת מתוך ${value}.`,
+          g(`את/ה פועל/ת מתוך ${value}.`),
           ...(strength ? [strength] : []),
           'איך זה מרגיש?',
         ];
@@ -138,7 +148,7 @@ function buildGuidedSteps(
         return [
           `היום ${pain}.`,
           `דמיין רגע אחד השבוע שבו ${goal}`,
-          `את/ה פועל/ת מתוך ${value}.`,
+          g(`את/ה פועל/ת מתוך ${value}.`),
           ...(strength ? [strength] : []),
           'איך זה מרגיש?',
         ];
@@ -184,11 +194,18 @@ function buildGuidedSteps(
   }
 }
 
-function buildSubtitle(input: VisualizationPromptInput, locale: AppLocale): string {
+function buildSubtitle(
+  input: VisualizationPromptInput,
+  locale: AppLocale,
+  gender?: string | null
+): string {
   const pain = clip(input.current_pain, 80);
   const value = clip(input.desired_value, 60);
   return locale === 'he'
-    ? `היום ${pain}… דמיין רגע אחד השבוע שבו את/ה פועל/ת מתוך ${value}.`
+    ? resolveGenderedHebrewText(
+        `היום ${pain}… דמיין רגע אחד השבוע שבו את/ה פועל/ת מתוך ${value}.`,
+        gender
+      )
     : `Today ${pain}… picture one moment this week when you act from ${value}.`;
 }
 
@@ -208,11 +225,12 @@ export function buildPersonalizedVisualization(
   if (!prompt_input) return null;
 
   const value_theme = detectVisualizationValueTheme(prompt_input, locale);
+  const gender = session.participant_gender;
   return {
     value_theme,
     prompt_input,
-    guided_steps: buildGuidedSteps(prompt_input, value_theme, locale),
-    subtitle: buildSubtitle(prompt_input, locale),
+    guided_steps: buildGuidedSteps(prompt_input, value_theme, locale, gender),
+    subtitle: buildSubtitle(prompt_input, locale, gender),
     placeholder: buildPlaceholder(prompt_input, locale),
   };
 }
@@ -254,7 +272,10 @@ export function buildVisualizationContextForWizard(
       : null,
     gap_pattern:
       locale === 'he'
-        ? 'היום {current_pain}… דמיין רגע אחד השבוע שבו את/ה פועל/ת מתוך {desired_value}.'
+        ? resolveGenderedHebrewText(
+            'היום {current_pain}… דמיין רגע אחד השבוע שבו את/ה פועל/ת מתוך {desired_value}.',
+            session.participant_gender
+          )
         : 'Today {current_pain}… picture one moment this week when you act from {desired_value}.',
   };
 }

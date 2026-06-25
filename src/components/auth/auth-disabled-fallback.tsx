@@ -1,6 +1,6 @@
-import {NextIntlClientProvider} from 'next-intl';
 import {localeDirections, type AppLocale} from '@/i18n/config';
 import {AuthDisabledClerkPanel} from '@/components/auth/auth-disabled-clerk-panel';
+import {GenderedIntlProvider} from '@/components/i18n/gendered-intl-provider';
 
 type Props = {
   locale: AppLocale;
@@ -12,10 +12,10 @@ export async function AuthDisabledFallback({locale, variant}: Props) {
   const dir = localeDirections[locale];
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <GenderedIntlProvider locale={locale} messages={messages}>
       <main className="flex min-h-screen items-center justify-center p-6" dir={dir} lang={locale}>
         <AuthDisabledClerkPanel locale={locale} variant={variant} />
       </main>
-    </NextIntlClientProvider>
+    </GenderedIntlProvider>
   );
 }

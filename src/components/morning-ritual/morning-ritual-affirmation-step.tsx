@@ -4,6 +4,7 @@ import {useState} from 'react';
 import {useTranslations} from 'next-intl';
 import {AffirmationManager, formatAffirmationTag} from '@/components/affirmation-manager';
 import type {AppLocale} from '@/i18n/config';
+import {resolveAffirmationTextContent} from '@/lib/default-affirmations';
 import type {AffirmationItem, AffirmationType} from '@/lib/morning-ritual-types';
 import {
   pickMorningAffirmation,
@@ -53,6 +54,9 @@ export function AffirmationStep({
     (a) => a.active && !a.hiddenFromLibrary && !a.isDraft && a.language === locale && a.type === 'youtube'
   );
   const activeAffirmation = affirmation && affirmation.type === viewType ? affirmation : null;
+  const activeAffirmationText = activeAffirmation
+    ? resolveAffirmationTextContent(activeAffirmation)
+    : '';
 
   function switchViewType(type: AffirmationType) {
     setViewType(type);
@@ -199,7 +203,7 @@ export function AffirmationStep({
   if (showFocusMode && activeAffirmation?.type === 'text') {
     return (
       <AffirmationFocusMode
-        text={activeAffirmation.textContent}
+        text={activeAffirmationText}
         title={activeAffirmation.title}
         onClose={() => setShowFocusMode(false)}
       />
@@ -252,7 +256,7 @@ export function AffirmationStep({
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="field-label mb-0 txt-muted">{activeAffirmation.title}</p>
-                  <p className="mt-4 text-xl font-bold leading-9">{activeAffirmation.textContent}</p>
+                  <p className="mt-4 text-xl font-bold leading-9">{activeAffirmationText}</p>
                 </div>
                 <span className="rounded-full border border-[color:var(--color-border)] fill-2 px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] txt-soft">
                   {t('affirmation.focusMode')}

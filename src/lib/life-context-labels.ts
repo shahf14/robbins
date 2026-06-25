@@ -1,5 +1,6 @@
 import type {AppLocale} from '@/i18n/config';
-import type {LifeContextStatus} from '@/lib/life-coach/types';
+import {resolveGenderedHebrewText, resolveParticipantGender} from '@/lib/gendered-copy';
+import {loadUserPreferences} from '@/lib/user-preferences';import type {LifeContextStatus} from '@/lib/life-coach/types';
 import {LIFE_CONTEXT_STATUSES} from '@/lib/life-coach/types';
 
 const LIFE_CONTEXT_HE: Record<LifeContextStatus, string> = {
@@ -54,10 +55,17 @@ function isLifeContextStatus(value: string): value is LifeContextStatus {
   return (LIFE_CONTEXT_STATUSES as readonly string[]).includes(value);
 }
 
-function lifeContextLabel(status: LifeContextStatus, locale: AppLocale): string {
-  return locale === 'he' ? LIFE_CONTEXT_HE[status] : LIFE_CONTEXT_EN[status];
+function lifeContextLabel(
+  status: LifeContextStatus,
+  locale: AppLocale,
+  gender?: string | null
+): string {
+  if (locale !== 'he') return LIFE_CONTEXT_EN[status];
+  return resolveGenderedHebrewText(
+    LIFE_CONTEXT_HE[status],
+    resolveParticipantGender(gender ?? loadUserPreferences().gender ?? null)
+  );
 }
-
 export function normalizeLifeContextStatuses(
   raw: string[] | LifeContextStatus[] | null | undefined
 ): LifeContextStatus[] {
@@ -71,24 +79,24 @@ export function normalizeLifeContextStatuses(
 
 export function formatLifeContextLabels(
   statuses: LifeContextStatus[] | string[] | null | undefined,
-  locale: AppLocale
+  locale: AppLocale,
+  gender?: string | null
 ): string[] {
   return normalizeLifeContextStatuses(statuses)
     .filter((s) => s !== 'prefer_not')
-    .map((s) => lifeContextLabel(s, locale));
+    .map((s) => lifeContextLabel(s, locale, gender));
 }
-
 export function lifeContextForPrompt(
   statuses: LifeContextStatus[] | null | undefined,
-  locale: AppLocale
+  locale: AppLocale,
+  gender?: string | null
 ): {statuses: LifeContextStatus[]; labels: string[]} {
   const filtered = (statuses ?? []).filter((s) => s !== 'prefer_not');
   return {
     statuses: filtered,
-    labels: filtered.map((s) => lifeContextLabel(s, locale)),
+    labels: filtered.map((s) => lifeContextLabel(s, locale, gender)),
   };
 }
-
 export function buildLifeContextAdaptationHint(
   statuses: LifeContextStatus[] | null | undefined,
   locale: AppLocale
@@ -112,7 +120,8 @@ export function buildLifeContextAdaptationHint(
 /** Theme phrase fallback when step-3 ratings are weak or absent. */
 export function lifeContextThemeFallback(
   statuses: LifeContextStatus[] | null | undefined,
-  locale: AppLocale
+  locale: AppLocale,
+  gender?: string | null
 ): string | null {
   const primary = (statuses ?? []).find((s) => s !== 'prefer_not' && s !== 'other');
   if (!primary) return null;
@@ -134,5 +143,5 @@ export function lifeContextThemeFallback(
   };
 
   const map = locale === 'he' ? themeHe : themeEn;
-  return map[primary] ?? lifeContextLabel(primary, locale);
+  return map[primary] ?? lifeContextLabel(primary, locale, gender);
 }

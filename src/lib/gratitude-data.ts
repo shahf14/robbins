@@ -1,6 +1,8 @@
 import gratitudeData from '@/data/gratitude.json';
 import {activeLifeContexts} from '@/lib/life-context-content';
+import {resolveGenderedHebrewText, resolveParticipantGender} from '@/lib/gendered-copy';
 import type {LifeContextStatus} from '@/lib/life-coach/types';
+import {loadUserPreferences} from '@/lib/user-preferences';
 
 export type GratitudeTriggerKey = keyof typeof gratitudeData.triggers;
 
@@ -45,9 +47,26 @@ function matchesLifeContext(
   return include.some((c) => contexts.includes(c as LifeContextStatus));
 }
 
-export function getTrigger(key: GratitudeTriggerKey, locale: string) {
+function resolveHebrewCopy<T extends Record<string, string>>(
+  copy: T,
+  gender?: string | null
+): T {
+  const resolvedGender = resolveParticipantGender(gender ?? loadUserPreferences().gender ?? null);
+  const output = {...copy};
+  for (const [key, value] of Object.entries(copy)) {
+    output[key as keyof T] = resolveGenderedHebrewText(value, resolvedGender) as T[keyof T];
+  }
+  return output;
+}
+
+export function getTrigger(
+  key: GratitudeTriggerKey,
+  locale: string,
+  gender?: string | null
+) {
   const lang = (locale === 'he' ? 'he' : 'en') as LocaleKey;
-  return getRawTrigger(key)[lang];
+  const raw = getRawTrigger(key)[lang];
+  return lang === 'he' ? resolveHebrewCopy(raw, gender) : raw;
 }
 
 export function getTriggersForLifeContexts(
@@ -76,7 +95,10 @@ export function getTriggersForLifeContexts(
   return [...prioritized, ...rest].slice(0, 6);
 }
 
-export function getEntryPlaceholders(locale: string): string[] {
+export function getEntryPlaceholders(locale: string, gender?: string | null): string[] {
   const lang = (locale === 'he' ? 'he' : 'en') as LocaleKey;
-  return gratitudeData.entryPlaceholders[lang];
+  const placeholders = gratitudeData.entryPlaceholders[lang];
+  if (lang !== 'he') return placeholders;
+  const resolvedGender = resolveParticipantGender(gender ?? loadUserPreferences().gender ?? null);
+  return placeholders.map((entry) => resolveGenderedHebrewText(entry, resolvedGender));
 }

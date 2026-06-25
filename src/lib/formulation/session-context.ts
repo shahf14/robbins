@@ -3,6 +3,7 @@ import {
   getGuidedQuestionBody,
   getGuidedQuestionById,
   getPolarityForQuestionId,
+  profileFromFormulationSession,
 } from '@/lib/formulation/guided-questions';
 import {difficultyLabelFromRating} from '@/lib/formulation/rating-difficulty-label';
 import {buildFormulationInsights} from '@/lib/formulation/formulation-insights';
@@ -54,7 +55,9 @@ import type {FormulationSession} from '@/lib/life-coach/types';
 export function buildFormulationSessionContext(session: FormulationSession, locale: AppLocale) {
   const ratings = session.passive_ratings.map((r) => {
     const q = getGuidedQuestionById(r.key);
-    const label = q ? getGuidedQuestionBody(q, locale) : r.key;
+    const label = q
+      ? getGuidedQuestionBody(q, locale, profileFromFormulationSession(session).gender)
+      : r.key;
     return {
       id: r.key,
       score: r.score,
