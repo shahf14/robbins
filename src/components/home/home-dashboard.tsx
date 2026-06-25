@@ -43,6 +43,7 @@ import {
 } from '@/components/home/home-dashboard-metrics';
 import {HomeToolsBar} from '@/components/home/home-tools-bar';
 import {ProfileCompletionPrompt} from '@/components/home/profile-completion-prompt';
+import {ClarificationSuggestionPrompt} from '@/components/home/clarification-suggestion-prompt';
 import {
   computeMomentumScore,
   deriveCelebration,
@@ -581,6 +582,7 @@ export function HomeDashboard() {
       </div>
 
       {/* ── התראות קריטיות בלבד ─────────────────────────────────────────── */}
+      <ClarificationSuggestionPrompt />
       <ProfileCompletionPrompt />
       {lifeContextMode.active && <LifeContextModeBanner mode={lifeContextMode} />}
       <ContinueProcessBanner includeOnboarding />

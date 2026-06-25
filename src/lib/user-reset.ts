@@ -26,6 +26,9 @@ const USER_LOCAL_STORAGE_KEYS = [
   'robbins_friction_skips',
   'robbins_home_how_it_works_collapsed',
   'home_focus_draft',
+  'profile_completion_prompts_v1',
+  'profile_completion_prompts_v2',
+  'clarification_suggestion_v1',
   'preferred_language',
   'daily_reminder',
   'daily_reminder_last',
@@ -95,6 +98,7 @@ export async function resetAllUserData(): Promise<void> {
     response = await fetch('/api/user/reset', {
       method: 'POST',
       headers: localAuthHeaders(),
+      credentials: 'same-origin',
     });
   } catch {
     throw new UserResetError(

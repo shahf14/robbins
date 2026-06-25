@@ -8,6 +8,8 @@ import type {CuratedDailyTaskOption} from '@/lib/life-coach/curated-daily-tasks'
 import {formulationApi, lifeCoachApi} from '@/lib/life-coach/api-client';
 import {todayYMD} from '@/lib/date-utils';
 import {applyServerOnboardingStatus, fetchServerOnboardingStatus} from '@/lib/onboarding-state';
+import {clearClarificationSuggestionState} from '@/lib/clarification-suggestion';
+import {clearProfileCompletionPromptState} from '@/lib/profile-completion';
 import {clearDraft as clearOnboardingWizardDraft} from '@/lib/onboarding-wizard-state';
 import {resolveCuratedErrorMessage} from '@/lib/life-coach/curated-api-errors';
 import {useToast} from '@/components/feedback/toast-provider';
@@ -151,6 +153,8 @@ export function CuratedDailyTaskPicker({onCreated, initialDomain}: Props) {
       if (serverStatus?.completedAt) {
         applyServerOnboardingStatus(serverStatus);
         clearOnboardingWizardDraft();
+        clearProfileCompletionPromptState();
+        clearClarificationSuggestionState();
       }
       if (response.inserted.length === 0) {
         toast.info(t('lifeCoach.curatedPicker.alreadySelected'));

@@ -183,6 +183,8 @@ export function resolveGenderedHebrewText(
   return pickGendered(resolveParticipantGender(gender), split);
 }
 
+const GENDER_OPTION_LABEL_KEYS = new Set(['genderOptions']);
+
 function isGenderVariantObject(value: unknown): value is GenderedPair {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const obj = value as Record<string, unknown>;
@@ -195,10 +197,16 @@ function isGenderVariantObject(value: unknown): value is GenderedPair {
   );
 }
 
+function shouldPreserveGenderOptionLabels(path: string[]): boolean {
+  const leaf = path[path.length - 1];
+  return leaf != null && GENDER_OPTION_LABEL_KEYS.has(leaf);
+}
+
 /** Resolve nested `{ male, female }` objects and slash forms for runtime Hebrew copy. */
 export function resolveGenderedDeep<T>(
   value: T,
-  gender?: ParticipantGender | string | null
+  gender?: ParticipantGender | string | null,
+  path: string[] = []
 ): T {
   const resolvedGender = resolveParticipantGender(gender);
 
@@ -208,19 +216,19 @@ export function resolveGenderedDeep<T>(
     return split[resolvedGender] as T;
   }
 
-  if (isGenderVariantObject(value)) {
+  if (isGenderVariantObject(value) && !shouldPreserveGenderOptionLabels(path)) {
     return value[resolvedGender] as T;
   }
 
   if (Array.isArray(value)) {
-    return value.map((item) => resolveGenderedDeep(item, resolvedGender)) as T;
+    return value.map((item) => resolveGenderedDeep(item, resolvedGender, path)) as T;
   }
 
   if (value && typeof value === 'object') {
     const input = value as Record<string, unknown>;
     const output: Record<string, unknown> = {};
     for (const [key, entry] of Object.entries(input)) {
-      output[key] = resolveGenderedDeep(entry, resolvedGender);
+      output[key] = resolveGenderedDeep(entry, resolvedGender, [...path, key]);
     }
     return output as T;
   }

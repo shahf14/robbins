@@ -78,9 +78,12 @@ const proxy = clerkEnabled
   ? clerkMiddleware(async (auth, request) => {
       if (!isPublicRoute(request)) {
         const {userId} = await auth();
-        if (!userId) {
-          return redirectToLocalizedSignIn(request);
-        }
+    if (!userId) {
+      if (request.nextUrl.pathname.startsWith('/api/')) {
+        return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+      }
+      return redirectToLocalizedSignIn(request);
+    }
       }
       return composeLocaleResponse(request);
     })

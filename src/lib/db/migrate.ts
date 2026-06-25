@@ -4,6 +4,7 @@ import {
   INCREMENTAL_COLUMN_REPAIRS,
   INCREMENTAL_INDEX_REPAIRS,
   listTableColumns,
+  repairDeleteTriggers,
   tableExists,
 } from './schema-drift-repairs.ts';
 
@@ -384,4 +385,5 @@ export function runMigrations(db: MigrationDb): void {
 export function repairSchemaDrift(db: MigrationDb): void {
   ensureIncrementalColumns(db);
   ensureIncrementalIndexes(db);
+  repairDeleteTriggers(db);
 }

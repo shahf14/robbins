@@ -536,6 +536,8 @@ export type FormulationSession = {
 
 export type FormulationGateResponse = {
   required: boolean;
+  /** Soft home nudge — clarification not finished but app stays usable. */
+  suggested?: boolean;
   reason?: string;
   draft_id?: string | null;
   latest_completed_id?: string | null;

@@ -754,30 +754,45 @@ export async function getFormulationGate(userId: string): Promise<FormulationGat
     const latest = await getLatestCompletedFormulation(userId);
     return {
       required: false,
+      suggested: false,
       latest_completed_id: latest?.id ?? null,
     };
   }
 
-  const onboarding = await getOnboardingServerStatus(userId);
-  if (onboarding.completedAt) {
-    return {required: false, reason: 'onboarding_complete'};
-  }
-
-  if (await userHasActiveGoals(userId)) {
-    return {required: false, reason: 'has_active_goal'};
-  }
-
+  const draft = await getActiveDraftFormulation(userId);
   const dismissed = dbGet<{formulation_gate_dismissed: number}>(
     `SELECT formulation_gate_dismissed FROM users WHERE id = ?`,
     [userId]
   );
-  if (dismissed?.formulation_gate_dismissed === 1) {
-    return {required: false, reason: 'dismissed'};
+  const serverDismissed = dismissed?.formulation_gate_dismissed === 1;
+  const suggested = !serverDismissed;
+
+  const onboarding = await getOnboardingServerStatus(userId);
+  if (onboarding.completedAt) {
+    return {
+      required: false,
+      suggested,
+      reason: 'onboarding_complete',
+      draft_id: draft?.id ?? null,
+    };
   }
 
-  const draft = await getActiveDraftFormulation(userId);
+  if (await userHasActiveGoals(userId)) {
+    return {
+      required: false,
+      suggested,
+      reason: 'has_active_goal',
+      draft_id: draft?.id ?? null,
+    };
+  }
+
+  if (serverDismissed) {
+    return {required: false, suggested: false, reason: 'dismissed'};
+  }
+
   return {
     required: true,
+    suggested: true,
     reason: 'first_goal',
     draft_id: draft?.id ?? null,
   };

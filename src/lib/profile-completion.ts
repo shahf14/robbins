@@ -12,7 +12,7 @@ type PromptStateEntry = {
 
 type PromptState = Partial<Record<ProfileCompletionPromptKey, PromptStateEntry>>;
 
-const KEY = 'profile_completion_prompts_v1';
+const KEY = 'profile_completion_prompts_v2';
 
 function parseState(): PromptState {
   if (typeof window === 'undefined') return {};
@@ -54,4 +54,9 @@ export function dismissProfilePrompt(key: ProfileCompletionPromptKey, days: numb
     dismissedUntil: dismissedUntil.toISOString(),
   };
   saveState(state);
+}
+
+export function clearProfileCompletionPromptState() {
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem(KEY);
 }

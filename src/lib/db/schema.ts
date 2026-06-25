@@ -624,6 +624,8 @@ BEGIN
   DELETE FROM daily_steps WHERE user_id = OLD.id;
   DELETE FROM goals WHERE user_id = OLD.id;
   DELETE FROM weekly_reviews WHERE user_id = OLD.id;
+  DELETE FROM skip_coach_adjustments WHERE user_id = OLD.id;
+  DELETE FROM weekly_goal_focus WHERE user_id = OLD.id;
   DELETE FROM ai_insights WHERE user_id = OLD.id;
   DELETE FROM streaks WHERE user_id = OLD.id;
   DELETE FROM formulation_sessions WHERE user_id = OLD.id;

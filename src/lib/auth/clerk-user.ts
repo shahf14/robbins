@@ -1,6 +1,7 @@
 import {auth, currentUser} from '@clerk/nextjs/server';
 import {isClerkConfigured} from '@/lib/auth/clerk-config';
 import {ensureUserProfile} from '@/lib/life-coach/user-profile-repository';
+import {deleteUserAccountSync} from '@/lib/life-coach/user-account-delete';
 import {dbGet, dbRun} from '@/lib/db/sqlite';
 import {randomUUID} from 'crypto';
 
@@ -53,7 +54,7 @@ export async function upsertClerkUserFromWebhook(input: {
   if (input.deleted) {
     const row = dbGet<{id: string}>(`SELECT id FROM users WHERE clerk_id = ?`, [input.clerkId]);
     if (row) {
-      dbRun(`DELETE FROM users WHERE id = ?`, [row.id]);
+      deleteUserAccountSync(row.id);
     }
     return;
   }

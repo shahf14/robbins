@@ -2,6 +2,8 @@ import {mergeLocalAuthHeaders} from '@/lib/auth/client-headers';
 import {observeAuthResponse} from '@/lib/auth/observe-auth-response';
 import type {AppLocale} from '@/i18n/config';
 import {parseJsonObjectOr} from '@/lib/safe-json';
+import {clearProfileCompletionPromptState} from '@/lib/profile-completion';
+import {clearClarificationSuggestionState} from '@/lib/clarification-suggestion';
 import type {
   AvailableTimePerDay,
   IntensityPreference,
@@ -65,11 +67,16 @@ export function applyServerOnboardingStatus(status: {
   const current = loadOnboardingState();
 
   if (status.completedAt) {
+    const isFirstCompletion = !current.completedAt;
     saveOnboardingState({
       completedAt: status.completedAt,
       primaryDomain: status.primaryDomain ?? current.primaryDomain,
       startedAt: current.startedAt ?? status.completedAt,
     });
+    if (isFirstCompletion && typeof window !== 'undefined') {
+      clearProfileCompletionPromptState();
+      clearClarificationSuggestionState();
+    }
     return;
   }
 

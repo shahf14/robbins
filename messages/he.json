@@ -1335,8 +1335,8 @@
       "profileSectionHelp": "מין, גיל והקשר חיים עוזרים לבחור אילו משפטים ושאלות יוצגו בהמשך. שדות שהוגדרו בהגדרות מוצגים ללא שינוי.",
       "gender": "מין",
       "genderOptions": {
-        "female": "אישה",
-        "male": "גבר"
+        "female": "נקבה",
+        "male": "זכר"
       },
       "age": "גיל",
       "agePlaceholder": "למשל 28",
@@ -3597,6 +3597,15 @@
         "available_time_per_day": "כמה זמן ריאלי יש לך ביום לצעדים?",
         "intensity_preference": "באיזה קצב נוח לך להתקדם?"
       }
+    },
+    "clarificationSuggestion": {
+      "aria": "הצעה לסיים הבהרה",
+      "title": "סיים את ההבהרה",
+      "body": "הבהרה קצרה (כ-5 דקות) עוזרת להבין מה חשוב עכשיו ולבנות יעד מתאים — לא אבחון.",
+      "cta": "התחל הבהרה",
+      "resume": "המשך הבהרה",
+      "later": "אחר כך",
+      "hideWeek": "אל תציג השבוע"
     },
     "weeklyChallengeEyebrow": "אתגר שבועי",
     "weeklyChallengeTitle": "השלם {target} צעדים השבוע",

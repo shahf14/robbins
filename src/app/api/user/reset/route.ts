@@ -10,6 +10,6 @@ export async function POST(request: Request) {
     await deleteUserAccount(current.user.id);
     return jsonOk({reset: true});
   } catch (error) {
-    return jsonError('Could not reset user data.', 500, String(error));
+    return jsonError('Could not reset user data.', 500, String(error), {exposeDetails: true});
   }
 }

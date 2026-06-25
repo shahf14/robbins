@@ -36,9 +36,10 @@ export async function ensureUserProfile(
   return rowToUserProfile(user.id, row, now);
 }
 
-/** Deletes the user and all dependent records (SQLite triggers + FK cascades). */
+/** Deletes the user and all dependent records (explicit wipe — safe on all DB shapes). */
 export async function deleteUserAccount(userId: string): Promise<void> {
-  dbRun(`DELETE FROM users WHERE id = ?`, [userId]);
+  const {deleteUserAccountSync} = await import('@/lib/life-coach/user-account-delete');
+  deleteUserAccountSync(userId);
 }
 
 export async function getUserParticipantProfile(userId: string): Promise<UserProfile> {

@@ -168,3 +168,88 @@ export function findMissingIncrementalColumns(
     return !listTableColumns(db, table).includes(column);
   });
 }
+
+/** Markers in trigger SQL that mean the trigger predates a table drop and must be recreated. */
+const STALE_DELETE_TRIGGER_MARKERS = ['health_phases'] as const;
+
+const TRG_GOALS_DELETE_DEPENDENTS = `CREATE TRIGGER trg_goals_delete_dependents
+AFTER DELETE ON goals
+BEGIN
+  DELETE FROM milestones WHERE goal_id = OLD.id;
+  DELETE FROM daily_steps WHERE goal_id = OLD.id;
+  DELETE FROM weekly_goal_focus WHERE goal_id = OLD.id;
+END`;
+
+const TRG_USERS_DELETE_DEPENDENTS = `CREATE TRIGGER trg_users_delete_dependents
+AFTER DELETE ON users
+BEGIN
+  DELETE FROM checkins WHERE user_id = OLD.id;
+  DELETE FROM gratitude_entries WHERE user_id = OLD.id;
+  DELETE FROM morning_rituals WHERE user_id = OLD.id;
+  DELETE FROM ritual_content WHERE user_id = OLD.id;
+  DELETE FROM domain_assessments WHERE user_id = OLD.id;
+  DELETE FROM daily_reflections WHERE user_id = OLD.id;
+  DELETE FROM milestones WHERE user_id = OLD.id;
+  DELETE FROM daily_steps WHERE user_id = OLD.id;
+  DELETE FROM goals WHERE user_id = OLD.id;
+  DELETE FROM weekly_reviews WHERE user_id = OLD.id;
+  DELETE FROM skip_coach_adjustments WHERE user_id = OLD.id;
+  DELETE FROM weekly_goal_focus WHERE user_id = OLD.id;
+  DELETE FROM ai_insights WHERE user_id = OLD.id;
+  DELETE FROM streaks WHERE user_id = OLD.id;
+  DELETE FROM formulation_sessions WHERE user_id = OLD.id;
+  DELETE FROM evening_resets WHERE user_id = OLD.id;
+  DELETE FROM user_behavior_profile WHERE user_id = OLD.id;
+  DELETE FROM gamification_unlocks WHERE user_id = OLD.id;
+END`;
+
+type DeleteTriggerRepair = {
+  name: string;
+  createSql: string;
+  requiredFragments: string[];
+};
+
+const DELETE_TRIGGER_REPAIRS: DeleteTriggerRepair[] = [
+  {
+    name: 'trg_goals_delete_dependents',
+    createSql: TRG_GOALS_DELETE_DEPENDENTS,
+    requiredFragments: ['weekly_goal_focus'],
+  },
+  {
+    name: 'trg_users_delete_dependents',
+    createSql: TRG_USERS_DELETE_DEPENDENTS,
+    requiredFragments: ['evening_resets', 'gamification_unlocks', 'skip_coach_adjustments'],
+  },
+];
+
+function readTriggerSql(
+  db: {prepare: (sql: string) => {get: (name: string) => unknown}},
+  name: string
+): string | null {
+  const row = db
+    .prepare(`SELECT sql FROM sqlite_master WHERE type = 'trigger' AND name = ?`)
+    .get(name) as {sql: string | null} | undefined;
+  return row?.sql ?? null;
+}
+
+export function deleteTriggerNeedsRepair(
+  db: {prepare: (sql: string) => {get: (name: string) => unknown}},
+  repair: DeleteTriggerRepair
+): boolean {
+  const sql = readTriggerSql(db, repair.name);
+  if (!sql) return false;
+  if (STALE_DELETE_TRIGGER_MARKERS.some((marker) => sql.includes(marker))) return true;
+  return !repair.requiredFragments.every((fragment) => sql.includes(fragment));
+}
+
+/**
+ * `CREATE TRIGGER IF NOT EXISTS` never updates an existing trigger body. After
+ * dropping `health_phases`, older local DBs still fire stale delete triggers.
+ */
+export function repairDeleteTriggers(db: {exec: (sql: string) => void; prepare: (sql: string) => {get: (name: string) => unknown}}): void {
+  for (const repair of DELETE_TRIGGER_REPAIRS) {
+    if (!deleteTriggerNeedsRepair(db, repair)) continue;
+    db.exec(`DROP TRIGGER IF EXISTS ${repair.name}`);
+    db.exec(repair.createSql);
+  }
+}

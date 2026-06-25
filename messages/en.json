@@ -3346,6 +3346,15 @@
         "intensity_preference": "What pace feels right for progress?"
       }
     },
+    "clarificationSuggestion": {
+      "aria": "Clarification suggestion",
+      "title": "Finish clarification",
+      "body": "A short clarification (~5 minutes) helps clarify what matters now and build a fitting goal — not a diagnosis.",
+      "cta": "Start clarification",
+      "resume": "Resume clarification",
+      "later": "Later",
+      "hideWeek": "Hide this week"
+    },
     "weeklyChallengeEyebrow": "Weekly Challenge",
     "weeklyChallengeTitle": "Beat {target} steps this week",
     "weeklyChallengeComplete": "Weekly challenge complete",
