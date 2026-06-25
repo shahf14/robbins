@@ -62,7 +62,7 @@ export function ProgressDashboard({domain, state, goals, allRecentSteps, onRefre
 
     // Map goal milestones to % positions on the bar
     const milestoneMarkers = (activeGoal.milestones ?? [])
-      .filter((m) => m.target_date != null)
+      .filter((m) => m.target_date != null && m.target_date !== '')
       .map((m) => {
         const targetDay = Math.max(0, Math.floor((new Date(m.target_date!).getTime() - start.getTime()) / msPerDay));
         const clampedDay = Math.min(targetDay, totalDays);

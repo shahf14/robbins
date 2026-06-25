@@ -191,7 +191,7 @@ export async function isUserOnboardingComplete(userId: string): Promise<boolean>
   if (status.completedAt) return true;
 
   const countRow = dbGet<{c: number}>(
-    `SELECT COUNT(*) as c FROM goals WHERE user_id = ?`,
+    `SELECT COUNT(*) as c FROM goals WHERE user_id = ? AND status IN ('active', 'completed')`,
     [userId]
   );
   if (Number(countRow?.c ?? 0) > 0) {

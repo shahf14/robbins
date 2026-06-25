@@ -13,7 +13,7 @@ export function hadMissedYesterday(
   weekSteps: DailyBabyStep[],
   today: string
 ): boolean {
-  const yday = yesterdayDate(new Date(today));
+  const yday = yesterdayDate(new Date(`${today}T00:00:00`));
   const daySteps = weekSteps.filter((s) => s.scheduled_date === yday);
   if (daySteps.length === 0) return false;
   const completed = daySteps.filter((s) => s.status === 'completed').length;

@@ -477,48 +477,60 @@ export function HomeDashboard() {
   }
 
   async function handleSurvivalEasyStep(stepId: string) {
-    await Promise.all(
-      pendingSteps
-        .filter((s) => s.id !== stepId)
-        .map((s) =>
+    try {
+      await Promise.all(
+        pendingSteps
+          .filter((s) => s.id !== stepId)
+          .map((s) =>
+            lifeCoachApi.updateDailyStepStatus(s.id, {
+              status: 'skipped',
+              blocker_reason: 'low_energy',
+            })
+          )
+      );
+      await load();
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
+    }
+  }
+
+  async function handleSurvivalSkipAll(blocker: import('@/lib/life-coach/types').ReflectionBlockerReason) {
+    try {
+      await Promise.all(
+        pendingSteps.map((s) =>
+          lifeCoachApi.updateDailyStepStatus(s.id, {
+            status: 'skipped',
+            blocker_reason: blocker,
+          })
+        )
+      );
+      await lifeCoachApi.saveReflection({
+        date: todayYMD(),
+        mood_score: null,
+        energy_score: null,
+        reflection_text: '',
+        blocker_reason: blocker,
+      });
+      await load();
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
+    }
+  }
+
+  async function handleSurvivalPauseDay() {
+    try {
+      await Promise.all(
+        pendingSteps.map((s) =>
           lifeCoachApi.updateDailyStepStatus(s.id, {
             status: 'skipped',
             blocker_reason: 'low_energy',
           })
         )
-    );
-    await load();
-  }
-
-  async function handleSurvivalSkipAll(blocker: import('@/lib/life-coach/types').ReflectionBlockerReason) {
-    await Promise.all(
-      pendingSteps.map((s) =>
-        lifeCoachApi.updateDailyStepStatus(s.id, {
-          status: 'skipped',
-          blocker_reason: blocker,
-        })
-      )
-    );
-    await lifeCoachApi.saveReflection({
-      date: todayYMD(),
-      mood_score: null,
-      energy_score: null,
-      reflection_text: '',
-      blocker_reason: blocker,
-    });
-    await load();
-  }
-
-  async function handleSurvivalPauseDay() {
-    await Promise.all(
-      pendingSteps.map((s) =>
-        lifeCoachApi.updateDailyStepStatus(s.id, {
-          status: 'skipped',
-          blocker_reason: 'low_energy',
-        })
-      )
-    );
-    await load();
+      );
+      await load();
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
+    }
   }
 
   return (

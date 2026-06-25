@@ -53,21 +53,21 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
   const [lifeContexts, setLifeContexts] = useState(() => getInitialLifeContexts());
 
   useEffect(() => {
-    if (!initialState) return;
-    const timeout = window.setTimeout(() => {
-      setCurrentScore(initialState.current_score ?? 5);
-      setCurrentState(initialState.current_state ?? '');
-      setDesiredState(initialState.desired_state ?? '');
-      setMainBlockers(initialState.main_blockers ?? []);
+    const timeout = setTimeout(() => {
+      setCurrentScore(initialState?.current_score ?? 5);
+      setCurrentState(initialState?.current_state ?? '');
+      setDesiredState(initialState?.desired_state ?? '');
+      setMainBlockers(initialState?.main_blockers ?? []);
+      setViewMode(hasSavedAssessment(initialState) ? 'summary' : 'edit');
     }, 0);
-    return () => window.clearTimeout(timeout);
+    return () => clearTimeout(timeout);
   }, [initialState]);
 
   useEffect(() => {
-    const id = window.setTimeout(() => {
+    const id = setTimeout(() => {
       setLifeContexts(getInitialLifeContexts());
     }, 0);
-    return () => window.clearTimeout(id);
+    return () => clearTimeout(id);
   }, []);
 
   const hints = useMemo(() => assessmentContentHints(lifeContexts), [lifeContexts]);

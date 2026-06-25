@@ -67,6 +67,18 @@ export function DailyReflectionModal({
 
   useEffect(() => {
     if (!open) return;
+    setBlockerCategory(null);
+    setBlockerReason(initialBlocker ?? null);
+    setDeepDiveAnswer('');
+    setReflectionText('');
+    setMoodScore(7);
+    setEnergyScore(6);
+    setSaving(false);
+    writingStartRef.current = null;
+  }, [open, initialBlocker]);
+
+  useEffect(() => {
+    if (!open) return;
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape' && !saving) onClose();

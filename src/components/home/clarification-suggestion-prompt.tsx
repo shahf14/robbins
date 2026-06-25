@@ -35,8 +35,8 @@ export function ClarificationSuggestionPrompt() {
   }, []);
 
   useEffect(() => {
-    const timeout = window.setTimeout(load, 0);
-    return () => window.clearTimeout(timeout);
+    const timeout = setTimeout(load, 0);
+    return () => clearTimeout(timeout);
   }, [load]);
 
   if (loading || !visible) return null;

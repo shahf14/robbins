@@ -214,7 +214,7 @@ export function HomePersonalBests({
   t: ReturnType<typeof useTranslations>;
 }) {
   const strongestDomain = data.domainStates
-    .filter((state: LifeDomainState) => typeof state.current_score === 'number')
+    .filter((state: LifeDomainState) => Number.isFinite(state.current_score))
     .sort((a, b) => b.current_score - a.current_score)[0] ?? null;
   const activeGoalCount = data.goals.filter((goal) => goal.status === 'active').length;
 

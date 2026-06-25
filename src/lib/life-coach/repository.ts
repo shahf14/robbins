@@ -1078,8 +1078,8 @@ function buildDomainCardSummaries(
       : mixed ? 'mixed'
       : 'pending';
 
-    const progressPercent = state
-      ? Math.round(((state.current_score - 1) / 9) * 100)
+    const progressPercent = state?.current_score != null
+      ? Math.round(Math.max(0, Math.min(100, ((state.current_score - 1) / 9) * 100)))
       : 0;
 
     return {

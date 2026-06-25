@@ -140,7 +140,7 @@ export async function markOnboardingCompleteOnServer(
 ) {
   const res = await fetch('/api/onboarding/complete', {
     method: 'POST',
-    headers: mergeLocalAuthHeaders(),
+    headers: {...mergeLocalAuthHeaders(), 'Content-Type': 'application/json'},
     body: JSON.stringify({
       primaryDomain: payload.primaryDomain ?? null,
       locale: payload.locale,
