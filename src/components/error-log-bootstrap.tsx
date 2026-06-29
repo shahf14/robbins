@@ -1,15 +1,12 @@
 'use client';
 
 import Script from 'next/script';
-import {LOCAL_AUTH_TOKEN_STORAGE_KEY} from '@/lib/auth-storage-keys';
 
 export function ErrorLogBootstrap() {
-  const storageKey = LOCAL_AUTH_TOKEN_STORAGE_KEY;
   const script = `
     (() => {
       if (window.__robbinsErrorLoggerInstalled) return;
       window.__robbinsErrorLoggerInstalled = true;
-      const storageKey = ${JSON.stringify(storageKey)};
       const ignoreLoggingFailure = (error) => {
         void error;
       };
@@ -48,20 +45,6 @@ export function ErrorLogBootstrap() {
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString()
           });
-
-          const token = sessionStorage.getItem(storageKey)?.trim() ?? '';
-          if (token) {
-            fetch('/api/log', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + token
-              },
-              body,
-              keepalive: true
-            }).catch(ignoreLoggingFailure);
-            return;
-          }
 
           if (navigator.sendBeacon) {
             navigator.sendBeacon('/api/log', new Blob([body], {type: 'application/json'}));

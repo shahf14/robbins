@@ -40,11 +40,14 @@ export class LifeCoachApiError extends Error {
   }
 }
 
+const LIFE_COACH_FETCH_TIMEOUT_MS = 20_000;
+
 async function lifeCoachFetch<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
   try {
     response = await fetch(path, {
       ...init,
+      signal: init?.signal ?? AbortSignal.timeout(LIFE_COACH_FETCH_TIMEOUT_MS),
       headers: mergeLocalAuthHeaders(init),
     });
   } catch (error) {
@@ -68,7 +71,7 @@ async function lifeCoachFetch<T>(path: string, init?: RequestInit): Promise<T> {
   if (!response.ok) {
     const message =
       payload?.error || response.statusText || `Request failed (${response.status}).`;
-    if (response.status === 401) {
+    if (response.status === 401 || response.status === 403) {
       notifyLocalAuthRequired();
     }
     const nestedDetails =
@@ -282,7 +285,8 @@ export const lifeCoachApi = {
     });
   },
   getDailySteps(date: string) {
-    return lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>(`/api/life-coach/daily-steps?date=${date}`);
+    const params = new URLSearchParams({date});
+    return lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>(`/api/life-coach/daily-steps?${params.toString()}`);
   },
   getDailyCoachMessage(date: string, locale?: string) {
     const params = new URLSearchParams({date});
@@ -303,8 +307,9 @@ export const lifeCoachApi = {
     return lifeCoachFetch<{dailyFocus: DailyFocusContext}>(path);
   },
   getDailyStepsRange(start: string, end: string) {
+    const params = new URLSearchParams({start, end});
     return lifeCoachFetch<{start: string; end: string; steps: DailyBabyStep[]}>(
-      `/api/life-coach/daily-steps?start=${start}&end=${end}`
+      `/api/life-coach/daily-steps?${params.toString()}`
     );
   },
   updateDailyStepStatus(id: string, input: Record<string, unknown>) {

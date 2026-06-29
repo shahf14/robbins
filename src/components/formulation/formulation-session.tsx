@@ -54,19 +54,9 @@ function formatWizardError(
   updateSessionFailed: string
 ): string {
   if (error instanceof LifeCoachApiError) {
-    const detail =
-      typeof error.details === 'string'
-        ? error.details
-        : error.details != null
-          ? JSON.stringify(error.details)
-          : null;
     const base =
       error.message === 'Could not update session.' ? updateSessionFailed : error.message;
-    if (detail) {
-      console.error('[formulation]', base, detail);
-      return `${base} (${detail})`;
-    }
-    console.error('[formulation]', base, error);
+    console.error('[formulation]', base, error.details ?? error);
     return base;
   }
   if (error instanceof Error && error.message) {

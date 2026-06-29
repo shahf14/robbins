@@ -426,7 +426,7 @@ export function DailyBabyStepsList({
       setReplacementStepId(null);
       setReplacementOptions([]);
       await onRefresh?.();
-      toast.success(t('lifeCoach.curatedReplace.saved'));
+      toast.success(t('lifeCoach.curatedReplace.saved')); // toast after refresh so UI is already updated
     } catch (error) {
       toast.error(resolveCuratedErrorMessage(error, t));
     } finally {
@@ -789,10 +789,15 @@ export function DailyBabyStepsList({
                       onClick={async () => {
                         const mins = parseInt(actualMinutes, 10);
                         if (mins > 0) {
-                          await lifeCoachApi.updateDailyStepStatus(step.id, {
-                            status: 'completed',
-                            actual_minutes: mins,
-                          }).catch(() => {/* best-effort */});
+                          try {
+                            await lifeCoachApi.updateDailyStepStatus(step.id, {
+                              status: 'completed',
+                              actual_minutes: mins,
+                            });
+                          } catch (error) {
+                            toast.error(resolveLifeCoachErrorMessage(error, t));
+                            return;
+                          }
                         }
                         setMinutesPromptId(null);
                         setActualMinutes('');

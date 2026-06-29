@@ -231,7 +231,7 @@ export const openaiLifeCoachService = {
       input,
       usedFallback
     );
-    const firstStep = plan.daily_baby_steps[0];
+    const firstStep = plan.daily_baby_steps.length > 0 ? plan.daily_baby_steps[0] : undefined;
     return {
       ...plan,
       next_best_action: ensureNextBestAction(data.next_best_action, buildGoalStructuringNextBestAction({
@@ -515,7 +515,7 @@ function buildStructuredGoalFallbackResponse(input: GoalStructuringInput): AiStr
     daily_baby_steps: goalBabyStepsFromContracts(response.daily_baby_steps),
   };
 
-  const firstStep = response.daily_baby_steps[0];
+  const firstStep = response.daily_baby_steps.length > 0 ? response.daily_baby_steps[0] : undefined;
   return {
     ...response,
     realism_check: realismCheckForAiResponse(planForCheck, input),

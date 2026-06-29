@@ -3,14 +3,16 @@ import {createHmac, timingSafeEqual} from 'node:crypto';
 export const ADMIN_SESSION_COOKIE = 'robbins_admin_session';
 export const ADMIN_SESSION_MAX_AGE_SEC = 60 * 60;
 
+let _devSecret = '';
+
 function sessionSecret(): string {
   const configured = process.env.ADMIN_API_TOKEN?.trim() ?? '';
   if (configured) return configured;
-  if (
-    process.env.NODE_ENV !== 'production' ||
-    process.env.ALLOW_LOCAL_AUTH === 'true'
-  ) {
-    return '__dev_admin_session__';
+  if (process.env.NODE_ENV !== 'production') {
+    if (!_devSecret) {
+      _devSecret = (require('node:crypto') as typeof import('node:crypto')).randomBytes(32).toString('hex');
+    }
+    return _devSecret;
   }
   return '';
 }

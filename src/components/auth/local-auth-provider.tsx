@@ -16,7 +16,16 @@ async function fetchAuthContext(): Promise<LocalAuthContext> {
   if (!response.ok) {
     return {mode: 'local', openAccess: false};
   }
-  return (await response.json()) as LocalAuthContext;
+  const raw = (await response.json()) as unknown;
+  if (
+    raw !== null &&
+    typeof raw === 'object' &&
+    'mode' in raw &&
+    (raw.mode === 'clerk' || raw.mode === 'local')
+  ) {
+    return raw as LocalAuthContext;
+  }
+  return {mode: 'local', openAccess: false};
 }
 
 async function hasValidSession(): Promise<boolean> {

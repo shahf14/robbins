@@ -119,6 +119,7 @@ export function HomeDashboard() {
   const focusRef = useRef<HTMLInputElement>(null);
   const dataRef = useRef<HomeData | null>(null);
   const microRewardTimeoutRef = useRef<number | null>(null);
+  const markDoneInFlightRef = useRef<Set<string>>(new Set());
   const toast = useToast();
   const router = useRouter();
 
@@ -237,6 +238,8 @@ export function HomeDashboard() {
   }, [locale, load, t, toast]);
 
   const handleMarkDone = useCallback(async (stepId: string) => {
+    if (markDoneInFlightRef.current.has(stepId)) return;
+    markDoneInFlightRef.current.add(stepId);
     try {
       const step = data?.todaySteps.find((s) => s.id === stepId);
       await lifeCoachApi.updateDailyStepStatus(stepId, {status: 'completed'});
@@ -256,6 +259,8 @@ export function HomeDashboard() {
       await load();
     } catch (error) {
       toast.error(resolveLifeCoachErrorMessage(error, t));
+    } finally {
+      markDoneInFlightRef.current.delete(stepId);
     }
   }, [data, load, t, toast]);
 

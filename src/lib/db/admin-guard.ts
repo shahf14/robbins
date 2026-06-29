@@ -26,8 +26,7 @@ export function getAdminTokenFromRequest(request: Request) {
 
 export function allowsDevLoopbackAdminBypass(request: Request): boolean {
   if (!isLoopbackHost(request)) return false;
-  if (process.env.NODE_ENV === 'development') return true;
-  return process.env.ALLOW_LOCAL_AUTH === 'true';
+  return process.env.NODE_ENV === 'development';
 }
 
 function hasAdminApiToken(request: Request): boolean {

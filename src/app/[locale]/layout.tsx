@@ -7,6 +7,7 @@ import {GenderedIntlProvider} from '@/components/i18n/gendered-intl-provider';
 import {AppProviders} from '@/components/feedback/app-providers';
 import {PwaRegister} from '@/components/pwa-register';
 import {ScheduleReminderPoller} from '@/components/schedule-reminder-poller';
+import {ErrorBoundary} from '@/components/error-boundary';
 import {isLocale, locales, type AppLocale} from '@/i18n/config';
 
 export function generateStaticParams() {
@@ -59,7 +60,9 @@ export default async function LocaleLayout({children, params}: Props) {
       </a>
       <AppHeader />
       <div id="main-content" tabIndex={-1}>
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
       </div>
       <PwaRegister />
       <ScheduleReminderPoller />

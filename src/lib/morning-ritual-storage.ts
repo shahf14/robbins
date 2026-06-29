@@ -70,15 +70,29 @@ export async function fetchSessions(options?: {strict?: boolean}): Promise<Morni
 }
 
 async function persistSession(session: MorningRitualSession): Promise<void> {
-  const response = await fetch('/api/morning-rituals', {
-    method: 'POST',
-    headers: mergeLocalAuthHeaders(),
-    body: JSON.stringify(session),
-  });
-  if (!response.ok) {
-    throw new Error('Could not save morning ritual session.');
+  const MAX_ATTEMPTS = 3;
+  let lastError: unknown;
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    if (attempt > 0) {
+      await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
+    }
+    try {
+      const response = await fetch('/api/morning-rituals', {
+        method: 'POST',
+        headers: mergeLocalAuthHeaders(),
+        body: JSON.stringify(session),
+      });
+      if (!response.ok) {
+        lastError = new Error('Could not save morning ritual session.');
+        continue;
+      }
+      removePendingSession(SESSIONS_KEY, session.id);
+      return;
+    } catch (err) {
+      lastError = err;
+    }
   }
-  removePendingSession(SESSIONS_KEY, session.id);
+  throw lastError ?? new Error('Could not save morning ritual session.');
 }
 
 export function persistSessionWithFallback(session: MorningRitualSession): void {
