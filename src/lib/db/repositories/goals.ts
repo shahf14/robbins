@@ -1,5 +1,6 @@
 import {getDb} from '../sqlite';
 import {randomUUID} from 'crypto';
+import {inferDayMarkerFromTitle} from '@/lib/goal-day-marker';
 import type {Goal, Milestone} from '@/lib/life-coach/types';
 
 export function ensureDomainAssessmentForGoal(userId: string, domain: string): void {
@@ -108,10 +109,7 @@ export function upsertGoal(
 
 export function upsertMilestone(milestone: Milestone, userId: string): void {
   const db = getDb();
-  const dayMarker = milestone.title.includes('30') ? 30
-    : milestone.title.includes('60') ? 60
-    : milestone.title.includes('90') ? 90
-    : null;
+  const dayMarker = milestone.day_marker ?? inferDayMarkerFromTitle(milestone.title);
 
   db.prepare(
     `INSERT OR REPLACE INTO milestones

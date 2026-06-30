@@ -8,6 +8,7 @@ import type {AccountabilityContext} from '@/lib/formulation/accountability-routi
 import type {EmotionalStageRouting} from '@/lib/formulation/emotional-stage-routing';
 import type {MeditationRecommendation} from '@/lib/formulation/meditation-routing';
 import {mergeSessions, readLegacyItems, removePendingSession} from '@/lib/legacy-session-storage';
+import {computeRitualStreak} from '@/lib/ritual-streak';
 
 const SESSIONS_KEY = 'evening_reset_sessions';
 
@@ -95,29 +96,7 @@ export function persistEveningSessionWithFallback(session: EveningResetSession):
 }
 
 export function getEveningStreak(sessions: EveningResetSession[]): number {
-  const completed = sessions.filter((s) => s.completed && s.completedAt);
-  if (completed.length === 0) return 0;
-
-  let streak = 0;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  for (let i = 0; i <= 365; i++) {
-    const checkDate = new Date(today);
-    checkDate.setDate(checkDate.getDate() - i);
-    const dateStr = checkDate.toDateString();
-
-    const hasEntry = completed.some(
-      (s) => new Date(s.completedAt!).toDateString() === dateStr
-    );
-
-    if (hasEntry) {
-      streak++;
-    } else if (i > 0) {
-      break;
-    }
-  }
-  return streak;
+  return computeRitualStreak(sessions);
 }
 
 export function computeReadinessScore(session: Partial<EveningResetSession>): number {

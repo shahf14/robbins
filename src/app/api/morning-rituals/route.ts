@@ -12,6 +12,7 @@ import {
 } from '@/lib/db/repositories/morning-rituals';
 import type {MorningRitualSession} from '@/lib/morning-ritual-types';
 import {serverError} from '@/lib/api-response';
+import {RitualSessionUncompleteError} from '@/lib/ritual-session-guards';
 import {JSON_BODY_LIMITS, readAuthenticatedJsonBody} from '@/lib/read-authenticated-json-body';
 
 export async function GET(request: Request) {
@@ -34,7 +35,10 @@ export async function POST(request: Request) {
   try {
     saveMorningRitualSession(body.user.id, session);
     return Response.json({ok: true});
-  } catch {
+  } catch (error) {
+    if (error instanceof RitualSessionUncompleteError) {
+      return Response.json({error: error.message}, {status: 409});
+    }
     return serverError('Could not save morning ritual session');
   }
 }

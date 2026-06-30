@@ -1,3 +1,4 @@
+import {FormulationSessionConflictError} from '@/lib/db/repositories/formulation-sessions';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {
   getFormulationSession,
@@ -50,6 +51,9 @@ export async function PATCH(
     const result = await patchFormulationSession(current.user.id, id, parsed.data);
     return jsonOk({session: result.session});
   } catch (error) {
+    if (error instanceof FormulationSessionConflictError) {
+      return jsonError('Session was modified concurrently. Refresh and try again.', 409);
+    }
     console.error('[formulation-session] PATCH failed:', error);
     return jsonError('Could not update session.', 500, String(error), {exposeDetails: true});
   }

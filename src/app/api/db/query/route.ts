@@ -1,5 +1,6 @@
 import {badRequest} from '@/lib/api-response';
 import {requireAdmin} from '@/lib/db/admin-guard';
+import {logAdminAccess} from '@/lib/db/admin-audit-log';
 import {getDb} from '@/lib/db/sqlite';
 import {JSON_BODY_LIMITS, readJsonBody} from '@/lib/read-json-body';
 import {z} from 'zod';
@@ -53,5 +54,12 @@ export async function POST(request: Request) {
       error: 'Query could not be executed.',
       duration_ms: Date.now() - start,
     }, {status: 400});
+  } finally {
+    logAdminAccess({
+      userId: guard.user.id,
+      action: 'db_query',
+      detail: sql.slice(0, 500),
+      request,
+    });
   }
 }

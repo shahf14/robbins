@@ -39,23 +39,11 @@ export function DatabaseTab({
 }: {
   onActivity: (key: AdminActivityKey) => void;
   onSubCrumbChange: (segment: string | null) => void;
-  activeView?: View;
-  onActiveViewChange?: (view: View) => void;
+  activeView: View;
+  onActiveViewChange: (view: View) => void;
 }) {
   const t = useTranslations('admin.database');
   const {confirm} = useConfirm();
-  const [internalView, setInternalView] = useState<View>('tables');
-  const view = activeView ?? internalView;
-  const setView = useCallback(
-    (next: View) => {
-      if (onActiveViewChange) {
-        onActiveViewChange(next);
-      } else {
-        setInternalView(next);
-      }
-    },
-    [onActiveViewChange],
-  );
   const [tables, setTables] = useState<TableSummary[]>([]);
   const [loadingTables, setLoadingTables] = useState(true);
   const [tablesError, setTablesError] = useState<string | null>(null);
@@ -67,8 +55,8 @@ export function DatabaseTab({
   const [savingTokens, setSavingTokens] = useState(false);
 
   useEffect(() => {
-    onSubCrumbChange(view === 'tables' ? t('tablesView') : t('queryView'));
-  }, [onSubCrumbChange, t, view]);
+    onSubCrumbChange(activeView === 'tables' ? t('tablesView') : t('queryView'));
+  }, [activeView, onSubCrumbChange, t]);
 
   const fetchTables = useCallback(async () => {
     setLoadingTables(true);
@@ -246,9 +234,9 @@ export function DatabaseTab({
           <button
             key={v}
             type="button"
-            onClick={() => setView(v)}
+            onClick={() => onActiveViewChange(v)}
             className={`rounded-full px-5 py-1.5 text-sm font-semibold transition ${
-              view === v ? 'fill-3 txt-strong' : 'txt-muted hover:txt-strong'
+              activeView === v ? 'fill-3 txt-strong' : 'txt-muted hover:txt-strong'
             }`}
           >
             {v === 'tables' ? t('tablesView') : t('queryView')}
@@ -256,7 +244,7 @@ export function DatabaseTab({
         ))}
       </div>
 
-      {view === 'tables' ? (
+      {activeView === 'tables' ? (
         loadingTables ? (
           <p className="text-sm txt-muted">{t('loadingTables')}</p>
         ) : tablesError ? null : tables.length === 0 ? (
@@ -266,7 +254,7 @@ export function DatabaseTab({
         )
       ) : null}
 
-      {view === 'query' ? <SqlEditor /> : null}
+      {activeView === 'query' ? <SqlEditor /> : null}
     </div>
   );
 }

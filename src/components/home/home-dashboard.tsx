@@ -5,7 +5,9 @@ import {useLocale, useTranslations} from 'next-intl';
 import {useRouter} from '@/i18n/navigation';
 import type {AppLocale} from '@/i18n/config';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
-import {type ApiLoadFailureKind, resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
+import {resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
+import {useApiLoadSession} from '@/hooks/use-api-load';
+import {useAutoHide} from '@/hooks/use-auto-hide';
 import {useOnLocalAuthReady} from '@/lib/auth/use-on-local-auth-ready';
 import {loadHomeDashboardData, type HomeOptionalSection} from '@/lib/home/load-home-dashboard-data';
 import {SurvivalModeBanner} from '@/components/life-coach/survival-mode-banner';
@@ -84,6 +86,7 @@ import {buildSimplifiedStep} from '@/lib/life-coach/simplify-step';
 import {pickStartHereStep} from '@/lib/life-coach/step-priority';
 import {currentWeekRange, todayYMD} from '@/lib/date-utils';
 import {WEEKLY_TARGET_RATIO} from '@/lib/life-coach/progress-constants';
+import {settleAllThen} from '@/lib/async/batch-mutations';
 import {
   completedRitualSessions,
   energyTrend,
@@ -107,31 +110,26 @@ export function HomeDashboard() {
   const locale = useLocale() as AppLocale;
 
   const [data,     setData]     = useState<HomeData | null>(null);
-  const [loading,  setLoading]  = useState(true);
-  const [loadFailure, setLoadFailure] = useState<ApiLoadFailureKind | null>(null);
+  const {loading, error: loadFailure, arm: armLoad, complete: completeLoad, fail: failLoad} =
+    useApiLoadSession();
   const [partialFailures, setPartialFailures] = useState<HomeOptionalSection[]>([]);
   const [isStaleView, setIsStaleView] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const [microReward, setMicroReward] = useState<string | null>(null);
+  const microReward = useAutoHide<string>(2600);
   const [coachMessage, setCoachMessage] = useState<CoachMessageView | null>(null);
   const [sharingWeekly, setSharingWeekly] = useState(false);
   const focusDraftKey = 'home_focus_draft';
   const focusRef = useRef<HTMLInputElement>(null);
   const dataRef = useRef<HomeData | null>(null);
-  const microRewardTimeoutRef = useRef<number | null>(null);
+  const loadVersionRef = useRef(0);
+  const coachMessageVersionRef = useRef(0);
   const markDoneInFlightRef = useRef<Set<string>>(new Set());
   const toast = useToast();
   const router = useRouter();
 
-  useEffect(() => () => {
-    if (microRewardTimeoutRef.current) {
-      window.clearTimeout(microRewardTimeoutRef.current);
-    }
-  }, []);
-
   const load = useCallback(async () => {
-    setLoading(true);
-    setLoadFailure(null);
+    const version = ++loadVersionRef.current;
+    armLoad();
     setPartialFailures([]);
     setIsStaleView(false);
 
@@ -141,10 +139,11 @@ export function HomeDashboard() {
       previous: dataRef.current,
     });
 
+    if (version !== loadVersionRef.current) return;
+
     if (!result.ok) {
-      setLoadFailure(result.failure);
+      failLoad(result.failure);
       setIsStaleView(dataRef.current !== null);
-      setLoading(false);
       return;
     }
 
@@ -155,12 +154,8 @@ export function HomeDashboard() {
     dataRef.current = result.data;
     setData(result.data);
     setPartialFailures(result.partialFailures);
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    dataRef.current = data;
-  }, [data]);
+    completeLoad();
+  }, [armLoad, completeLoad, failLoad]);
 
   useEffect(() => {
     const id = window.setTimeout(() => void load(), 0);
@@ -170,49 +165,47 @@ export function HomeDashboard() {
   useOnLocalAuthReady(useCallback(() => void load(), [load]));
 
   useEffect(() => {
-    let cancelled = false;
-    const id = window.setTimeout(() => {
-      async function loadCoachMessage() {
-        if (!data) {
-          setCoachMessage(null);
-          return;
+    if (!data) {
+      setCoachMessage(null);
+      return;
+    }
+
+    const version = ++coachMessageVersionRef.current;
+    const snapshot = data;
+    const prefs = loadUserPreferences();
+    const latestEnergy = ritualEnergy(completedRitualSessions(snapshot.ritualSessions)[0]);
+    const step = pickStartHereStep(
+      snapshot.todaySteps,
+      latestEnergy,
+      {
+        wake_time: prefs.wake_time,
+        sleep_time: prefs.sleep_time,
+        preferred_action_window: prefs.preferred_action_window,
+      },
+      snapshot.weekSteps
+    );
+
+    if (!step) {
+      setCoachMessage(null);
+      return;
+    }
+
+    void (async () => {
+      try {
+        const res = await lifeCoachApi.getDailyCoachMessage(todayYMD(), locale);
+        if (version === coachMessageVersionRef.current) {
+          setCoachMessage(res.message);
         }
-        const prefs = loadUserPreferences();
-        const latestEnergy = ritualEnergy(completedRitualSessions(data.ritualSessions)[0]);
-        const step = pickStartHereStep(
-          data.todaySteps,
-          latestEnergy,
-          {
-            wake_time: prefs.wake_time,
-            sleep_time: prefs.sleep_time,
-            preferred_action_window: prefs.preferred_action_window,
-          },
-          data.weekSteps
-        );
-        if (!step) {
+      } catch {
+        if (version === coachMessageVersionRef.current) {
           setCoachMessage(null);
-          return;
-        }
-        try {
-          const res = await lifeCoachApi.getDailyCoachMessage(todayYMD(), locale);
-          if (!cancelled) {
-            setCoachMessage(res.message);
-          }
-        } catch {
-          if (!cancelled) {
-            setCoachMessage(null);
-          }
         }
       }
-      void loadCoachMessage();
-    }, 0);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(id);
-    };
+    })();
   }, [data, locale]);
 
   const handleGenerateSteps = useCallback(async () => {
+    toast.clearErrors();
     setGenerating(true);
     try {
       const prefs = loadUserPreferences();
@@ -240,23 +233,17 @@ export function HomeDashboard() {
   const handleMarkDone = useCallback(async (stepId: string) => {
     if (markDoneInFlightRef.current.has(stepId)) return;
     markDoneInFlightRef.current.add(stepId);
+    toast.clearErrors();
     try {
       const step = data?.todaySteps.find((s) => s.id === stepId);
       await lifeCoachApi.updateDailyStepStatus(stepId, {status: 'completed'});
+      await load();
       const energyBonus = step ? detectEnergyMatchBonus(ritualEnergy(completedRitualSessions(data?.ritualSessions ?? [])[0]), step) : null;
       const reward = energyBonus
         ? t(`gamification.energyMatch.${energyBonus}`)
         : t('home.microRewardStep');
-      setMicroReward(reward);
+      microReward.show(reward);
       toast.success(reward);
-      if (microRewardTimeoutRef.current) {
-        window.clearTimeout(microRewardTimeoutRef.current);
-      }
-      microRewardTimeoutRef.current = window.setTimeout(() => {
-        setMicroReward(null);
-        microRewardTimeoutRef.current = null;
-      }, 2600);
-      await load();
     } catch (error) {
       toast.error(resolveLifeCoachErrorMessage(error, t));
     } finally {
@@ -482,8 +469,9 @@ export function HomeDashboard() {
   }
 
   async function handleSurvivalEasyStep(stepId: string) {
+    toast.clearErrors();
     try {
-      await Promise.all(
+      await settleAllThen(
         pendingSteps
           .filter((s) => s.id !== stepId)
           .map((s) =>
@@ -491,48 +479,52 @@ export function HomeDashboard() {
               status: 'skipped',
               blocker_reason: 'low_energy',
             })
-          )
+          ),
+        load
       );
-      await load();
     } catch (error) {
       toast.error(resolveLifeCoachErrorMessage(error, t));
     }
   }
 
   async function handleSurvivalSkipAll(blocker: import('@/lib/life-coach/types').ReflectionBlockerReason) {
+    toast.clearErrors();
     try {
-      await Promise.all(
-        pendingSteps.map((s) =>
-          lifeCoachApi.updateDailyStepStatus(s.id, {
-            status: 'skipped',
+      await settleAllThen(
+        [
+          ...pendingSteps.map((s) =>
+            lifeCoachApi.updateDailyStepStatus(s.id, {
+              status: 'skipped',
+              blocker_reason: blocker,
+            })
+          ),
+          lifeCoachApi.saveReflection({
+            date: todayYMD(),
+            mood_score: null,
+            energy_score: null,
+            reflection_text: '',
             blocker_reason: blocker,
-          })
-        )
+          }),
+        ],
+        load
       );
-      await lifeCoachApi.saveReflection({
-        date: todayYMD(),
-        mood_score: null,
-        energy_score: null,
-        reflection_text: '',
-        blocker_reason: blocker,
-      });
-      await load();
     } catch (error) {
       toast.error(resolveLifeCoachErrorMessage(error, t));
     }
   }
 
   async function handleSurvivalPauseDay() {
+    toast.clearErrors();
     try {
-      await Promise.all(
+      await settleAllThen(
         pendingSteps.map((s) =>
           lifeCoachApi.updateDailyStepStatus(s.id, {
             status: 'skipped',
             blocker_reason: 'low_energy',
           })
-        )
+        ),
+        load
       );
-      await load();
     } catch (error) {
       toast.error(resolveLifeCoachErrorMessage(error, t));
     }
@@ -607,7 +599,7 @@ export function HomeDashboard() {
       {atRisk && pendingSteps.length > 0 && (
         <EarlyWarningBanner onTwoMinuteStep={() => void handleTwoMinuteStep()} />
       )}
-      {microReward && <HomeMicroReward message={microReward} />}
+      {microReward.value && <HomeMicroReward message={microReward.value} />}
       {celebration && <HomeCelebrationMoment id={celebration} t={t} />}
       {showClosure && endOfDayClosure && (
         <EndOfDayClosureCard closure={endOfDayClosure} />

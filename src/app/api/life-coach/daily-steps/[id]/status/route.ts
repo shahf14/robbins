@@ -16,6 +16,7 @@ import {getSupportContextForUser} from '@/lib/support-context/formulation-suppor
 import type {CoachingStyle, PreferredActionWindow} from '@/lib/user-preferences';
 import {jsonError, jsonOk, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {dailyStepStatusUpdateSchema} from '@/lib/life-coach/schemas';
+import {InvalidDailyStepStatusTransitionError} from '@/lib/life-coach/daily-step-status-transitions';
 
 export async function PATCH(
   request: Request,
@@ -47,6 +48,10 @@ export async function PATCH(
       read_description: parsed.data.read_description,
       value_feedback: parsed.data.value_feedback,
     }, current.user.id);
+
+    if (!step) {
+      return jsonError('Daily step not found.', 404);
+    }
 
     const isTerminalStatus =
       parsed.data.status === 'completed' ||
@@ -143,7 +148,9 @@ export async function PATCH(
 
     return jsonOk({step});
   } catch (error) {
-    if (String(error).includes('not found')) return jsonError('Daily step not found.', 404);
+    if (error instanceof InvalidDailyStepStatusTransitionError) {
+      return jsonError('Invalid step status transition.', 409);
+    }
     return jsonError('Could not update daily step status.', 500, String(error));
   }
 }

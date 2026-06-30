@@ -19,6 +19,7 @@ import {
   clearFormulationDraftPointer,
   clearFormulationLiveDraft,
   clearFormulationLiveDraftsForSession,
+  loadFormulationDraftPointer,
   loadFormulationLiveDraft,
   saveFormulationDraftPointer,
   saveFormulationLiveDraft,
@@ -94,6 +95,7 @@ export function FormulationSessionWizard() {
   const loadSession = useCallback(async () => {
     setLoading(true);
     setLoadFailure(null);
+    setError(null);
     try {
       if (resumeId) {
         const {session: s} = await formulationApi.get(resumeId);
@@ -112,6 +114,20 @@ export function FormulationSessionWizard() {
         setSession(draft);
         saveFormulationDraftPointer({sessionId: draft.id, phase: draft.current_phase});
         return;
+      }
+      const pointer = loadFormulationDraftPointer();
+      if (pointer) {
+        try {
+          const {session: recovered} = await formulationApi.get(pointer.sessionId);
+          const phase = resolveWizardPhase(recovered);
+          hydratedPhaseRef.current = `${recovered.id}:${phase}`;
+          setLiveDraft(loadFormulationLiveDraft(recovered.id, phase) ?? {});
+          setSession(recovered);
+          saveFormulationDraftPointer({sessionId: recovered.id, phase: recovered.current_phase});
+          return;
+        } catch {
+          clearFormulationDraftPointer();
+        }
       }
       const {session: created} = await formulationApi.create(locale);
       const phase = resolveWizardPhase(created);
@@ -147,7 +163,7 @@ export function FormulationSessionWizard() {
   }, [session, liveDraft]);
 
   useEffect(() => {
-    if (!session) return;
+    if (!session || saving) return;
     const phase = resolveWizardPhase(session);
     if (!wizardLiveDraftHasContent(liveDraft, phase)) return;
 
@@ -158,7 +174,7 @@ export function FormulationSessionWizard() {
 
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
-  }, [session, liveDraft]);
+  }, [session, liveDraft, saving]);
 
   useEffect(() => {
     formulationApi
@@ -204,6 +220,10 @@ export function FormulationSessionWizard() {
       setLiveDraft((d) => ({...d, llm_exploration_answers})),
     []
   );
+  const onExplorationPageChange = useCallback(
+    (exploration_page: number) => setLiveDraft((d) => ({...d, exploration_page})),
+    []
+  );
 
   async function patchAndSet(
     id: string,
@@ -228,6 +248,7 @@ export function FormulationSessionWizard() {
         }
         if (body.phase === 'exploration' && 'llm_exploration_answers' in body) {
           delete next.llm_exploration_answers;
+          delete next.exploration_page;
           clearFormulationLiveDraft(id, 'exploration');
         }
         return next;
@@ -456,6 +477,8 @@ export function FormulationSessionWizard() {
             locale={locale}
             questions={session.llm_exploration_questions}
             initialAnswers={liveDraft.llm_exploration_answers ?? session.llm_exploration_answers}
+            initialPage={liveDraft.exploration_page ?? 0}
+            onPageChange={onExplorationPageChange}
             generating={busy === 'generating_questions'}
             loadError={error}
             onDraftChange={onExplorationDraft}

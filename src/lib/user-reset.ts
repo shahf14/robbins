@@ -4,13 +4,16 @@ import {
   HEALTH_GOAL_DRAFT_KEY,
   ONBOARDING_DRAFT_KEY,
 } from '@/lib/draft-storage-keys';
+import {clearStoredLocalAuthToken} from '@/lib/auth/local-auth-token-storage';
 import {getLocalAuthHeaders} from '@/lib/auth/client-headers';
+import {clearAdminSession} from '@/lib/auth/clear-admin-session';
 
 const USER_LOCAL_STORAGE_KEYS = [
   'onboarding_v2',
   'onboarding_wizard_v1',
   ONBOARDING_DRAFT_KEY,
   'user_preferences',
+  'theme',
   'morning_ritual_affirmations',
   'morning_ritual_identities',
   'morning_ritual_sessions',
@@ -25,6 +28,8 @@ const USER_LOCAL_STORAGE_KEYS = [
   'robbins_goal_contracts',
   'robbins_friction_skips',
   'robbins_home_how_it_works_collapsed',
+  'robbins_admin_activity',
+  'robbins-curated-tasks-v1',
   'home_focus_draft',
   'profile_completion_prompts_v1',
   'profile_completion_prompts_v2',
@@ -38,6 +43,7 @@ const USER_LOCAL_STORAGE_KEYS = [
 const USER_LOCAL_STORAGE_PREFIXES = [
   'robbins_feature_seen_',
   'robbins_feature_hint_dismissed_',
+  'formulation_live_draft:',
 ] as const;
 
 export type UserResetFailureKind = 'auth' | 'server' | 'offline';
@@ -77,6 +83,9 @@ function clearUserLocalStorage(): void {
   for (const key of dynamicKeys) {
     window.localStorage.removeItem(key);
   }
+
+  clearStoredLocalAuthToken();
+  document.cookie = 'NEXT_LOCALE=; path=/; max-age=0';
 }
 
 async function readResetErrorMessage(response: Response): Promise<string> {
@@ -115,6 +124,7 @@ export async function resetAllUserData(): Promise<void> {
   }
 
   clearUserLocalStorage();
+  void clearAdminSession();
 }
 
 export function isUserResetError(error: unknown): error is UserResetError {

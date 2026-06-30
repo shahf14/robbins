@@ -8,6 +8,7 @@ import type {MorningRitualGoalContext} from './morning-ritual/goal-context';
 import type {EmotionalStageRouting} from '@/lib/formulation/emotional-stage-routing';
 import type {MeditationRecommendation} from '@/lib/formulation/meditation-routing';
 import {mergeSessions, readLegacyItems, removePendingSession} from '@/lib/legacy-session-storage';
+import {computeRitualStreak} from '@/lib/ritual-streak';
 
 export type MorningRitualBootContext = {
   yesterday: MorningRitualYesterdayContext | null;
@@ -59,11 +60,20 @@ export async function fetchSessions(options?: {strict?: boolean}): Promise<Morni
       if (!res.ok) return pending;
     }
     const data = (await res.json()) as {sessions?: MorningRitualSession[]};
+    const apiSessions = data.sessions ?? [];
+
     if (pending.length > 0) {
-      await Promise.all(pending.map(persistSession));
+      const results = await Promise.allSettled(pending.map(persistSession));
+      if (options?.strict) {
+        const rejected = results.find((result) => result.status === 'rejected');
+        if (rejected?.status === 'rejected') {
+          throw rejected.reason;
+        }
+      }
     }
+
     const remainingPending = readLegacyItems<MorningRitualSession>(SESSIONS_KEY) ?? [];
-    return mergeSessions(data.sessions ?? [], remainingPending);
+    return mergeSessions(apiSessions, remainingPending);
   } catch (error) {
     if (options?.strict) throw error;
     return pending;
@@ -162,29 +172,7 @@ export async function fetchRitualContent() {
 }
 
 export function getStreak(sessions: MorningRitualSession[]): number {
-  const completed = sessions.filter((s) => s.completed && s.completedAt);
-  if (completed.length === 0) return 0;
-
-  let streak = 0;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  for (let i = 0; i <= 365; i++) {
-    const checkDate = new Date(today);
-    checkDate.setDate(checkDate.getDate() - i);
-    const dateStr = checkDate.toDateString();
-
-    const hasEntry = completed.some(
-      (s) => new Date(s.completedAt!).toDateString() === dateStr
-    );
-
-    if (hasEntry) {
-      streak++;
-    } else if (i > 0) {
-      break;
-    }
-  }
-  return streak;
+  return computeRitualStreak(sessions);
 }
 
 async function persistRitualContent(body: {

@@ -1,5 +1,6 @@
 import {dbAll, dbGet, dbRun} from '../sqlite';
 import {parseJsonOr} from '@/lib/safe-json';
+import {assertRitualNotUncompleted} from '@/lib/ritual-session-guards';
 import type {EveningResetSession} from '@/lib/evening-reset-types';
 import {dateToYMD} from '@/lib/date-utils';
 
@@ -45,13 +46,14 @@ export function listEveningResetSessions(userId: string, limit = 60): EveningRes
 }
 
 export function saveEveningResetSession(userId: string, session: EveningResetSession): void {
-  const existing = dbGet<{user_id: string | null}>(
-    `SELECT user_id FROM evening_resets WHERE id = ?`,
+  const existing = dbGet<{user_id: string | null; completed: number}>(
+    `SELECT user_id, completed FROM evening_resets WHERE id = ?`,
     [session.id]
   );
   if (existing && existing.user_id !== userId) {
     throw new Error(`Evening reset ${session.id} is owned by another user`);
   }
+  assertRitualNotUncompleted(existing?.completed === 1, session.completed);
 
   const date = dateToYMD(new Date(session.completedAt ?? session.startedAt ?? Date.now()));
 

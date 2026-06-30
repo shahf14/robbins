@@ -1,14 +1,23 @@
 import {isPastWakeTimeInTimezone} from '@/lib/schedule-content';
+import {AiRateLimitExceededError} from '@/lib/ai-rate-limit';
+import {DailyStepsGenerationLockedError} from '@/lib/life-coach/daily-steps-generation-lock';
 import {generateDailyStepsForUser} from '@/lib/life-coach/generate-daily-steps-for-user';
 import {getUserGenerationContext, getUserParticipantProfile, listActiveGoalUsers} from '@/lib/life-coach/repository';
 import {jsonError, jsonOk, startOfToday, verifyCronRequest} from '@/lib/life-coach/server';
 import {logCronRun} from '@/lib/db/cron-log';
+import {releaseCronLock, tryAcquireCronLock} from '@/lib/db/cron-lock';
+
+const DAILY_STEPS_LOCK_TTL_MS = 60 * 60 * 1000;
 
 export async function POST(request: Request) {
   const unauthorized = verifyCronRequest(request);
 
   if (unauthorized) {
     return unauthorized;
+  }
+
+  if (!tryAcquireCronLock('daily-steps', DAILY_STEPS_LOCK_TTL_MS)) {
+    return jsonOk({ok: true, skipped: true, reason: 'lock_held'});
   }
 
   try {
@@ -54,6 +63,12 @@ export async function POST(request: Request) {
         );
         generatedCount += 1;
       } catch (error) {
+        if (error instanceof AiRateLimitExceededError) {
+          continue;
+        }
+        if (error instanceof DailyStepsGenerationLockedError) {
+          continue;
+        }
         failedCount += 1;
         errors.push({userId, error: String(error)});
         console.error(`daily-steps cron failed for user ${userId}:`, error);
@@ -71,5 +86,7 @@ export async function POST(request: Request) {
   } catch (error) {
     logCronRun({job: 'daily-steps', status: 'failed', generatedCount: 0, failedCount: 1, errors: [{userId: 'unknown', error: String(error)}]});
     return jsonError('Could not run daily life coach cron.', 500, String(error));
+  } finally {
+    releaseCronLock('daily-steps');
   }
 }

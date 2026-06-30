@@ -1,13 +1,12 @@
 'use client';
 
 import {useLocale, useTranslations} from 'next-intl';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useReducer, useRef, useState} from 'react';
 import type {AppLocale} from '@/i18n/config';
 import type {
   EveningMode,
   EveningResetSession,
   EveningStep,
-  GratitudeCategory,
 } from '@/lib/evening-reset-types';
 import {EVENING_STEPS_BY_MODE} from '@/lib/evening-reset-types';
 import type {LifeContextStatus} from '@/lib/life-coach/types';
@@ -33,7 +32,7 @@ import type {MeditationRecommendation} from '@/lib/formulation/meditation-routin
 import {buildEveningBriefingFields} from '@/lib/evening-reset/briefing';
 import {buildTomorrowTakeawayFallback} from '@/lib/evening-reset/tomorrow-takeaway';
 import {generateEveningAiInsight} from '@/lib/evening-reset/ai-insight';
-import {loadUserPreferences} from '@/lib/user-preferences';
+import {loadUserPreferences, subscribeUserPreferences} from '@/lib/user-preferences';
 import {fetchPersonalizedVisualization} from '@/lib/ritual-visualization-storage';
 import type {PersonalizedVisualization} from '@/lib/formulation/visualization-context';
 import {FeatureHint} from '@/components/feedback/feature-hint';
@@ -57,6 +56,11 @@ import {
   EnvironmentDesignStep,
   VisualizationStep,
 } from '@/components/evening-reset/evening-reset-planning-steps';
+import {
+  eveningFormReducer,
+  INITIAL_EVENING_FORM,
+  type EveningFormState,
+} from '@/lib/evening-reset/form-state';
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -72,21 +76,27 @@ export function EveningReset() {
   });
   const [session, setSession] = useState<EveningResetSession | null>(null);
   const [sessions, setSessions] = useState<EveningResetSession[]>([]);
+  const [form, dispatchForm] = useReducer(eveningFormReducer, INITIAL_EVENING_FORM);
+  const {
+    dayMood,
+    biggestWin,
+    successFactors,
+    blockers,
+    emotionalDump,
+    gratitudeItems,
+    gratitudeCategories,
+    aiInsight,
+    tomorrowsWin,
+    tomorrowTakeaway,
+    preparedItems,
+    sleepTarget,
+    prepInput,
+  } = form;
 
-  // Step data states
-  const [dayMood, setDayMood] = useState<number | null>(null);
-  const [biggestWin, setBiggestWin] = useState('');
-  const [successFactors, setSuccessFactors] = useState('');
-  const [blockers, setBlockers] = useState('');
-  const [emotionalDump, setEmotionalDump] = useState('');
-  const [gratitudeItems, setGratitudeItems] = useState<string[]>(['', '', '']);
-  const [gratitudeCategories, setGratitudeCategories] = useState<GratitudeCategory[]>([]);
-  const [aiInsight, setAiInsight] = useState('');
-  const [tomorrowsWin, setTomorrowsWin] = useState('');
-  const [tomorrowTakeaway, setTomorrowTakeaway] = useState('');
-  const [preparedItems, setPreparedItems] = useState<string[]>([]);
-  const [sleepTarget, setSleepTarget] = useState('');
-  const [prepInput, setPrepInput] = useState('');
+  const patchForm = useCallback((patch: Partial<EveningFormState>) => {
+    dispatchForm({type: 'patch', patch});
+  }, []);
+
   const [personalizedVisualization, setPersonalizedVisualization] =
     useState<PersonalizedVisualization | null>(null);
   const [painContext, setPainContext] = useState<EveningResetPainContext | null>(null);
@@ -94,6 +104,9 @@ export function EveningReset() {
   const [emotionalStage, setEmotionalStage] = useState<EmotionalStageRouting | null>(null);
   const [meditationRecommendation, setMeditationRecommendation] =
     useState<MeditationRecommendation | null>(null);
+  const [lifeContexts, setLifeContexts] = useState<LifeContextStatus[]>(
+    () => loadUserPreferences().life_context_statuses ?? []
+  );
 
   const startTimeRef = useRef<number>(0);
   const completingRef = useRef(false);
@@ -132,8 +145,11 @@ export function EveningReset() {
     };
   }, [ignoreBootFetchError, locale]);
 
-  const lifeContexts = useMemo(
-    () => loadUserPreferences().life_context_statuses ?? [],
+  useEffect(
+    () =>
+      subscribeUserPreferences(() => {
+        setLifeContexts(loadUserPreferences().life_context_statuses ?? []);
+      }),
     []
   );
 
@@ -207,21 +223,13 @@ export function EveningReset() {
     };
     setSession(newSession);
 
-    // Reset all step data
-    setDayMood(null);
-    setBiggestWin('');
-    setSuccessFactors('');
-    setBlockers('');
-    setEmotionalDump('');
-    setGratitudeItems(['', '', '']);
-    setGratitudeCategories([]);
-    setAiInsight('');
-    setTomorrowsWin('');
     const prefs = loadUserPreferences();
     const eveningDefaults = getEveningScheduleDefaults(prefs.sleep_time, locale);
-    setPreparedItems([eveningDefaults.screenOffSuggestion]);
-    setSleepTarget(eveningDefaults.sleepTarget);
-    setPrepInput('');
+    dispatchForm({
+      type: 'reset',
+      preparedItems: [eveningDefaults.screenOffSuggestion],
+      sleepTarget: eveningDefaults.sleepTarget,
+    });
 
     setStep(EVENING_STEPS_BY_MODE[selectedMode][0]);
   }
@@ -236,7 +244,7 @@ export function EveningReset() {
       tomorrowsWin,
     };
     const insight = generateEveningAiInsight(partial, t, painContext);
-    setAiInsight(insight);
+    patchForm({aiInsight: insight});
     goNext();
   }
 
@@ -302,25 +310,29 @@ export function EveningReset() {
       ...briefingFields,
     };
 
-    setTomorrowTakeaway(takeaway);
-    setSession(finalSession);
-    setSessions((prev) => [finalSession, ...prev.filter((s) => s.id !== finalSession.id)]);
-    setStep('complete');
-    completingRef.current = false;
-
-    void persistEveningSession(finalSession)
-      .then((saved) => {
-        if (!saved?.tomorrow_takeaway) return;
-        setTomorrowTakeaway(saved.tomorrow_takeaway);
-        setSession((prev) =>
-          prev?.id === finalSession.id
-            ? {...prev, tomorrow_takeaway: saved.tomorrow_takeaway}
-            : prev
-        );
-      })
-      .catch(() => {
+    void (async () => {
+      try {
+        const saved = await persistEveningSession(finalSession);
+        const persisted = saved
+          ? {
+              ...finalSession,
+              tomorrow_takeaway: saved.tomorrow_takeaway ?? finalSession.tomorrow_takeaway,
+            }
+          : finalSession;
+        setSession(persisted);
+        setSessions((prev) => [persisted, ...prev.filter((s) => s.id !== persisted.id)]);
+        patchForm({tomorrowTakeaway: persisted.tomorrow_takeaway ?? takeaway});
+        setStep('complete');
+      } catch {
         persistEveningSessionWithFallback(finalSession);
-      });
+        patchForm({tomorrowTakeaway: takeaway});
+        setSession(finalSession);
+        setSessions((prev) => [finalSession, ...prev.filter((s) => s.id !== finalSession.id)]);
+        setStep('complete');
+      } finally {
+        completingRef.current = false;
+      }
+    })();
   }
 
   // ── Screens ─────────────────────────────────────────────────────────────────
@@ -382,7 +394,7 @@ export function EveningReset() {
           t={t}
           value={dayMood}
           onSelect={(mood) => {
-            setDayMood(mood);
+            patchForm({dayMood: mood});
             goNext(mood);
           }}
         />
@@ -397,7 +409,7 @@ export function EveningReset() {
           painContext={painContext}
           accountability={accountability}
           value={biggestWin}
-          onChange={setBiggestWin}
+          onChange={(value) => patchForm({biggestWin: value})}
           onBack={goBack}
           onNext={goNext}
           onSkip={skipStep}
@@ -410,9 +422,9 @@ export function EveningReset() {
           t={t}
           painContext={painContext}
           successFactors={successFactors}
-          setSuccessFactors={setSuccessFactors}
+          setSuccessFactors={(value) => patchForm({successFactors: value})}
           blockers={blockers}
-          setBlockers={setBlockers}
+          setBlockers={(value) => patchForm({blockers: value})}
           onBack={goBack}
           onNext={goNext}
           onSkip={skipStep}
@@ -423,7 +435,7 @@ export function EveningReset() {
         <EmotionalDumpStep
           t={t}
           value={emotionalDump}
-          onChange={setEmotionalDump}
+          onChange={(value) => patchForm({emotionalDump: value})}
           onBack={goBack}
           onNext={goNext}
           onSkip={skipStep}
@@ -434,9 +446,9 @@ export function EveningReset() {
         <GratitudeStep
           t={t}
           items={gratitudeItems}
-          setItems={setGratitudeItems}
+          setItems={(value) => patchForm({gratitudeItems: value})}
           categories={gratitudeCategories}
-          setCategories={setGratitudeCategories}
+          setCategories={(value) => patchForm({gratitudeCategories: value})}
           onBack={goBack}
           onNext={goNext}
           onSkip={skipStep}
@@ -459,7 +471,7 @@ export function EveningReset() {
           lifeContexts={lifeContexts}
           painContext={painContext}
           value={tomorrowsWin}
-          onChange={setTomorrowsWin}
+          onChange={(value) => patchForm({tomorrowsWin: value})}
           onBack={goBack}
           onNext={
             modeSteps.indexOf('tomorrows-win') === modeSteps.length - 2
@@ -478,11 +490,11 @@ export function EveningReset() {
             t={t}
             lifeContexts={lifeContexts}
             items={preparedItems}
-            setItems={setPreparedItems}
+            setItems={(value) => patchForm({preparedItems: value})}
             input={prepInput}
-            setInput={setPrepInput}
+            setInput={(value) => patchForm({prepInput: value})}
             sleepTarget={sleepTarget}
-            setSleepTarget={setSleepTarget}
+            setSleepTarget={(value) => patchForm({sleepTarget: value})}
             sleepTime={prefs.sleep_time}
             screenOffHint={eveningDefaults.screenOffSuggestion}
             onBack={goBack}

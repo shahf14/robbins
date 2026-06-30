@@ -14,6 +14,13 @@ import {
 import {parseJsonArrayOr, parseJsonOr} from '@/lib/safe-json';
 import type {FormulationSession, RatingFollowUpItem} from '@/lib/life-coach/types';
 
+export class FormulationSessionConflictError extends Error {
+  constructor() {
+    super('Formulation session was modified concurrently.');
+    this.name = 'FormulationSessionConflictError';
+  }
+}
+
 function parseJson<T>(value: unknown, fallback: T): T {
   return parseJsonOr(value, fallback);
 }
@@ -250,10 +257,13 @@ function sanitizeFormulationSessionForUpdate(session: FormulationSession): void 
   }
 }
 
-export function updateFormulationSession(session: FormulationSession): void {
+export function updateFormulationSession(
+  session: FormulationSession,
+  options?: {expectedUpdatedAt?: string}
+): void {
   sanitizeFormulationSessionForUpdate(session);
 
-  getDb()
+  const result = getDb()
     .prepare(
       `UPDATE formulation_sessions SET
         locale = ?, status = ?, current_phase = ?,
@@ -272,7 +282,9 @@ export function updateFormulationSession(session: FormulationSession): void {
         llm_exploration_questions_json = ?, llm_exploration_answers_json = ?,
         last_ai_action = ?, last_ai_tokens = ?, last_ai_model = ?, last_ai_duration_ms = ?,
         completed_at = ?, updated_at = ?, duration_sec = ?
-      WHERE id = ? AND user_id = ?`
+      WHERE id = ? AND user_id = ?${
+        options?.expectedUpdatedAt ? ' AND updated_at = ?' : ''
+      }`
     )
     .run(
       session.locale,
@@ -328,6 +340,11 @@ export function updateFormulationSession(session: FormulationSession): void {
       session.updated_at,
       session.duration_sec,
       session.id,
-      session.user_id
+      session.user_id,
+      ...(options?.expectedUpdatedAt ? [options.expectedUpdatedAt] : [])
     );
+
+  if (options?.expectedUpdatedAt && result.changes === 0) {
+    throw new FormulationSessionConflictError();
+  }
 }

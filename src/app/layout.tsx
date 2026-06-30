@@ -5,6 +5,7 @@ import {isClerkConfigured} from '@/lib/auth/clerk-config';
 import {defaultLocale, isLocale, localeDirections, type AppLocale} from '@/i18n/config';
 import {themeBootstrapScript} from '@/lib/theme';
 import './globals.css';
+import {AuthSessionCleanup} from '@/components/auth/auth-session-cleanup';
 import {ErrorLogBootstrap} from '@/components/error-log-bootstrap';
 
 type Props = {
@@ -40,6 +41,7 @@ export default async function RootLayout({children}: Props) {
       >
         {clerkEnabled ? (
           <ClerkProvider>
+            <AuthSessionCleanup />
             <ErrorLogBootstrap />
             {children}
           </ClerkProvider>

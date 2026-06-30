@@ -79,16 +79,17 @@ export function SettingsPanel() {
       setAge(prefs.age != null ? String(prefs.age) : '');
       void formulationApi.getParticipantProfile().then((profile) => {
         if (cancelled) return;
-        if ((prefs.life_context_statuses?.length ?? 0) === 0 && profile.life_context_statuses.length > 0) {
+        const latest = loadUserPreferences();
+        if ((latest.life_context_statuses?.length ?? 0) === 0 && profile.life_context_statuses.length > 0) {
           setLifeContexts(profile.life_context_statuses);
         }
-        if (!prefs.life_context_note && profile.life_context_note) {
+        if (!latest.life_context_note && profile.life_context_note) {
           setLifeContextNote(profile.life_context_note);
         }
-        if (!prefs.gender && profile.gender && isParticipantGender(profile.gender)) {
+        if (!latest.gender && profile.gender && isParticipantGender(profile.gender)) {
           setGender(profile.gender);
         }
-        if (prefs.age == null && profile.age != null) {
+        if (latest.age == null && profile.age != null) {
           setAge(String(profile.age));
         }
       });
@@ -144,6 +145,7 @@ export function SettingsPanel() {
     if (savingRef.current) return;
     const prefs = pendingSyncPrefsRef.current ?? loadUserPreferences();
     savingRef.current = true;
+    setSaveMessage('');
     setSaveState('saving');
     try {
       await syncUserPreferencesToServer(prefs);

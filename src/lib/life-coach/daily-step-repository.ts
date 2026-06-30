@@ -4,6 +4,7 @@ import {refreshUserBehaviorProfile} from '@/lib/behavior-profile/repository';
 import {ensurePlanBFields} from '@/lib/life-coach/plan-b';
 import {clampStepReasoning} from '@/lib/life-coach/step-reasoning';
 import {dateToYMD} from '@/lib/date-utils';
+import {assertAllowedDailyStepStatusTransition} from './daily-step-status-transitions';
 import {rowToStep} from './repository-mappers';
 import type {DailyBabyStep, StructuredDailyBabyStep} from './types';
 
@@ -160,6 +161,19 @@ export async function insertDailyBabySteps(
   coachTone: import('@/lib/user-preferences').CoachingStyle | null = null,
   options?: {domainScope?: import('@/lib/life-coach/types').LifeDomain}
 ): Promise<DailyBabyStep[]> {
+  return getDb().transaction(() =>
+    insertDailyBabyStepsSync(userId, date, steps, locale, coachTone, options)
+  )();
+}
+
+export function insertDailyBabyStepsSync(
+  userId: string,
+  date: string,
+  steps: StructuredDailyBabyStep[],
+  locale: import('@/i18n/config').AppLocale = 'he',
+  coachTone: import('@/lib/user-preferences').CoachingStyle | null = null,
+  options?: {domainScope?: import('@/lib/life-coach/types').LifeDomain}
+): DailyBabyStep[] {
   if (steps.length === 0) return [];
   const now = new Date().toISOString();
   const db = getDb();
@@ -184,53 +198,51 @@ export async function insertDailyBabySteps(
       );
 
   const inserted: DailyBabyStep[] = [];
-  db.transaction((items: StructuredDailyBabyStep[]) => {
-    if (options?.domainScope) {
-      clearStmt.run(userId, date, options.domainScope);
-    } else {
-      clearStmt.run(userId, date);
-    }
-    for (const raw of items) {
-      const s = ensurePlanBFields(raw, locale);
-      const isGeneral = validateDailyStepRelation(userId, s);
-      const id = randomUUID();
-      stmt.run(
-        id, userId, s.goal_id ?? null, s.domain,
-        s.title, s.description ?? '', s.estimated_minutes,
-        s.difficulty, date, 'pending', 1, isGeneral ? 1 : 0,
-        s.fallback_title ?? null,
-        s.fallback_description ?? null,
-        s.fallback_estimated_minutes ?? 2,
-        clampStepReasoning(s.reasoning),
-        s.expected_resistance ?? null,
-        s.pain_addressed ?? null,
-        s.success_signal ?? null,
-        s.validation_fallback_applied ? 1 : 0,
-        coachTone,
-        s.weekly_focus_id ?? null,
-        now, now
-      );
-      inserted.push({
-        id, user_id: userId, goal_id: s.goal_id ?? null,
-        is_general: isGeneral,
-        domain: s.domain, title: s.title, description: s.description ?? '',
-        estimated_minutes: s.estimated_minutes, difficulty: s.difficulty,
-        scheduled_date: date, status: 'pending', generated_by_ai: true,
-        fallback_title: s.fallback_title ?? null,
-        fallback_description: s.fallback_description ?? null,
-        fallback_estimated_minutes: s.fallback_estimated_minutes ?? 2,
-        reasoning: s.reasoning ?? null,
-        expected_resistance: s.expected_resistance ?? null,
-        pain_addressed: s.pain_addressed ?? null,
-        success_signal: s.success_signal ?? null,
-        user_edited: false,
-        validation_fallback_applied: !!s.validation_fallback_applied,
-        coach_tone: coachTone,
-        weekly_focus_id: s.weekly_focus_id ?? null,
-        created_at: now, updated_at: now,
-      });
-    }
-  })(steps);
+  if (options?.domainScope) {
+    clearStmt.run(userId, date, options.domainScope);
+  } else {
+    clearStmt.run(userId, date);
+  }
+  for (const raw of steps) {
+    const s = ensurePlanBFields(raw, locale);
+    const isGeneral = validateDailyStepRelation(userId, s);
+    const id = randomUUID();
+    stmt.run(
+      id, userId, s.goal_id ?? null, s.domain,
+      s.title, s.description ?? '', s.estimated_minutes,
+      s.difficulty, date, 'pending', 1, isGeneral ? 1 : 0,
+      s.fallback_title ?? null,
+      s.fallback_description ?? null,
+      s.fallback_estimated_minutes ?? 2,
+      clampStepReasoning(s.reasoning),
+      s.expected_resistance ?? null,
+      s.pain_addressed ?? null,
+      s.success_signal ?? null,
+      s.validation_fallback_applied ? 1 : 0,
+      coachTone,
+      s.weekly_focus_id ?? null,
+      now, now
+    );
+    inserted.push({
+      id, user_id: userId, goal_id: s.goal_id ?? null,
+      is_general: isGeneral,
+      domain: s.domain, title: s.title, description: s.description ?? '',
+      estimated_minutes: s.estimated_minutes, difficulty: s.difficulty,
+      scheduled_date: date, status: 'pending', generated_by_ai: true,
+      fallback_title: s.fallback_title ?? null,
+      fallback_description: s.fallback_description ?? null,
+      fallback_estimated_minutes: s.fallback_estimated_minutes ?? 2,
+      reasoning: s.reasoning ?? null,
+      expected_resistance: s.expected_resistance ?? null,
+      pain_addressed: s.pain_addressed ?? null,
+      success_signal: s.success_signal ?? null,
+      user_edited: false,
+      validation_fallback_applied: !!s.validation_fallback_applied,
+      coach_tone: coachTone,
+      weekly_focus_id: s.weekly_focus_id ?? null,
+      created_at: now, updated_at: now,
+    });
+  }
 
   return inserted;
 }
@@ -249,7 +261,7 @@ export async function updateDailyBabyStepStatus(
     value_feedback?: DailyBabyStep['value_feedback'];
   },
   userId?: string
-): Promise<DailyBabyStep> {
+): Promise<DailyBabyStep | null> {
   const now = new Date().toISOString();
   // Detect reattempt: was the step previously skipped/partial today?
   const current = dbGet<{status: string; scheduled_date: string; completed_at: string | null}>(
@@ -258,9 +270,14 @@ export async function updateDailyBabyStepStatus(
       : `SELECT status, scheduled_date, completed_at FROM daily_steps WHERE id = ?`,
     userId ? [id, userId] : [id]
   );
+  if (!current) return null;
+
+  const fromStatus = current.status as DailyBabyStep['status'];
+  assertAllowedDailyStepStatusTransition(fromStatus, input.status);
+
   const completedAt =
     input.status === 'completed'
-      ? current?.completed_at ?? now
+      ? current.completed_at ?? now
       : null;
   const today = dateToYMD(new Date());
   const isReattempt =
@@ -303,7 +320,7 @@ export async function updateDailyBabyStepStatus(
     userId ? `SELECT * FROM daily_steps WHERE id = ? AND user_id = ?` : `SELECT * FROM daily_steps WHERE id = ?`,
     userId ? [id, userId] : [id]
   );
-  if (!row) throw new Error(`Step ${id} not found`);
+  if (!row) return null;
   const updated = rowToStep(row);
   if (userId) {
     try {

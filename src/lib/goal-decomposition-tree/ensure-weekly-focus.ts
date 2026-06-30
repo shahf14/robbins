@@ -1,6 +1,14 @@
 import {addDaysYMD} from '@/lib/date-utils';
 import type {AppLocale} from '@/i18n/config';
-import type {Goal, Milestone, WeeklyReview} from '@/lib/life-coach/types';
+import {getDb} from '@/lib/db/sqlite';
+import {insertAiInsightRow} from '@/lib/life-coach/reflection-insight-repository';
+import {assertWeeklyReviewPersistable} from '@/lib/life-coach/validate-weekly-review-payload';
+import type {
+  AiCoachingInsight,
+  Goal,
+  Milestone,
+  WeeklyReview,
+} from '@/lib/life-coach/types';
 import {upsertWeeklyGoalFocus, getWeeklyFocusForGoal} from './repository';
 import {buildWeeklyFocusFallback} from './weekly-focus-fallback';
 import {isoWeekWindow} from './week-window';
@@ -73,4 +81,31 @@ export function refreshWeeklyFocusesFromReview(
   }
 
   return byGoalId;
+}
+
+/** Persist weekly review insight and refresh goal focuses atomically. */
+export function persistWeeklyReviewWithFocusRefresh(
+  userId: string,
+  input: Omit<AiCoachingInsight, 'id' | 'user_id' | 'created_at'>,
+  focus: {
+    goals: Goal[];
+    milestonesByGoalId: Record<string, Milestone[]>;
+    review: WeeklyReview;
+    periodEnd: string;
+    locale: AppLocale;
+  }
+): AiCoachingInsight {
+  const validatedReview = assertWeeklyReviewPersistable(focus.review);
+  return getDb().transaction(() => {
+    const insight = insertAiInsightRow(userId, input);
+    refreshWeeklyFocusesFromReview(
+      userId,
+      focus.goals,
+      focus.milestonesByGoalId,
+      {...focus.review, ...validatedReview},
+      focus.periodEnd,
+      focus.locale
+    );
+    return insight;
+  })();
 }

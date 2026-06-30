@@ -1,13 +1,14 @@
 import {openaiFormulationService} from '@/lib/ai-formulation/openai-formulation-service';
-import {PROMPT_VERSIONS} from '@/lib/ai-formulation/prompts';
 import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
 import {MicroGoalLlmError} from '@/lib/formulation/micro-goal-llm';
+import {
+  PROMPT_VERSIONS,
+  persistFormulationDraftAiResult,
+  persistFormulationExplorationAiResult,
+} from '@/lib/formulation/persist-ai-action';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {
-  createAiInsight,
   getFormulationSession,
-  saveFormulationDraft,
-  saveFormulationExplorationQuestions,
   updateFormulationSessionAiMetrics,
 } from '@/lib/life-coach/repository';
 import {formulationAiActionSchema} from '@/lib/life-coach/schemas';
@@ -50,67 +51,66 @@ export async function POST(
         session,
         locale
       );
-      const updated = await saveFormulationExplorationQuestions(
+      const updated = persistFormulationExplorationAiResult(
         current.user.id,
         id,
-        result.questions
-      );
-
-      await updateFormulationSessionAiMetrics(current.user.id, id, {
-        action: 'generate_exploration_questions',
-        tokens_used: result.metrics.tokens_used ?? undefined,
-        model_used: result.metrics.model_used ?? undefined,
-        generation_duration_ms: result.metrics.generation_duration_ms ?? undefined,
-      });
-
-      await createAiInsight(current.user.id, {
-        insight_type: 'pattern',
-        content: result.questions.map((q) => q.text).join('\n'),
-        metadata: {
-          source: 'formulation',
-          formulation_session_id: id,
+        result.questions,
+        {
           action: 'generate_exploration_questions',
-          prompt_version: PROMPT_VERSIONS.exploration,
-          raw_llm_json: result.questions,
-          validation_passed: result.validation_passed,
+          tokens_used: result.metrics.tokens_used ?? undefined,
+          model_used: result.metrics.model_used ?? undefined,
+          generation_duration_ms: result.metrics.generation_duration_ms ?? undefined,
         },
-        tokens_used: result.metrics.tokens_used,
-        generation_duration_ms: result.metrics.generation_duration_ms,
-        model_used: result.metrics.model_used,
-      });
+        {
+          insight_type: 'pattern',
+          content: result.questions.map((q) => q.text).join('\n'),
+          metadata: {
+            source: 'formulation',
+            formulation_session_id: id,
+            action: 'generate_exploration_questions',
+            prompt_version: PROMPT_VERSIONS.exploration,
+            raw_llm_json: result.questions,
+            validation_passed: result.validation_passed,
+          },
+          tokens_used: result.metrics.tokens_used,
+          generation_duration_ms: result.metrics.generation_duration_ms,
+          model_used: result.metrics.model_used,
+        }
+      );
 
       return jsonOk({session: updated, questions: result.questions});
     }
 
     if (parsed.data.action === 'draft_formulation') {
       const result = await openaiFormulationService.draftFormulation(session, locale);
-      await saveFormulationDraft(current.user.id, id, result.formulation);
-
-      await updateFormulationSessionAiMetrics(current.user.id, id, {
-        action: 'draft_formulation',
-        tokens_used: result.metrics.tokens_used ?? undefined,
-        model_used: result.metrics.model_used ?? undefined,
-        generation_duration_ms: result.metrics.generation_duration_ms ?? undefined,
-      });
-
-      await createAiInsight(current.user.id, {
-        insight_type: 'pattern',
-        content: result.formulation.presenting_concern_user_words,
-        metadata: {
-          source: 'formulation',
-          formulation_session_id: id,
+      const updated = persistFormulationDraftAiResult(
+        current.user.id,
+        id,
+        result.formulation,
+        {
           action: 'draft_formulation',
-          prompt_version: PROMPT_VERSIONS.formulation,
-          raw_llm_json: result.formulation,
-          validation_passed: result.validation_passed,
+          tokens_used: result.metrics.tokens_used ?? undefined,
+          model_used: result.metrics.model_used ?? undefined,
+          generation_duration_ms: result.metrics.generation_duration_ms ?? undefined,
         },
-        tokens_used: result.metrics.tokens_used,
-        generation_duration_ms: result.metrics.generation_duration_ms,
-        model_used: result.metrics.model_used,
-      });
+        {
+          insight_type: 'pattern',
+          content: result.formulation.presenting_concern_user_words,
+          metadata: {
+            source: 'formulation',
+            formulation_session_id: id,
+            action: 'draft_formulation',
+            prompt_version: PROMPT_VERSIONS.formulation,
+            raw_llm_json: result.formulation,
+            validation_passed: result.validation_passed,
+          },
+          tokens_used: result.metrics.tokens_used,
+          generation_duration_ms: result.metrics.generation_duration_ms,
+          model_used: result.metrics.model_used,
+        }
+      );
 
-      const updated = await getFormulationSession(current.user.id, id);
-      return jsonOk({session: updated ?? session, formulation: result.formulation});
+      return jsonOk({session: updated, formulation: result.formulation});
     }
 
     if (parsed.data.action === 'suggest_micro_goal') {

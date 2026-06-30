@@ -1,4 +1,4 @@
-import {refreshWeeklyFocusesFromReview} from '@/lib/goal-decomposition-tree';
+import {refreshWeeklyFocusesFromReview, persistWeeklyReviewWithFocusRefresh} from '@/lib/goal-decomposition-tree';
 import {mergeToneWithPersonalization} from '@/lib/ai-personalization-summary';
 import {
   resolveDynamicCoachTone,
@@ -16,7 +16,6 @@ import {openaiLifeCoachService} from '@/lib/ai-life-coach/openai-life-coach-serv
 import type {CoachingStyle} from '@/lib/user-preferences';
 import type {AppLocale} from '@/i18n/config';
 import {
-  createAiInsight,
   getUserGenerationContext,
   getUserParticipantProfile,
   hasWeeklyReviewForPeriod,
@@ -24,13 +23,21 @@ import {
 } from '@/lib/life-coach/repository';
 import {trailingSevenDayWindow, jsonError, jsonOk, verifyCronRequest} from '@/lib/life-coach/server';
 import {logCronRun} from '@/lib/db/cron-log';
+import {releaseCronLock, tryAcquireCronLock} from '@/lib/db/cron-lock';
+import {consumeAiRateLimit, AiRateLimitExceededError} from '@/lib/ai-rate-limit';
 import {getSupportContextForUser} from '@/lib/support-context/formulation-support-context';
+
+const WEEKLY_REVIEW_LOCK_TTL_MS = 2 * 60 * 60 * 1000;
 
 export async function POST(request: Request) {
   const unauthorized = verifyCronRequest(request);
 
   if (unauthorized) {
     return unauthorized;
+  }
+
+  if (!tryAcquireCronLock('weekly-review', WEEKLY_REVIEW_LOCK_TTL_MS)) {
+    return jsonOk({ok: true, skipped: true, reason: 'lock_held'});
   }
 
   try {
@@ -53,6 +60,20 @@ export async function POST(request: Request) {
         }
         if (await hasWeeklyReviewForPeriod(userId, week.start, week.end)) {
           continue;
+        }
+
+        try {
+          consumeAiRateLimit({
+            action: 'life-coach:weekly-review',
+            userId,
+            limit: 3,
+            windowMs: 24 * 60 * 60 * 1000,
+          });
+        } catch (error) {
+          if (error instanceof AiRateLimitExceededError) {
+            continue;
+          }
+          throw error;
         }
 
         const locale = (profile.preferred_language ?? 'he') as AppLocale;
@@ -134,21 +155,23 @@ export async function POST(request: Request) {
         });
 
         const {_metrics, ...reviewData} = review;
-        await createAiInsight(userId, {
-          insight_type: 'weekly_review',
-          content: reviewData.summary,
-          metadata: {...reviewData, period_start: week.start, period_end: week.end},
-          tokens_used: _metrics.tokens_used,
-          generation_duration_ms: _metrics.generation_duration_ms,
-          model_used: _metrics.model_used,
-        });
-        refreshWeeklyFocusesFromReview(
+        persistWeeklyReviewWithFocusRefresh(
           userId,
-          context.goals,
-          context.milestonesByGoalId,
-          reviewData,
-          week.end,
-          locale
+          {
+            insight_type: 'weekly_review',
+            content: reviewData.summary,
+            metadata: {...reviewData, period_start: week.start, period_end: week.end},
+            tokens_used: _metrics.tokens_used,
+            generation_duration_ms: _metrics.generation_duration_ms,
+            model_used: _metrics.model_used,
+          },
+          {
+            goals: context.goals,
+            milestonesByGoalId: context.milestonesByGoalId,
+            review: reviewData,
+            periodEnd: week.end,
+            locale,
+          }
         );
         generatedCount += 1;
       } catch (error) {
@@ -169,5 +192,7 @@ export async function POST(request: Request) {
   } catch (error) {
     logCronRun({job: 'weekly-review', status: 'failed', generatedCount: 0, failedCount: 1, errors: [{userId: 'unknown', error: String(error)}]});
     return jsonError('Could not run weekly life coach cron.', 500, String(error));
+  } finally {
+    releaseCronLock('weekly-review');
   }
 }

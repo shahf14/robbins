@@ -10,6 +10,7 @@ export {
 } from './weekly-focus-fallback';
 export {
   ensureWeeklyFocusesForGoals,
+  persistWeeklyReviewWithFocusRefresh,
   refreshWeeklyFocusesFromReview,
 } from './ensure-weekly-focus';
 export {

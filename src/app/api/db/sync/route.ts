@@ -4,92 +4,41 @@
  *
  * Body shape:
  * {
- *   user_id?: string,
  *   checkins?: CheckInEntry[],
  *   morning_rituals?: MorningRitualSession[],
  * }
  */
-import {dbSyncBodySchema} from '@/lib/api-body-schemas';
+import {
+  dbSyncBodySchema,
+  dbSyncCheckinItemSchema,
+  dbSyncMorningRitualItemSchema,
+} from '@/lib/api-body-schemas';
 import {requireAdmin} from '@/lib/db/admin-guard';
+import {logAdminAccess} from '@/lib/db/admin-audit-log';
 import {bulkUpsertCheckins} from '@/lib/db/repositories/checkins';
 import {bulkUpsertMorningRituals} from '@/lib/db/repositories/gratitude';
 import {dateToYMD} from '@/lib/date-utils';
 import {badRequest, serverError, payloadTooLarge} from '@/lib/api-response';
 import {JSON_BODY_LIMITS, readJsonBody} from '@/lib/read-json-body';
 
-type RawCheckin = {
-  id?: string;
-  date?: string;
-  createdAt?: string;
-  focus?: number;
-  energy?: number;
-  stateScore?: number;
-  momentum?: number;
-  primaryTag?: string;
-  selectedTags?: string[];
-  priorityAction?: string;
-  recommendationType?: string;
-  insightKey?: string;
-  coachSupport?: string;
-  challengeDone?: boolean;
-  followUps?: string[];
-  sessionDurationSec?: number;
-  sliderAdjustments?: number;
-  openedCoachSupport?: boolean;
-  priorityActionWordCount?: number;
-  rewrotePriorityActionCount?: number;
-  tagValenceShift?: number;
-  energyFocusDivergence?: number;
-  physicalComplaintMentioned?: boolean;
-  helpEngagementDepth?: string;
-  statedActionCompleted?: boolean | null;
-  [key: string]: unknown;
-};
+import {z} from 'zod';
 
-type RawRitual = {
-  id?: string;
-  date?: string;
-  startedAt?: string;
-  completedAt?: string | null;
-  moodBefore?: number | string | null;
-  moodAfter?: number | string | null;
-  triggers?: string[];
-  durationSec?: number;
-  completed?: boolean;
-  gratitudeEntries?: string[];
-  [key: string]: unknown;
-};
-
-function normalizeSyncBody(value: unknown): {
-  user_id?: string;
-  checkins: RawCheckin[];
-  morning_rituals: RawRitual[];
-} {
-  const body = value && typeof value === 'object' ? value as {
-    user_id?: unknown;
-    checkins?: unknown;
-    morning_rituals?: unknown;
-  } : {};
-  return {
-    user_id: typeof body.user_id === 'string' ? body.user_id : undefined,
-    checkins: Array.isArray(body.checkins) ? body.checkins as RawCheckin[] : [],
-    morning_rituals: Array.isArray(body.morning_rituals) ? body.morning_rituals as RawRitual[] : [],
-  };
-}
+type RawCheckin = z.infer<typeof dbSyncCheckinItemSchema>;
+type RawRitual = z.infer<typeof dbSyncMorningRitualItemSchema>;
 
 export async function POST(request: Request) {
   const guard = await requireAdmin(request);
   if (!guard.ok) return guard.response;
 
-  let body: ReturnType<typeof normalizeSyncBody>;
+  let body: {checkins?: RawCheckin[]; morning_rituals?: RawRitual[]};
   const parsed = await readJsonBody(request, {
     maxBytes: JSON_BODY_LIMITS.dbSync,
     schema: dbSyncBodySchema,
   });
   if (!parsed.ok) return parsed.response;
-  body = normalizeSyncBody(parsed.data);
+  body = parsed.data;
 
-  const userId = body.user_id ?? guard.user.id;
+  const userId = guard.user.id;
   if ((body.checkins?.length ?? 0) > 1000 || (body.morning_rituals?.length ?? 0) > 1000) {
     return payloadTooLarge('Import is limited to 1000 records per collection.');
   }
@@ -148,6 +97,13 @@ export async function POST(request: Request) {
       stats.morning_rituals = rows.length;
       stats.gratitude_entries = rows.reduce((sum, r) => sum + (r.gratitude_entries?.length ?? 0), 0);
     }
+
+    logAdminAccess({
+      userId: guard.user.id,
+      action: 'db_sync',
+      detail: JSON.stringify(stats),
+      request,
+    });
 
     return Response.json({ok: true, synced: stats});
   } catch {

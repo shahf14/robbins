@@ -24,11 +24,6 @@ export function getAdminTokenFromRequest(request: Request) {
   return request.headers.get('x-admin-api-token')?.trim() ?? '';
 }
 
-export function allowsDevLoopbackAdminBypass(request: Request): boolean {
-  if (!isLoopbackHost(request)) return false;
-  return process.env.NODE_ENV === 'development';
-}
-
 function hasAdminApiToken(request: Request): boolean {
   return !!(ADMIN_API_TOKEN && getAdminTokenFromRequest(request) === ADMIN_API_TOKEN);
 }
@@ -51,33 +46,26 @@ async function authenticateAdminUser(request: Request) {
   if (!current.ok) return {ok: false as const, response: current.response};
 
   const adminEmail = process.env.ADMIN_EMAIL?.trim();
-  if (adminEmail && current.user.email !== adminEmail) {
-    return {ok: false as const, response: forbidden()};
-  }
-  if (
-    !adminEmail &&
-    process.env.NODE_ENV === 'production' &&
-    !allowsDevLoopbackAdminBypass(request)
-  ) {
+  if (!adminEmail) {
     return {
       ok: false as const,
       response: serviceUnavailable('ADMIN_EMAIL is not configured.'),
     };
   }
 
+  if (current.user.email !== adminEmail) {
+    return {ok: false as const, response: forbidden()};
+  }
+
   return {ok: true as const, user: current.user};
 }
 
 export function isAdminAccessGranted(request: Request, userId: string): boolean {
-  return (
-    hasValidAdminSession(request, userId) ||
-    hasAdminApiToken(request) ||
-    allowsDevLoopbackAdminBypass(request)
-  );
+  return hasValidAdminSession(request, userId) || hasAdminApiToken(request);
 }
 
 export function canBootstrapAdminSession(request: Request): boolean {
-  return hasAdminApiToken(request) || allowsDevLoopbackAdminBypass(request);
+  return hasAdminApiToken(request);
 }
 
 export async function requireAdmin(request: Request) {
@@ -102,7 +90,7 @@ export async function requireAdminSessionBootstrap(request: Request) {
   const auth = await authenticateAdminUser(request);
   if (!auth.ok) return auth;
 
-  if (hasAdminApiToken(request) || allowsDevLoopbackAdminBypass(request)) {
+  if (hasAdminApiToken(request)) {
     return {ok: true as const, user: auth.user};
   }
 

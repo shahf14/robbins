@@ -213,6 +213,9 @@ CREATE TABLE IF NOT EXISTS daily_steps (
 CREATE INDEX IF NOT EXISTS idx_steps_date         ON daily_steps(user_id, scheduled_date);
 CREATE INDEX IF NOT EXISTS idx_steps_domain_date  ON daily_steps(user_id, domain, scheduled_date);
 CREATE INDEX IF NOT EXISTS idx_steps_goal_status  ON daily_steps(goal_id, status);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_daily_steps_commitment_goal_date
+  ON daily_steps(user_id, goal_id, scheduled_date)
+  WHERE generated_by_ai = 0 AND goal_id IS NOT NULL;
 
 -- ── Daily Reflections ────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS daily_reflections (
@@ -270,7 +273,7 @@ CREATE TABLE IF NOT EXISTS skip_coach_adjustments (
   applied_at       TEXT,
   created_at       TEXT DEFAULT (datetime('now'))
 );
-CREATE UNIQUE INDEX IF NOT EXISTS idx_skip_coach_user_date
+CREATE INDEX IF NOT EXISTS idx_skip_coach_user_date
   ON skip_coach_adjustments(user_id, skip_date);
 CREATE INDEX IF NOT EXISTS idx_skip_coach_user_created
   ON skip_coach_adjustments(user_id, created_at DESC);
@@ -285,6 +288,7 @@ CREATE TABLE IF NOT EXISTS ai_insights (
   tokens_used          INTEGER,  -- LLM tokens consumed
   generation_duration_ms INTEGER, -- ms for the AI call
   model_used           TEXT,     -- e.g. gpt-4o-mini
+  plan_adjustments_applied_at TEXT,
   created_at           TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_insights_user_type ON ai_insights(user_id, insight_type);

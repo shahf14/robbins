@@ -25,6 +25,11 @@ import type {DailyFocusContext} from '@/lib/daily-focus-context';
 import {parseGoalCreateResponse} from './schemas';
 import type {formulationSessionPatchSchema} from './schemas';
 import type {z} from 'zod';
+import {
+  applyTodayStepUpdate,
+  removeTodayStepFromSnapshot,
+  writeTodayStepsSnapshot,
+} from './today-steps-sync';
 
 type GoalWithMilestones = Goal & {milestones?: Milestone[]};
 
@@ -112,6 +117,12 @@ async function lifeCoachFetch<T>(path: string, init?: RequestInit): Promise<T> {
   return payload;
 }
 
+async function syncTodayStepMutation<T extends {step: DailyBabyStep}>(promise: Promise<T>): Promise<T> {
+  const result = await promise;
+  applyTodayStepUpdate(result.step);
+  return result;
+}
+
 export const lifeCoachApi = {
   listDomains() {
     return lifeCoachFetch<{domains: DomainCardSummary[]; states: LifeDomainState[]}>('/api/life-coach/domains');
@@ -176,7 +187,7 @@ export const lifeCoachApi = {
     });
   },
   async createGoal(input: {
-    idempotency_key?: string;
+    idempotency_key: string;
     formulation_session_id?: string;
     goal: Record<string, unknown>;
     milestones?: unknown[];
@@ -220,7 +231,7 @@ export const lifeCoachApi = {
       method: 'DELETE',
     });
   },
-  generateDailySteps(input: {
+  async generateDailySteps(input: {
     date?: string;
     force?: boolean;
     domain?: LifeDomain;
@@ -232,10 +243,15 @@ export const lifeCoachApi = {
     physical_considerations?: string[];
     preferred_action_window?: string;
   }) {
-    return lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>('/api/life-coach/ai/generate-daily-steps', {
-      method: 'POST',
-      body: JSON.stringify(input),
-    });
+    const result = await lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>(
+      '/api/life-coach/ai/generate-daily-steps',
+      {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }
+    );
+    writeTodayStepsSnapshot(result.date, result.steps);
+    return result;
   },
   getCuratedDailyTasks(input: {
     domain: LifeDomain;
@@ -253,13 +269,13 @@ export const lifeCoachApi = {
       tasks: CuratedDailyTaskOption[];
     }>(`/api/life-coach/curated-daily-tasks?${params.toString()}`);
   },
-  selectCuratedDailyTasks(input: {
+  async selectCuratedDailyTasks(input: {
     domain: LifeDomain;
     task_ids: string[];
     date: string;
     locale?: AppLocale;
   }) {
-    return lifeCoachFetch<{
+    const result = await lifeCoachFetch<{
       date: string;
       steps: DailyBabyStep[];
       inserted: DailyBabyStep[];
@@ -267,6 +283,8 @@ export const lifeCoachApi = {
       method: 'POST',
       body: JSON.stringify(input),
     });
+    writeTodayStepsSnapshot(result.date, result.steps);
+    return result;
   },
   createDailyStep(input: {
     goal_id: string | null;
@@ -279,14 +297,20 @@ export const lifeCoachApi = {
     status?: 'pending' | 'completed' | 'skipped' | 'partial';
     is_general?: boolean;
   }) {
-    return lifeCoachFetch<{step: DailyBabyStep}>('/api/life-coach/daily-steps', {
-      method: 'POST',
-      body: JSON.stringify(input),
-    });
+    return syncTodayStepMutation(
+      lifeCoachFetch<{step: DailyBabyStep}>('/api/life-coach/daily-steps', {
+        method: 'POST',
+        body: JSON.stringify(input),
+      })
+    );
   },
-  getDailySteps(date: string) {
+  async getDailySteps(date: string) {
     const params = new URLSearchParams({date});
-    return lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>(`/api/life-coach/daily-steps?${params.toString()}`);
+    const result = await lifeCoachFetch<{date: string; steps: DailyBabyStep[]}>(
+      `/api/life-coach/daily-steps?${params.toString()}`
+    );
+    writeTodayStepsSnapshot(result.date, result.steps);
+    return result;
   },
   getDailyCoachMessage(date: string, locale?: string) {
     const params = new URLSearchParams({date});
@@ -313,10 +337,12 @@ export const lifeCoachApi = {
     );
   },
   updateDailyStepStatus(id: string, input: Record<string, unknown>) {
-    return lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}/status`, {
-      method: 'PATCH',
-      body: JSON.stringify(input),
-    });
+    return syncTodayStepMutation(
+      lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify(input),
+      })
+    );
   },
   updateDailyStepContent(
     id: string,
@@ -327,10 +353,12 @@ export const lifeCoachApi = {
       difficulty: 'easy' | 'medium' | 'hard';
     }
   ) {
-    return lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}/content`, {
-      method: 'PATCH',
-      body: JSON.stringify(input),
-    });
+    return syncTodayStepMutation(
+      lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}/content`, {
+        method: 'PATCH',
+        body: JSON.stringify(input),
+      })
+    );
   },
   updateDailyStep(
     id: string,
@@ -346,10 +374,12 @@ export const lifeCoachApi = {
       is_general: boolean;
     }>
   ) {
-    return lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(input),
-    });
+    return syncTodayStepMutation(
+      lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(input),
+      })
+    );
   },
   suggestSkipRecovery(
     id: string,
@@ -371,21 +401,27 @@ export const lifeCoachApi = {
     id: string,
     input: {replacement_task_id: string; locale?: AppLocale}
   ) {
-    return lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}/replace-curated`, {
-      method: 'POST',
-      body: JSON.stringify(input),
-    });
+    return syncTodayStepMutation(
+      lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}/replace-curated`, {
+        method: 'POST',
+        body: JSON.stringify(input),
+      })
+    );
   },
   rescheduleDailyStep(id: string, scheduledDate: string, rescheduledFrom?: string) {
-    return lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({scheduled_date: scheduledDate, rescheduled_from: rescheduledFrom}),
-    });
+    return syncTodayStepMutation(
+      lifeCoachFetch<{step: DailyBabyStep}>(`/api/life-coach/daily-steps/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({scheduled_date: scheduledDate, rescheduled_from: rescheduledFrom}),
+      })
+    );
   },
-  deleteDailyStep(id: string) {
-    return lifeCoachFetch<{ok: boolean}>(`/api/life-coach/daily-steps/${id}`, {
+  async deleteDailyStep(id: string) {
+    const result = await lifeCoachFetch<{ok: boolean}>(`/api/life-coach/daily-steps/${id}`, {
       method: 'DELETE',
     });
+    removeTodayStepFromSnapshot(id);
+    return result;
   },
   saveSkipCoachAdjustment(input: {
     skip_date?: string;

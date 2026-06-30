@@ -435,6 +435,18 @@ export async function qualifyGeneratedStepsBeforeSave(
   );
   let evaluated = evaluate(current);
   const passedFirst = evaluated.filter((e) => e.result.valid).length;
+  const failedFirstPass = evaluated.filter((e) => !e.result.valid);
+
+  if (failedFirstPass.length > 0) {
+    console.warn('[step-validation] steps failed first-pass quality gate', {
+      failed_count: failedFirstPass.length,
+      total: evaluated.length,
+      issues: failedFirstPass.map(({step, result}) => ({
+        title: step.title.slice(0, 80),
+        issues: result.issues,
+      })),
+    });
+  }
 
   const needsRegenerate =
     evaluated.some((e) => !e.result.valid && isCandidate(e.step)) &&
@@ -443,8 +455,29 @@ export async function qualifyGeneratedStepsBeforeSave(
   let regenerated = false;
   if (needsRegenerate) {
     regenerated = true;
-    current = (await options?.regenerate?.()) ?? current;
+    console.info('[step-validation] regenerating AI step batch after validation failures', {
+      failed_count: failedFirstPass.filter((e) => isCandidate(e.step)).length,
+    });
+    const regeneratedBatch = await options?.regenerate?.();
+    if (!regeneratedBatch || regeneratedBatch.length === 0) {
+      console.warn(
+        '[step-validation] regenerate returned no steps; keeping original batch',
+        {original_count: steps.length}
+      );
+    } else {
+      current = regeneratedBatch;
+    }
     evaluated = evaluate(current);
+    const stillFailing = evaluated.filter((e) => !e.result.valid);
+    if (stillFailing.length > 0) {
+      console.warn('[step-validation] steps still invalid after regenerate', {
+        failed_count: stillFailing.length,
+        issues: stillFailing.map(({step, result}) => ({
+          title: step.title.slice(0, 80),
+          issues: result.issues,
+        })),
+      });
+    }
   }
 
   const passedAfter = evaluated.filter((e) => e.result.valid).length;
@@ -464,6 +497,10 @@ export async function qualifyGeneratedStepsBeforeSave(
     }
     if (result.issues.includes('value_gate_failed')) valueGateFailed += 1;
     fallbackRepaired += 1;
+    console.debug('[step-validation] applying fallback template', {
+      title: step.title.slice(0, 80),
+      issues: result.issues,
+    });
     const repaired = applyValidationFallbackTemplate(step, profile, result.issues);
     if (repaired.value_gate_repaired) valueGateRepaired += 1;
     return repaired;

@@ -1,8 +1,11 @@
+import {clearStoredLocalAuthToken} from '@/lib/auth/local-auth-token-storage';
+
 export const LOCAL_AUTH_REQUIRED_EVENT = 'robbins-local-auth-required';
 export const LOCAL_AUTH_READY_EVENT = 'robbins-local-auth-ready';
 
 export function notifyLocalAuthRequired(): void {
   if (typeof window === 'undefined') return;
+  clearStoredLocalAuthToken();
   window.dispatchEvent(new Event(LOCAL_AUTH_REQUIRED_EVENT));
 }
 

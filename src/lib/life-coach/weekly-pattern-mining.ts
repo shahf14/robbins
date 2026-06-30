@@ -347,7 +347,7 @@ export function getActiveWeeklyPlanAdjustments(
 ): WeeklyPlanAdjustments | null {
   const meta = parseWeeklyReviewMetadata(insight?.metadata);
   if (!meta?.plan_adjustments) return null;
-  if (meta.plan_adjustments_applied_at) return null;
+  if (insight?.plan_adjustments_applied_at || meta.plan_adjustments_applied_at) return null;
   if (meta.period_end) {
     const end = new Date(meta.period_end);
     const cutoff = new Date();

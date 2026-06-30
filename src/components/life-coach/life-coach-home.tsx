@@ -4,7 +4,8 @@ import {useCallback, useEffect, useMemo, useRef, useState, type ReactNode} from 
 import {useLocale, useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
-import {classifyLoadFailure, type ApiLoadFailureKind, resolveLifeCoachErrorMessage, resolveWeeklyReviewErrorMessage} from '@/lib/life-coach/api-error';
+import {classifyLoadFailure, resolveLifeCoachErrorMessage, resolveWeeklyReviewErrorMessage} from '@/lib/life-coach/api-error';
+import {useApiLoadSession} from '@/hooks/use-api-load';
 import {
   runStepReflectionFollowUp,
   shouldRunReflectionFollowUp,
@@ -64,6 +65,8 @@ import {buildEndOfDayClosure} from '@/lib/behavior-science/end-of-day-closure';
 import {InfoNote} from './shared/info-note';
 import {currentWeekRange, todayYMD} from '@/lib/date-utils';
 import {WEEKLY_TARGET_RATIO} from '@/lib/life-coach/progress-constants';
+import {useTodayDailySteps} from '@/lib/life-coach/use-today-daily-steps';
+import {settleAllThen} from '@/lib/async/batch-mutations';
 
 export function LifeCoachHome() {
   return (
@@ -80,15 +83,15 @@ export function LifeCoachHome() {
 function LifeCoachHomeContent() {
   const t = useTranslations();
   const locale = useLocale() as AppLocale;
-  const [loading, setLoading] = useState(true);
+  const {loading, error: loadFailure, arm: armLoad, complete: completeLoad, fail: failLoad} =
+    useApiLoadSession();
   const [domainCards, setDomainCards] = useState<DomainCardSummary[]>([]);
   const [domainStates, setDomainStates] = useState<LifeDomainState[]>([]);
-  const [todaySteps, setTodaySteps] = useState<DailyBabyStep[]>([]);
+  const {todaySteps, refreshTodaySteps} = useTodayDailySteps();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [weeklyReview, setWeeklyReview] = useState<AiCoachingInsight | null>(null);
   const [insights, setInsights] = useState<AiCoachingInsight[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
-  const [loadFailure, setLoadFailure] = useState<ApiLoadFailureKind | null>(null);
   const [generating, setGenerating] = useState(false);
   const [generatingReview, setGeneratingReview] = useState(false);
   const toast = useToast();
@@ -101,7 +104,17 @@ function LifeCoachHomeContent() {
   const [comebackMessaging, setComebackMessaging] = useState<ComebackMessaging | null>(null);
   const mountedRef = useRef(true);
   const scrollTimeoutRef = useRef<number | null>(null);
-  const generatingReviewRef = useRef(false);
+  const refreshVersionRef = useRef(0);
+  const optionalSnapshotRef = useRef({
+    weeklyReview: null as AiCoachingInsight | null,
+    insights: [] as AiCoachingInsight[],
+    ritualSessions: [] as MorningRitualSession[],
+    ritualStreak: 0,
+    loadAdaptation: null as LoadAdaptationContext | null,
+    comebackMessaging: null as ComebackMessaging | null,
+  });
+  type LifeCoachOptionalSection = 'weeklyReview' | 'insights' | 'rituals' | 'coachContext';
+  const [partialFailures, setPartialFailures] = useState<LifeCoachOptionalSection[]>([]);
 
   useEffect(() => () => {
     mountedRef.current = false;
@@ -114,48 +127,83 @@ function LifeCoachHomeContent() {
   const configuredCount = domainCards.filter((card) => card.active_goals_count > 0).length;
   const totalDomains = domainCards.length || 8;
   const refresh = useCallback(async () => {
-    setLoading(true);
-    setLoadFailure(null);
+    const version = ++refreshVersionRef.current;
+    armLoad();
+    setPartialFailures([]);
+    const failures: LifeCoachOptionalSection[] = [];
+    const snapshot = optionalSnapshotRef.current;
     try {
       const {start, end} = currentWeekRange();
-      const [domains, goalsRes, dailySteps, weekStepsRes, latestReview, recentInsights, sessions, coachContext] =
-        await Promise.all([
+      const [domains, goalsRes, , weekStepsRes, optionalResults] = await Promise.all([
         lifeCoachApi.listDomains(),
         lifeCoachApi.listGoals(),
-        lifeCoachApi.getDailySteps(todayYMD()),
+        refreshTodaySteps(),
         lifeCoachApi.getDailyStepsRange(start, end),
-        lifeCoachApi.getLatestWeeklyReview().catch(() => ({review: null})),
-        lifeCoachApi.listInsights().catch(() => ({insights: []})),
-        fetchSessions().catch(() => []),
-        fetchFormulationCoachContext().catch(() => ({
-          challenge: null,
-          load_adaptation: null,
-          comeback_messaging: null,
-          accountability: null,
-          behavior_change: null,
-        })),
+        Promise.allSettled([
+          lifeCoachApi.getLatestWeeklyReview(),
+          lifeCoachApi.listInsights(),
+          fetchSessions(),
+          fetchFormulationCoachContext(),
+        ]),
       ]);
 
-      if (!mountedRef.current) return;
+      if (!mountedRef.current || version !== refreshVersionRef.current) return;
+
+      const latestReview =
+        optionalResults[0].status === 'fulfilled'
+          ? optionalResults[0].value
+          : (failures.push('weeklyReview'), {review: snapshot.weeklyReview});
+      const recentInsights =
+        optionalResults[1].status === 'fulfilled'
+          ? optionalResults[1].value
+          : (failures.push('insights'), {insights: snapshot.insights});
+      const sessions =
+        optionalResults[2].status === 'fulfilled'
+          ? optionalResults[2].value
+          : (failures.push('rituals'), snapshot.ritualSessions);
+      const coachContext =
+        optionalResults[3].status === 'fulfilled'
+          ? optionalResults[3].value
+          : (failures.push('coachContext'), {
+              challenge: null,
+              load_adaptation: snapshot.loadAdaptation,
+              comeback_messaging: snapshot.comebackMessaging,
+              accountability: null,
+              behavior_change: null,
+            });
+
+      const completedSessions = sessions.filter((session) => session.completed);
+      const streak = getStreak(sessions);
+      const insightsSlice = recentInsights.insights.slice(0, 4);
+
       setDomainCards(domains.domains);
       setDomainStates(domains.states);
       setGoals(goalsRes.goals);
-      setTodaySteps(dailySteps.steps);
       setWeekSteps(weekStepsRes.steps);
       setWeeklyReview(latestReview.review);
-      setInsights(recentInsights.insights.slice(0, 4));
-      setRitualSessions(sessions.filter((session) => session.completed));
-      setRitualStreak(getStreak(sessions));
+      setInsights(insightsSlice);
+      setRitualSessions(completedSessions);
+      setRitualStreak(streak);
       setLoadAdaptation(coachContext.load_adaptation);
       setComebackMessaging(coachContext.comeback_messaging);
+      setPartialFailures(failures);
+      optionalSnapshotRef.current = {
+        weeklyReview: latestReview.review,
+        insights: insightsSlice,
+        ritualSessions: completedSessions,
+        ritualStreak: streak,
+        loadAdaptation: coachContext.load_adaptation,
+        comebackMessaging: coachContext.comeback_messaging,
+      };
     } catch (error) {
-      if (!mountedRef.current) return;
-      setLoadFailure(classifyLoadFailure(error));
+      if (!mountedRef.current || version !== refreshVersionRef.current) return;
+      failLoad(classifyLoadFailure(error));
+      return;
     }
-    if (mountedRef.current) {
-      setLoading(false);
+    if (mountedRef.current && version === refreshVersionRef.current) {
+      completeLoad();
     }
-  }, []);
+  }, [armLoad, completeLoad, failLoad, refreshTodaySteps]);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -231,7 +279,7 @@ function LifeCoachHomeContent() {
   const weeklyTarget = Math.max(3, Math.min(weekSteps.length, Math.ceil(weekSteps.length * WEEKLY_TARGET_RATIO)));
   const weeklyComplete = weeklyDone >= weeklyTarget;
   const lifeContextMode = resolveLifeContextMode(prefs.life_context_statuses);
-  const pendingCount = todaySteps.filter((s) => s.status === 'pending').length;
+  const pendingCount = stepFilterCounts.pending;
   const atRisk = detectEarlyWarning({
     weekSteps,
     today: todayYMD(),
@@ -244,6 +292,7 @@ function LifeCoachHomeContent() {
   const showClosure = endOfDayClosure && (allDoneToday || dayPhase === 'evening' || dayPhase === 'night');
 
   async function handleGenerateSteps() {
+    toast.clearErrors();
     setNotice(null);
     if (!hasAnyGoal) {
       setNotice(t('lifeCoach.noGoalsForSteps'));
@@ -280,8 +329,7 @@ function LifeCoachHomeContent() {
   }
 
   async function handleGenerateWeeklyReview() {
-    if (generatingReviewRef.current) return;
-    generatingReviewRef.current = true;
+    if (generatingReview) return;
     setGeneratingReview(true);
     try {
       markFeatureSeen('weekly_review');
@@ -291,13 +339,15 @@ function LifeCoachHomeContent() {
     } catch (error) {
       toast.error(resolveWeeklyReviewErrorMessage(error, t));
     } finally {
-      generatingReviewRef.current = false;
-      setGeneratingReview(false);
+      if (mountedRef.current) {
+        setGeneratingReview(false);
+      }
     }
   }
 
   async function handleQuickAction() {
     if (pendingStep) {
+      toast.clearErrors();
       try {
         await lifeCoachApi.updateDailyStepStatus(pendingStep.id, {status: 'completed'});
         await refresh();
@@ -324,6 +374,23 @@ function LifeCoachHomeContent() {
       </section>
 
       <LoadingErrorPanel loading={loading} className="panel-surface mt-6 p-6 sm:p-8" />
+
+      {partialFailures.length > 0 && !loadFailure && (
+        <section
+          className="panel-surface mt-6 border border-amber-400/30 p-4 sm:p-5"
+          role="status"
+        >
+          <p className="text-sm font-bold txt-strong">{t('dashboard.loadStatus.partialTitle')}</p>
+          <p className="mt-1 text-sm leading-6 txt-muted">{t('dashboard.loadStatus.partialBody')}</p>
+          <button
+            type="button"
+            className="focus-ring btn-ghost mt-3 text-sm"
+            onClick={() => void refresh()}
+          >
+            {t('dashboard.loadStatus.retry')}
+          </button>
+        </section>
+      )}
 
       {loadFailure && (
         <ApiAccessPanel
@@ -510,7 +577,7 @@ function LifeCoachHomeContent() {
                     }
                     onEasyStep={async (stepId) => {
                       const pending = todaySteps.filter((s) => s.status === 'pending');
-                      await Promise.all(
+                      await settleAllThen(
                         pending
                           .filter((s) => s.id !== stepId)
                           .map((s) =>
@@ -518,40 +585,42 @@ function LifeCoachHomeContent() {
                               status: 'skipped',
                               blocker_reason: 'low_energy',
                             })
-                          )
+                          ),
+                        refresh
                       );
-                      await refresh();
                     }}
                     onSkipAll={async (blocker) => {
                       const pending = todaySteps.filter((s) => s.status === 'pending');
-                      await Promise.all(
-                        pending.map((s) =>
-                          lifeCoachApi.updateDailyStepStatus(s.id, {
-                            status: 'skipped',
+                      await settleAllThen(
+                        [
+                          ...pending.map((s) =>
+                            lifeCoachApi.updateDailyStepStatus(s.id, {
+                              status: 'skipped',
+                              blocker_reason: blocker,
+                            })
+                          ),
+                          lifeCoachApi.saveReflection({
+                            date: todayYMD(),
+                            mood_score: null,
+                            energy_score: null,
+                            reflection_text: '',
                             blocker_reason: blocker,
-                          })
-                        )
+                          }),
+                        ],
+                        refresh
                       );
-                      await lifeCoachApi.saveReflection({
-                        date: todayYMD(),
-                        mood_score: null,
-                        energy_score: null,
-                        reflection_text: '',
-                        blocker_reason: blocker,
-                      });
-                      await refresh();
                     }}
                     onPauseDay={async () => {
                       const pending = todaySteps.filter((s) => s.status === 'pending');
-                      await Promise.all(
+                      await settleAllThen(
                         pending.map((s) =>
                           lifeCoachApi.updateDailyStepStatus(s.id, {
                             status: 'skipped',
                             blocker_reason: 'low_energy',
                           })
-                        )
+                        ),
+                        refresh
                       );
-                      await refresh();
                     }}
                   />
                 )}

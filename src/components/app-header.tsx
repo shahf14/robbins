@@ -7,7 +7,7 @@ import {Link} from '@/i18n/navigation';
 import {fetchSessions, getStreak} from '@/lib/morning-ritual-storage';
 import {
   loadUserPreferences,
-  userPreferencesChangedEvent,
+  subscribeUserPreferences,
 } from '@/lib/user-preferences';
 import {LanguageSwitcher} from './language-switcher';
 import {ThemeToggle} from './theme-toggle';
@@ -76,8 +76,7 @@ export function AppHeader() {
       setDisplayName(loadUserPreferences().display_name);
     };
     syncPreferences();
-    window.addEventListener(userPreferencesChangedEvent, syncPreferences as EventListener);
-    return () => window.removeEventListener(userPreferencesChangedEvent, syncPreferences as EventListener);
+    return subscribeUserPreferences(syncPreferences);
   }, []);
 
   useEffect(() => {

@@ -15,12 +15,23 @@ import type {GoalSelfContract} from '@/lib/behavior-science/self-contract';
 
 type BlockerCategory = 'external' | 'internal' | 'unclear';
 
+export type ReflectionFormDraft = {
+  blockerCategory: BlockerCategory | null;
+  blockerReason: ReflectionBlockerReason | null;
+  deepDiveAnswer: string;
+  reflectionText: string;
+  moodScore: number;
+  energyScore: number;
+};
+
 type Props = {
   open: boolean;
   /** When provided the modal focuses on blocker capture (skip/partial context) */
   context?: 'skip' | 'reflection';
   skipAction?: 'skipped' | 'partial';
   initialBlocker?: ReflectionBlockerReason | null;
+  initialFormDraft?: ReflectionFormDraft | null;
+  onFormDraftChange?: (draft: ReflectionFormDraft) => void;
   goalTitle?: string;
   selfContract?: GoalSelfContract | null;
   comebackMessage?: string | null;
@@ -44,6 +55,8 @@ export function DailyReflectionModal({
   context = 'skip',
   skipAction = 'skipped',
   initialBlocker = null,
+  initialFormDraft = null,
+  onFormDraftChange,
   goalTitle,
   selfContract = null,
   comebackMessage,
@@ -67,15 +80,50 @@ export function DailyReflectionModal({
 
   useEffect(() => {
     if (!open) return;
-    setBlockerCategory(null);
-    setBlockerReason(initialBlocker ?? null);
-    setDeepDiveAnswer('');
-    setReflectionText('');
-    setMoodScore(7);
-    setEnergyScore(6);
+    if (initialFormDraft) {
+      setBlockerCategory(initialFormDraft.blockerCategory);
+      setBlockerReason(initialFormDraft.blockerReason ?? initialBlocker ?? null);
+      setDeepDiveAnswer(initialFormDraft.deepDiveAnswer);
+      setReflectionText(initialFormDraft.reflectionText);
+      setMoodScore(initialFormDraft.moodScore);
+      setEnergyScore(initialFormDraft.energyScore);
+    } else {
+      setBlockerCategory(null);
+      setBlockerReason(initialBlocker ?? null);
+      setDeepDiveAnswer('');
+      setReflectionText('');
+      setMoodScore(7);
+      setEnergyScore(6);
+    }
     setSaving(false);
     writingStartRef.current = null;
-  }, [open, initialBlocker]);
+  }, [open, initialBlocker, initialFormDraft]);
+
+  useEffect(() => {
+    if (!open || initialFormDraft) return;
+    setBlockerReason(initialBlocker ?? null);
+  }, [open, initialBlocker, initialFormDraft]);
+
+  useEffect(() => {
+    if (!open || !onFormDraftChange) return;
+    onFormDraftChange({
+      blockerCategory,
+      blockerReason,
+      deepDiveAnswer,
+      reflectionText,
+      moodScore,
+      energyScore,
+    });
+  }, [
+    open,
+    onFormDraftChange,
+    blockerCategory,
+    blockerReason,
+    deepDiveAnswer,
+    reflectionText,
+    moodScore,
+    energyScore,
+  ]);
 
   useEffect(() => {
     if (!open) return;

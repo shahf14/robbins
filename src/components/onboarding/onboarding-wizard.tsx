@@ -110,7 +110,6 @@ export function OnboardingWizard() {
   }
 
   async function enterApp() {
-    clearDraft();
     router.replace('/');
   }
 

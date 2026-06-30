@@ -202,6 +202,7 @@ export type AiCoachingInsight = {
   content: string;
   metadata: Record<string, unknown>;
   created_at: string;
+  plan_adjustments_applied_at?: string | null;
   // Raw behavioral metrics
   tokens_used?: number | null;
   generation_duration_ms?: number | null;
@@ -216,6 +217,7 @@ export type StructuredGoalMilestone = {
   title: string;
   description: string;
   target_date: string | null;
+  day_marker?: 30 | 60 | 90 | null;
 };
 
 

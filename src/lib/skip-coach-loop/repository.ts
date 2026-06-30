@@ -49,15 +49,11 @@ export function saveSkipCoachAdjustment(
     adjustment: SkipCoachAdjustmentPayload;
   }
 ): SkipCoachAdjustment {
-  const existing = dbGet<{id: string; created_at: string}>(
-    `SELECT id, created_at FROM skip_coach_adjustments WHERE user_id = ? AND skip_date = ?`,
-    [userId, input.skip_date]
-  );
-  const id = existing?.id ?? randomUUID();
+  const id = randomUUID();
   const now = new Date().toISOString();
 
   dbRun(
-    `INSERT OR REPLACE INTO skip_coach_adjustments
+    `INSERT INTO skip_coach_adjustments
       (id, user_id, skip_date, step_id, goal_id, blocker_reason,
        coach_action, adjustment_json, applied_at, created_at)
      VALUES (?,?,?,?,?,?,?,?,?,?)`,
@@ -71,7 +67,7 @@ export function saveSkipCoachAdjustment(
       input.coach_action,
       JSON.stringify(input.adjustment),
       null,
-      existing?.created_at ?? now,
+      now,
     ]
   );
 
@@ -89,7 +85,9 @@ export function getActiveSkipCoachAdjustment(
   const skipDate = previousDate(targetDate);
   const row = dbGet<Record<string, unknown>>(
     `SELECT * FROM skip_coach_adjustments
-     WHERE user_id = ? AND skip_date = ? AND applied_at IS NULL`,
+     WHERE user_id = ? AND skip_date = ? AND applied_at IS NULL
+     ORDER BY created_at DESC
+     LIMIT 1`,
     [userId, skipDate]
   );
   return row ? rowToAdjustment(row) : null;

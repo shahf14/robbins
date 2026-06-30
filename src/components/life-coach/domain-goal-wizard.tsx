@@ -70,13 +70,31 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
   );
   const effectiveCategory = category === OTHER_CATEGORY ? customCategory.trim() : category;
 
+  const clearResumeGoalFromUrl = useCallback(() => {
+    if (!resumeGoal) return;
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('resumeGoal');
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, {scroll: false});
+  }, [resumeGoal, searchParams, router, pathname]);
+
   useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      setHasDraft(hasDomainGoalDraftForDomain(domain));
-      setDraftRestored(false);
-      autoRestoreAttempted.current = false;
-    }, 0);
-    return () => window.clearTimeout(timeout);
+    setStep(1);
+    setCategory('');
+    setCustomCategory('');
+    setGoalText('');
+    setMilestone30('');
+    setMilestone60('');
+    setMilestone90('');
+    setPreview(null);
+    setCelebrating(false);
+    setErrorMessage(null);
+    setInspiring(false);
+    setInspiringMilestones(false);
+    setLoading(false);
+    setHasDraft(hasDomainGoalDraftForDomain(domain));
+    setDraftRestored(false);
+    autoRestoreAttempted.current = false;
   }, [domain]);
 
   useEffect(() => {
@@ -112,6 +130,7 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
     clearDomainGoalWizardDraft();
     setHasDraft(false);
     setDraftRestored(true);
+    clearResumeGoalFromUrl();
   }
 
   const restoreDraft = useCallback(() => {
@@ -133,11 +152,6 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
     autoRestoreAttempted.current = true;
     restoreDraft();
   }, [resumeGoal, hasDraft, draftRestored, restoreDraft]);
-
-  useEffect(() => {
-    if (!resumeGoal || !draftRestored) return;
-    router.replace(pathname);
-  }, [resumeGoal, draftRestored, router, pathname]);
 
   function canProceed() {
     if (step === 1) return effectiveCategory.length > 0;
@@ -248,6 +262,7 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
           const idempotency_key = input.idempotency_key ?? crypto.randomUUID();
           await lifeCoachApi.createGoal({...input, idempotency_key});
           clearDomainGoalWizardDraft();
+          clearResumeGoalFromUrl();
           setPreview(null);
           setCelebrating(true);
         }}

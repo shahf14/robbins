@@ -1,4 +1,5 @@
 import type {AppLocale} from '@/i18n/config';
+import {AiRateLimitExceededError, consumeAiRateLimit} from '@/lib/ai-rate-limit';
 import {openaiLifeCoachService} from '@/lib/ai-life-coach/openai-life-coach-service';
 import {
   enforceEasyOnlySteps,
@@ -23,7 +24,14 @@ import {
   resolveSchedulingActionWindow,
 } from '@/lib/behavior-profile/skip-windows';
 import {refreshUserBehaviorProfile} from '@/lib/behavior-profile/repository';
-import {getUserGenerationContext, getUserParticipantProfile, getLatestWeeklyReview, insertDailyBabySteps, markWeeklyPlanAdjustmentsApplied} from '@/lib/life-coach/repository';
+import {getDb} from '@/lib/db/sqlite';
+import {getUserGenerationContext, getUserParticipantProfile, getLatestWeeklyReview, insertDailyBabyStepsSync, listDailyBabyStepsForDate, markWeeklyPlanAdjustmentsAppliedSync} from '@/lib/life-coach/repository';
+import {
+  DailyStepsGenerationLockedError,
+  releaseDailyStepsGenerationLock,
+  tryAcquireDailyStepsGenerationLock,
+} from '@/lib/life-coach/daily-steps-generation-lock';
+import {filterStepsForDomain, hasReusablePendingAiSteps} from '@/lib/life-coach/generate-daily-steps-scope';
 import {
   anchorStepsToTriggers,
   buildHabitTriggerContext,
@@ -134,6 +142,7 @@ function finalizeSteps(
 }
 
 type AiGenerationParams = {
+  userId: string;
   locale: AppLocale;
   date: string;
   goalsForAi: Goal[];
@@ -174,6 +183,12 @@ type AiGenerationParams = {
 };
 
 async function generateAiStepsBatch(params: AiGenerationParams): Promise<StructuredDailyBabyStep[]> {
+  consumeAiRateLimit({
+    action: 'life-coach:generate-daily-steps',
+    userId: params.userId,
+    limit: 8,
+  });
+
   const mergedTone = mergeToneWithPersonalization(
     {preferred_tone: params.preferredTone, avoid_tone: params.avoidTone},
     params.profile.ai_personalization_summary
@@ -249,7 +264,8 @@ async function qualifyAndInsertSteps(
   planStepKeys: Set<string>,
   params: AiGenerationParams,
   coachTone: CoachingStyle,
-  domainScope?: import('@/lib/life-coach/types').LifeDomain
+  domainScope?: import('@/lib/life-coach/types').LifeDomain,
+  marking?: StepAdjustmentMarking
 ) {
   const validationProfile = buildStepValidationProfile({
     locale,
@@ -312,13 +328,52 @@ async function qualifyAndInsertSteps(
     ? qualified.filter((step) => step.domain === domainScope)
     : qualified;
 
-  return insertDailyBabySteps(userId, date, stepsToInsert, locale, coachTone, {
+  return insertStepsAndMarkAdjustments(
+    userId,
+    date,
+    stepsToInsert,
+    locale,
+    coachTone,
     domainScope,
-  });
+    marking
+  );
 }
 
 function stepKey(step: StructuredDailyBabyStep): string {
   return `${step.goal_id ?? 'none'}::${step.domain}::${step.title}`;
+}
+
+type StepAdjustmentMarking = {
+  weeklyReviewId?: string | null;
+  applyWeeklyPlanAdjustments?: boolean;
+  reflectionDate?: string | null;
+  skipDate?: string | null;
+};
+
+function insertStepsAndMarkAdjustments(
+  userId: string,
+  date: string,
+  steps: StructuredDailyBabyStep[],
+  locale: AppLocale,
+  coachTone: import('@/lib/user-preferences').CoachingStyle,
+  domainScope: import('@/lib/life-coach/types').LifeDomain | undefined,
+  marking?: StepAdjustmentMarking
+) {
+  return getDb().transaction(() => {
+    const inserted = insertDailyBabyStepsSync(userId, date, steps, locale, coachTone, {
+      domainScope,
+    });
+    if (marking?.applyWeeklyPlanAdjustments && marking.weeklyReviewId) {
+      markWeeklyPlanAdjustmentsAppliedSync(marking.weeklyReviewId, userId);
+    }
+    if (marking?.reflectionDate) {
+      markReflectionAdjustmentApplied(userId, marking.reflectionDate);
+    }
+    if (marking?.skipDate) {
+      markSkipCoachAdjustmentApplied(userId, marking.skipDate);
+    }
+    return inserted;
+  })();
 }
 
 function injectFirstWinStep(
@@ -337,6 +392,48 @@ function injectFirstWinStep(
 }
 
 export async function generateDailyStepsForUser(
+  userId: string,
+  date: string,
+  locale: AppLocale,
+  wakeTime = '07:00',
+  coachingStyle = 'supportive',
+  physicalConsiderations: PhysicalConsideration[] = [],
+  preferredActionWindow: PreferredActionWindow = 'flexible',
+  sleepTime = '22:30',
+  includeFirstWin = false,
+  domainScope?: import('@/lib/life-coach/types').LifeDomain
+) {
+  if (!tryAcquireDailyStepsGenerationLock(userId, date, domainScope)) {
+    throw new DailyStepsGenerationLockedError();
+  }
+
+  try {
+    const existing = await listDailyBabyStepsForDate(date, userId);
+    const scopedExisting = filterStepsForDomain(existing, domainScope);
+    if (hasReusablePendingAiSteps(existing, domainScope)) {
+      return scopedExisting;
+    }
+
+    return await generateDailyStepsForUserLocked(
+      userId,
+      date,
+      locale,
+      wakeTime,
+      coachingStyle,
+      physicalConsiderations,
+      preferredActionWindow,
+      sleepTime,
+      includeFirstWin,
+      domainScope
+    );
+  } finally {
+    releaseDailyStepsGenerationLock(userId, date, domainScope);
+  }
+}
+
+export {DailyStepsGenerationLockedError};
+
+async function generateDailyStepsForUserLocked(
   userId: string,
   date: string,
   locale: AppLocale,
@@ -540,6 +637,7 @@ export async function generateDailyStepsForUser(
   const planStepKeys = new Set<string>();
   const goalsForAi = [...scopedGoals];
   const aiParams: AiGenerationParams = {
+    userId,
     locale,
     date,
     goalsForAi,
@@ -693,17 +791,14 @@ export async function generateDailyStepsForUser(
       planStepKeys,
       {...aiParams, goalsForAi: scopedGoals},
       dynamicTone.effective_style,
-      domainScope
+      domainScope,
+      {
+        applyWeeklyPlanAdjustments: Boolean(weeklyPlanAdjustments && latestWeeklyReview),
+        weeklyReviewId: latestWeeklyReview?.id ?? null,
+        reflectionDate: reflectionPlanAdjustments?.reflection_date ?? null,
+        skipDate: skipCoachAdjustment?.skip_date ?? null,
+      }
     );
-    if (weeklyPlanAdjustments && latestWeeklyReview) {
-      await markWeeklyPlanAdjustmentsApplied(latestWeeklyReview.id, userId);
-    }
-    if (reflectionPlanAdjustments) {
-      markReflectionAdjustmentApplied(userId, reflectionPlanAdjustments.reflection_date);
-    }
-    if (skipCoachAdjustment) {
-      markSkipCoachAdjustmentApplied(userId, skipCoachAdjustment.skip_date);
-    }
     return inserted;
   }
 
@@ -731,16 +826,13 @@ export async function generateDailyStepsForUser(
     planStepKeys,
     aiParams,
     dynamicTone.effective_style,
-    domainScope
+    domainScope,
+    {
+      applyWeeklyPlanAdjustments: Boolean(weeklyPlanAdjustments && latestWeeklyReview),
+      weeklyReviewId: latestWeeklyReview?.id ?? null,
+      reflectionDate: reflectionPlanAdjustments?.reflection_date ?? null,
+      skipDate: skipCoachAdjustment?.skip_date ?? null,
+    }
   );
-  if (weeklyPlanAdjustments && latestWeeklyReview) {
-    await markWeeklyPlanAdjustmentsApplied(latestWeeklyReview.id, userId);
-  }
-  if (reflectionPlanAdjustments) {
-    markReflectionAdjustmentApplied(userId, reflectionPlanAdjustments.reflection_date);
-  }
-  if (skipCoachAdjustment) {
-    markSkipCoachAdjustmentApplied(userId, skipCoachAdjustment.skip_date);
-  }
   return inserted;
 }

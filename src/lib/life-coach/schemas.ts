@@ -37,6 +37,9 @@ const stepValueFeedbackSchema = z.enum(STEP_VALUE_FEEDBACK_OPTIONS);
 const scoreSchema = z.number().int().min(1).max(10);
 const optionalIsoDateSchema = z.string().date().nullable();
 const requiredIsoDateSchema = z.string().date();
+const isoDateTimeSchema = z.string().datetime();
+const optionalIsoDateTimeSchema = z.string().datetime().nullable();
+const dayMarkerSchema = z.union([z.literal(30), z.literal(60), z.literal(90)]);
 
 export const lifeDomainAssessmentInputSchema = z.object({
   current_score: scoreSchema,
@@ -78,6 +81,7 @@ const structuredGoalMilestoneSchema = z.object({
   title: z.string().trim().min(1).max(200).transform((value) => value.slice(0, 140)),
   description: z.string().trim().max(1000).optional().default(''),
   target_date: optionalIsoDateSchema,
+  day_marker: dayMarkerSchema.nullable().optional(),
 });
 
 const planBFieldsSchema = {
@@ -188,9 +192,9 @@ export const dailyStepStatusUpdateSchema = z.object({
   actual_minutes: z.number().int().min(1).max(480).nullable().optional().default(null),
   blocker_category: z.enum(['external', 'internal', 'unclear']).nullable().optional().default(null),
   reattempt_same_day: z.boolean().optional().default(false),
-  first_viewed_at: z.string().datetime().nullable().optional().default(null),
-  coach_message_impression_at: z.string().datetime().nullable().optional().default(null),
-  primary_cta_clicked_at: z.string().datetime().nullable().optional().default(null),
+  first_viewed_at: optionalIsoDateTimeSchema.optional().default(null),
+  coach_message_impression_at: optionalIsoDateTimeSchema.optional().default(null),
+  primary_cta_clicked_at: optionalIsoDateTimeSchema.optional().default(null),
   read_description: z.boolean().optional().default(false),
   writing_duration_sec: z.number().int().min(0).max(86400).nullable().optional().default(null),
   reflection_word_count: z.number().int().min(0).nullable().optional().default(null),

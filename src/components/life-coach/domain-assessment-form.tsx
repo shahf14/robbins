@@ -9,7 +9,7 @@ import {
   type LifeDomain,
   type LifeDomainState,
 } from '@/lib/life-coach/types';
-import {defaultUserPreferences, loadUserPreferences} from '@/lib/user-preferences';
+import {defaultUserPreferences, loadUserPreferences, subscribeUserPreferences} from '@/lib/user-preferences';
 import {useToast} from '@/components/feedback/toast-provider';
 import {resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
 import {InfoNote} from './shared/info-note';
@@ -53,22 +53,20 @@ export function DomainAssessmentForm({domain, initialState, onSave}: Props) {
   const [lifeContexts, setLifeContexts] = useState(() => getInitialLifeContexts());
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setCurrentScore(initialState?.current_score ?? 5);
-      setCurrentState(initialState?.current_state ?? '');
-      setDesiredState(initialState?.desired_state ?? '');
-      setMainBlockers(initialState?.main_blockers ?? []);
-      setViewMode(hasSavedAssessment(initialState) ? 'summary' : 'edit');
-    }, 0);
-    return () => clearTimeout(timeout);
+    setCurrentScore(initialState?.current_score ?? 5);
+    setCurrentState(initialState?.current_state ?? '');
+    setDesiredState(initialState?.desired_state ?? '');
+    setMainBlockers(initialState?.main_blockers ?? []);
+    setViewMode(hasSavedAssessment(initialState) ? 'summary' : 'edit');
   }, [initialState]);
 
-  useEffect(() => {
-    const id = setTimeout(() => {
-      setLifeContexts(getInitialLifeContexts());
-    }, 0);
-    return () => clearTimeout(id);
-  }, []);
+  useEffect(
+    () =>
+      subscribeUserPreferences(() => {
+        setLifeContexts(getInitialLifeContexts());
+      }),
+    []
+  );
 
   const hints = useMemo(() => assessmentContentHints(lifeContexts), [lifeContexts]);
   const suggestedBlockerSet = useMemo(() => new Set(hints.suggestedBlockers), [hints.suggestedBlockers]);

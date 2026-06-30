@@ -32,6 +32,7 @@ import {
 import {buildReflectionAnalysisFallback} from '@/lib/reflection-analysis/fallback';
 import type {ReflectionAnalysis} from '@/lib/reflection-analysis/types';
 import {getLifeCoachModelConfig} from '@/lib/life-coach/env';
+import {assertWeeklyReviewPersistable} from '@/lib/life-coach/validate-weekly-review-payload';
 import {
   FALLBACK_STEP_COPY,
   FALLBACK_WEEKLY_COPY,
@@ -391,7 +392,7 @@ export const openaiLifeCoachService = {
       data.recommended_adjustment;
 
     const emotional_reflection = data.emotional_reflection ?? emotionalFallback;
-    return {
+    const review = {
       ...data,
       recommended_adjustment,
       emotional_reflection,
@@ -407,6 +408,8 @@ export const openaiLifeCoachService = {
       })),
       _metrics: metrics,
     };
+    assertWeeklyReviewPersistable(review);
+    return review;
   },
 
   async suggestSkipRecovery(input: {

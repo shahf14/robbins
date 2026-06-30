@@ -25,6 +25,7 @@ type ToastContextValue = {
   success: (message: string) => void;
   error: (message: string) => void;
   info: (message: string) => void;
+  clearErrors: () => void;
   action: (message: string, actionLabel: string, onAction: () => void, durationMs?: number) => void;
 };
 
@@ -77,14 +78,19 @@ export function ToastProvider({children}: {children: ReactNode}) {
     [dismiss]
   );
 
+  const clearErrors = useCallback(() => {
+    setToasts((prev) => prev.filter((item) => item.tone !== 'error'));
+  }, []);
+
   const value = useMemo<ToastContextValue>(
     () => ({
       success: (message) => push(message, 'success'),
       error: (message) => push(message, 'error', 5200),
       info: (message) => push(message, 'info'),
+      clearErrors,
       action,
     }),
-    [push, action]
+    [push, action, clearErrors]
   );
 
   return (

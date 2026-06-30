@@ -1,7 +1,8 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
-import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
+import {AiRateLimitExceededError} from '@/lib/ai-rate-limit';
+import {DailyStepsGenerationLockedError} from '@/lib/life-coach/daily-steps-generation-lock';
 import {generateDailyStepsForUser} from '@/lib/life-coach/generate-daily-steps-for-user';
-import {getUserParticipantProfile, listDailyBabyStepsForDate} from '@/lib/life-coach/repository';
+import {getOnboardingServerStatus, getUserParticipantProfile, listDailyBabyStepsForDate} from '@/lib/life-coach/repository';
 import {jsonError, jsonOk, resolveLocale, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {aiGenerateDailyStepsRequestSchema} from '@/lib/life-coach/schemas';
 import {isFirstWinStep} from '@/lib/formulation/first-win-routing';
@@ -9,12 +10,18 @@ import {
   filterStepsForDomain,
   hasReusablePendingAiSteps,
 } from '@/lib/life-coach/generate-daily-steps-scope';
+import {NextResponse} from 'next/server';
 
 export async function POST(request: Request) {
   const current = await requireLifeCoachAccess(request);
 
   if (!current.ok) {
     return current.response;
+  }
+
+  const onboarding = await getOnboardingServerStatus(current.user.id);
+  if (!onboarding.completedAt) {
+    return jsonError('Onboarding required.', 403);
   }
 
   const parsed = await parseLifeCoachJsonBody(request, aiGenerateDailyStepsRequestSchema);
@@ -38,13 +45,6 @@ export async function POST(request: Request) {
         return jsonOk({date, steps: scopedExisting});
       }
     }
-
-    const limited = enforceAiRateLimit({
-      action: 'life-coach:generate-daily-steps',
-      userId: current.user.id,
-      limit: 8,
-    });
-    if (limited) return limited;
 
     const profile = await getUserParticipantProfile(current.user.id);
     const locale = resolveLocale(profile.preferred_language ?? null);
@@ -71,6 +71,21 @@ export async function POST(request: Request) {
     );
     return jsonOk({date, steps: filterStepsForDomain(steps, domain)});
   } catch (error) {
+    if (error instanceof AiRateLimitExceededError) {
+      const retryAfterSeconds = Math.max(1, Math.ceil((error.resetAt - Date.now()) / 1000));
+      return NextResponse.json(
+        {error: 'AI rate limit exceeded.', retry_after_seconds: retryAfterSeconds},
+        {status: 429, headers: {'Retry-After': String(retryAfterSeconds)}}
+      );
+    }
+    if (error instanceof DailyStepsGenerationLockedError) {
+      const inFlightExisting = await listDailyBabyStepsForDate(date, current.user.id);
+      const scoped = filterStepsForDomain(inFlightExisting, domain);
+      if (scoped.length > 0) {
+        return jsonOk({date, steps: scoped, generation_in_progress: true});
+      }
+      return jsonError('Daily steps generation already in progress.', 409);
+    }
     return jsonError('Could not generate daily steps.', 500, String(error));
   }
 }

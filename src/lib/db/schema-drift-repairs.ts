@@ -59,6 +59,7 @@ export const INCREMENTAL_COLUMN_REPAIRS: ColumnRepair[] = [
   {table: 'ai_insights', column: 'tokens_used', definition: 'INTEGER'},
   {table: 'ai_insights', column: 'generation_duration_ms', definition: 'INTEGER'},
   {table: 'ai_insights', column: 'model_used', definition: 'TEXT'},
+  {table: 'ai_insights', column: 'plan_adjustments_applied_at', definition: 'TEXT'},
   {table: 'checkins', column: 'priority_action_word_count', definition: 'INTEGER'},
   {table: 'checkins', column: 'rewrote_priority_action_count', definition: 'INTEGER DEFAULT 0'},
   {table: 'checkins', column: 'tag_valence_shift', definition: 'INTEGER'},
@@ -143,6 +144,13 @@ export const INCREMENTAL_INDEX_REPAIRS: IndexRepair[] = [
     sql: `CREATE UNIQUE INDEX IF NOT EXISTS idx_goals_create_idempotency
        ON goals(user_id, create_idempotency_key)
        WHERE create_idempotency_key IS NOT NULL`,
+  },
+  {
+    table: 'daily_steps',
+    columns: ['user_id', 'goal_id', 'scheduled_date', 'generated_by_ai'],
+    sql: `CREATE UNIQUE INDEX IF NOT EXISTS idx_daily_steps_commitment_goal_date
+       ON daily_steps(user_id, goal_id, scheduled_date)
+       WHERE generated_by_ai = 0 AND goal_id IS NOT NULL`,
   },
 ];
 

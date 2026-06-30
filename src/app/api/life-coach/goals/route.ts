@@ -3,6 +3,7 @@ import {createGoalBundle, ensureCommitmentDailySteps, linkFormulationCreatedGoal
 import {jsonError, jsonOk, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {goalBundleCreateInputSchema} from '@/lib/life-coach/schemas';
 import {formatGoalCreateError, sanitizeGoalBundleInput} from '@/lib/life-coach/sanitize-goal-bundle';
+import {randomUUID} from 'crypto';
 
 export async function GET(request: Request) {
   const current = await requireLifeCoachAccess(request);
@@ -44,6 +45,7 @@ export async function POST(request: Request) {
   }
 
   const bundle = sanitizeGoalBundleInput(parsed.data);
+  const idempotencyKey = parsed.data.idempotency_key ?? randomUUID();
 
   try {
     const today = startOfToday();
@@ -53,7 +55,7 @@ export async function POST(request: Request) {
       bundle.milestones,
       bundle.initial_steps.map((step) => ({...step, goal_id: null})),
       today,
-      {idempotencyKey: parsed.data.idempotency_key}
+      {idempotencyKey}
     );
     if (bundle.formulation_session_id) {
       linkFormulationCreatedGoal(current.user.id, bundle.formulation_session_id, goal.id);

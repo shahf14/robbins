@@ -1,5 +1,7 @@
 import {dateToYMD} from '@/lib/date-utils';
-import {dbAll, dbGet, dbRun, getDb} from '../sqlite';
+import {runImmediateTransaction} from '@/lib/db/immediate-transaction';
+import {assertRitualNotUncompleted} from '@/lib/ritual-session-guards';
+import {dbAll, dbGet, dbRun} from '../sqlite';
 import {parseJsonOr} from '@/lib/safe-json';
 import type {MorningRitualSession} from '@/lib/morning-ritual-types';
 
@@ -57,17 +59,18 @@ export function getLatestMorningRitualForUser(
 }
 
 export function saveMorningRitualSession(userId: string, session: MorningRitualSession): void {
-  const existing = dbGet<{user_id: string | null}>(
-    `SELECT user_id FROM morning_rituals WHERE id = ?`,
-    [session.id]
-  );
-  if (existing && existing.user_id !== userId) {
-    throw new Error(`Morning ritual ${session.id} is owned by another user`);
-  }
+  runImmediateTransaction(() => {
+    const existing = dbGet<{user_id: string | null; completed: number}>(
+      `SELECT user_id, completed FROM morning_rituals WHERE id = ?`,
+      [session.id]
+    );
+    if (existing && existing.user_id !== userId) {
+      throw new Error(`Morning ritual ${session.id} is owned by another user`);
+    }
+    assertRitualNotUncompleted(existing?.completed === 1, session.completed);
 
-  const date = dateToYMD(new Date(session.completedAt ?? session.startedAt ?? Date.now()));
-  const db = getDb();
-  const save = db.transaction(() => {
+    const date = dateToYMD(new Date(session.completedAt ?? session.startedAt ?? Date.now()));
+
     dbRun(
       `INSERT OR REPLACE INTO morning_rituals
          (id, user_id, date, mood_before, mood_after, triggers, duration_sec, completed, mode,
@@ -123,8 +126,6 @@ export function saveMorningRitualSession(userId: string, session: MorningRitualS
       );
     });
   });
-
-  save();
 }
 
 function toNumber(value: string | null): number | null {

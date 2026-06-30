@@ -21,10 +21,12 @@ type Props = {
   locale: AppLocale;
   questions: LlmExplorationQuestion[];
   initialAnswers?: LlmExplorationAnswer[];
+  initialPage?: number;
   generating: boolean;
   loadError?: string | null;
   onLoadQuestions: () => Promise<LlmExplorationQuestion[] | null>;
   onDraftChange?: (answers: LlmExplorationAnswer[]) => void;
+  onPageChange?: (page: number) => void;
   onSubmit: (answers: LlmExplorationAnswer[]) => void;
 };
 
@@ -34,21 +36,35 @@ export function ExplorationStep({
   locale,
   questions,
   initialAnswers,
+  initialPage = 0,
   generating,
   loadError,
   onLoadQuestions,
   onDraftChange,
+  onPageChange,
   onSubmit,
 }: Props) {
   const t = useTranslations('formulation');
   const hasRealQuestions =
     questions.length === 15 &&
     !isFallbackExplorationBundle(questions, session, locale);
-  const [loadStarted, setLoadStarted] = useState(hasRealQuestions);
-  const [page, setPage] = useState(0);
-
   const activeQuestions = useMemo(() => questions.length === 15 ? questions : [], [questions]);
   const questionIds = useMemo(() => activeQuestions.map((q) => q.id), [activeQuestions]);
+  const [loadStarted, setLoadStarted] = useState(hasRealQuestions);
+  const [page, setPage] = useState(() => Math.max(0, initialPage));
+
+  useEffect(() => {
+    const pageCount = Math.max(1, Math.ceil(questionIds.length / QUESTIONS_PER_PAGE));
+    setPage((current) => {
+      const next = Math.min(Math.max(0, initialPage), pageCount - 1);
+      return next === current ? current : next;
+    });
+  }, [initialPage, questionIds]);
+
+  function goToPage(next: number) {
+    setPage(next);
+    onPageChange?.(next);
+  }
 
   const [scores, setScores] = useState<Record<string, number>>(() => {
     const map: Record<string, number> = {};
@@ -211,7 +227,7 @@ export function ExplorationStep({
             type="button"
             disabled={loading}
             aria-busy={loading}
-            onClick={() => setPage((p) => p - 1)}
+            onClick={() => goToPage(page - 1)}
           >
             {t('back')}
           </button>
@@ -222,7 +238,7 @@ export function ExplorationStep({
             type="button"
             disabled={loading || !pageComplete}
             aria-busy={loading}
-            onClick={() => setPage((p) => p + 1)}
+            onClick={() => goToPage(page + 1)}
           >
             {t('next')}
           </button>

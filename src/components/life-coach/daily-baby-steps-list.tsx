@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 import type {DailyBabyStep, Goal} from '@/lib/life-coach/types';
@@ -67,6 +67,14 @@ import {
 } from '@/lib/step-value-feedback/should-prompt';
 import {dateToYMD} from '@/lib/date-utils';
 import {commitmentBadgeForStep, CommitmentTodayPanel} from './shared/commitment-today-panel';
+import {useTodayDailySteps} from '@/lib/life-coach/use-today-daily-steps';
+import {useAutoHide} from '@/hooks/use-auto-hide';
+import {
+  clearReflectionModalDraft,
+  loadReflectionModalDraft,
+  saveReflectionModalDraft,
+} from '@/lib/life-coach/daily-steps-reflection-storage';
+import type {ReflectionFormDraft} from './daily-reflection-modal';
 
 type Props = {
   steps: DailyBabyStep[];
@@ -118,6 +126,77 @@ function getTomorrow(): string {
   return localDateStr(d);
 }
 
+type ReflectionModalState = {
+  activeStep: DailyBabyStep | null;
+  activeAction: 'skipped' | 'partial';
+};
+
+type BusyStepState = {
+  loadingId: string | null;
+  microCreatingId: string | null;
+  skipRecoveryLoadingId: string | null;
+  replacementLoadingId: string | null;
+  replacingId: string | null;
+  frictionShrinkingId: string | null;
+  skipRecoveryHighlightId: string | null;
+};
+
+type PromptUiState = {
+  expandedIds: Set<string>;
+  minutesPromptId: string | null;
+  valueFeedbackPromptId: string | null;
+  actualMinutes: string;
+};
+
+type ReplacementUiState = {
+  stepId: string | null;
+  options: CuratedDailyTaskOption[];
+};
+
+type FeedbackUiState = {
+  reflectionLoot: LootType | null;
+};
+
+type CoachUiState = {
+  message: string | null;
+  loading: boolean;
+  comebackMessaging: ComebackMessaging | null;
+  accountability: AccountabilityContext | null;
+};
+
+const INITIAL_BUSY_STEPS: BusyStepState = {
+  loadingId: null,
+  microCreatingId: null,
+  skipRecoveryLoadingId: null,
+  replacementLoadingId: null,
+  replacingId: null,
+  frictionShrinkingId: null,
+  skipRecoveryHighlightId: null,
+};
+
+const INITIAL_PROMPTS: PromptUiState = {
+  expandedIds: new Set(),
+  minutesPromptId: null,
+  valueFeedbackPromptId: null,
+  actualMinutes: '',
+};
+
+const INITIAL_REPLACEMENT: ReplacementUiState = {
+  stepId: null,
+  options: [],
+};
+
+const INITIAL_FEEDBACK: FeedbackUiState = {
+  reflectionLoot: null,
+};
+
+const INITIAL_COACH: CoachUiState = {
+  message: null,
+  loading: false,
+  comebackMessaging: null,
+  accountability: null,
+};
+
 export function DailyBabyStepsList({
   steps,
   onUpdateStatus,
@@ -138,34 +217,207 @@ export function DailyBabyStepsList({
   const locale = useLocale() as AppLocale;
   const toast = useToast();
   const {confirm} = useConfirm();
-  const [activeStep, setActiveStep] = useState<DailyBabyStep | null>(null);
-  const [activeAction, setActiveAction] = useState<'skipped' | 'partial'>('partial');
-  const [loadingId, setLoadingId] = useState<string | null>(null);
-  const [microCreatingId, setMicroCreatingId] = useState<string | null>(null);
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
-  const [minutesPromptId, setMinutesPromptId] = useState<string | null>(null);
-  const [valueFeedbackPromptId, setValueFeedbackPromptId] = useState<string | null>(null);
-  const [actualMinutes, setActualMinutes] = useState<string>('');
-  const [microReward, setMicroReward] = useState<string | null>(null);
-  const [reflectionLoot, setReflectionLoot] = useState<LootType | null>(null);
-  const [skipCoachMessage, setSkipCoachMessage] = useState<string | null>(null);
-  const [skipCoachLoading, setSkipCoachLoading] = useState(false);
-  const [skipRecoveryLoadingId, setSkipRecoveryLoadingId] = useState<string | null>(null);
-  const [skipRecoveryHighlightId, setSkipRecoveryHighlightId] = useState<string | null>(null);
+  const [reflectionModal, setReflectionModal] = useState<ReflectionModalState>({
+    activeStep: null,
+    activeAction: 'partial',
+  });
+  const [busySteps, setBusySteps] = useState<BusyStepState>(INITIAL_BUSY_STEPS);
+  const [prompts, setPrompts] = useState<PromptUiState>(INITIAL_PROMPTS);
+  const [replacement, setReplacement] = useState<ReplacementUiState>(INITIAL_REPLACEMENT);
+  const [feedback, setFeedback] = useState<FeedbackUiState>(INITIAL_FEEDBACK);
+  const [coach, setCoach] = useState<CoachUiState>(INITIAL_COACH);
+  const identityFlash = useAutoHide<string>(4000);
+  const microReward = useAutoHide<string>(2600);
   const skipRecoveryBlockersRef = useRef<Record<string, ReflectionBlockerReason | null>>({});
-  const [frictionShrinkingId, setFrictionShrinkingId] = useState<string | null>(null);
-  const [replacementStepId, setReplacementStepId] = useState<string | null>(null);
-  const [replacementOptions, setReplacementOptions] = useState<CuratedDailyTaskOption[]>([]);
-  const [replacementLoadingId, setReplacementLoadingId] = useState<string | null>(null);
-  const [replacingId, setReplacingId] = useState<string | null>(null);
-  const [identityFlash, setIdentityFlash] = useState<string | null>(null);
-  const [comebackMessaging, setComebackMessaging] = useState<ComebackMessaging | null>(null);
-  const [accountability, setAccountability] = useState<AccountabilityContext | null>(null);
-  const identityFlashTimeoutRef = useRef<number | null>(null);
-  const microRewardTimeoutRef = useRef<number | null>(null);
   const reportedRef = useRef<Set<string>>(new Set());
+  const restoredReflectionRef = useRef(false);
+
+  const {activeStep, activeAction} = reflectionModal;
+  const {
+    loadingId,
+    microCreatingId,
+    skipRecoveryLoadingId,
+    replacementLoadingId,
+    replacingId,
+    frictionShrinkingId,
+    skipRecoveryHighlightId,
+  } = busySteps;
+  const {expandedIds, minutesPromptId, valueFeedbackPromptId, actualMinutes} = prompts;
+  const {stepId: replacementStepId, options: replacementOptions} = replacement;
+  const {reflectionLoot} = feedback;
+  const {
+    message: skipCoachMessage,
+    loading: skipCoachLoading,
+    comebackMessaging,
+    accountability,
+  } = coach;
+
+  const setActiveStep = useCallback((step: DailyBabyStep | null) => {
+    setReflectionModal((current) => ({...current, activeStep: step}));
+  }, []);
+  const setActiveAction = useCallback((action: 'skipped' | 'partial') => {
+    setReflectionModal((current) => ({...current, activeAction: action}));
+  }, []);
+  const setLoadingId = useCallback((loadingId: string | null) => {
+    setBusySteps((current) => ({...current, loadingId}));
+  }, []);
+  const setMicroCreatingId = useCallback((microCreatingId: string | null) => {
+    setBusySteps((current) => ({...current, microCreatingId}));
+  }, []);
+  const setSkipRecoveryLoadingId = useCallback((skipRecoveryLoadingId: string | null) => {
+    setBusySteps((current) => ({...current, skipRecoveryLoadingId}));
+  }, []);
+  const setReplacementLoadingId = useCallback((replacementLoadingId: string | null) => {
+    setBusySteps((current) => ({...current, replacementLoadingId}));
+  }, []);
+  const setReplacingId = useCallback((replacingId: string | null) => {
+    setBusySteps((current) => ({...current, replacingId}));
+  }, []);
+  const setFrictionShrinkingId = useCallback((frictionShrinkingId: string | null) => {
+    setBusySteps((current) => ({...current, frictionShrinkingId}));
+  }, []);
+  const setSkipRecoveryHighlightId = useCallback((skipRecoveryHighlightId: string | null) => {
+    setBusySteps((current) => ({...current, skipRecoveryHighlightId}));
+  }, []);
+  const setExpandedIds = useCallback(
+    (updater: Set<string> | ((prev: Set<string>) => Set<string>)) => {
+      setPrompts((current) => ({
+        ...current,
+        expandedIds: typeof updater === 'function' ? updater(current.expandedIds) : updater,
+      }));
+    },
+    []
+  );
+  const setMinutesPromptId = useCallback((minutesPromptId: string | null) => {
+    setPrompts((current) => ({...current, minutesPromptId}));
+  }, []);
+  const setValueFeedbackPromptId = useCallback((valueFeedbackPromptId: string | null) => {
+    setPrompts((current) => ({...current, valueFeedbackPromptId}));
+  }, []);
+  const setActualMinutes = useCallback((actualMinutes: string) => {
+    setPrompts((current) => ({...current, actualMinutes}));
+  }, []);
+  const setReplacementStepId = useCallback((stepId: string | null) => {
+    setReplacement((current) => ({...current, stepId}));
+  }, []);
+  const setReplacementOptions = useCallback((options: CuratedDailyTaskOption[]) => {
+    setReplacement((current) => ({...current, options}));
+  }, []);
+  const setReflectionLoot = useCallback((reflectionLoot: LootType | null) => {
+    setFeedback((current) => ({...current, reflectionLoot}));
+  }, []);
+  const setSkipCoachMessage = useCallback((message: string | null) => {
+    setCoach((current) => ({...current, message}));
+  }, []);
+  const setSkipCoachLoading = useCallback((loading: boolean) => {
+    setCoach((current) => ({...current, loading}));
+  }, []);
+  const setComebackMessaging = useCallback((comebackMessaging: ComebackMessaging | null) => {
+    setCoach((current) => ({...current, comebackMessaging}));
+  }, []);
+  const setAccountability = useCallback((accountability: AccountabilityContext | null) => {
+    setCoach((current) => ({...current, accountability}));
+  }, []);
   const today = localDateStr(new Date());
   const tBs = useTranslations('behaviorScience');
+  const {refreshTodaySteps} = useTodayDailySteps();
+
+  const refreshSteps = useCallback(async () => {
+    if (onRefresh) {
+      await onRefresh();
+      return;
+    }
+    await refreshTodaySteps();
+  }, [onRefresh, refreshTodaySteps]);
+
+  const reflectionInitialDraft = useMemo((): ReflectionFormDraft | null => {
+    if (!activeStep) return null;
+    const saved = loadReflectionModalDraft();
+    if (!saved || saved.stepId !== activeStep.id || saved.action !== activeAction) return null;
+    return {
+      blockerCategory: saved.blockerCategory,
+      blockerReason: saved.blockerReason,
+      deepDiveAnswer: saved.deepDiveAnswer,
+      reflectionText: saved.reflectionText,
+      moodScore: saved.moodScore,
+      energyScore: saved.energyScore,
+    };
+  }, [activeStep, activeAction]);
+
+  const handleReflectionFormDraftChange = useCallback(
+    (draft: ReflectionFormDraft) => {
+      if (!activeStep) return;
+      saveReflectionModalDraft({
+        stepId: activeStep.id,
+        action: activeAction,
+        ...draft,
+      });
+    },
+    [activeStep, activeAction]
+  );
+
+  useEffect(() => {
+    if (restoredReflectionRef.current) return;
+    const saved = loadReflectionModalDraft();
+    if (!saved) return;
+    const step = steps.find((item) => item.id === saved.stepId);
+    if (!step || step.status !== 'pending') {
+      clearReflectionModalDraft();
+      return;
+    }
+    restoredReflectionRef.current = true;
+    setActiveAction(saved.action);
+    setActiveStep(step);
+  }, [steps]);
+
+  useEffect(() => {
+    if (!activeStep) return;
+    const saved = loadReflectionModalDraft();
+    if (saved?.stepId === activeStep.id && saved.action === activeAction) return;
+    saveReflectionModalDraft({
+      stepId: activeStep.id,
+      action: activeAction,
+      blockerCategory: null,
+      blockerReason: null,
+      deepDiveAnswer: '',
+      reflectionText: '',
+      moodScore: 7,
+      energyScore: 6,
+    });
+  }, [activeStep, activeAction]);
+
+  useEffect(() => {
+    return () => {
+      identityFlash.clear();
+      microReward.clear();
+    };
+  }, [identityFlash, microReward]);
+
+  function showIdentityFlash(message: string) {
+    identityFlash.show(message);
+  }
+
+  function showMicroReward(message: string) {
+    microReward.show(message);
+  }
+
+  const prefs = loadUserPreferences();
+  const schedulePrefs = useMemo(
+    () => ({
+      wake_time: prefs.wake_time,
+      sleep_time: prefs.sleep_time,
+      preferred_action_window: prefs.preferred_action_window,
+    }),
+    [prefs.wake_time, prefs.sleep_time, prefs.preferred_action_window]
+  );
+  const sortedSteps = useMemo(
+    () => sortStepsForDisplay(steps, schedulePrefs, new Date(), energy, weekSteps),
+    [steps, schedulePrefs, energy, weekSteps]
+  );
+  const coachContextKey = useMemo(
+    () => sortedSteps.map((step) => `${step.id}:${step.status}`).join('|'),
+    [sortedSteps]
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -182,50 +434,9 @@ export function DailyBabyStepsList({
       });
     return () => {
       cancelled = true;
-      if (identityFlashTimeoutRef.current) {
-        window.clearTimeout(identityFlashTimeoutRef.current);
-      }
-      if (microRewardTimeoutRef.current) {
-        window.clearTimeout(microRewardTimeoutRef.current);
-      }
     };
-  }, []);
+  }, [coachContextKey]);
 
-  function showIdentityFlash(message: string) {
-    setIdentityFlash(message);
-    if (identityFlashTimeoutRef.current) {
-      window.clearTimeout(identityFlashTimeoutRef.current);
-    }
-    identityFlashTimeoutRef.current = window.setTimeout(() => {
-      setIdentityFlash(null);
-      identityFlashTimeoutRef.current = null;
-    }, 4000);
-  }
-
-  function showMicroReward(message: string) {
-    setMicroReward(message);
-    if (microRewardTimeoutRef.current) {
-      window.clearTimeout(microRewardTimeoutRef.current);
-    }
-    microRewardTimeoutRef.current = window.setTimeout(() => {
-      setMicroReward(null);
-      microRewardTimeoutRef.current = null;
-    }, 2600);
-  }
-
-  const prefs = loadUserPreferences();
-  const schedulePrefs = useMemo(
-    () => ({
-      wake_time: prefs.wake_time,
-      sleep_time: prefs.sleep_time,
-      preferred_action_window: prefs.preferred_action_window,
-    }),
-    [prefs.wake_time, prefs.sleep_time, prefs.preferred_action_window]
-  );
-  const sortedSteps = useMemo(
-    () => sortStepsForDisplay(steps, schedulePrefs, new Date(), energy, weekSteps),
-    [steps, schedulePrefs, energy, weekSteps]
-  );
   const stepFitScores = useMemo(() => {
     const derived = deriveFitContextFromSteps(weekSteps.length > 0 ? weekSteps : steps);
     return scoreStepsForDisplay(sortedSteps.filter((s) => s.status === 'pending'), {
@@ -238,32 +449,52 @@ export function DailyBabyStepsList({
   }, [sortedSteps, energy, schedulePrefs, weekSteps, steps]);
   const recommendedId =
     pickStartHereStep(sortedSteps, energy, schedulePrefs, weekSteps)?.id ?? null;
-  const pendingCount = sortedSteps.filter((step) => step.status === 'pending').length;
+  const pendingCount = useMemo(
+    () => sortedSteps.filter((step) => step.status === 'pending').length,
+    [sortedSteps]
+  );
   const showEveningMomentum = shouldShowEveningMomentumMessage(
     prefs.sleep_time,
     pendingCount
   );
 
-  const completedToday = sortedSteps.filter((step) => step.status === 'completed');
-  const allActioned =
-    sortedSteps.length > 0 && sortedSteps.every((step) => step.status !== 'pending');
-  const totalLoggedMinutes = completedToday.reduce(
-    (sum, step) => sum + (step.actual_minutes ?? step.estimated_minutes),
-    0
-  );
-  const finalBoss = getFinalBossStep(sortedSteps, prefs.sleep_time);
-  const comebackChain = weekSteps.length > 0 ? computeComebackChain(weekSteps, today) : 0;
-  const dailyRollUp = allActioned
-    ? buildDailyRollUp(sortedSteps, identityTitle, comebackChain)
-    : null;
-  const missedYesterday = weekSteps.length > 0 && hadMissedYesterday(weekSteps, today);
-  const recoveryQuest = missedYesterday
-    ? pickRecoveryQuest(sortedSteps, energy, schedulePrefs, weekSteps)
-    : null;
-  const recoveryMode = !!recoveryQuest;
-  const recentNegativeValueFeedback = countRecentNegativeValueFeedback(
-    weekSteps.length > 0 ? weekSteps : sortedSteps
-  );
+  const {
+    completedToday,
+    allActioned,
+    totalLoggedMinutes,
+    finalBoss,
+    dailyRollUp,
+    recoveryQuest,
+    recoveryMode,
+    recentNegativeValueFeedback,
+  } = useMemo(() => {
+    const completed = sortedSteps.filter((step) => step.status === 'completed');
+    const actioned =
+      sortedSteps.length > 0 && sortedSteps.every((step) => step.status !== 'pending');
+    const loggedMinutes = completed.reduce(
+      (sum, step) => sum + (step.actual_minutes ?? step.estimated_minutes),
+      0
+    );
+    const boss = getFinalBossStep(sortedSteps, prefs.sleep_time);
+    const missedYesterday = weekSteps.length > 0 && hadMissedYesterday(weekSteps, today);
+    const recovery = missedYesterday
+      ? pickRecoveryQuest(sortedSteps, energy, schedulePrefs, weekSteps)
+      : null;
+    return {
+      completedToday: completed,
+      allActioned: actioned,
+      totalLoggedMinutes: loggedMinutes,
+      finalBoss: boss,
+      dailyRollUp: actioned
+        ? buildDailyRollUp(sortedSteps, identityTitle, weekSteps.length > 0 ? computeComebackChain(weekSteps, today) : 0)
+        : null,
+      recoveryQuest: recovery,
+      recoveryMode: !!recovery,
+      recentNegativeValueFeedback: countRecentNegativeValueFeedback(
+        weekSteps.length > 0 ? weekSteps : sortedSteps
+      ),
+    };
+  }, [sortedSteps, prefs.sleep_time, weekSteps, today, identityTitle, energy, schedulePrefs]);
 
   function maybeShowValueFeedback(step: DailyBabyStep) {
     const completedAiToday = sortedSteps.filter(
@@ -288,7 +519,7 @@ export function DailyBabyStepsList({
       });
       toast.success(t('lifeCoach.valueFeedback.thanks'));
       setValueFeedbackPromptId(null);
-      await onRefresh?.();
+      await refreshSteps();
     } catch (error) {
       toast.error(resolveLifeCoachErrorMessage(error, t));
     }
@@ -305,7 +536,10 @@ export function DailyBabyStepsList({
         void lifeCoachApi.updateDailyStepStatus(step.id, {
           status: step.status,
           first_viewed_at: new Date().toISOString(),
-        } as Record<string, unknown>).catch(() => {/* best-effort */});
+        } as Record<string, unknown>).catch((error) => {
+          reportedRef.current.delete(step.id);
+          console.debug('[analytics] first_viewed_at tracking failed', step.id, error);
+        });
       }
     }
   }, [prefs.behavioral_analytics_enabled, steps]);
@@ -356,7 +590,7 @@ export function DailyBabyStepsList({
       await lifeCoachApi.updateDailyStepContent(step.id, content);
       await lifeCoachApi.updateDailyStepStatus(step.id, {status: 'pending'});
       setSkipRecoveryHighlightId(null);
-      await onRefresh?.();
+      await refreshSteps();
       toast.success(t('lifeCoach.skipRecovery.done'));
     } catch (error) {
       toast.error(resolveLifeCoachErrorMessage(error, t));
@@ -377,7 +611,7 @@ export function DailyBabyStepsList({
         difficulty: 'easy',
         scheduled_date: getTomorrow(),
       });
-      await onRefresh?.();
+      await refreshSteps();
       toast.success(t('lifeCoach.microStepTomorrowCreated'));
     } catch (error) {
       toast.error(resolveLifeCoachErrorMessage(error, t));
@@ -425,7 +659,7 @@ export function DailyBabyStepsList({
       });
       setReplacementStepId(null);
       setReplacementOptions([]);
-      await onRefresh?.();
+      await refreshSteps();
       toast.success(t('lifeCoach.curatedReplace.saved')); // toast after refresh so UI is already updated
     } catch (error) {
       toast.error(resolveCuratedErrorMessage(error, t));
@@ -507,14 +741,14 @@ export function DailyBabyStepsList({
           <RecoveryQuestCard step={recoveryQuest} />
         </div>
       )}
-      {identityFlash && (
+      {identityFlash.value && (
         <div className="mb-3 rounded-[18px] border border-violet-400/25 bg-violet-500/8 px-4 py-3 text-sm font-semibold leading-6 text-violet-100">
-          {identityFlash}
+          {identityFlash.value}
         </div>
       )}
-      {microReward && (
+      {microReward.value && (
         <div className="mb-3 rounded-[18px] border border-emerald-400/25 bg-emerald-500/8 px-4 py-3 text-sm font-black text-emerald-300">
-          {microReward}
+          {microReward.value}
         </div>
       )}
       {accountability?.daily_step_serve && sortedSteps.length > 0 && (
@@ -734,7 +968,7 @@ export function DailyBabyStepsList({
                     try {
                       const planB = buildSimplifiedStep(step, locale);
                       await lifeCoachApi.updateDailyStepContent(step.id, planB);
-                      await onRefresh?.();
+                      await refreshSteps();
                       toast.success(t('lifeCoach.easierStepDone'));
                     } catch (error) {
                       toast.error(resolveLifeCoachErrorMessage(error, t));
@@ -873,7 +1107,7 @@ export function DailyBabyStepsList({
                         ...(reattempt ? {reattempt_same_day: true} : {}),
                         actual_minutes: step.estimated_minutes,
                       });
-                      await onRefresh?.();
+                      await refreshSteps();
                       const identityMoment = pickIdentityMoment({
                         status: 'completed',
                         reattempt,
@@ -918,9 +1152,9 @@ export function DailyBabyStepsList({
                             'partial_toast',
                             locale
                           );
+                          await refreshSteps();
                           showIdentityFlash(partialMsg);
                           toast.success(partialMsg);
-                          await onRefresh?.();
                         } catch (error) {
                           toast.error(resolveLifeCoachErrorMessage(error, t));
                         } finally {
@@ -940,7 +1174,7 @@ export function DailyBabyStepsList({
                           try {
                             const planB = buildSimplifiedStep(step, locale);
                             await lifeCoachApi.updateDailyStepContent(step.id, planB);
-                            await onRefresh?.();
+                            await refreshSteps();
                             toast.success(t('lifeCoach.easierStepDone'));
                           } catch (error) {
                             toast.error(resolveLifeCoachErrorMessage(error, t));
@@ -987,7 +1221,7 @@ export function DailyBabyStepsList({
                     try {
                       const originalDate = step.rescheduled_from ?? step.scheduled_date;
                       await lifeCoachApi.rescheduleDailyStep(step.id, getTomorrow(), originalDate);
-                      await onRefresh?.();
+                      await refreshSteps();
                       toast.success(t('feedback.saved'));
                     } catch (error) {
                       toast.error(resolveLifeCoachErrorMessage(error, t));
@@ -1012,7 +1246,7 @@ export function DailyBabyStepsList({
                     setLoadingId(step.id);
                     try {
                       await lifeCoachApi.deleteDailyStep(step.id);
-                      await onRefresh?.();
+                      await refreshSteps();
                       toast.success(t('feedback.saved'));
                     } catch (error) {
                       toast.error(resolveLifeCoachErrorMessage(error, t));
@@ -1034,6 +1268,8 @@ export function DailyBabyStepsList({
         open={!!activeStep}
         context="skip"
         skipAction={activeAction}
+        initialFormDraft={reflectionInitialDraft}
+        onFormDraftChange={handleReflectionFormDraftChange}
         goalTitle={activeStep?.title}
         selfContract={
           activeStep?.goal_id && goalsById.get(activeStep.goal_id)
@@ -1083,6 +1319,7 @@ export function DailyBabyStepsList({
             throw error;
           }
 
+          clearReflectionModalDraft();
           setActiveStep(null);
 
           if (action === 'skipped') {
@@ -1095,7 +1332,7 @@ export function DailyBabyStepsList({
             blocker_reason: input.blocker_reason,
             reflection_text: input.reflection_text,
             energy,
-            completedToday: completedToday.length,
+            completedToday: sortedSteps.filter((item) => item.status === 'completed').length,
           });
           setReflectionLoot(loot);
 

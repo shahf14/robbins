@@ -28,10 +28,26 @@ export function loadFormulationDraftPointer(): FormulationDraftPointer | null {
   try {
     const raw = window.localStorage.getItem(DRAFT_KEY);
     if (!raw) return null;
-    return parseJsonOr<FormulationDraftPointer | null>(raw, null);
+    const parsed = parseJsonOr<unknown>(raw, null);
+    if (!isValidFormulationDraftPointer(parsed)) {
+      window.localStorage.removeItem(DRAFT_KEY);
+      return null;
+    }
+    return parsed;
   } catch {
     return null;
   }
+}
+
+function isValidFormulationDraftPointer(value: unknown): value is FormulationDraftPointer {
+  if (!value || typeof value !== 'object') return false;
+  const pointer = value as FormulationDraftPointer;
+  return (
+    typeof pointer.sessionId === 'string' &&
+    pointer.sessionId.length > 0 &&
+    typeof pointer.phase === 'string' &&
+    pointer.phase.length > 0
+  );
 }
 
 export function clearFormulationDraftPointer() {

@@ -10,6 +10,11 @@ import {
   parseDomainDetailTab,
   parseDomainStepFilter,
 } from '@/lib/life-coach/domain-detail-url-state';
+import {
+  loadDomainStepFilter,
+  saveDomainStepFilter,
+} from '@/lib/life-coach/domain-step-filter-storage';
+import type {LifeDomain} from '@/lib/life-coach/types';
 
 type Options = {
   fallbackTab: DomainDetailTab;
@@ -17,6 +22,8 @@ type Options = {
   ready?: boolean;
   defaultStepFilter?: StepStatusFilter;
   includeStepFilter?: boolean;
+  /** When set, step filter is remembered per domain when `steps` is absent from the URL. */
+  domain?: LifeDomain;
 };
 
 export function useDomainDetailUrlState({
@@ -24,6 +31,7 @@ export function useDomainDetailUrlState({
   ready = true,
   defaultStepFilter = 'pending',
   includeStepFilter = true,
+  domain,
 }: Options) {
   const router = useRouter();
   const pathname = usePathname();
@@ -32,8 +40,34 @@ export function useDomainDetailUrlState({
 
   const tabParam = searchParams.get('tab');
   const stepsParam = includeStepFilter ? searchParams.get('steps') : null;
-  const activeTab = parseDomainDetailTab(tabParam) ?? fallbackTab;
-  const stepFilter = parseDomainStepFilter(stepsParam) ?? defaultStepFilter;
+  const parsedTab = parseDomainDetailTab(tabParam);
+  const parsedSteps = includeStepFilter ? parseDomainStepFilter(stepsParam) : null;
+  const activeTab = parsedTab ?? fallbackTab;
+  const persistedStepFilter =
+    includeStepFilter && domain && stepsParam === null ? loadDomainStepFilter(domain) : null;
+  const stepFilter = parsedSteps ?? persistedStepFilter ?? defaultStepFilter;
+
+  useEffect(() => {
+    if (!ready) return;
+    const invalidTab = tabParam !== null && parsedTab === null;
+    const invalidSteps = includeStepFilter && stepsParam !== null && parsedSteps === null;
+    if (!invalidTab && !invalidSteps) return;
+    const params = new URLSearchParams(searchParams.toString());
+    if (invalidTab) params.delete('tab');
+    if (invalidSteps) params.delete('steps');
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, {scroll: false});
+  }, [
+    ready,
+    tabParam,
+    stepsParam,
+    parsedTab,
+    parsedSteps,
+    includeStepFilter,
+    pathname,
+    router,
+    searchParams,
+  ]);
 
   useEffect(() => {
     if (!ready || tabParam !== null || bootstrappedRef.current) return;
@@ -54,11 +88,12 @@ export function useDomainDetailUrlState({
   const setStepFilter = useCallback(
     (filter: StepStatusFilter) => {
       if (!includeStepFilter) return;
+      if (domain) saveDomainStepFilter(domain, filter);
       router.push(buildDomainDetailHref(pathname, searchParams, {steps: filter}), {
         scroll: false,
       });
     },
-    [includeStepFilter, pathname, router, searchParams]
+    [domain, includeStepFilter, pathname, router, searchParams]
   );
 
   return {activeTab, stepFilter, setActiveTab, setStepFilter};

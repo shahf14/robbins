@@ -14,6 +14,7 @@ export type WizardLiveDraft = {
   consent?: ConsentLiveDraft;
   passive_ratings?: PassiveRatingItem[];
   llm_exploration_answers?: LlmExplorationAnswer[];
+  exploration_page?: number;
 };
 
 export function wizardLiveDraftHasContent(draft: WizardLiveDraft, phase: string): boolean {

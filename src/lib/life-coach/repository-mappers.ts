@@ -100,12 +100,18 @@ export function rowToReflection(row: Record<string, unknown>): DailyReflection {
 
 export function rowToInsight(row: Record<string, unknown>): AiCoachingInsight {
   const metadata = parseJsonObjectOr<Record<string, unknown>>(row.metadata, {});
+  const planAppliedAt =
+    (row.plan_adjustments_applied_at as string) ??
+    (typeof metadata.plan_adjustments_applied_at === 'string'
+      ? metadata.plan_adjustments_applied_at
+      : null);
   return {
     id: row.id as string,
     user_id: row.user_id as string,
     insight_type: row.insight_type as AiCoachingInsight['insight_type'],
     content: (row.content as string) ?? '',
     metadata,
+    plan_adjustments_applied_at: planAppliedAt,
     tokens_used: (row.tokens_used as number) ?? null,
     generation_duration_ms: (row.generation_duration_ms as number) ?? null,
     model_used: (row.model_used as string) ?? null,

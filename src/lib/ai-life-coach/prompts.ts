@@ -1,5 +1,6 @@
 import type { AppLocale } from '@/i18n/config';
 import { JSON_OUTPUT_LANGUAGE_INSTRUCTION } from '@/lib/llm/language-instruction';
+import { sanitizePromptUserText } from '@/lib/llm/sanitize-prompt-input';
 import { buildLifeContextAdaptationHint, lifeContextForPrompt } from '@/lib/life-context-labels';
 import type {
   DailyBabyStep,
@@ -120,6 +121,22 @@ import {
   executionHistoryForPrompt,
   type ExecutionHistorySummary,
 } from '@/lib/execution-history/summarize';
+
+function sanitizeOptionalUserText(value: string | null | undefined, maxLength = 2000): string | null {
+  if (value == null) return null;
+  const trimmed = sanitizePromptUserText(value, maxLength);
+  return trimmed || null;
+}
+
+function sanitizeGoalForPrompt(goal: Pick<Goal, 'id' | 'domain' | 'title' | 'description' | 'success_metric'>) {
+  return {
+    id: goal.id,
+    domain: goal.domain,
+    title: sanitizePromptUserText(goal.title, 500),
+    description: sanitizeOptionalUserText(goal.description, 2000),
+    success_metric: sanitizeOptionalUserText(goal.success_metric ?? null, 500),
+  };
+}
 
 const BEHAVIOR_PROFILE_SYSTEM_HINT =
   'When user_behavior_profile is provided, personalize timing, difficulty, and domain focus from it. ' +
@@ -557,9 +574,9 @@ export function buildGoalStructuringUserPrompt(input: {
       participant_age: input.age ?? null,
       participant_gender: input.gender ?? null,
       current_score: input.assessment?.current_score ?? null,
-      current_state: input.assessment?.current_state ?? '',
-      desired_state: input.assessment?.desired_state ?? '',
-      main_blockers: input.assessment?.main_blockers ?? [],
+      current_state: sanitizeOptionalUserText(input.assessment?.current_state ?? '', 1000) ?? '',
+      desired_state: sanitizeOptionalUserText(input.assessment?.desired_state ?? '', 1000) ?? '',
+      main_blockers: (input.assessment?.main_blockers ?? []).map((b) => sanitizePromptUserText(b, 200)),
       known_blockers: knownBlockersForPrompt(input.known_blockers),
       ai_personalization_summary: aiPersonalizationSummaryForPrompt(
         input.ai_personalization_summary
@@ -568,10 +585,10 @@ export function buildGoalStructuringUserPrompt(input: {
       intensity_preference: input.assessment?.intensity_preference ?? 'balanced',
       life_context_statuses: lifeContext.statuses,
       life_context_labels: lifeContext.labels,
-      raw_goal: input.raw_goal,
+      raw_goal: sanitizePromptUserText(input.raw_goal, 2000),
       deadline: input.deadline,
-      motivation: input.motivation,
-      constraints: input.constraints,
+      motivation: sanitizePromptUserText(input.motivation, 1000),
+      constraints: sanitizePromptUserText(input.constraints, 1000),
       user_behavior_profile: behaviorProfileForPrompt(input.user_behavior_profile ?? null),
     },
     null,
@@ -767,18 +784,25 @@ export function buildDailyStepsUserPrompt(input: {
 
     return {
       ...goal,
+      title: sanitizePromptUserText(goal.title, 500),
+      description: sanitizeOptionalUserText(goal.description, 2000) ?? goal.description,
+      success_metric: goal.success_metric
+        ? sanitizePromptUserText(goal.success_metric, 500)
+        : goal.success_metric,
       milestones,
       decomposition: {
         day_index: milestoneCtx.day_index,
-        active_milestone: milestoneCtx.milestone_title,
+        active_milestone: milestoneCtx.milestone_title
+          ? sanitizePromptUserText(milestoneCtx.milestone_title, 300)
+          : milestoneCtx.milestone_title,
         active_day_marker: milestoneCtx.day_marker,
         weekly_focus: weeklyFocus
           ? {
-              focus_title: weeklyFocus.focus_title,
-              focus_description: weeklyFocus.focus_description,
-              weekly_themes: weeklyFocus.weekly_themes,
-              progress_cue: weeklyFocus.progress_cue,
-              today_theme: todayTheme,
+              focus_title: sanitizePromptUserText(weeklyFocus.focus_title, 300),
+              focus_description: sanitizeOptionalUserText(weeklyFocus.focus_description, 1000),
+              weekly_themes: weeklyFocus.weekly_themes?.map((t) => sanitizePromptUserText(t, 200)),
+              progress_cue: sanitizeOptionalUserText(weeklyFocus.progress_cue, 500),
+              today_theme: todayTheme ? sanitizePromptUserText(todayTheme, 200) : todayTheme,
             }
           : null,
       },
@@ -917,7 +941,7 @@ export function buildReflectionAnalysisUserPrompt(input: {
     {
       date: input.date,
       blocker_reason: input.blocker_reason,
-      reflection_text: input.reflection_text,
+      reflection_text: sanitizeOptionalUserText(input.reflection_text, 2000),
       execution_history: executionHistoryForPrompt(input.execution_history),
       short_term_context: shortTermContextForPrompt(input.short_term_context),
       long_term_profile: longTermProfileForPrompt(input.long_term_profile),
@@ -1028,13 +1052,7 @@ export function buildWeeklyReviewUserPrompt(input: {
       period_start: input.period_start,
       period_end: input.period_end,
       domain_states: input.domainStates,
-      active_goals: input.activeGoals.map((goal) => ({
-        id: goal.id,
-        domain: goal.domain,
-        title: goal.title,
-        description: goal.description,
-        success_metric: goal.success_metric,
-      })),
+      active_goals: input.activeGoals.map(sanitizeGoalForPrompt),
       week_execution: input.week_execution ?? null,
       identity_phrases: input.identity_phrases ?? [],
       execution_history: executionHistoryForPrompt(input.execution_history),
@@ -1045,7 +1063,9 @@ export function buildWeeklyReviewUserPrompt(input: {
         blocker_reason: r.blocker_reason,
         energy_score: r.energy_score,
         mood_score: r.mood_score,
-        reflection_excerpt: r.reflection_text?.trim().slice(0, 160) ?? null,
+        reflection_excerpt: r.reflection_text
+          ? sanitizePromptUserText(r.reflection_text.trim().slice(0, 160), 160)
+          : null,
         primary_emotion: r.analysis?.primary_emotion ?? null,
       })),
       user_behavior_profile: behaviorProfileForPrompt(input.user_behavior_profile ?? null),
@@ -1103,8 +1123,8 @@ export function buildSkipRecoveryUserPrompt(input: {
   return JSON.stringify(
     {
       original_step: {
-        title: input.step.title,
-        description: input.step.description,
+        title: sanitizePromptUserText(input.step.title, 500),
+        description: sanitizeOptionalUserText(input.step.description, 2000),
         estimated_minutes: input.step.estimated_minutes,
         difficulty: input.step.difficulty,
         domain: input.step.domain,

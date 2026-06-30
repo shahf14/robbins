@@ -199,7 +199,7 @@ export function EnhancedWeeklyReview({domain, insight, allRecentSteps, onGenerat
               ))}
             </ul>
           )}
-          {metadata.plan_adjustments_applied_at && (
+          {(metadata.plan_adjustments_applied_at || insight?.plan_adjustments_applied_at) && (
             <p className="mt-3 text-xs text-emerald-400">
               {t('enhancedReview.planApplied')}
             </p>

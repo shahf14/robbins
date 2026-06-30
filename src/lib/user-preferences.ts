@@ -200,3 +200,18 @@ export function saveUserPreferences(value: Partial<UserPreferences>) {
 
   return next;
 }
+
+export function subscribeUserPreferences(onChange: () => void): () => void {
+  if (typeof window === 'undefined') return () => {};
+
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === userPreferencesKey) onChange();
+  };
+
+  window.addEventListener('storage', onStorage);
+  window.addEventListener(userPreferencesChangedEvent, onChange);
+  return () => {
+    window.removeEventListener('storage', onStorage);
+    window.removeEventListener(userPreferencesChangedEvent, onChange);
+  };
+}

@@ -1,4 +1,5 @@
 import {requireAdmin} from '@/lib/db/admin-guard';
+import {logAdminAccess} from '@/lib/db/admin-audit-log';
 import {listTables, dbAll, dbGet, getDb} from '@/lib/db/sqlite';
 import {serverError, notFound} from '@/lib/api-response';
 
@@ -53,6 +54,13 @@ export async function GET(
     const totalRow = dbGet<{total: number}>(countSql, sqlParams);
     const rows = dbAll(dataSql, sqlParams);
     const total = totalRow?.total ?? 0;
+
+    logAdminAccess({
+      userId: guard.user.id,
+      action: 'db_table_view',
+      detail: JSON.stringify({table, page, search: search || null, total}),
+      request,
+    });
 
     return Response.json({
       table,

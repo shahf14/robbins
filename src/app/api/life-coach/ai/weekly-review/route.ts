@@ -1,4 +1,4 @@
-import {refreshWeeklyFocusesFromReview} from '@/lib/goal-decomposition-tree';
+import {persistWeeklyReviewWithFocusRefresh} from '@/lib/goal-decomposition-tree';
 import {mergeToneWithPersonalization} from '@/lib/ai-personalization-summary';
 import {
   resolveDynamicCoachTone,
@@ -17,7 +17,6 @@ import {openaiLifeCoachService} from '@/lib/ai-life-coach/openai-life-coach-serv
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import type {CoachingStyle} from '@/lib/user-preferences';
 import {
-  createAiInsight,
   getUserGenerationContext,
   getUserParticipantProfile,
   hasWeeklyReviewForPeriod,
@@ -63,7 +62,8 @@ export async function POST(request: Request) {
       (u) => u.kind === 'reflection_loot'
     );
     const lootCounts = weekLoot.reduce<Record<string, number>>((acc, u) => {
-      acc[u.reward_key] = (acc[u.reward_key] ?? 0) + 1;
+      const key = u.reward_key ?? 'unknown';
+      acc[key] = (acc[key] ?? 0) + 1;
       return acc;
     }, {});
     const reflection_loot_summary =
@@ -167,21 +167,23 @@ export async function POST(request: Request) {
     });
 
     const { _metrics, ...reviewData } = review;
-    const insight = await createAiInsight(current.user.id, {
-      insight_type: 'weekly_review',
-      content: reviewData.summary,
-      metadata: {...reviewData, period_start: week.start, period_end: week.end},
-      tokens_used: _metrics.tokens_used,
-      generation_duration_ms: _metrics.generation_duration_ms,
-      model_used: _metrics.model_used,
-    });
-    refreshWeeklyFocusesFromReview(
+    const insight = persistWeeklyReviewWithFocusRefresh(
       current.user.id,
-      context.goals,
-      context.milestonesByGoalId,
-      reviewData,
-      week.end,
-      locale
+      {
+        insight_type: 'weekly_review',
+        content: reviewData.summary,
+        metadata: {...reviewData, period_start: week.start, period_end: week.end},
+        tokens_used: _metrics.tokens_used,
+        generation_duration_ms: _metrics.generation_duration_ms,
+        model_used: _metrics.model_used,
+      },
+      {
+        goals: context.goals,
+        milestonesByGoalId: context.milestonesByGoalId,
+        review: reviewData,
+        periodEnd: week.end,
+        locale,
+      }
     );
 
     return jsonOk({review: reviewData, insight});

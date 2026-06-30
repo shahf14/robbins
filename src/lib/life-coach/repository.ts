@@ -5,6 +5,7 @@
  */
 
 import {getDb, dbAll, dbGet, dbRun} from '@/lib/db/sqlite';
+import {runImmediateTransaction} from '@/lib/db/immediate-transaction';
 import {parseJsonArrayOr, parseJsonObjectOr, parseJsonOr} from '@/lib/safe-json';
 import {
   getUserBehaviorProfile,
@@ -19,7 +20,7 @@ import {computeExecutionHistorySummary} from '@/lib/execution-history/summarize'
 import {randomUUID} from 'crypto';
 import {rowToGoal, rowToMilestone, upsertGoal, upsertMilestone, findGoalByCreateIdempotencyKey} from '@/lib/db/repositories/goals';
 import {isSqliteUniqueConstraintError} from '@/lib/goal-create-idempotency';
-import {upsertWeeklyReviewProjection} from '@/lib/db/repositories/insights';
+import {inferDayMarkerFromTitle} from '@/lib/goal-day-marker';
 import {
   insertFormulationSession,
   rowToFormulationSession,
@@ -89,6 +90,7 @@ export {
   deleteDailyBabyStep,
   getDailyBabyStepById,
   insertDailyBabySteps,
+  insertDailyBabyStepsSync,
   listDailyBabyStepsForDate,
   listDailyBabyStepsForRange,
   listRecentDailyBabySteps,
@@ -107,6 +109,7 @@ export {
   listInsights,
   listRecentReflections,
   markWeeklyPlanAdjustmentsApplied,
+  markWeeklyPlanAdjustmentsAppliedSync,
   upsertDailyReflection,
 } from './reflection-insight-repository';
 
@@ -178,7 +181,10 @@ export async function upsertLifeDomainState(
   const row = dbGet<Record<string, unknown>>(
     `SELECT * FROM domain_assessments WHERE id = ?`, [id]
   );
-  return rowToState(row!);
+  if (!row) {
+    throw new Error('Failed to retrieve domain state after insert');
+  }
+  return rowToState(row);
 }
 
 export async function listGoals(
@@ -228,7 +234,19 @@ export async function updateMilestoneStatus(
   status: Milestone['status'],
   userId?: string
 ): Promise<Milestone> {
-  const completedAt = status === 'completed' ? new Date().toISOString() : null;
+  const existing = dbGet<{completed_at: string | null; status: string}>(
+    userId
+      ? `SELECT completed_at, status FROM milestones WHERE id = ? AND user_id = ?`
+      : `SELECT completed_at, status FROM milestones WHERE id = ?`,
+    userId ? [id, userId] : [id]
+  );
+  if (!existing) throw new Error(`Milestone ${id} not found`);
+
+  const now = new Date().toISOString();
+  const completedAt =
+    status === 'completed'
+      ? existing.completed_at ?? now
+      : null;
   dbRun(
     userId
       ? `UPDATE milestones SET status = ?, completed_at = ? WHERE id = ? AND user_id = ?`
@@ -251,11 +269,6 @@ export async function createGoalBundle(
   scheduledDate: string,
   options?: {idempotencyKey?: string}
 ): Promise<Goal> {
-  if (options?.idempotencyKey) {
-    const existing = findGoalByCreateIdempotencyKey(userId, options.idempotencyKey);
-    if (existing) return existing;
-  }
-
   const now = new Date().toISOString();
   const goalId = randomUUID();
   const today = dateToYMD(new Date());
@@ -269,35 +282,40 @@ export async function createGoalBundle(
     updated_at: now,
   };
 
-  const db = getDb();
   try {
-    db.transaction(() => {
+    const created = runImmediateTransaction(() => {
+      if (options?.idempotencyKey) {
+        const existing = findGoalByCreateIdempotencyKey(userId, options.idempotencyKey);
+        if (existing) return existing;
+      }
+
+      const db = getDb();
       upsertGoal(goal, undefined, options?.idempotencyKey ?? null);
 
       if (milestones.length > 0) {
-      const stmt = db.prepare(
-        `INSERT OR REPLACE INTO milestones
-          (id, goal_id, user_id, title, description, target_date, day_marker, status, created_at)
-         VALUES (?,?,?,?,?,?,?,?,?)`
-      );
+        const stmt = db.prepare(
+          `INSERT OR REPLACE INTO milestones
+            (id, goal_id, user_id, title, description, target_date, day_marker, status, created_at)
+           VALUES (?,?,?,?,?,?,?,?,?)`
+        );
         for (const m of milestones) {
           stmt.run(
             randomUUID(), goalId, userId, m.title, m.description ?? '',
-            m.target_date ?? null, inferDayMarker(m.title), 'pending', now
+            m.target_date ?? null, m.day_marker ?? inferDayMarkerFromTitle(m.title), 'pending', now
           );
         }
       }
 
       if (initialSteps.length > 0) {
         const stmt = db.prepare(
-        `INSERT OR REPLACE INTO daily_steps
-          (id, user_id, goal_id, domain, title, description, estimated_minutes,
-           difficulty, scheduled_date, status, generated_by_ai, is_general,
-           fallback_title, fallback_description, fallback_estimated_minutes,
-           reasoning, expected_resistance, pain_addressed, success_signal,
-           created_at, updated_at)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
-      );
+          `INSERT OR REPLACE INTO daily_steps
+            (id, user_id, goal_id, domain, title, description, estimated_minutes,
+             difficulty, scheduled_date, status, generated_by_ai, is_general,
+             fallback_title, fallback_description, fallback_estimated_minutes,
+             reasoning, expected_resistance, pain_addressed, success_signal,
+             created_at, updated_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+        );
         for (const raw of initialSteps) {
           const s = ensurePlanBFields(raw, 'he');
           stmt.run(
@@ -315,7 +333,12 @@ export async function createGoalBundle(
           );
         }
       }
-    })();
+
+      return goal;
+    });
+
+    await ensureCommitmentDailySteps(userId, created);
+    return created;
   } catch (error) {
     if (options?.idempotencyKey && isSqliteUniqueConstraintError(error)) {
       const existing = findGoalByCreateIdempotencyKey(userId, options.idempotencyKey);
@@ -323,9 +346,6 @@ export async function createGoalBundle(
     }
     throw error;
   }
-
-  await ensureCommitmentDailySteps(userId, goal);
-  return goal;
 }
 
 /**
@@ -343,54 +363,43 @@ export function ensureCommitmentDailyStepsSync(userId: string, goal: Goal): numb
   const through = end < today ? end : today;
   if (through < start) return 0;
 
-  const db = getDb();
-  const existing = dbAll<{scheduled_date: string}>(
-    `SELECT scheduled_date FROM daily_steps WHERE user_id = ? AND goal_id = ? AND scheduled_date BETWEEN ? AND ?`,
-    [userId, goal.id, start, through]
-  );
-  const existingDates = new Set(existing.map((row) => row.scheduled_date));
-  const stmt = db.prepare(
-    `INSERT INTO daily_steps
-      (id, user_id, goal_id, domain, title, description, estimated_minutes,
-       difficulty, scheduled_date, status, generated_by_ai, created_at, updated_at)
-     VALUES (?,?,?,?,?,?,?,?,?, 'pending', 0, ?, ?)`
-  );
-  const now = new Date().toISOString();
-  let created = 0;
-
-  for (let offset = 0; ; offset++) {
-    const date = addDaysYMD(start, offset);
-    if (date > through) break;
-    if (existingDates.has(date)) continue;
-    stmt.run(
-      randomUUID(),
-      userId,
-      goal.id,
-      goal.domain,
-      goal.title,
-      goal.description?.trim() || goal.success_metric?.trim() || '',
-      10,
-      'easy',
-      date,
-      now,
-      now
+  return runImmediateTransaction(() => {
+    const db = getDb();
+    const stmt = db.prepare(
+      `INSERT OR IGNORE INTO daily_steps
+        (id, user_id, goal_id, domain, title, description, estimated_minutes,
+         difficulty, scheduled_date, status, generated_by_ai, created_at, updated_at)
+       VALUES (?,?,?,?,?,?,?,?,?, 'pending', 0, ?, ?)`
     );
-    created++;
-  }
+    const now = new Date().toISOString();
+    let created = 0;
 
-  return created;
+    for (let offset = 0; ; offset++) {
+      const date = addDaysYMD(start, offset);
+      if (date > through) break;
+      const result = stmt.run(
+        randomUUID(),
+        userId,
+        goal.id,
+        goal.domain,
+        goal.title,
+        goal.description?.trim() || goal.success_metric?.trim() || '',
+        10,
+        'easy',
+        date,
+        now,
+        now
+      );
+      if (result.changes > 0) created++;
+    }
+
+    return created;
+  });
 }
 
 /** Ensures one pending step per day in the active commitment window through today. */
 export async function ensureCommitmentDailySteps(userId: string, goal: Goal): Promise<number> {
   return ensureCommitmentDailyStepsSync(userId, goal);
-}
-
-function inferDayMarker(title: string): number | null {
-  if (title.includes('30')) return 30;
-  if (title.includes('60')) return 60;
-  if (title.includes('90')) return 90;
-  return null;
 }
 
 export async function updateGoal(
@@ -406,6 +415,11 @@ export async function updateGoal(
   if (!existing) throw new Error(`Goal ${id} not found`);
 
   const {renew_commitment: renewCommitment, ...goalPatch} = input;
+  if (goalPatch.domain !== undefined && goalPatch.domain !== existing.domain) {
+    throw new Error('Goal domain cannot be changed');
+  }
+  delete goalPatch.domain;
+
   const commitmentStartedAt =
     renewCommitment === true
       ? dateToYMD(new Date())
@@ -457,11 +471,22 @@ export async function updateGoal(
     goalPatch.commitment_days !== undefined ||
     goalPatch.commitment_started_at !== undefined;
   const userIdForSteps = options?.userId;
+  const pausingOrArchiving =
+    goalPatch.status &&
+    (goalPatch.status === 'archived' || goalPatch.status === 'paused') &&
+    existing.status === 'active';
 
   // Atomic: persist the goal AND (re)generate its commitment steps together, so
   // a step-generation failure can't leave an active goal with no scheduled steps.
   getDb().transaction(() => {
     upsertGoal(updated);
+    if (pausingOrArchiving && userIdForSteps) {
+      dbRun(
+        `UPDATE daily_steps SET status = 'skipped', updated_at = ?
+         WHERE goal_id = ? AND user_id = ? AND status = 'pending'`,
+        [now, id, userIdForSteps]
+      );
+    }
     if (commitmentTouched && updated.status === 'active' && userIdForSteps) {
       ensureCommitmentDailyStepsSync(userIdForSteps, updated);
     }
@@ -808,6 +833,7 @@ export async function patchFormulationSession(
     throw new Error('Session not found.');
   }
 
+  const expectedUpdatedAt = session.updated_at;
   const now = new Date().toISOString();
   // Profile write is deferred so it commits in the same transaction as the
   // session update at the end (consent writes both the user profile and session).
@@ -922,15 +948,15 @@ export async function patchFormulationSession(
     if (pendingProfileUpdate) {
       updateUserParticipantProfileSync(userId, pendingProfileUpdate);
     }
-    updateFormulationSession(session);
+    updateFormulationSession(session, {expectedUpdatedAt});
   };
 
   try {
-    getDb().transaction(runPersist)();
+    runImmediateTransaction(runPersist);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (/SQLITE_BUSY|database is locked/i.test(message)) {
-      getDb().transaction(runPersist)();
+      runImmediateTransaction(runPersist);
     } else {
       throw error;
     }
@@ -945,6 +971,9 @@ export async function completeFormulationSession(
   const session = await getFormulationSession(userId, id);
   if (!session) {
     throw new Error('Session not found.');
+  }
+  if (!session.coach_handoff) {
+    throw new Error('Coach handoff is required before completing.');
   }
 
   const now = new Date().toISOString();

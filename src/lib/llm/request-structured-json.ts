@@ -78,5 +78,24 @@ export async function requestStructuredJson<T>(
   opts: LlmRequestOpts & {schema: ZodType<T>; fallback: T}
 ): Promise<{data: T; metrics: AiCallMetrics}> {
   const {data, metrics} = await tryRequestStructuredJson(opts);
-  return {data: data ?? opts.fallback, metrics};
+  const candidate = data ?? opts.fallback;
+  const parsed = opts.schema.safeParse(candidate);
+  if (parsed.success) {
+    return {data: parsed.data, metrics};
+  }
+
+  const fallbackParsed = opts.schema.safeParse(opts.fallback);
+  if (!fallbackParsed.success) {
+    throw new Error('LLM fallback failed schema validation.');
+  }
+
+  if (data == null) {
+    console.warn('[llm] structured JSON call failed; using validated fallback');
+  } else {
+    console.warn('[llm] model output failed schema validation; using validated fallback', {
+      issues: parsed.error.flatten(),
+    });
+  }
+
+  return {data: fallbackParsed.data, metrics};
 }

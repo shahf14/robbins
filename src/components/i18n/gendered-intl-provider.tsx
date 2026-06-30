@@ -4,7 +4,7 @@ import {NextIntlClientProvider} from 'next-intl';
 import {useEffect, useMemo, useState, type ReactNode} from 'react';
 import type {AppLocale} from '@/i18n/config';
 import {resolveGenderedMessages, resolveParticipantGender} from '@/lib/gendered-copy';
-import {loadUserPreferences, userPreferencesChangedEvent} from '@/lib/user-preferences';
+import {loadUserPreferences, subscribeUserPreferences} from '@/lib/user-preferences';
 
 type Props = {
   locale: AppLocale;
@@ -23,8 +23,7 @@ export function GenderedIntlProvider({locale, messages, children}: Props) {
     };
 
     syncGender();
-    window.addEventListener(userPreferencesChangedEvent, syncGender);
-    return () => window.removeEventListener(userPreferencesChangedEvent, syncGender);
+    return subscribeUserPreferences(syncGender);
   }, []);
 
   const resolvedMessages = useMemo(() => {

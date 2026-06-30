@@ -9,6 +9,7 @@ import {briefingFieldsFromSession} from '@/lib/evening-reset/briefing';
 import {resolveTomorrowTakeaway} from '@/lib/evening-reset/tomorrow-takeaway';
 import type {EveningResetSession} from '@/lib/evening-reset-types';
 import {badRequest, serverError} from '@/lib/api-response';
+import {RitualSessionUncompleteError} from '@/lib/ritual-session-guards';
 import {JSON_BODY_LIMITS, readAuthenticatedJsonBody} from '@/lib/read-authenticated-json-body';
 
 export async function GET(request: Request) {
@@ -39,7 +40,10 @@ export async function POST(request: Request) {
     };
     saveEveningResetSession(body.user.id, enriched);
     return Response.json({ok: true, session: enriched, takeaway_source: takeaway.source});
-  } catch {
+  } catch (error) {
+    if (error instanceof RitualSessionUncompleteError) {
+      return Response.json({error: error.message}, {status: 409});
+    }
     return serverError('Could not save evening reset session');
   }
 }

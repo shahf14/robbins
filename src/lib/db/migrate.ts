@@ -90,7 +90,7 @@ function applyBaseline(db: MigrationDb): void {
       created_at       TEXT DEFAULT (datetime('now'))
     )
   `);
-  db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_skip_coach_user_date ON skip_coach_adjustments(user_id, skip_date)`);
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_skip_coach_user_date ON skip_coach_adjustments(user_id, skip_date)`);
 
   // Drop the deprecated parallel simple-task tables (unified into goals/daily_steps).
   db.exec(`DROP TABLE IF EXISTS simple_task_logs`);
@@ -350,6 +350,41 @@ const MIGRATIONS: Migration[] = [
     up: (db) => {
       addColumn(db, 'formulation_sessions', 'suggested_domain', 'TEXT');
       addColumn(db, 'formulation_sessions', 'created_goal_id', 'TEXT');
+    },
+  },
+  {
+    version: 9,
+    name: 'skip_coach_adjustments_allow_history',
+    up: (db) => {
+      db.exec(`DROP INDEX IF EXISTS idx_skip_coach_user_date`);
+      db.exec(
+        `CREATE INDEX IF NOT EXISTS idx_skip_coach_user_date ON skip_coach_adjustments(user_id, skip_date)`
+      );
+    },
+  },
+  {
+    version: 10,
+    name: 'daily_steps_commitment_goal_date_unique',
+    up: (db) => {
+      db.exec(`
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_daily_steps_commitment_goal_date
+          ON daily_steps(user_id, goal_id, scheduled_date)
+          WHERE generated_by_ai = 0 AND goal_id IS NOT NULL
+      `);
+    },
+  },
+  {
+    version: 11,
+    name: 'ai_insights_plan_adjustments_applied_at',
+    up: (db) => {
+      addColumn(db, 'ai_insights', 'plan_adjustments_applied_at', 'TEXT');
+      db.exec(`
+        UPDATE ai_insights
+        SET plan_adjustments_applied_at = json_extract(COALESCE(metadata, '{}'), '$.plan_adjustments_applied_at')
+        WHERE insight_type = 'weekly_review'
+          AND plan_adjustments_applied_at IS NULL
+          AND json_extract(COALESCE(metadata, '{}'), '$.plan_adjustments_applied_at') IS NOT NULL
+      `);
     },
   },
 ];

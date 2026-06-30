@@ -2,7 +2,6 @@ import {randomUUID} from 'crypto';
 import {dbAll, dbGet, dbRun, getDb} from '@/lib/db/sqlite';
 import {refreshUserBehaviorProfile} from '@/lib/behavior-profile/repository';
 import {upsertWeeklyReviewProjection} from '@/lib/db/repositories/insights';
-import {parseJsonObjectOr} from '@/lib/safe-json';
 import {saveReflectionAnalysis} from '@/lib/reflection-analysis/repository';
 import type {ReflectionAnalysis} from '@/lib/reflection-analysis/types';
 import {rowToInsight, rowToReflection} from './repository-mappers';
@@ -53,14 +52,10 @@ export async function upsertDailyReflection(
         created_at,
       ]
     );
+    refreshUserBehaviorProfile(userId);
   })();
 
   const row = dbGet<Record<string, unknown>>(`SELECT * FROM daily_reflections WHERE id = ?`, [rowId]);
-  try {
-    refreshUserBehaviorProfile(userId);
-  } catch {
-    /* best-effort */
-  }
   return rowToReflection(row!);
 }
 
@@ -103,6 +98,38 @@ export async function listRecentReflections(limit = 14, userId?: string): Promis
 // AI insights
 // ---------------------------------------------------------------------------
 
+export function insertAiInsightRow(
+  userId: string,
+  input: Omit<AiCoachingInsight, 'id' | 'user_id' | 'created_at'>
+): AiCoachingInsight {
+  const now = new Date().toISOString();
+  const id = randomUUID();
+  const planAppliedAt =
+    input.plan_adjustments_applied_at ??
+    (typeof input.metadata?.plan_adjustments_applied_at === 'string'
+      ? input.metadata.plan_adjustments_applied_at
+      : null);
+  const insight = {
+    id,
+    user_id: userId,
+    ...input,
+    plan_adjustments_applied_at: planAppliedAt,
+    created_at: now,
+  };
+  dbRun(
+    `INSERT INTO ai_insights
+      (id, user_id, insight_type, content, metadata,
+       tokens_used, generation_duration_ms, model_used, plan_adjustments_applied_at, created_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?)`,
+    [id, userId, input.insight_type, input.content ?? null,
+     JSON.stringify(input.metadata ?? {}),
+     input.tokens_used ?? null, input.generation_duration_ms ?? null,
+     input.model_used ?? null, planAppliedAt, now]
+  );
+  upsertWeeklyReviewProjection(insight);
+  return insight;
+}
+
 /**
  * Synchronous core of {@link createAiInsight}. Because better-sqlite3
  * transactions must be synchronous, callers that need to insert an insight as
@@ -115,23 +142,7 @@ export function createAiInsightSync(
   userId: string,
   input: Omit<AiCoachingInsight, 'id' | 'user_id' | 'created_at'>
 ): AiCoachingInsight {
-  const now = new Date().toISOString();
-  const id = randomUUID();
-  const insight = {id, user_id: userId, ...input, created_at: now};
-  getDb().transaction(() => {
-    dbRun(
-      `INSERT INTO ai_insights
-        (id, user_id, insight_type, content, metadata,
-         tokens_used, generation_duration_ms, model_used, created_at)
-       VALUES (?,?,?,?,?,?,?,?,?)`,
-      [id, userId, input.insight_type, input.content ?? null,
-       JSON.stringify(input.metadata ?? {}),
-       input.tokens_used ?? null, input.generation_duration_ms ?? null,
-       input.model_used ?? null, now]
-    );
-    upsertWeeklyReviewProjection(insight);
-  })();
-  return insight;
+  return getDb().transaction(() => insertAiInsightRow(userId, input))();
 }
 
 export async function createAiInsight(
@@ -159,7 +170,7 @@ export function saveReflectionAnalysisWithInsights(
 ): void {
   getDb().transaction(() => {
     saveReflectionAnalysis(userId, date, analysis);
-    createAiInsightSync(userId, {
+    insertAiInsightRow(userId, {
       insight_type: 'pattern',
       content: analysis.patterns.join('\n'),
       metadata: analysis,
@@ -167,7 +178,7 @@ export function saveReflectionAnalysisWithInsights(
       generation_duration_ms: metrics.generation_duration_ms,
       model_used: metrics.model_used,
     });
-    createAiInsightSync(userId, {
+    insertAiInsightRow(userId, {
       insight_type: 'recommendation',
       content: analysis.recommendations.join('\n'),
       metadata: analysis,
@@ -177,7 +188,8 @@ export function saveReflectionAnalysisWithInsights(
 
 export async function listInsights(
   type?: AiCoachingInsight['insight_type'],
-  userId?: string
+  userId?: string,
+  options?: {limit?: number; offset?: number}
 ): Promise<AiCoachingInsight[]> {
   let sql = `SELECT * FROM ai_insights WHERE 1=1`;
   const params: unknown[] = [];
@@ -190,6 +202,10 @@ export async function listInsights(
     params.push(userId);
   }
   sql += ` ORDER BY created_at DESC`;
+  const limit = Math.min(Math.max(options?.limit ?? 50, 1), 200);
+  const offset = Math.max(options?.offset ?? 0, 0);
+  sql += ` LIMIT ? OFFSET ?`;
+  params.push(limit, offset);
   const rows = dbAll<Record<string, unknown>>(sql, params);
   return rows.map(rowToInsight);
 }
@@ -211,8 +227,12 @@ export async function hasWeeklyReviewForPeriod(
 ): Promise<boolean> {
   const row = dbGet<{count: number}>(
     `SELECT COUNT(*) as count FROM weekly_reviews
-     WHERE user_id = ? AND period_start = ? AND period_end = ?`,
-    [userId, periodStart, periodEnd]
+     WHERE user_id = ?
+       AND period_start IS NOT NULL
+       AND period_end IS NOT NULL
+       AND period_start < ?
+       AND period_end > ?`,
+    [userId, periodEnd, periodStart]
   );
   return (row?.count ?? 0) > 0;
 }
@@ -221,22 +241,20 @@ export async function markWeeklyPlanAdjustmentsApplied(
   insightId: string,
   userId: string
 ): Promise<void> {
-  const row = dbGet<Record<string, unknown>>(
-    `SELECT metadata FROM ai_insights WHERE id = ? AND user_id = ? AND insight_type = 'weekly_review'`,
-    [insightId, userId]
+  markWeeklyPlanAdjustmentsAppliedSync(insightId, userId);
+}
+
+export function markWeeklyPlanAdjustmentsAppliedSync(
+  insightId: string,
+  userId: string
+): void {
+  const now = new Date().toISOString();
+  dbRun(
+    `UPDATE ai_insights
+     SET plan_adjustments_applied_at = ?,
+         metadata = json_set(COALESCE(metadata, '{}'), '$.plan_adjustments_applied_at', ?)
+     WHERE id = ? AND user_id = ? AND insight_type = 'weekly_review'
+       AND plan_adjustments_applied_at IS NULL`,
+    [now, now, insightId, userId]
   );
-  if (!row?.metadata) return;
-
-  const metadata =
-    typeof row.metadata === 'string'
-      ? parseJsonObjectOr<Record<string, unknown>>(row.metadata, {})
-      : (row.metadata as Record<string, unknown>);
-  if (Object.keys(metadata).length === 0) return;
-
-  metadata.plan_adjustments_applied_at = new Date().toISOString();
-  dbRun(`UPDATE ai_insights SET metadata = ? WHERE id = ? AND user_id = ?`, [
-    JSON.stringify(metadata),
-    insightId,
-    userId,
-  ]);
 }

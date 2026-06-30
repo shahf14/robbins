@@ -2,35 +2,6 @@ import {getDb} from '../sqlite';
 import {parseJsonOr} from '@/lib/safe-json';
 import type {AiCoachingInsight, WeeklyReview} from '@/lib/life-coach/types';
 
-function upsertInsight(insight: AiCoachingInsight): void {
-  getDb().prepare(
-    `INSERT INTO ai_insights
-      (id, user_id, insight_type, content, metadata, tokens_used,
-       generation_duration_ms, model_used, created_at)
-     VALUES (?,?,?,?,?,?,?,?,?)
-     ON CONFLICT(id) DO UPDATE SET
-       user_id = excluded.user_id,
-       insight_type = excluded.insight_type,
-       content = excluded.content,
-       metadata = excluded.metadata,
-       tokens_used = COALESCE(excluded.tokens_used, ai_insights.tokens_used),
-       generation_duration_ms = COALESCE(excluded.generation_duration_ms, ai_insights.generation_duration_ms),
-       model_used = COALESCE(excluded.model_used, ai_insights.model_used)`
-  ).run(
-    insight.id, insight.user_id, insight.insight_type,
-    insight.content ?? null,
-    typeof insight.metadata === 'string'
-      ? insight.metadata
-      : JSON.stringify(insight.metadata ?? {}),
-    insight.tokens_used ?? null,
-    insight.generation_duration_ms ?? null,
-    insight.model_used ?? null,
-    insight.created_at
-  );
-
-  upsertWeeklyReviewProjection(insight);
-}
-
 /** Keep the optional weekly review read model synchronized with its source insight. */
 export function upsertWeeklyReviewProjection(insight: AiCoachingInsight): void {
   if (insight.insight_type === 'weekly_review' && insight.metadata) {
