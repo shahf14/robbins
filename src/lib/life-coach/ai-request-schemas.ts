@@ -22,3 +22,16 @@ export const inspireGoalMilestonesResponseSchema = z.object({
   days_60: z.string().trim().min(1),
   days_90: z.string().trim().min(1),
 });
+
+/** Unified inspire-goal API response — one field set per mode. */
+export const inspireGoalResponseSchema = z
+  .object({
+    inspiration: z.string().trim().min(1).optional(),
+    milestones: inspireGoalMilestonesResponseSchema.optional(),
+  })
+  .refine(
+    (value) => Boolean(value.inspiration) !== Boolean(value.milestones),
+    {message: 'Provide exactly one of inspiration or milestones.'}
+  );
+
+export type InspireGoalResponse = z.infer<typeof inspireGoalResponseSchema>;

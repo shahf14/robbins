@@ -11,8 +11,9 @@ import {
   getFormulationSession,
   updateFormulationSessionAiMetrics,
 } from '@/lib/life-coach/repository';
+import {toFormulationSessionResponse} from '@/lib/life-coach/response-dtos';
 import {formulationAiActionSchema} from '@/lib/life-coach/schemas';
-import {jsonError, jsonOk, resolveLocale, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {jsonError, jsonMutation, resolveLocale, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 export async function POST(
   request: Request,
@@ -44,7 +45,10 @@ export async function POST(
     if (parsed.data.action === 'generate_exploration_questions') {
       // Cache — skip LLM if session already has valid questions
       if (session.llm_exploration_questions.length === 15) {
-        return jsonOk({session, questions: session.llm_exploration_questions});
+        return jsonMutation({
+          session: toFormulationSessionResponse(session),
+          questions: session.llm_exploration_questions,
+        });
       }
 
       const result = await openaiFormulationService.generateExplorationQuestions(
@@ -78,7 +82,7 @@ export async function POST(
         }
       );
 
-      return jsonOk({session: updated, questions: result.questions});
+      return jsonMutation({session: toFormulationSessionResponse(updated), questions: result.questions});
     }
 
     if (parsed.data.action === 'draft_formulation') {
@@ -110,7 +114,7 @@ export async function POST(
         }
       );
 
-      return jsonOk({session: updated, formulation: result.formulation});
+      return jsonMutation({session: toFormulationSessionResponse(updated), formulation: result.formulation});
     }
 
     if (parsed.data.action === 'suggest_micro_goal') {
@@ -123,7 +127,7 @@ export async function POST(
         generation_duration_ms: result.metrics.generation_duration_ms ?? undefined,
       });
 
-      return jsonOk({
+      return jsonMutation({
         suggestions: result.suggestions,
         generated_by: result.generated_by,
       });

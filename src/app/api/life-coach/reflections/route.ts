@@ -1,6 +1,7 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {upsertDailyReflection} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {toDailyReflectionResponse} from '@/lib/life-coach/response-dtos';
+import {jsonError, jsonMutation, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {reflectionCreateInputSchema} from '@/lib/life-coach/schemas';
 
 export async function POST(request: Request) {
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
       self_blame_language: parsed.data.self_blame_language,
     });
 
-    return jsonOk({reflection}, 201);
+    return jsonMutation({reflection: toDailyReflectionResponse(reflection)}, 201);
   } catch (error) {
     return jsonError('Could not save reflection.', 500, String(error));
   }

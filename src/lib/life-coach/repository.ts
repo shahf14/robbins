@@ -80,11 +80,13 @@ import {
 import {listRecentReflections} from './reflection-insight-repository';
 import {
   ensureUserProfile,
+  ensureUserProfileSync,
   getOnboardingServerStatus,
   updateUserParticipantProfileSync,
 } from './user-profile-repository';
 
 export {
+  countDailyBabyStepsForRange,
   createDailyBabyStep,
   DailyStepRelationError,
   deleteDailyBabyStep,
@@ -94,6 +96,7 @@ export {
   listDailyBabyStepsForDate,
   listDailyBabyStepsForRange,
   listRecentDailyBabySteps,
+  MAX_DAILY_STEPS_RANGE_ROWS,
   replaceDailyBabyStepWithCuratedContent,
   updateDailyBabyStep,
   updateDailyBabyStepContent,
@@ -102,10 +105,12 @@ export {
 
 export {
   createAiInsight,
+  MAX_INSIGHTS_LIST_OFFSET,
   saveReflectionAnalysisWithInsights,
   getDailyReflectionForDate,
   getLatestWeeklyReview,
   hasWeeklyReviewForPeriod,
+  countInsights,
   listInsights,
   listRecentReflections,
   markWeeklyPlanAdjustmentsApplied,
@@ -116,6 +121,7 @@ export {
 export {
   deleteUserAccount,
   ensureUserProfile,
+  ensureUserProfileSync,
   getOnboardingServerStatus,
   getUserParticipantProfile,
   isUserOnboardingComplete,
@@ -188,7 +194,13 @@ export async function upsertLifeDomainState(
 }
 
 export async function listGoals(
-  options?: {domain?: LifeDomain; status?: Goal['status']; userId?: string}
+  options?: {
+    domain?: LifeDomain;
+    status?: Goal['status'];
+    userId?: string;
+    limit?: number;
+    offset?: number;
+  }
 ): Promise<Goal[]> {
   let sql = `SELECT * FROM goals WHERE 1=1`;
   const params: unknown[] = [];
@@ -207,8 +219,38 @@ export async function listGoals(
   }
   sql += ` ORDER BY updated_at DESC`;
 
+  if (options?.limit !== undefined) {
+    const limit = Math.min(Math.max(options.limit, 1), 200);
+    const offset = Math.min(Math.max(options.offset ?? 0, 0), 10_000);
+    sql += ` LIMIT ? OFFSET ?`;
+    params.push(limit, offset);
+  }
+
   const rows = dbAll<Record<string, unknown>>(sql, params);
   return rows.map(rowToGoal);
+}
+
+export async function countGoals(
+  options?: {domain?: LifeDomain; status?: Goal['status']; userId?: string}
+): Promise<number> {
+  let sql = `SELECT COUNT(*) as count FROM goals WHERE 1=1`;
+  const params: unknown[] = [];
+
+  if (options?.domain) {
+    sql += ` AND domain = ?`;
+    params.push(options.domain);
+  }
+  if (options?.userId) {
+    sql += ` AND user_id = ?`;
+    params.push(options.userId);
+  }
+  if (options?.status) {
+    sql += ` AND status = ?`;
+    params.push(options.status);
+  }
+
+  const row = dbGet<{count: number}>(sql, params);
+  return row?.count ?? 0;
 }
 
 export async function getGoalById(id: string, userId?: string): Promise<Goal | null> {
@@ -752,8 +794,9 @@ export function linkFormulationCreatedGoal(
   dbRun(
     `UPDATE formulation_sessions
      SET created_goal_id = ?, updated_at = ?
-     WHERE id = ? AND user_id = ?`,
-    [goalId, new Date().toISOString(), formulationSessionId, userId]
+     WHERE id = ? AND user_id = ?
+       AND (created_goal_id IS NULL OR created_goal_id = ?)`,
+    [goalId, new Date().toISOString(), formulationSessionId, userId, goalId]
   );
 }
 

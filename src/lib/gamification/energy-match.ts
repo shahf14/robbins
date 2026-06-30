@@ -1,12 +1,12 @@
 import {deriveEnergyBand} from '@/lib/life-coach/step-priority';
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import {classifyQuestType} from './quest-types';
 
 export type EnergyMatchBonus = 'smartRecovery' | 'powerMove';
 
 export function detectEnergyMatchBonus(
   energy: number | null | undefined,
-  step: DailyBabyStep
+  step: DailyBabyStepResponse
 ): EnergyMatchBonus | null {
   const band = deriveEnergyBand(energy);
   const quest = classifyQuestType(step);

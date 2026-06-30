@@ -1,4 +1,4 @@
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import type {MorningRitualSession} from '@/lib/morning-ritual-types';
 import {dateToYMD} from '@/lib/date-utils';
 
@@ -9,7 +9,7 @@ function ritualEnergy(session: MorningRitualSession | undefined): number | null 
   return Math.round(score);
 }
 
-function datesWithAction(steps: DailyBabyStep[]): Set<string> {
+function datesWithAction(steps: DailyBabyStepResponse[]): Set<string> {
   const dates = new Set<string>();
   for (const step of steps) {
     if (step.status === 'completed' || step.status === 'partial') {
@@ -19,7 +19,7 @@ function datesWithAction(steps: DailyBabyStep[]): Set<string> {
   return dates;
 }
 
-function consecutiveInactiveDays(weekSteps: DailyBabyStep[], today: string): number {
+function consecutiveInactiveDays(weekSteps: DailyBabyStepResponse[], today: string): number {
   const active = datesWithAction(weekSteps);
   let count = 0;
   const d = new Date(today);
@@ -35,7 +35,7 @@ function consecutiveInactiveDays(weekSteps: DailyBabyStep[], today: string): num
 }
 
 export function detectEarlyWarning(input: {
-  weekSteps: DailyBabyStep[];
+  weekSteps: DailyBabyStepResponse[];
   today: string;
   pendingToday: number;
   ritualSessions: MorningRitualSession[];

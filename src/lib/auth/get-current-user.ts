@@ -1,4 +1,5 @@
-import {NextResponse} from 'next/server';
+import type {NextResponse} from 'next/server';
+import {jsonError} from '@/lib/api-response';
 import {isClerkConfigured, resolveClerkDbUser} from '@/lib/auth/clerk-user';
 import type {LocalAuthContext} from '@/lib/auth/local-auth-context';
 
@@ -16,8 +17,7 @@ type CurrentUserOk = {ok: true; user: LocalUser};
 type CurrentUserFail = {ok: false; response: NextResponse};
 export type CurrentUserResult = CurrentUserOk | CurrentUserFail;
 
-const unauthorizedResponse = () =>
-  NextResponse.json({error: 'Unauthorized'}, {status: 401});
+const unauthorizedResponse = () => jsonError('Unauthorized', 401);
 
 /** Host header only — never trust X-Forwarded-For for loopback decisions. */
 export function isLoopbackHost(request: Request): boolean {

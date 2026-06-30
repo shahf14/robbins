@@ -1,5 +1,5 @@
 import type {PersonalDifficultyCalibration} from '@/lib/life-coach/personal-difficulty-calibration';
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import type {PreferredActionWindow} from '@/lib/user-preferences';
 import type {UserBehaviorProfile, WeekdaySkipPattern, WindowSkipPattern} from './types';
 
@@ -15,21 +15,21 @@ export function hourToActionWindow(hour: number): PreferredActionWindow {
   return 'flexible';
 }
 
-function isTerminal(step: DailyBabyStep): boolean {
+function isTerminal(step: DailyBabyStepResponse): boolean {
   return step.status === 'completed' || step.status === 'partial' || step.status === 'skipped';
 }
 
-function stepActionTimestamp(step: DailyBabyStep): string | null {
+function stepActionTimestamp(step: DailyBabyStepResponse): string | null {
   if (step.status === 'completed' || step.status === 'partial') {
-    return step.completed_at ?? step.updated_at ?? null;
+    return step.completed_at ?? null;
   }
   if (step.status === 'skipped') {
-    return step.updated_at ?? step.completed_at ?? null;
+    return step.completed_at ?? step.created_at ?? null;
   }
   return null;
 }
 
-export function stepActionWindow(step: DailyBabyStep): PreferredActionWindow | null {
+export function stepActionWindow(step: DailyBabyStepResponse): PreferredActionWindow | null {
   if (!isTerminal(step)) return null;
   const ts = stepActionTimestamp(step);
   if (!ts) return null;
@@ -49,7 +49,7 @@ function rate(skipped: number, completed: number): {skip_rate: number; completio
   };
 }
 
-function computeWindowPatterns(steps: DailyBabyStep[]): WindowSkipPattern[] {
+function computeWindowPatterns(steps: DailyBabyStepResponse[]): WindowSkipPattern[] {
   const stats = new Map<
     PreferredActionWindow,
     {skipped: number; completed: number}
@@ -77,7 +77,7 @@ function computeWindowPatterns(steps: DailyBabyStep[]): WindowSkipPattern[] {
   });
 }
 
-function computeWeekdayPatterns(steps: DailyBabyStep[]): WeekdaySkipPattern[] {
+function computeWeekdayPatterns(steps: DailyBabyStepResponse[]): WeekdaySkipPattern[] {
   const stats = new Map<number, {skipped: number; completed: number}>();
 
   for (const step of steps) {
@@ -136,7 +136,7 @@ function deriveAvoidAndBestWindows(input: {
   };
 }
 
-export function computeSkipWindowPatterns(steps: DailyBabyStep[]): {
+export function computeSkipWindowPatterns(steps: DailyBabyStepResponse[]): {
   avoid_windows: PreferredActionWindow[];
   best_windows: PreferredActionWindow[];
   window_patterns: WindowSkipPattern[];

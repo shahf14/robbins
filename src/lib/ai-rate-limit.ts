@@ -1,4 +1,5 @@
-import {NextResponse} from 'next/server';
+import type {NextResponse} from 'next/server';
+import {jsonError} from '@/lib/api-response';
 import {checkAndIncrementRateLimit} from '@/lib/ai-rate-limit-store';
 
 export type RateLimitOptions = {
@@ -34,21 +35,15 @@ function parsePositiveInt(value: string | undefined, fallback: number) {
 
 function rateLimitResponse(limit: number, resetAt: number, now: number): NextResponse {
   const retryAfterSeconds = Math.max(1, Math.ceil((resetAt - now) / 1000));
-  return NextResponse.json(
-    {
-      error: 'AI rate limit exceeded.',
-      retry_after_seconds: retryAfterSeconds,
+  return jsonError('AI rate limit exceeded.', 429, undefined, {
+    extra: {retry_after_seconds: retryAfterSeconds},
+    headers: {
+      'Retry-After': String(retryAfterSeconds),
+      'X-RateLimit-Limit': String(limit),
+      'X-RateLimit-Remaining': '0',
+      'X-RateLimit-Reset': String(Math.ceil(resetAt / 1000)),
     },
-    {
-      status: 429,
-      headers: {
-        'Retry-After': String(retryAfterSeconds),
-        'X-RateLimit-Limit': String(limit),
-        'X-RateLimit-Remaining': '0',
-        'X-RateLimit-Reset': String(Math.ceil(resetAt / 1000)),
-      },
-    }
-  );
+  });
 }
 
 /** Increment AI rate-limit buckets; throws when the user is over limit. */

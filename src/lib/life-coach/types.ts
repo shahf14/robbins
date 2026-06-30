@@ -544,3 +544,15 @@ export type FormulationGateResponse = {
   draft_id?: string | null;
   latest_completed_id?: string | null;
 };
+
+export type {
+  AiCoachingInsightResponse,
+  DailyBabyStepResponse,
+  DailyReflectionResponse,
+  FormulationSessionResponse,
+  GoalResponse,
+  GoalWithMilestonesResponse,
+  LifeDomainStateResponse,
+  MilestoneResponse,
+  ParticipantProfileResponse,
+} from './response-dtos';

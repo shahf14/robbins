@@ -1,6 +1,6 @@
 import {buildAiPersonalizationSummaryFromOnboarding} from '@/lib/ai-personalization-summary';
 import {markUserOnboardingComplete} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, resolveLocale} from '@/lib/life-coach/server';
+import {jsonError, jsonMutation, resolveLocale} from '@/lib/life-coach/server';
 import {onboardingCompleteRequestSchema} from '@/lib/onboarding-ai-schemas';
 import {readAuthenticatedJsonBody} from '@/lib/read-authenticated-json-body';
 
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       summary
     );
     const completedAt = new Date().toISOString();
-    return jsonOk({
+    return jsonMutation({
       completedAt,
       primaryDomain: bodyResult.data.primaryDomain ?? null,
     });

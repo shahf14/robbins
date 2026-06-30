@@ -6,7 +6,8 @@ import {
 } from '@/lib/life-coach/repository';
 import {curatedTaskToStructuredDailyStep, curatedIdFromStepReasoning, getCuratedDailyTaskOption} from '@/lib/life-coach/curated-daily-tasks';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
-import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {toDailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
+import {jsonError, jsonMutation, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 const replaceCuratedSchema = z.object({
   replacement_task_id: z.string().trim().min(1),
@@ -82,7 +83,7 @@ export async function POST(
       current.user.id
     );
 
-    return jsonOk({step});
+    return jsonMutation({step: toDailyBabyStepResponse(step)});
   } catch (error) {
     return jsonError('Could not replace curated daily step.', 500, String(error));
   }

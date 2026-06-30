@@ -2,7 +2,8 @@
 
 import {useCallback, useEffect, useState} from 'react';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import {ensureCommitmentStepsOnSession} from '@/lib/life-coach/ensure-commitment-session';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import {todayYMD} from '@/lib/date-utils';
 import {
   readTodayStepsSnapshot,
@@ -12,11 +13,12 @@ import {
 
 export function useTodayDailySteps() {
   const today = todayYMD();
-  const [todaySteps, setTodaySteps] = useState<DailyBabyStep[]>(
+  const [todaySteps, setTodaySteps] = useState<DailyBabyStepResponse[]>(
     () => readTodayStepsSnapshot(today) ?? []
   );
 
   const refreshTodaySteps = useCallback(async () => {
+    await ensureCommitmentStepsOnSession();
     const response = await lifeCoachApi.getDailySteps(today);
     writeTodayStepsSnapshot(today, response.steps);
     setTodaySteps(response.steps);

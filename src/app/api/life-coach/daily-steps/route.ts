@@ -2,17 +2,32 @@ import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {z} from 'zod';
 import {
   createDailyBabyStep,
+  countDailyBabyStepsForRange,
   DailyStepRelationError,
   listDailyBabyStepsForDate,
   listDailyBabyStepsForRange,
+  MAX_DAILY_STEPS_RANGE_ROWS,
 } from '@/lib/life-coach/repository';
-import {ensureAllActiveCommitmentSteps} from '@/lib/life-coach/ensure-active-commitment-steps';
 import {
   dailyStepDifficultySchema,
   dailyStepStatusSchema,
   lifeDomainSchema,
 } from '@/lib/life-coach/schemas';
-import {isIsoDate, jsonError, jsonOk, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {
+  isDailyStepsDateRangeWithinLimit,
+  isIsoDate,
+  jsonError,
+  jsonMutation,
+  jsonOk,
+  MAX_DAILY_STEPS_DATE_RANGE_DAYS,
+  parseLifeCoachJsonBody,
+  startOfToday,
+} from '@/lib/life-coach/server';
+import {toDailyBabyStepResponse, toDailyBabyStepsResponse} from '@/lib/life-coach/response-dtos';
+import {offsetCapMetadata, parseLimitOffset} from '@/lib/list-pagination';
+import {randomUUID} from 'crypto';
+
+const DEFAULT_RANGE_LIMIT = 500;
 
 const dailyStepCreateSchema = z.object({
   goal_id: z.string().uuid().nullable().optional(),
@@ -25,6 +40,7 @@ const dailyStepCreateSchema = z.object({
   status: dailyStepStatusSchema.optional().default('pending'),
   generated_by_ai: z.boolean().optional().default(false),
   is_general: z.boolean().optional(),
+  idempotency_key: z.string().uuid().optional(),
 });
 
 export async function GET(request: Request) {
@@ -68,10 +84,38 @@ export async function GET(request: Request) {
     if (start > end) {
       return jsonError('Invalid date range. start must be before or equal to end.', 400);
     }
+    if (!isDailyStepsDateRangeWithinLimit(start, end)) {
+      return jsonError(
+        `Invalid date range. Maximum span is ${MAX_DAILY_STEPS_DATE_RANGE_DAYS} days.`,
+        400
+      );
+    }
+
+    const {limit, offset, requestedOffset, offsetCapped} = parseLimitOffset(url.searchParams, {
+      defaultLimit: DEFAULT_RANGE_LIMIT,
+      maxLimit: MAX_DAILY_STEPS_RANGE_ROWS,
+    });
+
+    if (offsetCapped) {
+      console.warn(
+        `[daily-steps] range offset capped at 10000 (requested ${requestedOffset}, user ${current.user.id})`
+      );
+    }
 
     try {
-      const steps = await listDailyBabyStepsForRange(start, end, current.user.id);
-      return jsonOk({start, end, steps: applyFilters(steps)});
+      const [steps, total_count] = await Promise.all([
+        listDailyBabyStepsForRange(start, end, current.user.id, {limit, offset}),
+        countDailyBabyStepsForRange(start, end, current.user.id),
+      ]);
+      return jsonOk({
+        start,
+        end,
+        steps: toDailyBabyStepsResponse(applyFilters(steps)),
+        limit,
+        offset,
+        total_count,
+        ...offsetCapMetadata(requestedOffset, offsetCapped),
+      });
     } catch (error) {
       return jsonError('Could not load daily steps.', 500, String(error));
     }
@@ -83,9 +127,13 @@ export async function GET(request: Request) {
   }
 
   try {
-    await ensureAllActiveCommitmentSteps(current.user.id);
     const steps = await listDailyBabyStepsForDate(date, current.user.id);
-    return jsonOk({date, steps: applyFilters(steps)});
+    const filtered = applyFilters(steps);
+    return jsonOk({
+      date,
+      steps: toDailyBabyStepsResponse(filtered),
+      total_count: filtered.length,
+    });
   } catch (error) {
     return jsonError('Could not load daily steps.', 500, String(error));
   }
@@ -104,11 +152,16 @@ export async function POST(request: Request) {
   }
 
   try {
-    const step = await createDailyBabyStep(current.user.id, {
-      ...parsed.data,
-      goal_id: parsed.data.goal_id ?? null,
-    });
-    return jsonOk({step}, 201);
+    const idempotencyKey = parsed.data.idempotency_key ?? randomUUID();
+    const step = await createDailyBabyStep(
+      current.user.id,
+      {
+        ...parsed.data,
+        goal_id: parsed.data.goal_id ?? null,
+      },
+      {idempotencyKey}
+    );
+    return jsonMutation({step: toDailyBabyStepResponse(step)}, 201);
   } catch (error) {
     if (error instanceof DailyStepRelationError) {
       return jsonError(error.message, 400);

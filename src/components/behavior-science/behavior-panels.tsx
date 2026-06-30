@@ -1,7 +1,7 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-import type {DailyBabyStep, Goal} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse, GoalResponse} from '@/lib/life-coach/response-dtos';
 import type {BehaviorScore} from '@/lib/behavior-science/behavior-score';
 import type {EndOfDayClosure} from '@/lib/behavior-science/end-of-day-closure';
 import type {LifeContextMode} from '@/lib/behavior-science/life-context-mode';
@@ -173,7 +173,7 @@ export function SocialAccountabilityActions({
   );
 }
 
-export function RecoveryQuestCard({step}: {step: DailyBabyStep}) {
+export function RecoveryQuestCard({step}: {step: DailyBabyStepResponse}) {
   const t = useTranslations('behaviorScience.neverMissTwice');
   return (
     <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/8 px-4 py-3" aria-label={`${t('recoveryQuest')}: ${step.title}`}>

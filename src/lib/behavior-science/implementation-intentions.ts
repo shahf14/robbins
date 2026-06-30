@@ -1,6 +1,6 @@
 import {assignSuggestedStepTimes} from '@/lib/schedule-content';
 import type {PreferredActionWindow} from '@/lib/user-preferences';
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 
 type Prefs = {
   wake_time: string;
@@ -16,7 +16,7 @@ const ANCHOR_BY_WINDOW: Record<PreferredActionWindow, string> = {
 };
 
 export function buildImplementationIntention(
-  step: DailyBabyStep,
+  step: DailyBabyStepResponse,
   prefs: Prefs,
   stepIndex = 0,
   totalSteps = 1

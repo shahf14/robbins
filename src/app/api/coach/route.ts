@@ -1,5 +1,5 @@
 import {NextResponse} from 'next/server';
-import {badRequest} from '@/lib/api-response';
+import {jsonError} from '@/lib/life-coach/server';
 import {isLocale, type AppLocale} from '@/i18n/config';
 import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
 import {buildCoachSystemPrompt, buildCoachUserPrompt} from '@/lib/ai-coach/prompts';
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
   const validation = validateCoachRequest(bodyResult.data as CoachRequest);
 
   if (!validation.ok) {
-    return badRequest(validation.error);
+    return jsonError(validation.error, 400);
   }
 
   const input = validation.value;

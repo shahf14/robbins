@@ -1,10 +1,7 @@
 import {assignSuggestedStepTimes, parseTimeToMinutes} from '@/lib/schedule-content';
 import type {PreferredActionWindow} from '@/lib/user-preferences';
-import type {
-  DailyBabyStep,
-  LifeDomain,
-  ReflectionBlockerReason,
-} from './types';
+import type {DailyBabyStepResponse} from './response-dtos';
+import type {LifeDomain, ReflectionBlockerReason} from './types';
 import {deriveEnergyBand} from './step-priority';
 
 type StepFitBreakdown = {
@@ -42,7 +39,7 @@ function timeWindowFit(suggestedTime: string | undefined, now: Date): number {
 
 /** Higher = better time match for this user right now. */
 function computeTimeFit(
-  step: DailyBabyStep,
+  step: DailyBabyStepResponse,
   ctx: StepFitContext,
   suggestedTime?: string
 ): number {
@@ -57,7 +54,7 @@ function computeTimeFit(
 }
 
 /** Higher = better match for current energy. */
-function computeEnergyFit(step: DailyBabyStep, energy: number | null | undefined): number {
+function computeEnergyFit(step: DailyBabyStepResponse, energy: number | null | undefined): number {
   const band = deriveEnergyBand(energy);
   if (band === 'low') {
     if (step.difficulty === 'easy' && step.estimated_minutes <= 10) return 1;
@@ -76,7 +73,7 @@ function computeEnergyFit(step: DailyBabyStep, energy: number | null | undefined
 }
 
 /** Higher = more likely the step is too hard to finish. */
-function computeDifficultyRisk(step: DailyBabyStep): number {
+function computeDifficultyRisk(step: DailyBabyStepResponse): number {
   const base =
     step.difficulty === 'easy' ? 0.2 : step.difficulty === 'medium' ? 0.5 : 0.85;
   const minuteBoost =
@@ -86,7 +83,7 @@ function computeDifficultyRisk(step: DailyBabyStep): number {
 
 /** Higher = more likely past blockers repeat on this step. */
 function computeBlockerRisk(
-  step: DailyBabyStep,
+  step: DailyBabyStepResponse,
   commonBlockers: ReflectionBlockerReason[],
   preferredDomains: LifeDomain[]
 ): number {
@@ -107,7 +104,7 @@ function computeBlockerRisk(
 }
 
 export function computeStepFit(
-  step: DailyBabyStep,
+  step: DailyBabyStepResponse,
   ctx: StepFitContext,
   suggestedTime?: string
 ): StepFitBreakdown {
@@ -136,7 +133,7 @@ export function computeStepFit(
 }
 
 export function deriveFitContextFromSteps(
-  weekSteps: DailyBabyStep[]
+  weekSteps: DailyBabyStepResponse[]
 ): Pick<StepFitContext, 'avgActualMinutes' | 'commonBlockers' | 'preferredDomains'> {
   const completed = weekSteps.filter(
     (s) => s.status === 'completed' && s.actual_minutes != null
@@ -174,7 +171,7 @@ export function deriveFitContextFromSteps(
 }
 
 export function scoreStepsForDisplay(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   ctx: StepFitContext
 ): Map<string, StepFitBreakdown> {
   const wake = ctx.wakeTime ?? '07:00';
@@ -197,9 +194,9 @@ export function scoreStepsForDisplay(
 }
 
 export function pickRecommendedFirst(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   ctx: StepFitContext
-): DailyBabyStep | null {
+): DailyBabyStepResponse | null {
   const pending = steps.filter((s) => s.status === 'pending');
   if (pending.length === 0) return null;
   const scores = scoreStepsForDisplay(pending, ctx);
@@ -209,9 +206,9 @@ export function pickRecommendedFirst(
 }
 
 export function sortPendingByFit(
-  pendingSteps: DailyBabyStep[],
+  pendingSteps: DailyBabyStepResponse[],
   ctx: StepFitContext
-): DailyBabyStep[] {
+): DailyBabyStepResponse[] {
   const scores = scoreStepsForDisplay(pendingSteps, ctx);
   return [...pendingSteps].sort((a, b) => {
     const fitDiff = (scores.get(b.id)?.fit_score ?? 0) - (scores.get(a.id)?.fit_score ?? 0);

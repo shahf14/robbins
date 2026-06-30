@@ -3,7 +3,7 @@ import {buildSkipCoachAdjustment} from '@/lib/skip-coach-loop';
 import {saveSkipCoachAdjustment} from '@/lib/skip-coach-loop/repository';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {getUserParticipantProfile} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, resolveLocale, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {jsonError, jsonMutation, resolveLocale, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {skipCoachAdjustmentInputSchema} from '@/lib/life-coach/schemas';
 import type {PreferredActionWindow} from '@/lib/user-preferences';
 
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       adjustment,
     });
 
-    return jsonOk({adjustment: saved});
+    return jsonMutation({adjustment: saved});
   } catch (error) {
     return jsonError('Could not save skip coach adjustment.', 500, String(error));
   }

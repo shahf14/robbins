@@ -1,7 +1,8 @@
 import {isFirstWinStep} from '@/lib/formulation/first-win-routing';
 import {assignSuggestedStepTimes, parseTimeToMinutes} from '@/lib/schedule-content';
 import type {PreferredActionWindow} from '@/lib/user-preferences';
-import type {DailyBabyStep, DailyStepDifficulty, DailyStepStatus} from './types';
+import type {DailyBabyStepResponse} from './response-dtos';
+import type {DailyStepDifficulty, DailyStepStatus} from './types';
 import {
   deriveFitContextFromSteps,
   pickRecommendedFirst,
@@ -47,7 +48,7 @@ function timeWindowScore(suggestedTime: string | undefined, now = new Date()): n
   return 2;
 }
 
-function energyFitScore(step: DailyBabyStep, band: EnergyBand): number {
+function energyFitScore(step: DailyBabyStepResponse, band: EnergyBand): number {
   const minutesScore =
     band === 'low'
       ? step.estimated_minutes <= 5
@@ -80,7 +81,7 @@ function buildFitContext(
   prefs: SchedulePrefs,
   energy: number | null | undefined,
   now: Date,
-  weekSteps: DailyBabyStep[] = [],
+  weekSteps: DailyBabyStepResponse[] = [],
   fitOverrides?: Partial<StepFitContext>
 ): StepFitContext {
   const derived = deriveFitContextFromSteps(weekSteps);
@@ -97,13 +98,13 @@ function buildFitContext(
 
 /** Pending first, then fit score, then legacy energy/time tie-breakers. */
 export function sortStepsForDisplay(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   prefs: SchedulePrefs,
   now = new Date(),
   energy?: number | null,
-  weekSteps: DailyBabyStep[] = [],
+  weekSteps: DailyBabyStepResponse[] = [],
   fitOverrides?: Partial<StepFitContext>
-): DailyBabyStep[] {
+): DailyBabyStepResponse[] {
   const band = deriveEnergyBand(energy);
   const fitCtx = buildFitContext(prefs, energy, now, weekSteps, fitOverrides);
   const suggestedTimes = assignSuggestedStepTimes(
@@ -155,12 +156,12 @@ export function sortStepsForDisplay(
 
 /** Best pending step by composite fit score. */
 export function pickStartHereStep(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   energy?: number | null,
   prefs?: SchedulePrefs,
-  weekSteps: DailyBabyStep[] = [],
+  weekSteps: DailyBabyStepResponse[] = [],
   fitOverrides?: Partial<StepFitContext>
-): DailyBabyStep | null {
+): DailyBabyStepResponse | null {
   const pending = steps.filter((step) => step.status === 'pending');
   if (pending.length === 0) return null;
 

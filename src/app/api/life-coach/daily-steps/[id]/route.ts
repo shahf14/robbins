@@ -4,13 +4,14 @@ import {
   deleteDailyBabyStep,
   updateDailyBabyStep,
 } from '@/lib/life-coach/repository';
+import {toDailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import {z} from 'zod';
 import {
   dailyStepDifficultySchema,
   dailyStepStatusSchema,
   lifeDomainSchema,
 } from '@/lib/life-coach/schemas';
-import {isIsoDate, jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {isIsoDate, jsonError, jsonMutation, jsonNoContent, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 const dailyStepPatchSchema = z.object({
   goal_id: z.string().uuid().nullable().optional(),
@@ -47,7 +48,7 @@ export async function PATCH(
       return jsonError('Invalid scheduled_date. Expected YYYY-MM-DD.', 400);
     }
     const step = await updateDailyBabyStep(id, parsed.data, current.user.id);
-    return jsonOk({step});
+    return jsonMutation({step: toDailyBabyStepResponse(step)});
   } catch (error) {
     if (String(error).includes('not found')) return jsonError('Daily step not found.', 404);
     if (error instanceof DailyStepRelationError) {
@@ -71,7 +72,7 @@ export async function DELETE(
 
   try {
     await deleteDailyBabyStep(id, current.user.id);
-    return jsonOk({ok: true});
+    return jsonNoContent();
   } catch (error) {
     if (String(error).includes('not found')) return jsonError('Daily step not found.', 404);
     return jsonError('Could not delete daily step.', 500, String(error));

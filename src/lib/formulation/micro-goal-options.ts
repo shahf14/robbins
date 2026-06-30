@@ -3,7 +3,7 @@ import {
   buildFormulationInsights,
   goalReadyLabel,
 } from '@/lib/formulation/formulation-insights';
-import type {FormulationSession} from '@/lib/life-coach/types';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
 
 /** Internal slot types for LLM prompt variety (not shown in UI). */
 export type MicroGoalType = 'practical' | 'mindset' | 'freestyle';
@@ -30,7 +30,7 @@ export type MicroGoalOption = {
 };
 
 /** Main clarified focus for step 7 (until LLM returns burning_focus). */
-export function burningFocusHeadline(session: FormulationSession, locale: AppLocale): string {
+export function burningFocusHeadline(session: FormulationSessionResponse, locale: AppLocale): string {
   const insights = buildFormulationInsights(session, locale);
   const top = insights.burning_now_themes[0];
   if (top) return goalReadyLabel(top, locale);

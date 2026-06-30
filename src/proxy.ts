@@ -1,6 +1,7 @@
 import {clerkMiddleware, createRouteMatcher} from '@clerk/nextjs/server';
 import createIntlMiddleware from 'next-intl/middleware';
 import {NextRequest, NextResponse} from 'next/server';
+import {jsonError} from '@/lib/api-response';
 import {isClerkConfigured} from '@/lib/auth/clerk-config';
 import {
   isLegacyAuthPath,
@@ -80,7 +81,7 @@ const proxy = clerkEnabled
         const {userId} = await auth();
     if (!userId) {
       if (request.nextUrl.pathname.startsWith('/api/')) {
-        return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+        return jsonError('Unauthorized', 401);
       }
       return redirectToLocalizedSignIn(request);
     }

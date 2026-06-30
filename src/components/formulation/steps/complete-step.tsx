@@ -5,7 +5,8 @@ import {useEffect, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {Link, useRouter} from '@/i18n/navigation';
 import type {AppLocale} from '@/i18n/config';
-import type {FormulationSession, LifeDomain, DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse, FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain} from '@/lib/life-coach/types';
 import {LIFE_DOMAINS} from '@/lib/life-coach/types';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
 import {isFirstWinStep, firstWinDisplayReasoning} from '@/lib/formulation/first-win-routing';
@@ -13,7 +14,7 @@ import {loadUserPreferences} from '@/lib/user-preferences';
 import {PersonalizedChallengeCard} from '@/components/formulation/personalized-challenge-card';
 import {buildPersonalizedChallenge} from '@/lib/formulation/personalized-challenge';
 
-type Props = {session: FormulationSession};
+type Props = {session: FormulationSessionResponse};
 
 /**
  * Shown after formulation is marked complete.
@@ -33,7 +34,7 @@ export function CompleteStep({session}: Props) {
   const [generating, setGenerating] = useState(false);
   const [generated,  setGenerated]  = useState(false);
   const [genError,   setGenError]   = useState<string | null>(null);
-  const [firstWinStep, setFirstWinStep] = useState<DailyBabyStep | null>(null);
+  const [firstWinStep, setFirstWinStep] = useState<DailyBabyStepResponse | null>(null);
 
   const handoff   = session.coach_handoff;
   const approved  = session.formulation_approved;

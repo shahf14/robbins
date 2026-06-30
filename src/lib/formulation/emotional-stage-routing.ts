@@ -5,8 +5,8 @@ import type {MindsetBlockerKind} from '@/lib/formulation/mindset-exercises';
 import type {BreathingType, RitualMode} from '@/lib/morning-ritual-types';
 import type {EveningMode} from '@/lib/evening-reset-types';
 import {defaultBreathingType, defaultMorningRitualMode} from '@/lib/life-context-content';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
 import type {
-  FormulationSession,
   LifeContextStatus,
   RiskAction,
   RiskLevel,
@@ -102,7 +102,7 @@ function assessStrengthsSignal(
   return 'weak';
 }
 
-function resolveIntensity(session: FormulationSession): number {
+function resolveIntensity(session: FormulationSessionResponse): number {
   const approved = session.formulation_approved?.intensity_0_10;
   if (typeof approved === 'number' && approved >= 0) return Math.min(10, Math.max(0, approved));
   return buildFormulationInsights(session, session.locale).overall_intensity_0_10;
@@ -263,7 +263,7 @@ function exerciseAdjustments(
 }
 
 export function buildEmotionalStageRouting(
-  session: FormulationSession,
+  session: FormulationSessionResponse,
   locale: AppLocale = session.locale
 ): EmotionalStageRouting {
   const insights = buildFormulationInsights(session, locale);

@@ -1,5 +1,6 @@
 import {dateToYMD} from '@/lib/date-utils';
-import type {DailyBabyStep, StepValueFeedback} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
+import type {StepValueFeedback} from '@/lib/life-coach/types';
 
 const NEGATIVE_FEEDBACK = new Set<StepValueFeedback>([
   'too_small',
@@ -9,7 +10,7 @@ const NEGATIVE_FEEDBACK = new Set<StepValueFeedback>([
 
 /** Ask value question only sometimes — not after every completion. */
 export function shouldPromptStepValueFeedback(input: {
-  step: Pick<DailyBabyStep, 'id' | 'generated_by_ai' | 'value_feedback' | 'status'>;
+  step: Pick<DailyBabyStepResponse, 'id' | 'generated_by_ai' | 'value_feedback' | 'status'>;
   completedAiStepsToday: number;
   recentNegativeFeedbackCount: number;
 }): boolean {
@@ -23,7 +24,7 @@ export function shouldPromptStepValueFeedback(input: {
 }
 
 export function countRecentNegativeValueFeedback(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   windowDays = 7
 ): number {
   const since = new Date();

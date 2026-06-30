@@ -3,7 +3,8 @@
 import {useMemo} from 'react';
 import {useTranslations} from 'next-intl';
 import {weeklyReviewEmptyKey} from '@/lib/life-context-content';
-import type {AiCoachingInsight, WeeklyReview} from '@/lib/life-coach/types';
+import type {AiCoachingInsightResponse, DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
+import type {WeeklyReview} from '@/lib/life-coach/types';
 import {loadUserPreferences} from '@/lib/user-preferences';
 import {WeeklyReviewEmotionalLayer} from '@/components/life-coach/shared/weekly-review-emotional-layer';
 import {WeeklyReviewProgressEvidenceCard} from '@/components/life-coach/shared/weekly-review-progress-evidence';
@@ -11,7 +12,6 @@ import {WeeklyReviewRecurringPatternSection} from '@/components/life-coach/share
 import {InfoNote} from '@/components/life-coach/shared/info-note';
 import {NextBestActionCta} from '@/components/next-best-action/next-best-action-cta';
 import {computeWeeklyReviewReadiness, WEEKLY_REVIEW_MIN_ACTIVE_DAYS, WEEKLY_REVIEW_MIN_STEPS} from '@/lib/life-coach/weekly-review-readiness';
-import type {DailyBabyStep} from '@/lib/life-coach/types';
 
 function useWeekendSignal() {
   // 0=Sun, 5=Fri, 6=Sat — ideal review days
@@ -23,8 +23,8 @@ export function WeeklyReviewCard({
   insight,
   recentSteps = [],
 }: {
-  insight: AiCoachingInsight | null;
-  recentSteps?: DailyBabyStep[];
+  insight: AiCoachingInsightResponse | null;
+  recentSteps?: DailyBabyStepResponse[];
 }) {
   const t = useTranslations();
   const lifeContexts = loadUserPreferences().life_context_statuses;

@@ -4,6 +4,9 @@ import {assertRitualNotUncompleted} from '@/lib/ritual-session-guards';
 import type {EveningResetSession} from '@/lib/evening-reset-types';
 import {dateToYMD} from '@/lib/date-utils';
 
+export const DEFAULT_RITUAL_SESSION_LIMIT = 60;
+export const MAX_RITUAL_SESSION_LIMIT = 400;
+
 type EveningRow = {
   id: string;
   date: string;
@@ -11,6 +14,23 @@ type EveningRow = {
   duration_sec: number | null;
   session_json: string | null;
 };
+
+type RitualListOptions = {limit?: number; offset?: number};
+
+function resolveRitualPagination(limitOrOptions?: number | RitualListOptions) {
+  if (typeof limitOrOptions === 'number') {
+    return {
+      limit: Math.min(Math.max(limitOrOptions, 1), MAX_RITUAL_SESSION_LIMIT),
+      offset: 0,
+    };
+  }
+  const limit = Math.min(
+    Math.max(limitOrOptions?.limit ?? DEFAULT_RITUAL_SESSION_LIMIT, 1),
+    MAX_RITUAL_SESSION_LIMIT
+  );
+  const offset = Math.min(Math.max(limitOrOptions?.offset ?? 0, 0), 10_000);
+  return {limit, offset};
+}
 
 function rowToSession(row: EveningRow): EveningResetSession | null {
   if (!row.session_json) return null;
@@ -33,16 +53,43 @@ export function getCompletedEveningResetForDate(
   return rowToSession(row);
 }
 
-export function listEveningResetSessions(userId: string, limit = 60): EveningResetSession[] {
+export function countEveningResetSessions(userId: string): number {
+  const row = dbGet<{count: number}>(
+    `SELECT COUNT(*) as count FROM evening_resets WHERE user_id = ?`,
+    [userId]
+  );
+  return row?.count ?? 0;
+}
+
+export function listEveningResetSessions(
+  userId: string,
+  limitOrOptions?: number | RitualListOptions
+): EveningResetSession[] {
+  const {limit, offset} = resolveRitualPagination(limitOrOptions);
   const rows = dbAll<EveningRow>(
     `SELECT id, date, completed, duration_sec, session_json
        FROM evening_resets
       WHERE user_id = ?
       ORDER BY date DESC, created_at DESC
-      LIMIT ?`,
-    [userId, limit]
+      LIMIT ? OFFSET ?`,
+    [userId, limit, offset]
   );
   return rows.map(rowToSession).filter((s): s is EveningResetSession => s !== null);
+}
+
+export function getEveningResetSessionById(
+  userId: string,
+  sessionId: string
+): EveningResetSession | null {
+  const row = dbGet<EveningRow>(
+    `SELECT id, date, completed, duration_sec, session_json
+       FROM evening_resets
+      WHERE user_id = ? AND id = ?
+      LIMIT 1`,
+    [userId, sessionId]
+  );
+  if (!row) return null;
+  return rowToSession(row);
 }
 
 export function saveEveningResetSession(userId: string, session: EveningResetSession): void {

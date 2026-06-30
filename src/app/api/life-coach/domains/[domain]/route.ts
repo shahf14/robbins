@@ -8,10 +8,16 @@ import {
   listMilestonesForGoal,
   listRecentDailyBabySteps,
 } from '@/lib/life-coach/repository';
-import {ensureAllActiveCommitmentSteps} from '@/lib/life-coach/ensure-active-commitment-steps';
 import {jsonError, jsonOk, startOfToday} from '@/lib/life-coach/server';
 import {lifeDomainSchema} from '@/lib/life-coach/schemas';
 import {resolveDailyFocusContext} from '@/lib/daily-focus-context';
+import {
+  toAiCoachingInsightsResponse,
+  toDailyBabyStepsResponse,
+  toGoalsWithMilestonesResponse,
+  toNullableAiCoachingInsightResponse,
+  toNullableLifeDomainStateResponse,
+} from '@/lib/life-coach/response-dtos';
 
 export async function GET(
   request: Request,
@@ -32,7 +38,6 @@ export async function GET(
 
   try {
     const domain = parsedDomain.data;
-    await ensureAllActiveCommitmentSteps(current.user.id);
     const today = startOfToday();
     const [state, goals, todaySteps, recentSteps, insights, weeklyReview, dailyFocus] = await Promise.all([
       getLifeDomainState(domain, current.user.id),
@@ -53,12 +58,12 @@ export async function GET(
 
     return jsonOk({
       domain,
-      state,
-      goals: goalsWithMilestones,
-      todaySteps: todaySteps.filter((step) => step.domain === domain),
-      recentSteps,
-      insights: insights.slice(0, 6),
-      weeklyReview,
+      state: toNullableLifeDomainStateResponse(state),
+      goals: toGoalsWithMilestonesResponse(goalsWithMilestones),
+      todaySteps: toDailyBabyStepsResponse(todaySteps.filter((step) => step.domain === domain)),
+      recentSteps: toDailyBabyStepsResponse(recentSteps),
+      insights: toAiCoachingInsightsResponse(insights.slice(0, 6)),
+      weeklyReview: toNullableAiCoachingInsightResponse(weeklyReview),
       dailyFocus,
     });
   } catch (error) {

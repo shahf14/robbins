@@ -4,7 +4,7 @@ import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
 import {getDailyBabyStepById} from '@/lib/life-coach/repository';
 import {skipRecoverySuggestInputSchema} from '@/lib/life-coach/schemas';
 import {buildSkipRecoveryStep} from '@/lib/life-coach/simplify-step';
-import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {jsonError, jsonMutation, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import type {AppLocale} from '@/i18n/config';
 
 export async function POST(
@@ -43,8 +43,8 @@ export async function POST(
       step,
       blocker_reason: parsed.data.blocker_reason,
     });
-    return jsonOk({content});
+    return jsonMutation({content});
   } catch {
-    return jsonOk({content: buildSkipRecoveryStep(step, locale)});
+    return jsonMutation({content: buildSkipRecoveryStep(step, locale)});
   }
 }

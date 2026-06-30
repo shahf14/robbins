@@ -3,8 +3,8 @@ import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
 import {formatLifeContextLabels} from '@/lib/life-context-labels';
 import {getLifeCoachModelConfig} from '@/lib/life-coach/env';
 import {getUserParticipantProfile} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
-import {inspireGoalMilestonesResponseSchema, inspireGoalRequestSchema} from '@/lib/life-coach/schemas';
+import {jsonError, jsonMutation, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
+import {inspireGoalMilestonesResponseSchema, inspireGoalRequestSchema, inspireGoalResponseSchema} from '@/lib/life-coach/schemas';
 import {requestLlmText, requestStructuredJson} from '@/lib/llm/request-structured-json';
 import {TEXT_RESPONSE_LANGUAGE_INSTRUCTION} from '@/lib/llm/language-instruction';
 import type {AppLocale} from '@/i18n/config';
@@ -239,7 +239,8 @@ export async function POST(request: Request) {
         goalText,
         lifeContextLabels
       );
-      return jsonOk(milestones);
+      const payload = inspireGoalResponseSchema.parse({milestones});
+      return jsonMutation(payload);
     }
 
     const inspiration = await generateGoalInspiration(
@@ -249,7 +250,8 @@ export async function POST(request: Request) {
       lifeContextLabels,
       profile.life_context_note
     );
-    return jsonOk({inspiration});
+    const payload = inspireGoalResponseSchema.parse({inspiration});
+    return jsonMutation(payload);
   } catch (error) {
     return jsonError('Could not generate inspiration.', 500, String(error));
   }

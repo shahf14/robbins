@@ -1,9 +1,9 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 
-export function FinalBossBanner({step}: {step: DailyBabyStep}) {
+export function FinalBossBanner({step}: {step: DailyBabyStepResponse}) {
   const t = useTranslations('gamification.finalBoss');
 
   return (

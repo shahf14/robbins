@@ -39,13 +39,13 @@ import {
 import {normalizeWizardPhase, previousWizardPhase, WIZARD_PHASES, wizardPhaseNumber} from '@/lib/formulation/phase-nav';
 import {formulationApi, LifeCoachApiError} from '@/lib/life-coach/api-client';
 import {classifyLoadFailure, type ApiLoadFailureKind} from '@/lib/life-coach/api-error';
-import type {FormulationSession} from '@/lib/life-coach/types';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
 import {FeatureHint} from '@/components/feedback/feature-hint';
 import {LoadingErrorPanel} from '@/components/feedback/loading-error-panel';
 import {useConfirm} from '@/components/feedback/confirm-provider';
 import {useFeatureVisit} from '@/hooks/use-feature-visit';
 
-function resolveWizardPhase(session: FormulationSession): string {
+function resolveWizardPhase(session: FormulationSessionResponse): string {
   return normalizeWizardPhase(session.current_phase, session.status);
 }
 
@@ -75,13 +75,13 @@ export function FormulationSessionWizard() {
   useFeatureVisit('formulation');
   const {confirm} = useConfirm();
 
-  const [session, setSession] = useState<FormulationSession | null>(null);
+  const [session, setSession] = useState<FormulationSessionResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadFailure, setLoadFailure] = useState<ApiLoadFailureKind | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [serverProfile, setServerProfile] = useState<{
-    life_context_statuses: FormulationSession['life_context_statuses'];
+    life_context_statuses: FormulationSessionResponse['life_context_statuses'];
     gender: string | null;
     age: number | null;
   } | null>(null);

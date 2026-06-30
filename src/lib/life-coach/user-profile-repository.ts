@@ -12,6 +12,15 @@ export async function ensureUserProfile(
   user: {id: string; email?: string | null},
   input?: Partial<Pick<UserProfile, 'preferred_language' | 'timezone'>>
 ): Promise<UserProfile> {
+  ensureUserProfileSync(user, input);
+  const row = dbGet<Record<string, unknown>>(`SELECT * FROM users WHERE id = ?`, [user.id]);
+  return rowToUserProfile(user.id, row, new Date().toISOString());
+}
+
+export function ensureUserProfileSync(
+  user: {id: string; email?: string | null},
+  input?: Partial<Pick<UserProfile, 'preferred_language' | 'timezone'>>
+): void {
   const now = new Date().toISOString();
   dbRun(
     `INSERT INTO users (id, email, language, timezone, created_at, updated_at)
@@ -32,8 +41,6 @@ export async function ensureUserProfile(
       input?.timezone ?? null,
     ]
   );
-  const row = dbGet<Record<string, unknown>>(`SELECT * FROM users WHERE id = ?`, [user.id]);
-  return rowToUserProfile(user.id, row, now);
 }
 
 /** Deletes the user and all dependent records (explicit wipe — safe on all DB shapes). */

@@ -3,7 +3,8 @@
 import {useState} from 'react';
 import {useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
-import type {AiCoachingInsight, DailyBabyStep, LifeDomain} from '@/lib/life-coach/types';
+import type {AiCoachingInsightResponse, DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain} from '@/lib/life-coach/types';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
 import {resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
 import {todayYMD} from '@/lib/date-utils';
@@ -15,9 +16,9 @@ import {EnhancedWeeklyReview} from './enhanced-weekly-review';
 type Props = {
   domain: LifeDomain;
   locale: AppLocale;
-  insights: AiCoachingInsight[];
-  weeklyReview: AiCoachingInsight | null;
-  allRecentSteps: DailyBabyStep[];
+  insights: AiCoachingInsightResponse[];
+  weeklyReview: AiCoachingInsightResponse | null;
+  allRecentSteps: DailyBabyStepResponse[];
   onRefresh: () => Promise<void>;
 };
 

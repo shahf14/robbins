@@ -1,6 +1,7 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {updateDailyBabyStepContent} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {toDailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
+import {jsonError, jsonMutation, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {z} from 'zod';
 
 const schema = z.object({
@@ -29,7 +30,7 @@ export async function PATCH(
 
   try {
     const step = await updateDailyBabyStepContent(id, parsed.data, current.user.id);
-    return jsonOk({step});
+    return jsonMutation({step: toDailyBabyStepResponse(step)});
   } catch (error) {
     if (String(error).includes('not found')) return jsonError('Daily step not found.', 404);
     return jsonError('Could not update daily step.', 500, String(error));

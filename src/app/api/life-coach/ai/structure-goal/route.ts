@@ -12,7 +12,7 @@ import {
   getUserParticipantProfile,
   listRecentReflections,
 } from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, resolveLocale, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {jsonError, jsonMutation, resolveLocale, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {aiStructureGoalRequestSchema} from '@/lib/life-coach/schemas';
 
 export async function POST(request: Request) {
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
       user_behavior_profile: behaviorProfile,
     });
 
-    return jsonOk({
+    return jsonMutation({
       goal: {
         domain: parsed.data.domain,
         domain_category: parsed.data.domain_category ?? null,

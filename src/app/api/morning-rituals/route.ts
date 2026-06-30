@@ -5,22 +5,39 @@
  * Backed purely by the local SQLite DB.
  */
 import {morningRitualSessionSchema} from '@/lib/api-body-schemas';
+import {jsonError, jsonMutation, jsonOk} from '@/lib/life-coach/server';
 import {requireCurrentUser} from '@/lib/auth/get-current-user';
 import {
+  countMorningRitualSessions,
+  DEFAULT_RITUAL_SESSION_LIMIT,
   listMorningRitualSessions,
+  MAX_RITUAL_SESSION_LIMIT,
   saveMorningRitualSession,
 } from '@/lib/db/repositories/morning-rituals';
 import type {MorningRitualSession} from '@/lib/morning-ritual-types';
-import {serverError} from '@/lib/api-response';
 import {RitualSessionUncompleteError} from '@/lib/ritual-session-guards';
 import {JSON_BODY_LIMITS, readAuthenticatedJsonBody} from '@/lib/read-authenticated-json-body';
+import {offsetCapMetadata, parseLimitOffset} from '@/lib/list-pagination';
 
 export async function GET(request: Request) {
   const current = await requireCurrentUser(request);
   if (!current.ok) return current.response;
 
-  const sessions = listMorningRitualSessions(current.user.id);
-  return Response.json({sessions});
+  const {limit, offset, requestedOffset, offsetCapped} = parseLimitOffset(
+    new URL(request.url).searchParams,
+    {defaultLimit: DEFAULT_RITUAL_SESSION_LIMIT, maxLimit: MAX_RITUAL_SESSION_LIMIT}
+  );
+
+  const sessions = listMorningRitualSessions(current.user.id, {limit, offset});
+  const total_count = countMorningRitualSessions(current.user.id);
+
+  return jsonOk({
+    sessions,
+    limit,
+    offset,
+    total_count,
+    ...offsetCapMetadata(requestedOffset, offsetCapped),
+  });
 }
 
 export async function POST(request: Request) {
@@ -34,11 +51,11 @@ export async function POST(request: Request) {
 
   try {
     saveMorningRitualSession(body.user.id, session);
-    return Response.json({ok: true});
+    return jsonMutation();
   } catch (error) {
     if (error instanceof RitualSessionUncompleteError) {
-      return Response.json({error: error.message}, {status: 409});
+      return jsonError(error.message, 409);
     }
-    return serverError('Could not save morning ritual session');
+    return jsonError('Could not save morning ritual session', 500);
   }
 }

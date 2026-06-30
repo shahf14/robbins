@@ -1,11 +1,11 @@
-import {mkdir, appendFile} from 'node:fs/promises';
-import {join} from 'node:path';
-import {NextResponse} from 'next/server';
-import {tooManyRequests, payloadTooLarge} from '@/lib/api-response';
+import {jsonError, jsonMutation} from '@/lib/life-coach/server';
 import {requireCurrentUser} from '@/lib/auth/get-current-user';
-import {formatJerusalemLogDate} from '@/lib/client-logs';
-import {dbGet, dbRun} from '@/lib/db/sqlite';
-import {redactLogFields} from '@/lib/log-redaction';
+import {
+  appendClientLogEntrySync,
+  ClientLogQuotaExceededError,
+  MAX_LOG_BYTES_PER_USER_DAY,
+} from '@/lib/client-log-storage';
+import {redactLogFields, sanitizeLogLine} from '@/lib/log-redaction';
 import {parseJsonObjectOr} from '@/lib/safe-json';
 
 type ClientLogPayload = {
@@ -24,7 +24,6 @@ const MAX_LOG_BODY_BYTES = 32_768;
 const MAX_LOG_FIELD_LENGTH = 8_192;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 60;
-const MAX_LOG_BYTES_PER_USER_DAY = 512_000;
 const logRateLimit = new Map<string, {count: number; resetAt: number}>();
 
 export async function POST(request: Request) {
@@ -32,12 +31,12 @@ export async function POST(request: Request) {
   if (!current.ok) return current.response;
 
   if (!checkRateLimit(current.user.id)) {
-    return tooManyRequests('Too many log requests');
+    return jsonError('Too many log requests', 429);
   }
 
   const declaredLength = Number(request.headers.get('content-length') ?? 0);
   if (declaredLength > MAX_LOG_BODY_BYTES) {
-    return payloadTooLarge('Log payload is too large');
+    return jsonError('Log payload is too large', 413);
   }
 
   let payload: ClientLogPayload;
@@ -45,7 +44,7 @@ export async function POST(request: Request) {
   try {
     const raw = await request.text();
     if (Buffer.byteLength(raw, 'utf8') > MAX_LOG_BODY_BYTES) {
-      return payloadTooLarge('Log payload is too large');
+      return jsonError('Log payload is too large', 413);
     }
     payload = parseJsonObjectOr<ClientLogPayload>(raw, {});
   } catch {
@@ -56,14 +55,18 @@ export async function POST(request: Request) {
     };
   }
 
-  const logLine = buildLogLine(payload);
-  if (!canWriteLogBytes(current.user.id, Buffer.byteLength(logLine, 'utf8'))) {
-    return payloadTooLarge('Daily log quota exceeded');
+  const logLine = sanitizeLogLine(buildLogLine(payload));
+
+  try {
+    appendClientLogEntrySync(current.user.id, logLine);
+  } catch (error) {
+    if (error instanceof ClientLogQuotaExceededError) {
+      return jsonError('Daily log quota exceeded', 413);
+    }
+    throw error;
   }
 
-  await writeClientLog(current.user.id, logLine);
-
-  return NextResponse.json({ok: true});
+  return jsonMutation();
 }
 
 function checkRateLimit(userId: string) {
@@ -114,32 +117,4 @@ function buildLogLine(payload: ClientLogPayload) {
   );
 }
 
-function canWriteLogBytes(userId: string, nextBytes: number) {
-  const logDate = formatJerusalemLogDate();
-  const row = dbGet<{bytes_written: number}>(
-    `SELECT bytes_written FROM client_log_usage WHERE user_id = ? AND log_date = ?`,
-    [userId, logDate]
-  );
-  const currentBytes = row?.bytes_written ?? 0;
-  return currentBytes + nextBytes <= MAX_LOG_BYTES_PER_USER_DAY;
-}
-
-function recordLogBytes(userId: string, bytes: number) {
-  const logDate = formatJerusalemLogDate();
-  dbRun(
-    `INSERT INTO client_log_usage (user_id, log_date, bytes_written)
-     VALUES (?, ?, ?)
-     ON CONFLICT(user_id, log_date) DO UPDATE SET
-       bytes_written = client_log_usage.bytes_written + excluded.bytes_written`,
-    [userId, logDate, bytes]
-  );
-}
-
-async function writeClientLog(userId: string, logLine: string) {
-  const logsDir = join(process.cwd(), 'logs');
-  const fileName = `${formatJerusalemLogDate()}.log`;
-
-  await mkdir(logsDir, {recursive: true});
-  await appendFile(join(logsDir, fileName), logLine, 'utf8');
-  recordLogBytes(userId, Buffer.byteLength(logLine, 'utf8'));
-}
+export {MAX_LOG_BYTES_PER_USER_DAY};

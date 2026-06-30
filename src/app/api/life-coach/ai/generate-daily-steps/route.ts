@@ -3,6 +3,7 @@ import {AiRateLimitExceededError} from '@/lib/ai-rate-limit';
 import {DailyStepsGenerationLockedError} from '@/lib/life-coach/daily-steps-generation-lock';
 import {generateDailyStepsForUser} from '@/lib/life-coach/generate-daily-steps-for-user';
 import {getOnboardingServerStatus, getUserParticipantProfile, listDailyBabyStepsForDate} from '@/lib/life-coach/repository';
+import {toDailyBabyStepsResponse} from '@/lib/life-coach/response-dtos';
 import {jsonError, jsonOk, resolveLocale, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {aiGenerateDailyStepsRequestSchema} from '@/lib/life-coach/schemas';
 import {isFirstWinStep} from '@/lib/formulation/first-win-routing';
@@ -10,7 +11,6 @@ import {
   filterStepsForDomain,
   hasReusablePendingAiSteps,
 } from '@/lib/life-coach/generate-daily-steps-scope';
-import {NextResponse} from 'next/server';
 
 export async function POST(request: Request) {
   const current = await requireLifeCoachAccess(request);
@@ -42,7 +42,11 @@ export async function POST(request: Request) {
       const needsFirstWin =
         !domain && includeFirstWin && !existing.some(isFirstWinStep);
       if (!needsFirstWin) {
-        return jsonOk({date, steps: scopedExisting});
+        return jsonOk({
+          date,
+          steps: toDailyBabyStepsResponse(scopedExisting),
+          generation_in_progress: false,
+        });
       }
     }
 
@@ -69,20 +73,28 @@ export async function POST(request: Request) {
       includeFirstWin,
       domain
     );
-    return jsonOk({date, steps: filterStepsForDomain(steps, domain)});
+    return jsonOk({
+      date,
+      steps: toDailyBabyStepsResponse(filterStepsForDomain(steps, domain)),
+      generation_in_progress: false,
+    });
   } catch (error) {
     if (error instanceof AiRateLimitExceededError) {
       const retryAfterSeconds = Math.max(1, Math.ceil((error.resetAt - Date.now()) / 1000));
-      return NextResponse.json(
-        {error: 'AI rate limit exceeded.', retry_after_seconds: retryAfterSeconds},
-        {status: 429, headers: {'Retry-After': String(retryAfterSeconds)}}
-      );
+      return jsonError('AI rate limit exceeded.', 429, undefined, {
+        extra: {retry_after_seconds: retryAfterSeconds},
+        headers: {'Retry-After': String(retryAfterSeconds)},
+      });
     }
     if (error instanceof DailyStepsGenerationLockedError) {
       const inFlightExisting = await listDailyBabyStepsForDate(date, current.user.id);
       const scoped = filterStepsForDomain(inFlightExisting, domain);
       if (scoped.length > 0) {
-        return jsonOk({date, steps: scoped, generation_in_progress: true});
+        return jsonOk({
+          date,
+          steps: toDailyBabyStepsResponse(scoped),
+          generation_in_progress: true,
+        });
       }
       return jsonError('Daily steps generation already in progress.', 409);
     }

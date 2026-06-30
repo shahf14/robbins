@@ -1,4 +1,9 @@
-import type {DailyBabyStep, Goal, LifeDomain, LifeDomainState, Milestone} from '@/lib/life-coach/types';
+import type {
+  DailyBabyStepResponse,
+  GoalWithMilestonesResponse,
+  LifeDomainStateResponse,
+} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain, Milestone} from '@/lib/life-coach/types';
 import type {DailyFocusContext} from '@/lib/daily-focus-context';
 import type {MorningRitualSession} from '@/lib/morning-ritual-types';
 import type {PersonalizedChallenge} from '@/lib/formulation/personalized-challenge';
@@ -10,7 +15,7 @@ import type {SkipAdaptationContext} from '@/lib/formulation/skip-adaptation-rout
 import {WEEKLY_TARGET_RATIO} from '@/lib/life-coach/progress-constants';
 import {completedRitualSessions, ritualEnergy} from '@/lib/home/ritual-derived';
 
-export type GoalWithMilestones = Goal & {milestones?: Milestone[]};
+export type GoalWithMilestones = GoalWithMilestonesResponse;
 
 export type CelebrationId = 'firstStep' | 'allDone' | 'weeklyChallenge' | 'multiGoal';
 
@@ -30,8 +35,8 @@ export type HomeBadge = {
 
 export type HomeDashboardData = {
   goals: GoalWithMilestones[];
-  todaySteps: DailyBabyStep[];
-  domainStates: LifeDomainState[];
+  todaySteps: DailyBabyStepResponse[];
+  domainStates: LifeDomainStateResponse[];
   ritualStreak: number;
   hasTodayRitual: boolean;
   hasTodayEvening: boolean;
@@ -39,7 +44,7 @@ export type HomeDashboardData = {
   weeklyDone: number;
   weeklyTotal: number;
   weeklyMinutes: number;
-  weekSteps: DailyBabyStep[];
+  weekSteps: DailyBabyStepResponse[];
   displayName: string;
   personalizedChallenge: PersonalizedChallenge | null;
   loadAdaptation: LoadAdaptationContext | null;

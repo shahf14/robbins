@@ -1,6 +1,7 @@
 import {randomUUID} from 'crypto';
 import {getDb, dbAll, dbGet, dbRun} from '@/lib/db/sqlite';
 import {refreshUserBehaviorProfile} from '@/lib/behavior-profile/repository';
+import {isSqliteUniqueConstraintError} from '@/lib/goal-create-idempotency';
 import {ensurePlanBFields} from '@/lib/life-coach/plan-b';
 import {clampStepReasoning} from '@/lib/life-coach/step-reasoning';
 import {dateToYMD} from '@/lib/date-utils';
@@ -55,18 +56,43 @@ export async function listDailyBabyStepsForDate(date: string, userId?: string): 
   return rows.map(rowToStep);
 }
 
+export const MAX_DAILY_STEPS_RANGE_ROWS = 2_000;
+
 export async function listDailyBabyStepsForRange(
   startDate: string,
   endDate: string,
-  userId?: string
+  userId?: string,
+  options?: {limit?: number; offset?: number}
 ): Promise<DailyBabyStep[]> {
-  const rows = dbAll<Record<string, unknown>>(
+  let sql = userId
+    ? `SELECT * FROM daily_steps WHERE scheduled_date >= ? AND scheduled_date <= ? AND user_id = ?`
+    : `SELECT * FROM daily_steps WHERE scheduled_date >= ? AND scheduled_date <= ?`;
+  const params: unknown[] = userId ? [startDate, endDate, userId] : [startDate, endDate];
+  sql += ` ORDER BY scheduled_date ASC, created_at ASC`;
+
+  if (options?.limit !== undefined) {
+    const limit = Math.min(Math.max(options.limit, 1), MAX_DAILY_STEPS_RANGE_ROWS);
+    const offset = Math.min(Math.max(options.offset ?? 0, 0), 10_000);
+    sql += ` LIMIT ? OFFSET ?`;
+    params.push(limit, offset);
+  }
+
+  const rows = dbAll<Record<string, unknown>>(sql, params);
+  return rows.map(rowToStep);
+}
+
+export async function countDailyBabyStepsForRange(
+  startDate: string,
+  endDate: string,
+  userId?: string
+): Promise<number> {
+  const row = dbGet<{count: number}>(
     userId
-      ? `SELECT * FROM daily_steps WHERE scheduled_date >= ? AND scheduled_date <= ? AND user_id = ? ORDER BY scheduled_date ASC, created_at ASC`
-      : `SELECT * FROM daily_steps WHERE scheduled_date >= ? AND scheduled_date <= ? ORDER BY scheduled_date ASC, created_at ASC`,
+      ? `SELECT COUNT(*) as count FROM daily_steps WHERE scheduled_date >= ? AND scheduled_date <= ? AND user_id = ?`
+      : `SELECT COUNT(*) as count FROM daily_steps WHERE scheduled_date >= ? AND scheduled_date <= ?`,
     userId ? [startDate, endDate, userId] : [startDate, endDate]
   );
-  return rows.map(rowToStep);
+  return row?.count ?? 0;
 }
 
 export async function listRecentDailyBabySteps(limit = 21, userId?: string): Promise<DailyBabyStep[]> {
@@ -77,6 +103,17 @@ export async function listRecentDailyBabySteps(limit = 21, userId?: string): Pro
     userId ? [userId, limit] : [limit]
   );
   return rows.map(rowToStep);
+}
+
+export function findDailyStepByCreateIdempotencyKey(
+  userId: string,
+  key: string
+): DailyBabyStep | null {
+  const row = dbGet<Record<string, unknown>>(
+    `SELECT * FROM daily_steps WHERE user_id = ? AND create_idempotency_key = ?`,
+    [userId, key]
+  );
+  return row ? rowToStep(row) : null;
 }
 
 export async function createDailyBabyStep(
@@ -106,47 +143,62 @@ export async function createDailyBabyStep(
         | 'fallback_estimated_minutes'
         | 'validation_fallback_applied'
       >
-    >
+    >,
+  options?: {idempotencyKey?: string}
 ): Promise<DailyBabyStep> {
+  if (options?.idempotencyKey) {
+    const existing = findDailyStepByCreateIdempotencyKey(userId, options.idempotencyKey);
+    if (existing) return existing;
+  }
+
   const now = new Date().toISOString();
   const completedAt = input.status === 'completed' ? now : null;
   const id = randomUUID();
   const isGeneral = validateDailyStepRelation(userId, input);
 
-  dbRun(
-    `INSERT INTO daily_steps
-      (id, user_id, goal_id, domain, title, description, estimated_minutes,
-       difficulty, scheduled_date, status, generated_by_ai, is_general, completed_at,
-       fallback_title, fallback_description, fallback_estimated_minutes,
-       reasoning, expected_resistance, pain_addressed, success_signal,
-       validation_fallback_applied, created_at, updated_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [
-      id,
-      userId,
-      input.goal_id ?? null,
-      input.domain,
-      input.title,
-      input.description ?? '',
-      input.estimated_minutes,
-      input.difficulty,
-      input.scheduled_date,
-      input.status,
-      input.generated_by_ai ? 1 : 0,
-      isGeneral ? 1 : 0,
-      completedAt,
-      input.fallback_title ?? null,
-      input.fallback_description ?? null,
-      input.fallback_estimated_minutes ?? null,
-      clampStepReasoning(input.reasoning),
-      input.expected_resistance ?? null,
-      input.pain_addressed ?? null,
-      input.success_signal ?? null,
-      input.validation_fallback_applied ? 1 : 0,
-      now,
-      now,
-    ]
-  );
+  try {
+    dbRun(
+      `INSERT INTO daily_steps
+        (id, user_id, goal_id, domain, title, description, estimated_minutes,
+         difficulty, scheduled_date, status, generated_by_ai, is_general, completed_at,
+         fallback_title, fallback_description, fallback_estimated_minutes,
+         reasoning, expected_resistance, pain_addressed, success_signal,
+         validation_fallback_applied, create_idempotency_key, created_at, updated_at)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      [
+        id,
+        userId,
+        input.goal_id ?? null,
+        input.domain,
+        input.title,
+        input.description ?? '',
+        input.estimated_minutes,
+        input.difficulty,
+        input.scheduled_date,
+        input.status,
+        input.generated_by_ai ? 1 : 0,
+        isGeneral ? 1 : 0,
+        completedAt,
+        input.fallback_title ?? null,
+        input.fallback_description ?? null,
+        input.fallback_estimated_minutes ?? null,
+        clampStepReasoning(input.reasoning),
+        input.expected_resistance ?? null,
+        input.pain_addressed ?? null,
+        input.success_signal ?? null,
+        input.validation_fallback_applied ? 1 : 0,
+        options?.idempotencyKey ?? null,
+        now,
+        now,
+      ]
+    );
+  } catch (error) {
+    if (options?.idempotencyKey && isSqliteUniqueConstraintError(error)) {
+      const existing = findDailyStepByCreateIdempotencyKey(userId, options.idempotencyKey);
+      if (existing) return existing;
+    }
+    throw error;
+  }
 
   const row = dbGet<Record<string, unknown>>(`SELECT * FROM daily_steps WHERE id = ?`, [id]);
   if (!row) throw new Error(`Daily step ${id} was not created`);

@@ -11,7 +11,8 @@ import {useLocale, useTranslations} from 'next-intl';
 import {useSearchParams} from 'next/navigation';
 import {usePathname, useRouter, Link} from '@/i18n/navigation';
 import type {AppLocale} from '@/i18n/config';
-import type {LifeDomain, LifeDomainState} from '@/lib/life-coach/types';
+import type {LifeDomainStateResponse} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain} from '@/lib/life-coach/types';
 import {goalInspirationStarterKeys, orderDomainCategories} from '@/lib/life-context-content';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
 import {resolveWeeklyReviewErrorMessage} from '@/lib/life-coach/api-error';
@@ -27,7 +28,7 @@ import {InfoNote} from './shared/info-note';
 
 type Props = {
   domain: LifeDomain;
-  assessment: LifeDomainState | null;
+  assessment: LifeDomainStateResponse | null;
   onCreated: () => Promise<void>;
 };
 
@@ -165,6 +166,9 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
     setErrorMessage(null);
     try {
       const result = await lifeCoachApi.inspireGoal({locale, domain, category: effectiveCategory});
+      if (!result.inspiration) {
+        throw new Error('Missing goal inspiration from server.');
+      }
       setGoalText(result.inspiration);
     } catch (error) {
       setErrorMessage(resolveWeeklyReviewErrorMessage(error, t));
@@ -178,9 +182,12 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
     setErrorMessage(null);
     try {
       const result = await lifeCoachApi.inspireMilestones({locale, domain, category: effectiveCategory, goal_text: goalText});
-      setMilestone30(result.days_30);
-      setMilestone60(result.days_60);
-      setMilestone90(result.days_90);
+      if (!result.milestones) {
+        throw new Error('Missing milestones from server.');
+      }
+      setMilestone30(result.milestones.days_30);
+      setMilestone60(result.milestones.days_60);
+      setMilestone90(result.milestones.days_90);
     } catch (error) {
       setErrorMessage(resolveWeeklyReviewErrorMessage(error, t));
     } finally {

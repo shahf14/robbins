@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {expandTextRequestSchema, inspireGoalRequestSchema} from './ai-request-schemas.ts';
+import {expandTextRequestSchema, inspireGoalRequestSchema, inspireGoalResponseSchema} from './ai-request-schemas.ts';
 
 test('inspireGoalRequestSchema accepts valid goal mode payload', () => {
   const parsed = inspireGoalRequestSchema.safeParse({
@@ -47,6 +47,25 @@ test('inspireGoalRequestSchema rejects unsupported domain and overlong fields', 
       domain: 'health',
       category: 'fitness',
       mode: 'weekly',
+    }).success,
+    false
+  );
+});
+
+test('inspireGoalResponseSchema accepts goal and milestones shapes exclusively', () => {
+  const goal = inspireGoalResponseSchema.safeParse({inspiration: 'Run 5k'});
+  assert.equal(goal.success, true);
+
+  const milestones = inspireGoalResponseSchema.safeParse({
+    milestones: {days_30: 'a', days_60: 'b', days_90: 'c'},
+  });
+  assert.equal(milestones.success, true);
+
+  assert.equal(inspireGoalResponseSchema.safeParse({}).success, false);
+  assert.equal(
+    inspireGoalResponseSchema.safeParse({
+      inspiration: 'x',
+      milestones: {days_30: 'a', days_60: 'b', days_90: 'c'},
     }).success,
     false
   );

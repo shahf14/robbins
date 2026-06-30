@@ -4,8 +4,9 @@ import {
   getFormulationSession,
   patchFormulationSession,
 } from '@/lib/life-coach/repository';
+import {toFormulationSessionResponse} from '@/lib/life-coach/response-dtos';
 import {formulationSessionPatchSchema} from '@/lib/life-coach/schemas';
-import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {jsonError, jsonMutation, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 export async function GET(
   request: Request,
@@ -20,7 +21,7 @@ export async function GET(
     if (!session) {
       return jsonError('Session not found.', 404);
     }
-    return jsonOk({session});
+    return jsonOk({session: toFormulationSessionResponse(session)});
   } catch (error) {
     return jsonError('Could not load session.', 500, String(error));
   }
@@ -49,7 +50,7 @@ export async function PATCH(
     }
 
     const result = await patchFormulationSession(current.user.id, id, parsed.data);
-    return jsonOk({session: result.session});
+    return jsonMutation({session: toFormulationSessionResponse(result.session)});
   } catch (error) {
     if (error instanceof FormulationSessionConflictError) {
       return jsonError('Session was modified concurrently. Refresh and try again.', 409);

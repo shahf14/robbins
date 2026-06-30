@@ -54,6 +54,11 @@ async function dbFetch<T>(path: string, init?: RequestInit): Promise<T> {
     },
   });
 
+  if (res.status === 204) {
+    if (!res.ok) throw new DbApiError(res.statusText || 'Request failed', res.status);
+    return undefined as T;
+  }
+
   const contentType = res.headers.get('content-type') ?? '';
   if (!contentType.includes('application/json')) {
     const fallback =
@@ -104,8 +109,7 @@ export const dbApi = {
   establishAdminSession: () =>
     dbFetch<{ok: boolean; expiresInSec: number}>('/api/admin/session', {method: 'POST'}),
 
-  clearAdminSession: () =>
-    dbFetch<{ok: boolean}>('/api/admin/session', {method: 'DELETE'}),
+  clearAdminSession: () => dbFetch<void>('/api/admin/session', {method: 'DELETE'}),
 
   listTables: () => dbFetch<{tables: TableSummary[]}>('/api/db/tables'),
 

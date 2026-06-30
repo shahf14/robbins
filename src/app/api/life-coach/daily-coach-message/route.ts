@@ -1,6 +1,6 @@
 import {generateDailyCoachMessage} from '@/lib/daily-coach-message';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
-import {jsonError, jsonOk, resolveLocale, startOfToday} from '@/lib/life-coach/server';
+import {jsonError, jsonOk, isIsoDate, parseLocaleQueryParam, startOfToday} from '@/lib/life-coach/server';
 
 export async function GET(request: Request) {
   const current = await requireLifeCoachAccess(request);
@@ -8,7 +8,12 @@ export async function GET(request: Request) {
 
   const {searchParams} = new URL(request.url);
   const date = searchParams.get('date') ?? startOfToday();
-  const locale = resolveLocale(searchParams.get('locale'));
+  if (!isIsoDate(date)) {
+    return jsonError('Invalid date. Expected YYYY-MM-DD.', 400);
+  }
+  const localeResult = parseLocaleQueryParam(searchParams.get('locale'));
+  if (!localeResult.ok) return localeResult.response;
+  const locale = localeResult.locale;
 
   try {
     const message = await generateDailyCoachMessage(current.user.id, date, locale);

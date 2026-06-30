@@ -3,7 +3,8 @@
 import {NavArrow} from '@/components/directional-arrow';
 import {Link} from '@/i18n/navigation';
 import type {useTranslations} from 'next-intl';
-import type {DailyBabyStep, LifeDomain, LifeDomainState} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse, LifeDomainStateResponse} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain} from '@/lib/life-coach/types';
 import type {MorningRitualSession} from '@/lib/morning-ritual-types';
 import type {WeekBehaviorChangeAnalysis} from '@/lib/formulation/behavior-change-tracking';
 import type {BehaviorScore} from '@/lib/behavior-science/behavior-score';
@@ -16,7 +17,7 @@ export function HomeGoalProgress({
   goal, steps, t,
 }: {
   goal: GoalWithMilestones | null;
-  steps: DailyBabyStep[];
+  steps: DailyBabyStepResponse[];
   t: ReturnType<typeof useTranslations>;
 }) {
   if (!goal) return null;
@@ -214,7 +215,7 @@ export function HomePersonalBests({
   t: ReturnType<typeof useTranslations>;
 }) {
   const strongestDomain = data.domainStates
-    .filter((state: LifeDomainState) => Number.isFinite(state.current_score))
+    .filter((state: LifeDomainStateResponse) => Number.isFinite(state.current_score))
     .sort((a, b) => b.current_score - a.current_score)[0] ?? null;
   const activeGoalCount = data.goals.filter((goal) => goal.status === 'active').length;
 

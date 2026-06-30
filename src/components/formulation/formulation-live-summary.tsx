@@ -12,10 +12,11 @@ import {
 import {isParticipantGender} from '@/lib/formulation/participant-profile';
 import {normalizeWizardPhase, WIZARD_PHASES} from '@/lib/formulation/phase-nav';
 import type {WizardLiveDraft} from '@/lib/formulation/wizard-live-draft';
-import type {FormulationPhase, FormulationSession} from '@/lib/life-coach/types';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
+import type {FormulationPhase} from '@/lib/life-coach/types';
 
 type Props = {
-  session: FormulationSession;
+  session: FormulationSessionResponse;
   phase: FormulationPhase;
   locale: AppLocale;
   guidedQuestions: GuidedQuestionEntry[];
@@ -206,7 +207,7 @@ function RatingRow({
 
 /* ── Formulation card ───────────────────────────────────── */
 
-function FormulationCard({session, t}: {session: FormulationSession; t: ReturnType<typeof useTranslations>}) {
+function FormulationCard({session, t}: {session: FormulationSessionResponse; t: ReturnType<typeof useTranslations>}) {
   const f = session.formulation_approved;
   if (!f) return null;
   return (
@@ -249,7 +250,7 @@ function FormulationCard({session, t}: {session: FormulationSession; t: ReturnTy
 
 /* ── Goal card ──────────────────────────────────────────── */
 
-function GoalCard({session, t}: {session: FormulationSession; t: ReturnType<typeof useTranslations>}) {
+function GoalCard({session, t}: {session: FormulationSessionResponse; t: ReturnType<typeof useTranslations>}) {
   const h = session.coach_handoff;
   if (!h) return null;
   return (

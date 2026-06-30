@@ -2,7 +2,8 @@
 
 import {Link} from '@/i18n/navigation';
 import type {useTranslations} from 'next-intl';
-import type {DailyBabyStep, Goal, LifeDomain, Milestone} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse, GoalWithMilestonesResponse} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain} from '@/lib/life-coach/types';
 import type {MorningRitualSession} from '@/lib/morning-ritual-types';
 import type {PersonalizedChallenge} from '@/lib/formulation/personalized-challenge';
 import type {AccountabilityContext} from '@/lib/formulation/accountability-routing';
@@ -11,7 +12,7 @@ import {WEEKLY_TARGET_RATIO} from '@/lib/life-coach/progress-constants';
 import {dateToYMD} from '@/lib/date-utils';
 import {completedRitualSessions, ritualEnergy} from '@/lib/home/ritual-derived';
 
-type GoalWithMilestones = Goal & {milestones?: Milestone[]};
+type GoalWithMilestones = GoalWithMilestonesResponse;
 
 type HomeBadgeId =
   | 'firstStep'
@@ -187,7 +188,7 @@ export function HomeSoftProgress({
   weeklyMinutes,
   t,
 }: {
-  weekSteps: DailyBabyStep[];
+  weekSteps: DailyBabyStepResponse[];
   ritualSessions: MorningRitualSession[];
   weeklyMinutes: number;
   t: ReturnType<typeof useTranslations>;
@@ -249,7 +250,7 @@ export function HomeDomainAttention({
   goals,
   t,
 }: {
-  weekSteps: DailyBabyStep[];
+  weekSteps: DailyBabyStepResponse[];
   goals: GoalWithMilestones[];
   t: ReturnType<typeof useTranslations>;
 }) {

@@ -2,8 +2,8 @@ import type {AppLocale} from '@/i18n/config';
 import {buildFormulationInsights} from '@/lib/formulation/formulation-insights';
 import {deriveDomainFromHandoff} from '@/lib/morning-ritual/goal-context';
 import {filterStepsInPeriod} from '@/lib/life-coach/weekly-review-emotional';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import type {
-  DailyBabyStep,
   DailyReflection,
   LifeDomain,
 } from '@/lib/life-coach/types';
@@ -27,7 +27,7 @@ type ScoredBehaviorStep = {
   step_id: string;
   title: string;
   date: string;
-  status: DailyBabyStep['status'];
+  status: DailyBabyStepResponse['status'];
   aligns_micro_goal: boolean;
   touches_barrier: boolean;
   addresses_maintaining: boolean;
@@ -85,7 +85,7 @@ function textMatchesAnchor(blob: string, anchor: string | null | undefined): boo
   return hits >= 2 || hits / tokens.length >= 0.34;
 }
 
-function stepBlob(step: DailyBabyStep): string {
+function stepBlob(step: DailyBabyStepResponse): string {
   return normalizeText(
     [
       step.title,
@@ -137,12 +137,12 @@ export function buildBehaviorChangeContext(
 }
 
 function detectComebackAfterBarrier(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   reflections: DailyReflection[],
   locale: AppLocale
 ): {found: boolean; detail: string | null} {
   const he = locale === 'he';
-  const byDate = new Map<string, DailyBabyStep[]>();
+  const byDate = new Map<string, DailyBabyStepResponse[]>();
   for (const step of steps) {
     const list = byDate.get(step.scheduled_date) ?? [];
     list.push(step);
@@ -187,7 +187,7 @@ function handoffBarrierFromReflection(text: string | null | undefined): string |
   return clip(text.trim(), 40);
 }
 
-function scoreStep(step: DailyBabyStep, ctx: BehaviorChangeContext): ScoredBehaviorStep {
+function scoreStep(step: DailyBabyStepResponse, ctx: BehaviorChangeContext): ScoredBehaviorStep {
   const blob = stepBlob(step);
   const goalAnchors = [ctx.micro_goal_week, ctx.value, ctx.primary_goal_focus].filter(Boolean);
   const aligns_micro_goal = goalAnchors.some((anchor) => textMatchesAnchor(blob, anchor));
@@ -326,7 +326,7 @@ function buildDetailLines(
 
 export function analyzeWeekBehaviorChange(input: {
   context: BehaviorChangeContext;
-  steps: DailyBabyStep[];
+  steps: DailyBabyStepResponse[];
   reflections?: DailyReflection[];
   periodStart?: string;
   periodEnd?: string;

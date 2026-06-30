@@ -1,4 +1,4 @@
-import {badRequest, payloadTooLarge} from '@/lib/api-response';
+import {jsonError} from '@/lib/api-response';
 import type {z} from 'zod';
 
 type ReadJsonBodyOptions<T> = {
@@ -15,31 +15,31 @@ export async function readJsonBody<T = unknown>(
 ): Promise<ReadJsonBodyOk<T> | ReadJsonBodyFail> {
   const declaredLength = Number(request.headers.get('content-length') ?? 0);
   if (Number.isFinite(declaredLength) && declaredLength > options.maxBytes) {
-    return {ok: false, response: payloadTooLarge('Request body is too large')};
+    return {ok: false, response: jsonError('Request body is too large', 413)};
   }
 
   let raw = '';
   try {
     raw = await request.text();
   } catch {
-    return {ok: false, response: badRequest('Invalid request body')};
+    return {ok: false, response: jsonError('Invalid request body', 400)};
   }
 
   if (Buffer.byteLength(raw, 'utf8') > options.maxBytes) {
-    return {ok: false, response: payloadTooLarge('Request body is too large')};
+    return {ok: false, response: jsonError('Request body is too large', 413)};
   }
 
   let parsed: unknown;
   try {
     parsed = raw.length > 0 ? JSON.parse(raw) : null;
   } catch {
-    return {ok: false, response: badRequest('Invalid JSON body')};
+    return {ok: false, response: jsonError('Invalid JSON body', 400)};
   }
 
   if (options.schema) {
     const result = options.schema.safeParse(parsed);
     if (!result.success) {
-      return {ok: false, response: badRequest('Invalid request body')};
+      return {ok: false, response: jsonError('Invalid request body', 400)};
     }
     return {ok: true, data: result.data};
   }

@@ -14,6 +14,7 @@ import {
 } from '@/lib/formulation/passive-ratings';
 import type {MicroGoalSuggestion} from '@/lib/ai-formulation/prompts';
 import {formatLifeContextLabels} from '@/lib/life-context-labels';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
 import type {FormulationApproved, FormulationSession} from '@/lib/life-coach/types';
 
 export type RatedThemeInsight = {
@@ -84,7 +85,7 @@ function ratedThemes(ratings: PassiveRatingItem[], locale: AppLocale): RatedThem
 }
 
 function explorationWithText(
-  session: FormulationSession
+  session: FormulationSessionResponse
 ): Array<{id: string; text: string; score: number}> {
   const byId = new Map(session.llm_exploration_questions.map((q) => [q.id, q.text]));
   return session.llm_exploration_answers.map((a) => ({
@@ -272,7 +273,7 @@ function classifyExploration(
 }
 
 export function buildFormulationInsights(
-  session: FormulationSession,
+  session: FormulationSessionResponse,
   locale: AppLocale
 ): FormulationInsights {
   const contexts = formatLifeContextLabels(session.life_context_statuses, locale);

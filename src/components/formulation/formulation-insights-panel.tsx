@@ -4,10 +4,10 @@ import {useMemo} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 import {buildFormulationInsights} from '@/lib/formulation/formulation-insights';
-import type {FormulationSession} from '@/lib/life-coach/types';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
 
 type Props = {
-  session: FormulationSession;
+  session: FormulationSessionResponse;
 };
 
 export function FormulationInsightsPanel({session}: Props) {

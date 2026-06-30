@@ -14,7 +14,8 @@ import {
 } from '@/lib/life-coach/curated-daily-tasks';
 import type {CuratedDailyTaskOption} from '@/lib/life-coach/curated-daily-tasks';
 import {lifeDomainSchema} from '@/lib/life-coach/schemas';
-import {isIsoDate, jsonError, jsonOk, resolveLocale, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {toDailyBabyStepsResponse} from '@/lib/life-coach/response-dtos';
+import {isIsoDate, jsonError, jsonMutation, jsonOk, parseLifeCoachJsonBody, parseLocaleQueryParam, startOfToday} from '@/lib/life-coach/server';
 
 const curatedSelectionSchema = z.object({
   domain: lifeDomainSchema,
@@ -55,7 +56,9 @@ export async function GET(request: Request) {
     return jsonError('Invalid domain.', 400, domain.error.flatten());
   }
 
-  const locale = resolveLocale(url.searchParams.get('locale'));
+  const localeResult = parseLocaleQueryParam(url.searchParams.get('locale'));
+  if (!localeResult.ok) return localeResult.response;
+  const locale = localeResult.locale;
   const date = url.searchParams.get('date') || startOfToday();
   if (!isIsoDate(date)) {
     return jsonError('Invalid date. Expected YYYY-MM-DD.', 400);
@@ -149,7 +152,7 @@ export async function POST(request: Request) {
 
       await markUserOnboardingComplete(current.user.id, parsed.data.domain, null);
       const steps = await listDailyBabyStepsForDate(date, current.user.id);
-      return jsonOk({date, steps, inserted}, 201);
+      return jsonMutation({date, steps: toDailyBabyStepsResponse(steps), inserted: toDailyBabyStepsResponse(inserted)}, 201);
     });
   } catch (error) {
     return jsonError('Could not create today plan from curated tasks.', 500, String(error));

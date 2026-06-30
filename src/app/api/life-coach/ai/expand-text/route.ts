@@ -1,6 +1,6 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {enforceAiRateLimit} from '@/lib/ai-rate-limit';
-import {jsonError, jsonOk, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
+import {jsonError, jsonMutation, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
 import {expandTextRequestSchema} from '@/lib/life-coach/schemas';
 import {getLifeCoachModelConfig} from '@/lib/life-coach/env';
 import {requestLlmText} from '@/lib/llm/request-structured-json';
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
 
   try {
     const expanded = await expandText(text, context, locale);
-    return jsonOk({expanded});
+    return jsonMutation({expanded});
   } catch (error) {
     return jsonError('Could not expand text.', 500, String(error));
   }

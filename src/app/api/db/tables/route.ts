@@ -1,7 +1,7 @@
 import {requireAdmin} from '@/lib/db/admin-guard';
 import {logAdminAccess} from '@/lib/db/admin-audit-log';
 import {listTables, tableRowCount} from '@/lib/db/sqlite';
-import {serverError} from '@/lib/api-response';
+import {jsonError} from '@/lib/life-coach/server';
 
 export async function GET(request: Request) {
   const guard = await requireAdmin(request);
@@ -21,6 +21,6 @@ export async function GET(request: Request) {
     });
     return Response.json({tables: result});
   } catch {
-    return serverError('Could not list database tables.');
+    return jsonError('Could not list database tables.', 500);
   }
 }

@@ -5,6 +5,7 @@ import {
   buildBarrierPlanBStrategy,
   type PlanBBarrierKind,
 } from '@/lib/formulation/plan-b-routing';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import type {
   DailyBabyStep,
   DailyReflection,
@@ -305,7 +306,7 @@ function blockerLabel(blocker: ReflectionBlockerReason, locale: AppLocale): stri
 
 export function analyzeReturningBarrierWeek(input: {
   context: SkipAdaptationContext | null;
-  steps: DailyBabyStep[];
+  steps: DailyBabyStepResponse[];
   reflections?: DailyReflection[];
   periodStart?: string;
   periodEnd?: string;

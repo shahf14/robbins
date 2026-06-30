@@ -10,8 +10,9 @@
 import {addDaysYMD, dateToYMD} from '@/lib/date-utils';
 import {ensureDomainAssessmentForGoal} from '@/lib/db/repositories/goals';
 import {createDailyBabyStep, DailyStepRelationError} from '@/lib/life-coach/repository';
+import {toDailyBabyStepsResponse} from '@/lib/life-coach/response-dtos';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
-import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {jsonError, jsonMutation, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {LIFE_DOMAINS, type DailyBabyStep} from '@/lib/life-coach/types';
 
 export async function POST(request: Request) {
@@ -69,7 +70,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return jsonOk({steps}, 201);
+    return jsonMutation({steps: toDailyBabyStepsResponse(steps)}, 201);
   } catch (error) {
     if (error instanceof DailyStepRelationError) {
       return jsonError(error.message, 400);

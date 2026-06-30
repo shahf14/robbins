@@ -9,13 +9,12 @@ import {lifeCoachApi} from '@/lib/life-coach/api-client';
 import {useApiLoad} from '@/hooks/use-api-load';
 import {computeStreak} from '@/lib/life-coach/streak-utils';
 import type {
-  AiCoachingInsight,
-  DailyBabyStep,
-  Goal,
-  LifeDomain,
-  LifeDomainState,
-  Milestone,
-} from '@/lib/life-coach/types';
+  AiCoachingInsightResponse,
+  DailyBabyStepResponse,
+  GoalWithMilestonesResponse,
+  LifeDomainStateResponse,
+} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain} from '@/lib/life-coach/types';
 import {DailyBabyStepsList} from './daily-baby-steps-list';
 import {DomainGoalWizard} from './domain-goal-wizard';
 import {LifeCoachPageShell} from './life-coach-page-shell';
@@ -45,7 +44,7 @@ import {
 import {DailyFocusCard} from './shared/daily-focus-card';
 import type {DailyFocusContext} from '@/lib/daily-focus-context';
 
-type GoalWithMilestones = Goal & {milestones?: Milestone[]};
+type GoalWithMilestones = GoalWithMilestonesResponse;
 
 export function DomainDetailPage({domain}: {domain: LifeDomain}) {
   return (

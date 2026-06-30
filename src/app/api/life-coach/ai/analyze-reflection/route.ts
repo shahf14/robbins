@@ -6,7 +6,7 @@ import {
   getUserGenerationContext,
   getUserParticipantProfile,
 } from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, resolveLocale, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {jsonError, jsonMutation, resolveLocale, startOfToday, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {reflectionCreateInputSchema} from '@/lib/life-coach/schemas';
 
 export async function POST(request: Request) {
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       model_used: _metrics.model_used,
     });
 
-    return jsonOk({analysis: analysisData});
+    return jsonMutation({analysis: analysisData});
   } catch (error) {
     return jsonError('Could not analyze reflection.', 500, String(error));
   }

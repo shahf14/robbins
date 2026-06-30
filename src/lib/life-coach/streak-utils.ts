@@ -1,11 +1,12 @@
 import {dateToYMD} from '@/lib/date-utils';
-import type {DailyBabyStep, StreakInfo} from './types';
+import type {DailyBabyStepResponse} from './response-dtos';
+import type {StreakInfo} from './types';
 
 /**
  * Compute streak information from a list of daily baby steps.
  * Steps must be sorted by scheduled_date descending (most recent first).
  */
-export function computeStreak(steps: DailyBabyStep[], domain?: string): StreakInfo {
+export function computeStreak(steps: DailyBabyStepResponse[], domain?: string): StreakInfo {
   const filtered = domain ? steps.filter((s) => s.domain === domain) : steps;
 
   if (filtered.length === 0) {
@@ -20,7 +21,7 @@ export function computeStreak(steps: DailyBabyStep[], domain?: string): StreakIn
   }
 
   // Group by date
-  const byDate = new Map<string, DailyBabyStep[]>();
+  const byDate = new Map<string, DailyBabyStepResponse[]>();
   for (const step of filtered) {
     const existing = byDate.get(step.scheduled_date) ?? [];
     existing.push(step);
@@ -95,7 +96,7 @@ export function computeStreak(steps: DailyBabyStep[], domain?: string): StreakIn
   };
 }
 
-function isGraceDay(daySteps: DailyBabyStep[]) {
+function isGraceDay(daySteps: DailyBabyStepResponse[]) {
   return (
     daySteps.length > 0 &&
     daySteps.every((step) => step.status === 'skipped') &&
@@ -129,9 +130,9 @@ function differenceInDays(left: Date, right: Date) {
  * Build a simple heat-map data structure for the last N days.
  * Returns an array of {date, level} where level is 0-4.
  */
-export function buildHeatMap(steps: DailyBabyStep[], days = 90, domain?: string): Array<{date: string; level: 0 | 1 | 2 | 3 | 4}> {
+export function buildHeatMap(steps: DailyBabyStepResponse[], days = 90, domain?: string): Array<{date: string; level: 0 | 1 | 2 | 3 | 4}> {
   const filtered = domain ? steps.filter((s) => s.domain === domain) : steps;
-  const byDate = new Map<string, DailyBabyStep[]>();
+  const byDate = new Map<string, DailyBabyStepResponse[]>();
 
   for (const step of filtered) {
     const existing = byDate.get(step.scheduled_date) ?? [];

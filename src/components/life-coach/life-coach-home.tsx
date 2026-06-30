@@ -11,7 +11,13 @@ import {
   shouldRunReflectionFollowUp,
 } from '@/lib/life-coach/step-reflection-follow-up';
 import {loadUserPreferences} from '@/lib/user-preferences';
-import type {AiCoachingInsight, DailyBabyStep, DomainCardSummary, Goal, LifeDomainState} from '@/lib/life-coach/types';
+import type {
+  AiCoachingInsightResponse,
+  DailyBabyStepResponse,
+  GoalWithMilestonesResponse,
+  LifeDomainStateResponse,
+} from '@/lib/life-coach/response-dtos';
+import type {DomainCardSummary} from '@/lib/life-coach/types';
 import {AIInsightCard} from './ai-insight-card';
 import {DailyBabyStepsList} from './daily-baby-steps-list';
 import {CuratedDailyTaskPicker} from './curated-daily-task-picker';
@@ -86,17 +92,17 @@ function LifeCoachHomeContent() {
   const {loading, error: loadFailure, arm: armLoad, complete: completeLoad, fail: failLoad} =
     useApiLoadSession();
   const [domainCards, setDomainCards] = useState<DomainCardSummary[]>([]);
-  const [domainStates, setDomainStates] = useState<LifeDomainState[]>([]);
+  const [domainStates, setDomainStates] = useState<LifeDomainStateResponse[]>([]);
   const {todaySteps, refreshTodaySteps} = useTodayDailySteps();
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [weeklyReview, setWeeklyReview] = useState<AiCoachingInsight | null>(null);
-  const [insights, setInsights] = useState<AiCoachingInsight[]>([]);
+  const [goals, setGoals] = useState<GoalWithMilestonesResponse[]>([]);
+  const [weeklyReview, setWeeklyReview] = useState<AiCoachingInsightResponse | null>(null);
+  const [insights, setInsights] = useState<AiCoachingInsightResponse[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [generatingReview, setGeneratingReview] = useState(false);
   const toast = useToast();
   const [ritualSessions, setRitualSessions] = useState<MorningRitualSession[]>([]);
-  const [weekSteps, setWeekSteps] = useState<DailyBabyStep[]>([]);
+  const [weekSteps, setWeekSteps] = useState<DailyBabyStepResponse[]>([]);
   const [ritualStreak, setRitualStreak] = useState(0);
   const [stepFilter, setStepFilter] = useState<StepStatusFilter>('all');
   const [sharingWeekly, setSharingWeekly] = useState(false);
@@ -106,8 +112,8 @@ function LifeCoachHomeContent() {
   const scrollTimeoutRef = useRef<number | null>(null);
   const refreshVersionRef = useRef(0);
   const optionalSnapshotRef = useRef({
-    weeklyReview: null as AiCoachingInsight | null,
-    insights: [] as AiCoachingInsight[],
+    weeklyReview: null as AiCoachingInsightResponse | null,
+    insights: [] as AiCoachingInsightResponse[],
     ritualSessions: [] as MorningRitualSession[],
     ritualStreak: 0,
     loadAdaptation: null as LoadAdaptationContext | null,
@@ -854,7 +860,7 @@ function HomeInsightGenerateButton({locale, onGenerated}: {locale: AppLocale; on
   );
 }
 
-function EnergyAdaptedBadge({domainStates}: {domainStates: LifeDomainState[]}) {
+function EnergyAdaptedBadge({domainStates}: {domainStates: LifeDomainStateResponse[]}) {
   const t = useTranslations();
   // Derive average score across configured domains as proxy for energy level
   const scores = domainStates
@@ -873,7 +879,7 @@ function EnergyAdaptedBadge({domainStates}: {domainStates: LifeDomainState[]}) {
   );
 }
 
-function CrossDomainBlockerCard({domainStates}: {domainStates: LifeDomainState[]}) {
+function CrossDomainBlockerCard({domainStates}: {domainStates: LifeDomainStateResponse[]}) {
   const t = useTranslations();
 
   // Find blockers that appear in 2+ domains

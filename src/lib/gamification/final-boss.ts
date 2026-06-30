@@ -1,5 +1,5 @@
 import {parseTimeToMinutes} from '@/lib/schedule-content';
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 
 function isLateDay(sleepTime: string, now = new Date()): boolean {
   const current = now.getHours() * 60 + now.getMinutes();
@@ -8,10 +8,10 @@ function isLateDay(sleepTime: string, now = new Date()): boolean {
 }
 
 export function getFinalBossStep(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   sleepTime: string,
   now = new Date()
-): DailyBabyStep | null {
+): DailyBabyStepResponse | null {
   if (!isLateDay(sleepTime, now)) return null;
   const pending = steps.filter((s) => s.status === 'pending');
   if (pending.length !== 1) return null;

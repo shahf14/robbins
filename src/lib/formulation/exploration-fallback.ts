@@ -2,7 +2,8 @@ import type {AppLocale} from '@/i18n/config';
 import {buildFormulationInsights} from '@/lib/formulation/formulation-insights';
 import {humanThemePhraseFromInsights} from '@/lib/formulation/theme-phrases';
 import {resolveGenderedHebrewText, resolveParticipantGender} from '@/lib/gendered-copy';
-import type {FormulationSession, LlmExplorationQuestion} from '@/lib/life-coach/types';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
+import type {LlmExplorationQuestion} from '@/lib/life-coach/types';
 
 /** First-person Likert statements — not interrogative questions. */
 const TEMPLATES_HE = [
@@ -41,7 +42,7 @@ const TEMPLATES_EN = [
   'It matters to me not to lose what holds me together while I try to improve',
 ];
 
-function themeFromSession(session: FormulationSession, locale: AppLocale): string {
+function themeFromSession(session: FormulationSessionResponse, locale: AppLocale): string {
   const insights = buildFormulationInsights(session, locale);
   return humanThemePhraseFromInsights(
     insights.burning_now_themes,
@@ -51,7 +52,7 @@ function themeFromSession(session: FormulationSession, locale: AppLocale): strin
 }
 
 export function buildFallbackExplorationQuestions(
-  session: FormulationSession,
+  session: FormulationSessionResponse,
   locale: AppLocale
 ): LlmExplorationQuestion[] {
   const theme = themeFromSession(session, locale);

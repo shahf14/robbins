@@ -1,6 +1,7 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {upsertLifeDomainState} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {toLifeDomainStateResponse} from '@/lib/life-coach/response-dtos';
+import {jsonError, jsonMutation, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 import {lifeDomainAssessmentInputSchema, lifeDomainSchema} from '@/lib/life-coach/schemas';
 
 export async function POST(
@@ -31,7 +32,7 @@ export async function POST(
       parsedDomain.data,
       parsed.data
     );
-    return jsonOk({state});
+    return jsonMutation({state: toLifeDomainStateResponse(state)});
   } catch (error) {
     return jsonError('Could not save domain assessment.', 500, String(error));
   }

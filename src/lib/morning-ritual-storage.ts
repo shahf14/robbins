@@ -52,7 +52,7 @@ export async function fetchMorningRitualBootContext(): Promise<MorningRitualBoot
 export async function fetchSessions(options?: {strict?: boolean}): Promise<MorningRitualSession[]> {
   const pending = readLegacyItems<MorningRitualSession>(SESSIONS_KEY) ?? [];
   try {
-    const res = await fetch('/api/morning-rituals', {headers: mergeLocalAuthHeaders()});
+    const res = await fetch('/api/morning-rituals?limit=400', {headers: mergeLocalAuthHeaders()});
     if (options?.strict) {
       await throwIfNotOk(res);
     } else {

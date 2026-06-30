@@ -1,8 +1,8 @@
 import {stepActionWindow} from './skip-windows';
-import type {DailyBabyStep, DailyReflection} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
+import type {DailyReflection, StructuredDailyBabyStep} from '@/lib/life-coach/types';
 import {VAGUE_TASK_PATTERNS} from '@/lib/life-coach/vague-task-detection';
 import type {PersonalDifficultyCalibration} from '@/lib/life-coach/personal-difficulty-calibration';
-import type {StructuredDailyBabyStep} from '@/lib/life-coach/types';
 import type {FailedActionPattern, FailedActionPatternKind} from './types';
 
 const LONG_MINUTES_THRESHOLD = 15;
@@ -10,7 +10,7 @@ const MIN_PATTERN_SKIPS = 2;
 const MIN_SAMPLE = 3;
 const MIN_SKIP_RATE = 0.5;
 
-function isTerminal(step: DailyBabyStep): boolean {
+function isTerminal(step: DailyBabyStepResponse): boolean {
   return step.status === 'completed' || step.status === 'partial' || step.status === 'skipped';
 }
 
@@ -19,7 +19,7 @@ function skipRate(skipped: number, total: number): number {
   return Math.round((skipped / total) * 100) / 100;
 }
 
-function detectDurationTooLong(steps: DailyBabyStep[]): FailedActionPattern | null {
+function detectDurationTooLong(steps: DailyBabyStepResponse[]): FailedActionPattern | null {
   const longSteps = steps.filter(
     (s) => isTerminal(s) && (s.estimated_minutes ?? 0) >= LONG_MINUTES_THRESHOLD
   );
@@ -39,7 +39,7 @@ function detectDurationTooLong(steps: DailyBabyStep[]): FailedActionPattern | nu
   return null;
 }
 
-function detectEveningTasks(steps: DailyBabyStep[]): FailedActionPattern | null {
+function detectEveningTasks(steps: DailyBabyStepResponse[]): FailedActionPattern | null {
   let skipped = 0;
   let total = 0;
   for (const step of steps) {
@@ -69,7 +69,7 @@ function isVagueReflectionText(text: string | null | undefined): boolean {
 }
 
 function detectVagueReflection(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   reflections: DailyReflection[]
 ): FailedActionPattern | null {
   let failures = 0;
@@ -91,7 +91,7 @@ function detectVagueReflection(
   };
 }
 
-function detectHardDifficulty(steps: DailyBabyStep[]): FailedActionPattern | null {
+function detectHardDifficulty(steps: DailyBabyStepResponse[]): FailedActionPattern | null {
   const hardSteps = steps.filter((s) => isTerminal(s) && s.difficulty === 'hard');
   const skippedHard = hardSteps.filter((s) => s.status === 'skipped');
   if (skippedHard.length < MIN_PATTERN_SKIPS) return null;
@@ -109,7 +109,7 @@ function detectHardDifficulty(steps: DailyBabyStep[]): FailedActionPattern | nul
 }
 
 export function computeFailedActionPatterns(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   reflections: DailyReflection[]
 ): FailedActionPattern[] {
   const patterns: FailedActionPattern[] = [];

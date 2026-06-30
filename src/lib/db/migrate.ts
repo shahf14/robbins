@@ -387,6 +387,57 @@ const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    version: 12,
+    name: 'client_log_entries',
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS client_log_entries (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          log_date TEXT NOT NULL,
+          line_json TEXT NOT NULL,
+          bytes INTEGER NOT NULL,
+          created_at TEXT NOT NULL DEFAULT (datetime('now'))
+        )
+      `);
+      db.exec(
+        `CREATE INDEX IF NOT EXISTS idx_client_log_entries_date_created
+         ON client_log_entries(log_date, created_at DESC)`
+      );
+      db.exec(
+        `CREATE INDEX IF NOT EXISTS idx_client_log_entries_user_date
+         ON client_log_entries(user_id, log_date)`
+      );
+    },
+  },
+  {
+    version: 13,
+    name: 'api_idempotency_and_daily_step_create_key',
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS api_idempotency_records (
+          user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          scope TEXT NOT NULL,
+          idempotency_key TEXT NOT NULL,
+          resource_id TEXT,
+          response_json TEXT NOT NULL,
+          created_at TEXT NOT NULL DEFAULT (datetime('now')),
+          PRIMARY KEY (user_id, scope, idempotency_key)
+        )
+      `);
+      db.exec(
+        `CREATE INDEX IF NOT EXISTS idx_api_idempotency_resource
+         ON api_idempotency_records(user_id, scope, resource_id)`
+      );
+      addColumn(db, 'daily_steps', 'create_idempotency_key', 'TEXT');
+      db.exec(`
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_daily_steps_create_idempotency
+          ON daily_steps(user_id, create_idempotency_key)
+          WHERE create_idempotency_key IS NOT NULL
+      `);
+    },
+  },
 ];
 
 /**

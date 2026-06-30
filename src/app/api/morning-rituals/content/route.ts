@@ -1,3 +1,5 @@
+import {jsonMutation} from '@/lib/life-coach/server';
+import {morningRitualContentPostSchema} from '@/lib/api-body-schemas';
 import {requireCurrentUser} from '@/lib/auth/get-current-user';
 import {
   listRitualContent,
@@ -5,7 +7,7 @@ import {
   replaceIdentities,
 } from '@/lib/db/repositories/ritual-content';
 import type {AffirmationItem, IdentityOption} from '@/lib/morning-ritual-types';
-import {readAuthenticatedJsonBody} from '@/lib/read-authenticated-json-body';
+import {JSON_BODY_LIMITS, readAuthenticatedJsonBody} from '@/lib/read-authenticated-json-body';
 
 export async function GET(request: Request) {
   const current = await requireCurrentUser(request);
@@ -15,20 +17,18 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const bodyResult = await readAuthenticatedJsonBody(request);
+  const bodyResult = await readAuthenticatedJsonBody(request, {
+    maxBytes: JSON_BODY_LIMITS.sessionPost,
+    schema: morningRitualContentPostSchema,
+  });
   if (!bodyResult.ok) return bodyResult.response;
 
-  const body = (bodyResult.data ?? {}) as {
-    affirmations?: AffirmationItem[];
-    identities?: IdentityOption[];
-  };
-
-  if (Array.isArray(body.affirmations)) {
-    replaceAffirmations(bodyResult.user.id, body.affirmations);
+  if (bodyResult.data.affirmations !== undefined) {
+    replaceAffirmations(bodyResult.user.id, bodyResult.data.affirmations as AffirmationItem[]);
   }
-  if (Array.isArray(body.identities)) {
-    replaceIdentities(bodyResult.user.id, body.identities);
+  if (bodyResult.data.identities !== undefined) {
+    replaceIdentities(bodyResult.user.id, bodyResult.data.identities as IdentityOption[]);
   }
 
-  return Response.json({ok: true});
+  return jsonMutation();
 }

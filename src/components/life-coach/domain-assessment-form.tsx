@@ -4,6 +4,7 @@ import {useEffect, useMemo, useState} from 'react';
 import {useTranslations} from 'next-intl';
 import {assessmentContentHints} from '@/lib/life-context-content';
 import {getLifeWheelRatingKeys} from '@/lib/life-wheel';
+import type {LifeDomainStateResponse} from '@/lib/life-coach/response-dtos';
 import {
   DOMAIN_BLOCKERS,
   type LifeDomain,
@@ -21,7 +22,7 @@ type AssessmentInput = Omit<
 
 type Props = {
   domain: LifeDomain;
-  initialState: LifeDomainState | null;
+  initialState: LifeDomainStateResponse | null;
   onSave: (input: AssessmentInput) => Promise<void>;
 };
 
@@ -29,7 +30,7 @@ function getInitialLifeContexts() {
   return loadUserPreferences().life_context_statuses ?? [];
 }
 
-function hasSavedAssessment(state: LifeDomainState | null): boolean {
+function hasSavedAssessment(state: LifeDomainStateResponse | null): boolean {
   if (!state) return false;
   return Boolean(
     state.desired_state?.trim() ||

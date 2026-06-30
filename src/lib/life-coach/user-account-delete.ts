@@ -19,7 +19,9 @@ const USER_OWNED_TABLES = [
   'morning_rituals',
   'evening_resets',
   'checkins',
+  'client_log_entries',
   'client_log_usage',
+  'api_idempotency_records',
 ] as const;
 
 function tableExists(db: ReturnType<typeof getDb>, table: string): boolean {

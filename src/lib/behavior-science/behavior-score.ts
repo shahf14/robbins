@@ -1,4 +1,4 @@
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 
 export type BehaviorScore = {
   showUps: number;
@@ -6,7 +6,7 @@ export type BehaviorScore = {
   percent: number;
 };
 
-export function computeWeeklyBehaviorScore(weekSteps: DailyBabyStep[]): BehaviorScore {
+export function computeWeeklyBehaviorScore(weekSteps: DailyBabyStepResponse[]): BehaviorScore {
   const daysWithSteps = new Set(weekSteps.map((s) => s.scheduled_date));
   let showUps = 0;
   let opportunities = 0;

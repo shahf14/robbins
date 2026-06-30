@@ -1,10 +1,12 @@
-import {dateToYMD, todayYMD} from '@/lib/date-utils';
-import {NextResponse} from 'next/server';
-import {isLocale, type AppLocale} from '@/i18n/config';
+import {jsonError, jsonOk} from '@/lib/api-response';
+import {dateToYMD, daysBetweenYMD, todayYMD} from '@/lib/date-utils';
+import {defaultLocale, isLocale, type AppLocale} from '@/i18n/config';
 import {getLifeCoachCronSecret} from '@/lib/life-coach/env';
 import {JSON_BODY_LIMITS, readJsonBody} from '@/lib/read-json-body';
 import type {z} from 'zod';
 
+export {jsonError, jsonOk, jsonMutation, jsonNoContent} from '@/lib/api-response';
+export type {MutationSuccess} from '@/lib/api-response';
 export {JSON_BODY_LIMITS, readJsonBody};
 
 export async function parseLifeCoachJsonBody<T = unknown>(
@@ -17,28 +19,29 @@ export async function parseLifeCoachJsonBody<T = unknown>(
   });
 }
 
-export function jsonError(
-  message: string,
-  status = 400,
-  details?: unknown,
-  options?: {exposeDetails?: boolean}
-) {
-  const payload: {error: string; details?: unknown} = {error: message};
-  const shouldExpose =
-    options?.exposeDetails === true ||
-    (details !== undefined && process.env.NODE_ENV !== 'production');
-  if (shouldExpose && details !== undefined) {
-    payload.details = details;
-  }
-  return NextResponse.json(payload, {status});
-}
-
-export function jsonOk(data: Record<string, unknown>, status = 200) {
-  return NextResponse.json(data, {status});
-}
-
 export function resolveLocale(input?: string | null): AppLocale {
-  return input && isLocale(input) ? input : 'en';
+  return input && isLocale(input) ? input : defaultLocale;
+}
+
+export function parseLocaleQueryParam(
+  value: string | null,
+  fallback: AppLocale = defaultLocale
+):
+  | {ok: true; locale: AppLocale}
+  | {ok: false; response: ReturnType<typeof jsonError>} {
+  if (value === null || value === '') {
+    return {ok: true, locale: fallback};
+  }
+  if (!isLocale(value)) {
+    return {ok: false, response: jsonError('Invalid locale. Expected en or he.', 400)};
+  }
+  return {ok: true, locale: value};
+}
+
+export const MAX_DAILY_STEPS_DATE_RANGE_DAYS = 90;
+
+export function isDailyStepsDateRangeWithinLimit(start: string, end: string): boolean {
+  return daysBetweenYMD(start, end) <= MAX_DAILY_STEPS_DATE_RANGE_DAYS;
 }
 
 export function verifyCronRequest(request: Request) {

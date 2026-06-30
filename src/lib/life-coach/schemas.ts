@@ -25,6 +25,7 @@ import {
 } from './types';
 
 export const lifeDomainSchema = z.enum(LIFE_DOMAINS);
+export const appLocaleSchema = z.enum(['he', 'en']);
 export const intensityPreferenceSchema = z.enum(INTENSITY_PREFERENCES);
 const goalStatusSchema = z.enum(GOAL_STATUSES);
 const goalCreatedBySchema = z.enum(GOAL_CREATED_BY);
@@ -121,6 +122,7 @@ export const goalBundleCreateInputSchema = z.object({
 export const goalIdSchema = z.string().uuid();
 
 const goalCreateResponseSchema = z.object({
+  ok: z.literal(true),
   goal: z.object({id: goalIdSchema}).passthrough(),
 });
 
@@ -145,6 +147,8 @@ export {
   expandTextRequestSchema,
   inspireGoalMilestonesResponseSchema,
   inspireGoalRequestSchema,
+  inspireGoalResponseSchema,
+  type InspireGoalResponse,
 } from './ai-request-schemas';
 
 const goalRealismRiskLevelSchema = z.enum(['low', 'medium', 'high']);
@@ -177,6 +181,18 @@ export const aiGenerateDailyStepsRequestSchema = z.object({
   include_first_win: z.boolean().optional(),
 });
 
+export const aiGenerateDailyStepsResponseSchema = z.object({
+  date: requiredIsoDateSchema,
+  steps: z.array(z.record(z.string(), z.unknown())),
+  generation_in_progress: z.boolean(),
+});
+
+export type AiGenerateDailyStepsResponse = {
+  date: string;
+  steps: import('./response-dtos').DailyBabyStepResponse[];
+  generation_in_progress: boolean;
+};
+
 export function aiGenerateDailyStepsResponseSchemaForMax(maxSteps: number) {
   const cap = Math.max(1, Math.min(3, maxSteps));
   return z.object({
@@ -200,7 +216,26 @@ export const dailyStepStatusUpdateSchema = z.object({
   reflection_word_count: z.number().int().min(0).nullable().optional().default(null),
   self_blame_language: z.boolean().optional().default(false),
   value_feedback: stepValueFeedbackSchema.nullable().optional().default(null),
+  idempotency_key: z.string().uuid().optional(),
 });
+
+const dailyStepCompletionSnapshotSchema = z.object({
+  completed_steps: z.number().int().min(0),
+  total_steps: z.number().int().min(0),
+});
+
+export const dailyStepStatusUpdateResponseSchema = z.object({
+  step: z.record(z.string(), z.unknown()),
+  reflection: z.record(z.string(), z.unknown()).nullable(),
+  completion_snapshot: dailyStepCompletionSnapshotSchema.nullable(),
+});
+
+export type DailyStepStatusUpdateResponse = {
+  ok: true;
+  step: import('./response-dtos').DailyBabyStepResponse;
+  reflection: import('./response-dtos').DailyReflectionResponse | null;
+  completion_snapshot: z.infer<typeof dailyStepCompletionSnapshotSchema> | null;
+};
 
 export const skipRecoveryStepContentSchema = z.object({
   title: z.string().trim().min(1).max(200),
@@ -288,6 +323,13 @@ export const weeklyReviewResponseSchema = z.object({
 });
 
 export type WeeklyReviewAiResponse = z.infer<typeof weeklyReviewResponseSchema>;
+
+export const weeklyReviewPostSchema = z
+  .object({
+    locale: appLocaleSchema.optional(),
+  })
+  .strict();
+
 export const lifeContextStatusSchema = z.enum(LIFE_CONTEXT_STATUSES);
 const riskLevelSchema = z.enum(RISK_LEVELS);
 const riskActionSchema = z.enum(RISK_ACTIONS);

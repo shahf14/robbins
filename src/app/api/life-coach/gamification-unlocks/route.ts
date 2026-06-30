@@ -4,7 +4,7 @@ import {
 } from '@/lib/db/repositories/gamification-unlocks';
 import {recordGamificationEvent} from '@/lib/gamification/events';
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
-import {jsonError, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
+import {jsonError, jsonMutation, jsonOk, parseLifeCoachJsonBody} from '@/lib/life-coach/server';
 
 const VALID_KINDS: GamificationUnlockKind[] = ['mystery_unlock', 'reflection_loot', 'identity_title'];
 
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       week_start: input.week_start ?? null,
       context: input.context ?? null,
     });
-    return jsonOk({unlock});
+    return jsonMutation({unlock});
   } catch (error) {
     return jsonError('Could not save gamification unlock.', 500, String(error));
   }

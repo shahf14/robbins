@@ -18,7 +18,7 @@ import {logAdminAccess} from '@/lib/db/admin-audit-log';
 import {bulkUpsertCheckins} from '@/lib/db/repositories/checkins';
 import {bulkUpsertMorningRituals} from '@/lib/db/repositories/gratitude';
 import {dateToYMD} from '@/lib/date-utils';
-import {badRequest, serverError, payloadTooLarge} from '@/lib/api-response';
+import {jsonError, jsonMutation} from '@/lib/life-coach/server';
 import {JSON_BODY_LIMITS, readJsonBody} from '@/lib/read-json-body';
 
 import {z} from 'zod';
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
 
   const userId = guard.user.id;
   if ((body.checkins?.length ?? 0) > 1000 || (body.morning_rituals?.length ?? 0) > 1000) {
-    return payloadTooLarge('Import is limited to 1000 records per collection.');
+    return jsonError('Import is limited to 1000 records per collection.', 413);
   }
   const stats = {checkins: 0, morning_rituals: 0, gratitude_entries: 0};
 
@@ -105,9 +105,9 @@ export async function POST(request: Request) {
       request,
     });
 
-    return Response.json({ok: true, synced: stats});
+    return jsonMutation({synced: stats});
   } catch {
-    return serverError('Could not import local storage data.');
+    return jsonError('Could not import local storage data.', 500);
   }
 }
 

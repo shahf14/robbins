@@ -1,11 +1,11 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-import type {AiCoachingInsight} from '@/lib/life-coach/types';
+import type {AiCoachingInsightResponse} from '@/lib/life-coach/response-dtos';
 import type {ReflectionAnalysis} from '@/lib/reflection-analysis/types';
 import {NextBestActionCta} from '@/components/next-best-action/next-best-action-cta';
 
-export function AIInsightCard({insight}: {insight: AiCoachingInsight}) {
+export function AIInsightCard({insight}: {insight: AiCoachingInsightResponse}) {
   const t = useTranslations();
   const metadata = insight.metadata as ReflectionAnalysis | null;
   const nextAction = metadata?.next_best_action ?? null;

@@ -1,7 +1,7 @@
 import type {AppLocale} from '@/i18n/config';
 import {FALLBACK_WEEKLY_COPY, pickFallbackCopy} from '@/lib/life-coach/fallback-copy';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import type {
-  DailyBabyStep,
   DailyReflection,
   Goal,
   WeeklyReviewEmotionalReflection,
@@ -22,17 +22,17 @@ export type WeeklyExecutionSnapshot = {
 };
 
 export function filterStepsInPeriod(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   periodStart: string,
   periodEnd: string
-): DailyBabyStep[] {
+): DailyBabyStepResponse[] {
   return steps.filter(
     (step) => step.scheduled_date >= periodStart && step.scheduled_date <= periodEnd
   );
 }
 
 export function buildWeeklyExecutionSnapshot(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   periodStart: string,
   periodEnd: string
 ): WeeklyExecutionSnapshot {
@@ -97,14 +97,14 @@ function blockerLabel(blocker: string | null | undefined, he: boolean): string |
 }
 
 function findComebackMoment(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   reflections: DailyReflection[],
   periodStart: string,
   periodEnd: string,
   he: boolean
 ): {hardDate: string; hardSignal: string; returnDate: string; returnTitle: string} | null {
   const periodSteps = filterStepsInPeriod(steps, periodStart, periodEnd);
-  const byDate = new Map<string, DailyBabyStep[]>();
+  const byDate = new Map<string, DailyBabyStepResponse[]>();
   for (const step of periodSteps) {
     const list = byDate.get(step.scheduled_date) ?? [];
     list.push(step);
@@ -153,7 +153,7 @@ export const PROGRESS_EVIDENCE_PROMPT_BLOCK = [
 
 export function buildProgressEvidenceFallback(input: {
   locale: AppLocale;
-  recentSteps: DailyBabyStep[];
+  recentSteps: DailyBabyStepResponse[];
   recentReflections: DailyReflection[];
   period_start: string;
   period_end: string;
@@ -205,7 +205,7 @@ export function buildProgressEvidenceFallback(input: {
 
 export function buildEmotionalReflectionFallback(input: {
   locale: AppLocale;
-  recentSteps: DailyBabyStep[];
+  recentSteps: DailyBabyStepResponse[];
   recentReflections: DailyReflection[];
   activeGoals: Goal[];
   period_start: string;

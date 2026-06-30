@@ -1,5 +1,5 @@
 import {NextResponse} from 'next/server';
-import {serverError} from '@/lib/api-response';
+import {jsonError, jsonMutation, jsonNoContent} from '@/lib/life-coach/server';
 import {
   canBootstrapAdminSession,
   requireAdminSessionBootstrap,
@@ -35,22 +35,19 @@ export async function POST(request: Request) {
   try {
     const sessionValue = createAdminSessionValue(guard.user.id);
     if (!sessionValue) {
-      return serverError('Could not create admin session.');
+      return jsonError('Could not create admin session.', 500);
     }
 
-    const response = NextResponse.json({
-      ok: true,
-      expiresInSec: ADMIN_SESSION_MAX_AGE_SEC,
-    });
+    const response = jsonMutation({expiresInSec: ADMIN_SESSION_MAX_AGE_SEC});
     response.cookies.set(ADMIN_SESSION_COOKIE, sessionValue, adminSessionCookieOptions());
     return response;
   } catch {
-    return serverError('Could not create admin session.');
+    return jsonError('Could not create admin session.', 500);
   }
 }
 
 export async function DELETE() {
-  const response = NextResponse.json({ok: true});
+  const response = jsonNoContent();
   response.cookies.set(ADMIN_SESSION_COOKIE, '', {
     ...adminSessionCookieOptions(),
     maxAge: 0,

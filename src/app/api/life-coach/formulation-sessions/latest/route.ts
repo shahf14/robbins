@@ -3,6 +3,9 @@ import {
   getActiveDraftFormulation,
   getLatestCompletedFormulation,
 } from '@/lib/life-coach/repository';
+import {
+  toNullableFormulationSessionResponse,
+} from '@/lib/life-coach/response-dtos';
 import {jsonError, jsonOk} from '@/lib/life-coach/server';
 
 export async function GET(request: Request) {
@@ -14,7 +17,10 @@ export async function GET(request: Request) {
       getActiveDraftFormulation(current.user.id),
       getLatestCompletedFormulation(current.user.id),
     ]);
-    return jsonOk({draft, completed});
+    return jsonOk({
+      draft: toNullableFormulationSessionResponse(draft),
+      completed: toNullableFormulationSessionResponse(completed),
+    });
   } catch (error) {
     return jsonError('Could not load formulation sessions.', 500, String(error));
   }

@@ -4,11 +4,12 @@ import {useCallback, useEffect, useState} from 'react';
 import {useTranslations} from 'next-intl';
 import {FormulationInsightsPanel} from '@/components/formulation/formulation-insights-panel';
 import {joinCommaList, splitCommaList} from '@/lib/formulation/formulation-utils';
-import type {FormulationApproved, FormulationDimensions, FormulationSession} from '@/lib/life-coach/types';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
+import type {FormulationApproved, FormulationDimensions} from '@/lib/life-coach/types';
 
 type Props = {
   loading: boolean;
-  session: FormulationSession;
+  session: FormulationSessionResponse;
   draft: FormulationApproved | null;
   dimensions: FormulationDimensions | null;
   riskLevel: FormulationApproved['risk_screen']['level'];

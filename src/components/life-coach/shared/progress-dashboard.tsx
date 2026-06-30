@@ -2,17 +2,22 @@
 
 import {useMemo, useState} from 'react';
 import {useTranslations} from 'next-intl';
-import type {DailyBabyStep, Goal, LifeDomain, LifeDomainState, Milestone} from '@/lib/life-coach/types';
+import type {
+  DailyBabyStepResponse,
+  GoalWithMilestonesResponse,
+  LifeDomainStateResponse,
+} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain, Milestone} from '@/lib/life-coach/types';
 import {buildHeatMap, computeStreak} from '@/lib/life-coach/streak-utils';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
 
-type GoalWithMilestones = Goal & {milestones?: Milestone[]};
+type GoalWithMilestones = GoalWithMilestonesResponse;
 
 type Props = {
   domain: LifeDomain;
-  state: LifeDomainState | null;
+  state: LifeDomainStateResponse | null;
   goals: GoalWithMilestones[];
-  allRecentSteps: DailyBabyStep[];
+  allRecentSteps: DailyBabyStepResponse[];
   onRefresh?: () => Promise<void> | void;
 };
 

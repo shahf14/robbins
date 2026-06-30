@@ -1,4 +1,4 @@
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 
 export type EndOfDayClosure = {
   closedTitles: string[];
@@ -7,8 +7,8 @@ export type EndOfDayClosure = {
 };
 
 export function buildEndOfDayClosure(
-  todaySteps: DailyBabyStep[],
-  tomorrowSteps: DailyBabyStep[] = []
+  todaySteps: DailyBabyStepResponse[],
+  tomorrowSteps: DailyBabyStepResponse[] = []
 ): EndOfDayClosure | null {
   if (todaySteps.length === 0) return null;
 

@@ -1,4 +1,4 @@
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import {parseJsonOr} from '@/lib/safe-json';
 
 const STORAGE_KEY = 'robbins_comeback_chain';
@@ -8,8 +8,8 @@ type ComebackState = {
   lastComebackDate: string | null;
 };
 
-function groupStepsByDate(steps: DailyBabyStep[]): Map<string, DailyBabyStep[]> {
-  const map = new Map<string, DailyBabyStep[]>();
+function groupStepsByDate(steps: DailyBabyStepResponse[]): Map<string, DailyBabyStepResponse[]> {
+  const map = new Map<string, DailyBabyStepResponse[]>();
   for (const step of steps) {
     const list = map.get(step.scheduled_date) ?? [];
     list.push(step);
@@ -18,7 +18,7 @@ function groupStepsByDate(steps: DailyBabyStep[]): Map<string, DailyBabyStep[]> 
   return map;
 }
 
-function wasHardDay(daySteps: DailyBabyStep[]): boolean {
+function wasHardDay(daySteps: DailyBabyStepResponse[]): boolean {
   if (daySteps.length === 0) return false;
   const completed = daySteps.filter((s) => s.status === 'completed').length;
   const struggled = daySteps.filter(
@@ -27,7 +27,7 @@ function wasHardDay(daySteps: DailyBabyStep[]): boolean {
   return completed === 0 && struggled > 0;
 }
 
-function hadComeback(daySteps: DailyBabyStep[]): boolean {
+function hadComeback(daySteps: DailyBabyStepResponse[]): boolean {
   return daySteps.some((s) => s.status === 'completed');
 }
 
@@ -53,7 +53,7 @@ function saveState(state: ComebackState) {
 
 /** Count consecutive comeback days ending today. */
 export function computeComebackChain(
-  weekSteps: DailyBabyStep[],
+  weekSteps: DailyBabyStepResponse[],
   today: string
 ): number {
   const byDate = groupStepsByDate(weekSteps);

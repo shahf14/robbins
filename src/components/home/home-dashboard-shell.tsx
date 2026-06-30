@@ -3,10 +3,9 @@
 import {NavArrow} from '@/components/directional-arrow';
 import {Link} from '@/i18n/navigation';
 import type {useTranslations} from 'next-intl';
-import type {Goal, LifeContextStatus, Milestone} from '@/lib/life-coach/types';
 import {LifeContextChip} from '@/components/life-context-chip';
-
-type GoalWithMilestones = Goal & {milestones?: Milestone[]};
+import type {GoalWithMilestones} from '@/lib/home/dashboard-derived';
+import type {LifeContextStatus} from '@/lib/life-coach/types';
 
 type CelebrationId = 'firstStep' | 'allDone' | 'weeklyChallenge' | 'multiGoal';
 

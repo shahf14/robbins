@@ -114,6 +114,7 @@ export const INCREMENTAL_COLUMN_REPAIRS: ColumnRepair[] = [
   {table: 'goals', column: 'commitment_days', definition: 'INTEGER DEFAULT 30'},
   {table: 'goals', column: 'commitment_started_at', definition: 'TEXT'},
   {table: 'goals', column: 'create_idempotency_key', definition: 'TEXT'},
+  {table: 'daily_steps', column: 'create_idempotency_key', definition: 'TEXT'},
 ];
 
 export type IndexRepair = {
@@ -151,6 +152,13 @@ export const INCREMENTAL_INDEX_REPAIRS: IndexRepair[] = [
     sql: `CREATE UNIQUE INDEX IF NOT EXISTS idx_daily_steps_commitment_goal_date
        ON daily_steps(user_id, goal_id, scheduled_date)
        WHERE generated_by_ai = 0 AND goal_id IS NOT NULL`,
+  },
+  {
+    table: 'daily_steps',
+    columns: ['user_id', 'create_idempotency_key'],
+    sql: `CREATE UNIQUE INDEX IF NOT EXISTS idx_daily_steps_create_idempotency
+       ON daily_steps(user_id, create_idempotency_key)
+       WHERE create_idempotency_key IS NOT NULL`,
   },
 ];
 

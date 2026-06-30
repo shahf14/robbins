@@ -8,11 +8,12 @@ import {splitCommaList} from '@/lib/formulation/formulation-utils';
 import type {MicroGoalOption} from '@/lib/formulation/micro-goal-options';
 import {burningFocusHeadline} from '@/lib/formulation/micro-goal-options';
 import type {MicroGoalSuggestion} from '@/lib/ai-formulation/prompts';
-import type {CoachHandoff, FormulationSession} from '@/lib/life-coach/types';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
+import type {CoachHandoff} from '@/lib/life-coach/types';
 
 type Props = {
   loading: boolean;
-  session: FormulationSession;
+  session: FormulationSessionResponse;
   onSuggest: () => Promise<MicroGoalSuggestion>;
   onSubmit: (handoff: CoachHandoff) => void;
 };

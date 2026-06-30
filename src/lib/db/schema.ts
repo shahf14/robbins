@@ -207,6 +207,7 @@ CREATE TABLE IF NOT EXISTS daily_steps (
   coach_tone           TEXT CHECK (coach_tone IS NULL OR coach_tone IN ('supportive', 'direct', 'motivational')),
   weekly_focus_id      TEXT REFERENCES weekly_goal_focus(id) ON DELETE SET NULL,
   value_feedback       TEXT CHECK (value_feedback IS NULL OR value_feedback IN ('felt_progress', 'too_small', 'too_generic', 'missed_problem')),
+  create_idempotency_key TEXT,
   created_at           TEXT DEFAULT (datetime('now')),
   updated_at           TEXT DEFAULT (datetime('now'))
 );
@@ -216,6 +217,21 @@ CREATE INDEX IF NOT EXISTS idx_steps_goal_status  ON daily_steps(goal_id, status
 CREATE UNIQUE INDEX IF NOT EXISTS idx_daily_steps_commitment_goal_date
   ON daily_steps(user_id, goal_id, scheduled_date)
   WHERE generated_by_ai = 0 AND goal_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_daily_steps_create_idempotency
+  ON daily_steps(user_id, create_idempotency_key)
+  WHERE create_idempotency_key IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS api_idempotency_records (
+  user_id          TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  scope            TEXT NOT NULL,
+  idempotency_key  TEXT NOT NULL,
+  resource_id      TEXT,
+  response_json    TEXT NOT NULL,
+  created_at       TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (user_id, scope, idempotency_key)
+);
+CREATE INDEX IF NOT EXISTS idx_api_idempotency_resource
+  ON api_idempotency_records(user_id, scope, resource_id);
 
 -- ── Daily Reflections ────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS daily_reflections (

@@ -1,6 +1,6 @@
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 
-type Snapshot = {date: string; steps: DailyBabyStep[]};
+type Snapshot = {date: string; steps: DailyBabyStepResponse[]};
 
 let snapshot: Snapshot | null = null;
 const listeners = new Set<() => void>();
@@ -11,17 +11,17 @@ function notify() {
   }
 }
 
-export function readTodayStepsSnapshot(date: string): DailyBabyStep[] | null {
+export function readTodayStepsSnapshot(date: string): DailyBabyStepResponse[] | null {
   if (snapshot?.date === date) return snapshot.steps;
   return null;
 }
 
-export function writeTodayStepsSnapshot(date: string, steps: DailyBabyStep[]) {
+export function writeTodayStepsSnapshot(date: string, steps: DailyBabyStepResponse[]) {
   snapshot = {date, steps};
   notify();
 }
 
-export function applyTodayStepUpdate(step: DailyBabyStep) {
+export function applyTodayStepUpdate(step: DailyBabyStepResponse) {
   if (!snapshot) return;
 
   const idx = snapshot.steps.findIndex((item) => item.id === step.id);

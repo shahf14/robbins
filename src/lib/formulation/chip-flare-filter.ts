@@ -1,7 +1,7 @@
 import type {AppLocale} from '@/i18n/config';
 import enMessages from '../../../messages/en.json';
 import heMessages from '../../../messages/he.json';
-import type {FormulationSession} from '@/lib/life-coach/types';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
 
 export type ChipSeverity = 'not_at_all' | 'a_little' | 'moderate' | 'a_lot' | 'not_sure' | 'unknown';
 
@@ -54,7 +54,7 @@ export type ChipFlareState = {
   entries: ChipFlareEntry[];
 };
 
-export function buildChipFlareState(session: FormulationSession, locale: AppLocale): ChipFlareState {
+export function buildChipFlareState(session: FormulationSessionResponse, locale: AppLocale): ChipFlareState {
   const suppressed_rating_ids = new Set<string>();
   const downgraded_rating_ids = new Set<string>();
   const confirmed_rating_ids = new Set<string>();

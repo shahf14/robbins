@@ -1,9 +1,7 @@
 import type {AppLocale} from '@/i18n/config';
 import {buildEmotionalStageRouting} from '@/lib/formulation/emotional-stage-routing';
-import type {
-  FormulationSession,
-  LifeContextStatus,
-} from '@/lib/life-coach/types';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
+import type {LifeContextStatus, LifeDomain} from '@/lib/life-coach/types';
 
 type ChallengeType =
   | 'time_micro'
@@ -55,7 +53,7 @@ function hasFlexibleLifeContext(statuses: LifeContextStatus[]): boolean {
   return statuses.some((s) => s === 'new_parent' || s === 'caregiver');
 }
 
-function resolveIntensity(session: FormulationSession): number {
+function resolveIntensity(session: FormulationSessionResponse): number {
   const fromApproved = session.formulation_approved?.intensity_0_10;
   if (typeof fromApproved === 'number' && fromApproved >= 0) {
     return Math.min(10, Math.max(0, fromApproved));
@@ -67,7 +65,7 @@ function resolveIntensity(session: FormulationSession): number {
   return 5;
 }
 
-function resolveFrequencyPerWeek(session: FormulationSession): number | null {
+function resolveFrequencyPerWeek(session: FormulationSessionResponse): number | null {
   const freq = session.dimensions?.frequency_per_week;
   if (typeof freq === 'number' && freq > 0) {
     return Math.min(6, Math.max(2, Math.round(freq)));
@@ -222,7 +220,7 @@ function resolveWeeklyTarget(
 }
 
 export function buildPersonalizedChallenge(
-  session: FormulationSession,
+  session: FormulationSessionResponse,
   locale: AppLocale = session.locale
 ): PersonalizedChallenge | null {
   const handoff = session.coach_handoff;

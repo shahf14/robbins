@@ -22,7 +22,9 @@ import {
   hasWeeklyReviewForPeriod,
 } from '@/lib/life-coach/repository';
 import {getSupportContextForUser} from '@/lib/support-context/formulation-support-context';
-import {trailingSevenDayWindow, jsonError, jsonOk, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
+import {weeklyReviewPostSchema} from '@/lib/life-coach/schemas';
+import {toAiCoachingInsightResponse} from '@/lib/life-coach/response-dtos';
+import {trailingSevenDayWindow, jsonError, jsonMutation, parseLifeCoachJsonBody, resolveLocale} from '@/lib/life-coach/server';
 import {listMorningRitualSessions} from '@/lib/db/repositories/morning-rituals';
 import {summarizeMorningRitualsForWeek} from '@/lib/life-coach/morning-ritual-weekly-summary';
 import {listCheckinRowsForPeriod} from '@/lib/db/repositories/checkins';
@@ -37,12 +39,11 @@ export async function POST(request: Request) {
     return current.response;
   }
 
-  const bodyResult = await parseLifeCoachJsonBody<Record<string, unknown>>(request);
+  const bodyResult = await parseLifeCoachJsonBody(request, weeklyReviewPostSchema);
   if (!bodyResult.ok) return bodyResult.response;
-  const body = (bodyResult.data ?? {}) as Record<string, unknown>;
 
   try {
-    const locale = resolveLocale(typeof body.locale === 'string' ? body.locale : null);
+    const locale = resolveLocale(bodyResult.data.locale ?? null);
     const [context, profile, supportContext] = await Promise.all([
       getUserGenerationContext(current.user.id),
       getUserParticipantProfile(current.user.id),
@@ -186,7 +187,7 @@ export async function POST(request: Request) {
       }
     );
 
-    return jsonOk({review: reviewData, insight});
+    return jsonMutation({review: reviewData, insight: toAiCoachingInsightResponse(insight)});
   } catch (error) {
     return jsonError('Could not generate weekly review.', 500, String(error));
   }

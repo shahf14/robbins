@@ -1,5 +1,6 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {listDomainCardSummaries, listLifeDomainStates} from '@/lib/life-coach/repository';
+import {toLifeDomainStatesResponse} from '@/lib/life-coach/response-dtos';
 import {jsonError, jsonOk} from '@/lib/life-coach/server';
 
 export async function GET(request: Request) {
@@ -15,7 +16,7 @@ export async function GET(request: Request) {
       listLifeDomainStates(current.user.id),
     ]);
 
-    return jsonOk({domains, states});
+    return jsonOk({domains, states: toLifeDomainStatesResponse(states)});
   } catch (error) {
     return jsonError('Could not load life domains.', 500, String(error));
   }

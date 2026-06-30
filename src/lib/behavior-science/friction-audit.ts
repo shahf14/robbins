@@ -1,4 +1,5 @@
-import type {DailyBabyStep, ReflectionBlockerReason} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
+import type {ReflectionBlockerReason} from '@/lib/life-coach/types';
 import {parseJsonArrayOr} from '@/lib/safe-json';
 
 const STORAGE_KEY = 'robbins_friction_skips';
@@ -9,7 +10,7 @@ type SkipRecord = {
   at: string;
 };
 
-function stepSignature(step: DailyBabyStep): string {
+function stepSignature(step: DailyBabyStepResponse): string {
   return `${step.domain}:${step.difficulty}:${step.estimated_minutes}`;
 }
 
@@ -32,7 +33,7 @@ function saveRecords(records: SkipRecord[]) {
   }
 }
 
-export function recordStepSkip(step: DailyBabyStep, blocker: ReflectionBlockerReason | null) {
+export function recordStepSkip(step: DailyBabyStepResponse, blocker: ReflectionBlockerReason | null) {
   const records = loadRecords();
   records.push({
     signature: stepSignature(step),
@@ -44,7 +45,7 @@ export function recordStepSkip(step: DailyBabyStep, blocker: ReflectionBlockerRe
 
 export type FrictionDiagnosis = 'too_big' | 'wrong_time' | 'unclear';
 
-export function diagnoseFriction(step: DailyBabyStep): FrictionDiagnosis | null {
+export function diagnoseFriction(step: DailyBabyStepResponse): FrictionDiagnosis | null {
   const sig = stepSignature(step);
   const matches = loadRecords().filter((r) => r.signature === sig);
   if (matches.length < 2) return null;

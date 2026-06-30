@@ -4,14 +4,14 @@ import {useEffect, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {formulationApi} from '@/lib/life-coach/api-client';
 import {buildPersonalizedChallenge} from '@/lib/formulation/personalized-challenge';
-import type {FormulationSession} from '@/lib/life-coach/types';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
 import {PersonalizedChallengeCard} from '@/components/formulation/personalized-challenge-card';
 import type {AppLocale} from '@/i18n/config';
 
 export function CoachHandoffCard() {
   const t = useTranslations('formulation.handoff');
   const locale = useLocale() as AppLocale;
-  const [session, setSession] = useState<FormulationSession | null>(null);
+  const [session, setSession] = useState<FormulationSessionResponse | null>(null);
 
   useEffect(() => {
     let cancelled = false;

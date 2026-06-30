@@ -1,6 +1,7 @@
 import {requireLifeCoachAccess} from '@/lib/life-coach/require-access';
 import {completeFormulationSession, getFormulationSession} from '@/lib/life-coach/repository';
-import {jsonError, jsonOk} from '@/lib/life-coach/server';
+import {toFormulationSessionResponse} from '@/lib/life-coach/response-dtos';
+import {jsonError, jsonMutation} from '@/lib/life-coach/server';
 
 export async function POST(
   request: Request,
@@ -20,11 +21,11 @@ export async function POST(
       return jsonError('Coach handoff is required before completing.', 400);
     }
     if (existing.status === 'completed') {
-      return jsonOk({session: existing});
+      return jsonMutation({session: toFormulationSessionResponse(existing)});
     }
 
     const session = await completeFormulationSession(current.user.id, id);
-    return jsonOk({session});
+    return jsonMutation({session: toFormulationSessionResponse(session)});
   } catch (error) {
     return jsonError('Could not complete session.', 500, String(error));
   }

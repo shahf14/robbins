@@ -1,4 +1,4 @@
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import type {DailyFocusContext} from '@/lib/daily-focus-context';
 import {getPersonalDayPhase, type PersonalDayPhase} from '@/lib/schedule-content';
 
@@ -15,7 +15,7 @@ export type HomeNowAction = {
   kind: HomeNowActionKind;
   reasonKey: string;
   ctaKey: string;
-  step?: DailyBabyStep;
+  step?: DailyBabyStepResponse;
   stepIndex?: number;
   stepCount?: number;
   estimatedMinutes?: number;
@@ -26,8 +26,8 @@ export type HomeNowActionInput = {
   hasTodayRitual: boolean;
   hasEveningToday: boolean;
   hasGoals: boolean;
-  todaySteps: DailyBabyStep[];
-  primaryStep: DailyBabyStep | null;
+  todaySteps: DailyBabyStepResponse[];
+  primaryStep: DailyBabyStepResponse | null;
   primaryStepIndex: number;
   dailyFocus?: DailyFocusContext | null;
   wakeTime: string;

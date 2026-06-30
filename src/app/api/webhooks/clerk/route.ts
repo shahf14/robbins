@@ -1,18 +1,20 @@
+import {jsonMutation} from '@/lib/life-coach/server';
 import {verifyWebhook} from '@clerk/nextjs/webhooks';
 import {type NextRequest, NextResponse} from 'next/server';
+import {jsonError} from '@/lib/life-coach/server';
 import {upsertClerkUserFromWebhook} from '@/lib/auth/clerk-user';
 
 export async function POST(request: NextRequest) {
   const secret = process.env.CLERK_WEBHOOK_SECRET?.trim();
   if (!secret) {
-    return NextResponse.json({error: 'Webhook not configured'}, {status: 503});
+    return jsonError('Webhook not configured', 503);
   }
 
   let event;
   try {
     event = await verifyWebhook(request, {signingSecret: secret});
   } catch {
-    return NextResponse.json({error: 'Invalid webhook signature'}, {status: 400});
+    return jsonError('Invalid webhook signature', 400);
   }
 
   switch (event.type) {
@@ -38,5 +40,5 @@ export async function POST(request: NextRequest) {
       break;
   }
 
-  return NextResponse.json({ok: true});
+  return jsonMutation();
 }

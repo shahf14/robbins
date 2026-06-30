@@ -1,4 +1,4 @@
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 
 export const WEEKLY_REVIEW_MIN_STEPS = 5;
 export const WEEKLY_REVIEW_MIN_ACTIVE_DAYS = 3;
@@ -11,12 +11,12 @@ export type WeeklyReviewReadiness = {
   daysRemaining: number;
 };
 
-function isLoggedActivity(step: DailyBabyStep): boolean {
+function isLoggedActivity(step: DailyBabyStepResponse): boolean {
   return step.status === 'completed' || step.status === 'partial' || step.status === 'skipped';
 }
 
 /** Review is meaningful once the user logged enough steps or active days in the window. */
-export function computeWeeklyReviewReadiness(steps: DailyBabyStep[]): WeeklyReviewReadiness {
+export function computeWeeklyReviewReadiness(steps: DailyBabyStepResponse[]): WeeklyReviewReadiness {
   const logged = steps.filter(isLoggedActivity);
   const activeDays = new Set(logged.map((step) => step.scheduled_date)).size;
   const isReady =

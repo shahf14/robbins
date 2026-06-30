@@ -2,7 +2,7 @@
 
 import {useMemo} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
-import type {DailyBabyStep, Goal} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse, GoalResponse} from '@/lib/life-coach/response-dtos';
 import {
   commitmentProgress,
   isWithinCommitment,
@@ -11,9 +11,9 @@ import {
 import {formatYmdLocale} from '@/lib/date-utils';
 
 type Props = {
-  goals: Goal[];
-  todaySteps?: DailyBabyStep[];
-  domain?: Goal['domain'];
+  goals: GoalResponse[];
+  todaySteps?: DailyBabyStepResponse[];
+  domain?: GoalResponse['domain'];
 };
 
 export function CommitmentTodayPanel({goals, todaySteps = [], domain}: Props) {
@@ -70,7 +70,7 @@ export function CommitmentTodayPanel({goals, todaySteps = [], domain}: Props) {
 }
 
 export function commitmentBadgeForStep(
-  goal: Goal | undefined,
+  goal: GoalResponse | undefined,
   t: (key: string, values?: Record<string, string | number>) => string
 ): string | null {
   if (!goal || goal.status !== 'active' || !isWithinCommitment(goal)) return null;

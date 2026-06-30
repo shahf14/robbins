@@ -1,3 +1,4 @@
+import {jsonError} from '@/lib/api-response';
 import {isLoopbackHost, requireCurrentUser} from '@/lib/auth/get-current-user';
 import {
   getAdminSessionTokenFromRequest,
@@ -7,17 +8,11 @@ import {
 const ADMIN_API_TOKEN = process.env.ADMIN_API_TOKEN ?? '';
 
 function forbidden(message = 'Forbidden') {
-  return new Response(JSON.stringify({error: message}), {
-    status: 403,
-    headers: {'Content-Type': 'application/json'},
-  });
+  return jsonError(message, 403);
 }
 
 function serviceUnavailable(message: string) {
-  return new Response(JSON.stringify({error: message}), {
-    status: 503,
-    headers: {'Content-Type': 'application/json'},
-  });
+  return jsonError(message, 503);
 }
 
 export function getAdminTokenFromRequest(request: Request) {

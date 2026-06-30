@@ -4,7 +4,13 @@ import {NavArrow} from '@/components/directional-arrow';
 import {useState, type ReactNode} from 'react';
 import {useSearchParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
-import type {DailyBabyStep, Goal, LifeDomain, LifeDomainState, Milestone} from '@/lib/life-coach/types';
+import type {
+  AiCoachingInsightResponse,
+  DailyBabyStepResponse,
+  GoalWithMilestonesResponse,
+  LifeDomainStateResponse,
+} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain, Milestone} from '@/lib/life-coach/types';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
 import {hasDomainGoalDraftForDomain} from '@/lib/open-process-drafts';
 import {LifeCoachFormulationGate} from '@/components/formulation/life-coach-formulation-gate';
@@ -14,13 +20,13 @@ import {GeneralTaskSeriesCreator} from '@/components/simple-tasks/general-task-s
 import {GoalEditCard} from './goal-edit-card';
 import {GeneralDailyStepsManager} from './general-daily-steps-manager';
 
-type GoalWithMilestones = Goal & {milestones?: Milestone[]};
+type GoalWithMilestones = GoalWithMilestonesResponse;
 
 type Props = {
   domain: LifeDomain;
-  state: LifeDomainState | null;
+  state: LifeDomainStateResponse | null;
   goals: GoalWithMilestones[];
-  allRecentSteps?: DailyBabyStep[];
+  allRecentSteps?: DailyBabyStepResponse[];
   onRefresh: () => Promise<void>;
   goalWizard: ReactNode;
   topSlot?: ReactNode;

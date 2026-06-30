@@ -1,4 +1,4 @@
-import type {Goal} from '@/lib/life-coach/types';
+import type {GoalResponse} from '@/lib/life-coach/response-dtos';
 import {
   DEFAULT_COMMITMENT_DAYS,
   resolveCommitmentDays,
@@ -11,7 +11,7 @@ export type GoalSelfContract = {
 };
 
 /** @deprecated Prefer goal.commitment_days / commitment_started_at from the server. */
-export function getGoalContract(goal: Goal): GoalSelfContract {
+export function getGoalContract(goal: GoalResponse): GoalSelfContract {
   return {
     commitmentDays: resolveCommitmentDays(goal),
     createdAt: resolveCommitmentStart(goal),

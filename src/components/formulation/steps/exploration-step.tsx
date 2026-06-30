@@ -5,7 +5,8 @@ import {useTranslations} from 'next-intl';
 import {AiActionHelpMicrocopy} from '@/components/feedback/ai-action-help-microcopy';
 import {isFallbackExplorationBundle} from '@/lib/formulation/exploration-question-source';
 import type {AppLocale} from '@/i18n/config';
-import type {FormulationSession, LlmExplorationAnswer, LlmExplorationQuestion} from '@/lib/life-coach/types';
+import type {FormulationSessionResponse} from '@/lib/life-coach/response-dtos';
+import type {LlmExplorationAnswer, LlmExplorationQuestion} from '@/lib/life-coach/types';
 
 const QUESTIONS_PER_PAGE = 5;
 
@@ -17,7 +18,7 @@ function getRatingLabel(value: number, minLabel: string, maxLabel: string): stri
 
 type Props = {
   loading: boolean;
-  session: FormulationSession;
+  session: FormulationSessionResponse;
   locale: AppLocale;
   questions: LlmExplorationQuestion[];
   initialAnswers?: LlmExplorationAnswer[];

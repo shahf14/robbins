@@ -1,4 +1,4 @@
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import {pickStartHereStep} from '@/lib/life-coach/step-priority';
 import type {PreferredActionWindow} from '@/lib/user-preferences';
 import {dateToYMD} from '@/lib/date-utils';
@@ -10,7 +10,7 @@ function yesterdayDate(from = new Date()): string {
 }
 
 export function hadMissedYesterday(
-  weekSteps: DailyBabyStep[],
+  weekSteps: DailyBabyStepResponse[],
   today: string
 ): boolean {
   const yday = yesterdayDate(new Date(`${today}T00:00:00`));
@@ -31,11 +31,11 @@ type SchedulePrefs = {
 };
 
 export function pickRecoveryQuest(
-  todaySteps: DailyBabyStep[],
+  todaySteps: DailyBabyStepResponse[],
   energy?: number | null,
   prefs?: SchedulePrefs,
-  weekSteps: DailyBabyStep[] = []
-): DailyBabyStep | null {
+  weekSteps: DailyBabyStepResponse[] = []
+): DailyBabyStepResponse | null {
   const pending = todaySteps.filter((s) => s.status === 'pending');
   if (pending.length === 0) return null;
   return pickStartHereStep(pending, energy, prefs, weekSteps);

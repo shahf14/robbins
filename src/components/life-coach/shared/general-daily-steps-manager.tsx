@@ -5,11 +5,11 @@ import {useTranslations} from 'next-intl';
 import {useToast} from '@/components/feedback/toast-provider';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
 import {resolveLifeCoachErrorMessage} from '@/lib/life-coach/api-error';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import {
   DAILY_STEP_DIFFICULTIES,
   DAILY_STEP_STATUSES,
   LIFE_DOMAINS,
-  type DailyBabyStep,
   type DailyStepDifficulty,
   type DailyStepStatus,
   type LifeDomain,
@@ -27,7 +27,7 @@ type Draft = {
 
 type Props = {
   domain: LifeDomain;
-  steps: DailyBabyStep[];
+  steps: DailyBabyStepResponse[];
   onChanged: () => Promise<void>;
 };
 
@@ -50,7 +50,7 @@ export function GeneralDailyStepsManager({domain, steps, onChanged}: Props) {
     [domain, steps]
   );
 
-  function beginEdit(step: DailyBabyStep) {
+  function beginEdit(step: DailyBabyStepResponse) {
     setEditingId(step.id);
     setDraft({
       title: step.title,

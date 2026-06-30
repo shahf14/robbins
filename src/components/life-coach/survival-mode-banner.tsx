@@ -6,14 +6,14 @@ import {useToast} from '@/components/feedback/toast-provider';
 import {survivalModeCopyKeys, survivalModeSoftCopyKeys} from '@/lib/life-context-content';
 import {hasStoredPlanB, planBPreviewLine} from '@/lib/life-coach/plan-b';
 import type {AppLocale} from '@/i18n/config';
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import type {LifeContextStatus} from '@/lib/life-coach/types';
 import type {ReflectionBlockerReason} from '@/lib/life-coach/types';
 
 type Option = 'easy' | 'skip' | 'pause';
 
 type Props = {
-  pendingSteps: DailyBabyStep[];
+  pendingSteps: DailyBabyStepResponse[];
   lifeContexts?: LifeContextStatus[] | null;
   emphasize?: boolean;
   softCopy?: boolean;

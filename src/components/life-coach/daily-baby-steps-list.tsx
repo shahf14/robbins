@@ -3,7 +3,7 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
-import type {DailyBabyStep, Goal} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse, GoalResponse} from '@/lib/life-coach/response-dtos';
 import {
   curatedIdFromStepReasoning,
   isCuratedStepReasoning,
@@ -77,7 +77,7 @@ import {
 import type {ReflectionFormDraft} from './daily-reflection-modal';
 
 type Props = {
-  steps: DailyBabyStep[];
+  steps: DailyBabyStepResponse[];
   onUpdateStatus: (
     id: string,
     status: 'completed' | 'skipped' | 'partial',
@@ -105,9 +105,9 @@ type Props = {
   goalSetupHref?: string;
   /** Latest check-in energy (1–10) for smart ordering. */
   energy?: number | null;
-  weekSteps?: DailyBabyStep[];
+  weekSteps?: DailyBabyStepResponse[];
   identityTitle?: IdentityTitle | null;
-  goals?: Goal[];
+  goals?: GoalResponse[];
   /** When true, render nothing instead of the empty-state panel (e.g. curated picker shown above). */
   hideEmptyState?: boolean;
 };
@@ -127,7 +127,7 @@ function getTomorrow(): string {
 }
 
 type ReflectionModalState = {
-  activeStep: DailyBabyStep | null;
+  activeStep: DailyBabyStepResponse | null;
   activeAction: 'skipped' | 'partial';
 };
 
@@ -252,7 +252,7 @@ export function DailyBabyStepsList({
     accountability,
   } = coach;
 
-  const setActiveStep = useCallback((step: DailyBabyStep | null) => {
+  const setActiveStep = useCallback((step: DailyBabyStepResponse | null) => {
     setReflectionModal((current) => ({...current, activeStep: step}));
   }, []);
   const setActiveAction = useCallback((action: 'skipped' | 'partial') => {
@@ -496,7 +496,7 @@ export function DailyBabyStepsList({
     };
   }, [sortedSteps, prefs.sleep_time, weekSteps, today, identityTitle, energy, schedulePrefs]);
 
-  function maybeShowValueFeedback(step: DailyBabyStep) {
+  function maybeShowValueFeedback(step: DailyBabyStepResponse) {
     const completedAiToday = sortedSteps.filter(
       (item) => item.status === 'completed' && item.generated_by_ai
     ).length;
@@ -511,7 +511,7 @@ export function DailyBabyStepsList({
     }
   }
 
-  async function saveValueFeedback(step: DailyBabyStep, feedback: StepValueFeedback) {
+  async function saveValueFeedback(step: DailyBabyStepResponse, feedback: StepValueFeedback) {
     try {
       await lifeCoachApi.updateDailyStepStatus(step.id, {
         status: 'completed',
@@ -574,7 +574,7 @@ export function DailyBabyStepsList({
     });
   }
 
-  async function applySkipRecovery(step: DailyBabyStep) {
+  async function applySkipRecovery(step: DailyBabyStepResponse) {
     setSkipRecoveryLoadingId(step.id);
     try {
       let content = buildSkipRecoveryStep(step, locale);
@@ -599,7 +599,7 @@ export function DailyBabyStepsList({
     }
   }
 
-  async function createMicroStepTomorrow(step: DailyBabyStep) {
+  async function createMicroStepTomorrow(step: DailyBabyStepResponse) {
     setMicroCreatingId(step.id);
     try {
       await lifeCoachApi.createDailyStep({
@@ -620,7 +620,7 @@ export function DailyBabyStepsList({
     }
   }
 
-  async function openReplacementOptions(step: DailyBabyStep) {
+  async function openReplacementOptions(step: DailyBabyStepResponse) {
     setReplacementStepId(step.id);
     setReplacementOptions([]);
     setReplacementLoadingId(step.id);
@@ -650,7 +650,7 @@ export function DailyBabyStepsList({
     }
   }
 
-  async function replaceCuratedStep(step: DailyBabyStep, task: CuratedDailyTaskOption) {
+  async function replaceCuratedStep(step: DailyBabyStepResponse, task: CuratedDailyTaskOption) {
     setReplacingId(task.id);
     try {
       await lifeCoachApi.replaceCuratedDailyStep(step.id, {

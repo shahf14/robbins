@@ -1,7 +1,7 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import {buildImplementationIntention} from '@/lib/behavior-science/implementation-intentions';
 import {planBPreviewLine} from '@/lib/life-coach/plan-b';
 import type {PreferredActionWindow} from '@/lib/user-preferences';
@@ -9,7 +9,7 @@ import {useLocale} from 'next-intl';
 import type {AppLocale} from '@/i18n/config';
 
 type Props = {
-  step: DailyBabyStep;
+  step: DailyBabyStepResponse;
   stepIndex: number;
   stepCount: number;
   wakeTime: string;

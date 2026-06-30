@@ -186,12 +186,13 @@ export function saveReflectionAnalysisWithInsights(
   })();
 }
 
-export async function listInsights(
-  type?: AiCoachingInsight['insight_type'],
-  userId?: string,
-  options?: {limit?: number; offset?: number}
-): Promise<AiCoachingInsight[]> {
-  let sql = `SELECT * FROM ai_insights WHERE 1=1`;
+export const MAX_INSIGHTS_LIST_OFFSET = 10_000;
+
+function insightsFilterSql(
+  type: AiCoachingInsight['insight_type'] | undefined,
+  userId: string | undefined
+): {sql: string; params: unknown[]} {
+  let sql = ` FROM ai_insights WHERE 1=1`;
   const params: unknown[] = [];
   if (type) {
     sql += ` AND insight_type = ?`;
@@ -201,9 +202,29 @@ export async function listInsights(
     sql += ` AND user_id = ?`;
     params.push(userId);
   }
+  return {sql, params};
+}
+
+export async function countInsights(
+  type?: AiCoachingInsight['insight_type'],
+  userId?: string
+): Promise<number> {
+  const {sql, params} = insightsFilterSql(type, userId);
+  const row = dbGet<{count: number}>(`SELECT COUNT(*) as count${sql}`, params);
+  return row?.count ?? 0;
+}
+
+export async function listInsights(
+  type?: AiCoachingInsight['insight_type'],
+  userId?: string,
+  options?: {limit?: number; offset?: number}
+): Promise<AiCoachingInsight[]> {
+  const {sql: filterSql, params: filterParams} = insightsFilterSql(type, userId);
+  let sql = `SELECT *${filterSql}`;
+  const params = [...filterParams];
   sql += ` ORDER BY created_at DESC`;
   const limit = Math.min(Math.max(options?.limit ?? 50, 1), 200);
-  const offset = Math.max(options?.offset ?? 0, 0);
+  const offset = Math.min(Math.max(options?.offset ?? 0, 0), MAX_INSIGHTS_LIST_OFFSET);
   sql += ` LIMIT ? OFFSET ?`;
   params.push(limit, offset);
   const rows = dbAll<Record<string, unknown>>(sql, params);

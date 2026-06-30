@@ -3,7 +3,7 @@
 import {useState, useEffect, useMemo} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
-import type {Goal} from '@/lib/life-coach/types';
+import type {GoalResponse, DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 import {useConfirm} from '@/components/feedback/confirm-provider';
 import {useToast} from '@/components/feedback/toast-provider';
 import {BusyButton} from '@/components/feedback/busy-button';
@@ -17,12 +17,11 @@ import {
 import {deriveLadderStage, ladderTarget} from '@/lib/behavior-science/commitment-ladder';
 import {computeWeeklyBehaviorScore} from '@/lib/behavior-science/behavior-score';
 import {formatYmdLocale} from '@/lib/date-utils';
-import type {DailyBabyStep} from '@/lib/life-coach/types';
 
 type Props = {
-  goal: Goal;
+  goal: GoalResponse;
   onChanged: () => Promise<void> | void;
-  weekSteps?: DailyBabyStep[];
+  weekSteps?: DailyBabyStepResponse[];
 };
 
 /**

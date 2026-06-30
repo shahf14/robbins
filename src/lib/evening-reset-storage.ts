@@ -46,7 +46,7 @@ export async function fetchEveningBootContext(): Promise<EveningResetBootContext
 export async function fetchEveningSessions(options?: {strict?: boolean}): Promise<EveningResetSession[]> {
   const pending = readLegacyItems<EveningResetSession>(SESSIONS_KEY) ?? [];
   try {
-    const res = await fetch('/api/evening-reset', {headers: mergeLocalAuthHeaders()});
+    const res = await fetch('/api/evening-reset?limit=400', {headers: mergeLocalAuthHeaders()});
     if (options?.strict) {
       await throwIfNotOk(res);
     } else {

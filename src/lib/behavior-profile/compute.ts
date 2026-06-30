@@ -1,9 +1,5 @@
-import type {
-  DailyBabyStep,
-  DailyReflection,
-  LifeDomain,
-  ReflectionBlockerReason,
-} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
+import type {DailyReflection, LifeDomain, ReflectionBlockerReason} from '@/lib/life-coach/types';
 import type {PreferredActionWindow} from '@/lib/user-preferences';
 import {
   computeFailedActionPatterns,
@@ -15,7 +11,7 @@ import {dateToYMD} from '@/lib/date-utils';
 
 type ComputeInput = {
   userId: string;
-  steps: DailyBabyStep[];
+  steps: DailyBabyStepResponse[];
   reflections: DailyReflection[];
   energyScores: number[];
   fallbackWindow?: PreferredActionWindow;
@@ -28,7 +24,7 @@ function dateDaysAgo(days: number, from = new Date()): string {
 }
 
 function topBlockers(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   reflections: DailyReflection[],
   limit = 3
 ): ReflectionBlockerReason[] {
@@ -45,7 +41,7 @@ function topBlockers(
     .map(([key]) => key as ReflectionBlockerReason);
 }
 
-function preferredDomains(steps: DailyBabyStep[], limit = 3): LifeDomain[] {
+function preferredDomains(steps: DailyBabyStepResponse[], limit = 3): LifeDomain[] {
   const counts = new Map<LifeDomain, number>();
   for (const s of steps) {
     if (s.status === 'completed' || s.status === 'partial') {
@@ -59,13 +55,13 @@ function preferredDomains(steps: DailyBabyStep[], limit = 3): LifeDomain[] {
 }
 
 function bestActionWindow(
-  steps: DailyBabyStep[],
+  steps: DailyBabyStepResponse[],
   fallback: PreferredActionWindow
 ): PreferredActionWindow {
   const windowCounts = new Map<PreferredActionWindow, number>();
   for (const s of steps) {
     if (s.status !== 'completed' && s.status !== 'partial') continue;
-    const ts = s.completed_at ?? s.updated_at;
+    const ts = s.completed_at;
     if (!ts) continue;
     const hour = new Date(ts).getHours();
     const window = hourToActionWindow(hour);
@@ -75,14 +71,14 @@ function bestActionWindow(
   return [...windowCounts.entries()].sort((a, b) => b[1] - a[1])[0][0];
 }
 
-function completionRate(steps: DailyBabyStep[]): number {
+function completionRate(steps: DailyBabyStepResponse[]): number {
   const actionable = steps.filter((s) => s.status !== 'pending');
   if (actionable.length === 0) return 0;
   const showUps = actionable.filter((s) => s.status === 'completed' || s.status === 'partial').length;
   return Math.round((showUps / actionable.length) * 100) / 100;
 }
 
-function avgActualMinutes(steps: DailyBabyStep[]): number | null {
+function avgActualMinutes(steps: DailyBabyStepResponse[]): number | null {
   const completed = steps.filter((s) => s.status === 'completed' && s.actual_minutes != null);
   if (completed.length === 0) return null;
   const sum = completed.reduce((acc, s) => acc + (s.actual_minutes ?? 0), 0);
@@ -96,7 +92,7 @@ function lowEnergyFrequency(energyScores: number[]): number {
 }
 
 /** Comeback after skip — same-day reattempt + next-day show-up after a missed day. */
-export function computeRecoveryRate(steps: DailyBabyStep[]): number {
+export function computeRecoveryRate(steps: DailyBabyStepResponse[]): number {
   const sameDayComebacks = steps.filter(
     (s) => s.reattempt_same_day && (s.status === 'completed' || s.status === 'partial')
   ).length;

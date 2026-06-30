@@ -4,7 +4,7 @@ import {computeDomainRivalry} from '@/lib/gamification/domain-rivalry';
 import {deriveIdentityTitle} from '@/lib/gamification/identity-titles';
 import {computeMysteryUnlock} from '@/lib/gamification/mystery-unlocks';
 import {deriveStreakHealth} from '@/lib/gamification/streak-health';
-import type {DailyBabyStep} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
 
 export type GamificationState = {
   comebackChain: ReturnType<typeof computeComebackChain>;
@@ -16,8 +16,8 @@ export type GamificationState = {
 
 export function buildGamificationState(input: {
   today: string;
-  todaySteps: DailyBabyStep[];
-  weekSteps: DailyBabyStep[];
+  todaySteps: DailyBabyStepResponse[];
+  weekSteps: DailyBabyStepResponse[];
   ritualStreak: number;
   sleepTime: string;
   hasTodayRitual: boolean;

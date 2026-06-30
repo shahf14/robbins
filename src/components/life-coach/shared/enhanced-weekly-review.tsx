@@ -11,7 +11,8 @@ import {
 import {analyzeReturningBarrierWeek} from '@/lib/formulation/skip-adaptation-routing';
 import {fetchFormulationCoachContext} from '@/lib/formulation/personalized-challenge-storage';
 import {BehaviorChangeInsightCard} from '@/components/behavior-science/behavior-change-insight-card';
-import type {AiCoachingInsight, DailyBabyStep, LifeDomain, WeeklyReview} from '@/lib/life-coach/types';
+import type {AiCoachingInsightResponse, DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain, WeeklyReview} from '@/lib/life-coach/types';
 import {loadUserPreferences} from '@/lib/user-preferences';
 import {computeStreak} from '@/lib/life-coach/streak-utils';
 import {WeeklyAccountabilityCheckin} from '@/components/behavior-science/weekly-accountability-checkin';
@@ -28,8 +29,8 @@ import {computeWeeklyReviewReadiness, WEEKLY_REVIEW_MIN_ACTIVE_DAYS, WEEKLY_REVI
 
 type Props = {
   domain: LifeDomain;
-  insight: AiCoachingInsight | null;
-  allRecentSteps: DailyBabyStep[];
+  insight: AiCoachingInsightResponse | null;
+  allRecentSteps: DailyBabyStepResponse[];
   onGenerateReview: () => Promise<void>;
 };
 

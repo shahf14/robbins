@@ -1,4 +1,5 @@
-import type {DailyBabyStep, LifeDomain} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain} from '@/lib/life-coach/types';
 import {LIFE_DOMAINS} from '@/lib/life-coach/types';
 
 export type DomainRivalrySnapshot = {
@@ -9,7 +10,7 @@ export type DomainRivalrySnapshot = {
   gap: number;
 };
 
-export function computeDomainRivalry(weekSteps: DailyBabyStep[]): DomainRivalrySnapshot | null {
+export function computeDomainRivalry(weekSteps: DailyBabyStepResponse[]): DomainRivalrySnapshot | null {
   const completed = weekSteps.filter((s) => s.status === 'completed');
   if (completed.length < 2) return null;
 

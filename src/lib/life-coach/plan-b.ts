@@ -1,5 +1,6 @@
 import type {AppLocale} from '@/i18n/config';
-import type {DailyBabyStep, StructuredDailyBabyStep} from './types';
+import type {DailyBabyStepResponse} from './response-dtos';
+import type {StructuredDailyBabyStep} from './types';
 
 export type PlanBFields = {
   fallback_title: string;
@@ -8,7 +9,7 @@ export type PlanBFields = {
 };
 
 export function buildDefaultPlanB(
-  step: Pick<DailyBabyStep, 'title' | 'description'>,
+  step: Pick<DailyBabyStepResponse, 'title' | 'description'>,
   locale: AppLocale = 'he'
 ): PlanBFields {
   const he = locale === 'he';
@@ -33,18 +34,18 @@ export function ensurePlanBFields(
   return {...step, ...planB};
 }
 
-export function hasStoredPlanB(step: Pick<DailyBabyStep, 'fallback_title'>): boolean {
+export function hasStoredPlanB(step: Pick<DailyBabyStepResponse, 'fallback_title'>): boolean {
   return !!step.fallback_title?.trim();
 }
 
-export function isPlanBActive(step: DailyBabyStep): boolean {
+export function isPlanBActive(step: DailyBabyStepResponse): boolean {
   if (!hasStoredPlanB(step)) return step.estimated_minutes <= 2 && step.difficulty === 'easy';
   return step.title.trim() === (step.fallback_title ?? '').trim();
 }
 
 /** Content to apply when user taps “easier version”. */
 export function getPlanBContent(
-  step: DailyBabyStep,
+  step: DailyBabyStepResponse,
   locale: AppLocale = 'he'
 ): {
   title: string;
@@ -70,7 +71,7 @@ export function getPlanBContent(
   };
 }
 
-export function planBPreviewLine(step: DailyBabyStep, locale: AppLocale = 'he'): string {
+export function planBPreviewLine(step: DailyBabyStepResponse, locale: AppLocale = 'he'): string {
   const planB = hasStoredPlanB(step)
     ? {
         fallback_title: step.fallback_title!,

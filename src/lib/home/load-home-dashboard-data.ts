@@ -1,4 +1,5 @@
 import {lifeCoachApi} from '@/lib/life-coach/api-client';
+import {ensureCommitmentStepsOnSession} from '@/lib/life-coach/ensure-commitment-session';
 import {classifyLoadFailure, type ApiLoadFailureKind} from '@/lib/life-coach/api-error';
 import {currentWeekRange, todayYMD} from '@/lib/date-utils';
 import {fetchEveningSessions} from '@/lib/evening-reset-storage';
@@ -88,6 +89,7 @@ export async function loadHomeDashboardData({
   const partialFailures: HomeOptionalSection[] = [];
 
   try {
+    await ensureCommitmentStepsOnSession();
     const [goalsRes, stepsRes, weekStepsRes, domainsRes] = await Promise.all([
       lifeCoachApi.listGoals(),
       lifeCoachApi.getDailySteps(today),

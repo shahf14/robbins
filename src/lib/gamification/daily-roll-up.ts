@@ -1,4 +1,5 @@
-import type {DailyBabyStep, LifeDomain} from '@/lib/life-coach/types';
+import type {DailyBabyStepResponse} from '@/lib/life-coach/response-dtos';
+import type {LifeDomain} from '@/lib/life-coach/types';
 import type {IdentityTitle} from './identity-titles';
 
 export type DailyRollUp = {
@@ -11,7 +12,7 @@ export type DailyRollUp = {
 };
 
 export function buildDailyRollUp(
-  todaySteps: DailyBabyStep[],
+  todaySteps: DailyBabyStepResponse[],
   identityTitle: IdentityTitle | null,
   comebackChain: number
 ): DailyRollUp | null {

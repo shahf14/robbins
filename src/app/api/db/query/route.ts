@@ -1,4 +1,4 @@
-import {badRequest} from '@/lib/api-response';
+import {jsonError} from '@/lib/life-coach/server';
 import {requireAdmin} from '@/lib/db/admin-guard';
 import {logAdminAccess} from '@/lib/db/admin-audit-log';
 import {getDb} from '@/lib/db/sqlite';
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   if (!parsed.ok) return parsed.response;
 
   const sql = parsed.data.sql.trim();
-  if (!sql) return badRequest('sql is required');
+  if (!sql) return jsonError('sql is required', 400);
 
   const start = Date.now();
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     const db = getDb();
     const stmt = db.prepare(sql);
     if (!stmt.readonly) {
-      return badRequest('Only read-only statements are allowed in the query editor.');
+      return jsonError('Only read-only statements are allowed in the query editor.', 400);
     }
 
     let rows: unknown[] = [];
@@ -50,10 +50,9 @@ export async function POST(request: Request) {
       duration_ms: Date.now() - start,
     });
   } catch {
-    return Response.json({
-      error: 'Query could not be executed.',
-      duration_ms: Date.now() - start,
-    }, {status: 400});
+    return jsonError('Query could not be executed.', 400, undefined, {
+      extra: {duration_ms: Date.now() - start},
+    });
   } finally {
     logAdminAccess({
       userId: guard.user.id,

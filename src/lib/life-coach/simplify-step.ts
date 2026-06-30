@@ -1,5 +1,5 @@
 import type {AppLocale} from '@/i18n/config';
-import type {DailyBabyStep} from './types';
+import type {DailyBabyStepResponse} from './response-dtos';
 import {getPlanBContent, hasStoredPlanB} from './plan-b';
 
 export type SimplifiedStepContent = {
@@ -13,7 +13,7 @@ const SKIP_RECOVERY_MINUTES = 3;
 
 /** Apply stored Plan B or generate a 2-minute fallback — no AI round-trip. */
 export function buildSimplifiedStep(
-  step: DailyBabyStep,
+  step: DailyBabyStepResponse,
   locale: AppLocale = 'he'
 ): SimplifiedStepContent {
   return getPlanBContent(step, locale);
@@ -21,7 +21,7 @@ export function buildSimplifiedStep(
 
 /** 3-minute easy version to bring a skipped step back on track — same row, new content. */
 export function buildSkipRecoveryStep(
-  step: DailyBabyStep,
+  step: DailyBabyStepResponse,
   locale: AppLocale = 'he'
 ): SimplifiedStepContent {
   const planB = getPlanBContent(step, locale);
