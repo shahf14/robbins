@@ -245,7 +245,8 @@ export function DomainGoalWizard({domain, assessment, onCreated}: Props) {
         preview={preview}
         onCancel={() => setPreview(null)}
         onSave={async (input) => {
-          await lifeCoachApi.createGoal(input);
+          const idempotency_key = input.idempotency_key ?? crypto.randomUUID();
+          await lifeCoachApi.createGoal({...input, idempotency_key});
           clearDomainGoalWizardDraft();
           setPreview(null);
           setCelebrating(true);

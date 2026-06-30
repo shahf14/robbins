@@ -23,6 +23,7 @@ import {
   listActiveGoalUsers,
 } from '@/lib/life-coach/repository';
 import {trailingSevenDayWindow, jsonError, jsonOk, verifyCronRequest} from '@/lib/life-coach/server';
+import {logCronRun} from '@/lib/db/cron-log';
 import {getSupportContextForUser} from '@/lib/support-context/formulation-support-context';
 
 export async function POST(request: Request) {
@@ -157,8 +158,16 @@ export async function POST(request: Request) {
       }
     }
 
+    logCronRun({
+      job: 'weekly-review',
+      status: failedCount === 0 ? 'success' : generatedCount === 0 ? 'failed' : 'partial',
+      generatedCount,
+      failedCount,
+      errors,
+    });
     return jsonOk({ok: true, generatedCount, failedCount, errors});
   } catch (error) {
+    logCronRun({job: 'weekly-review', status: 'failed', generatedCount: 0, failedCount: 1, errors: [{userId: 'unknown', error: String(error)}]});
     return jsonError('Could not run weekly life coach cron.', 500, String(error));
   }
 }

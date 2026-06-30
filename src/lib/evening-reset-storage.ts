@@ -1,6 +1,7 @@
 import {mergeLocalAuthHeaders} from '@/lib/auth/client-headers';
 import {observeAuthResponse} from '@/lib/auth/observe-auth-response';
 import {throwIfNotOk} from '@/lib/http/api-response-error';
+import {storageFetch} from '@/lib/http/storage-fetch';
 import type {EveningResetSession} from './evening-reset-types';
 import type {EveningResetPainContext} from './evening-reset/pain-context';
 import type {AccountabilityContext} from '@/lib/formulation/accountability-routing';
@@ -73,17 +74,11 @@ export async function persistEveningSession(
       await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
     }
     try {
-      const response = await fetch('/api/evening-reset', {
+      const data = await storageFetch<{session?: EveningResetSession}>('/api/evening-reset', {
         method: 'POST',
-        headers: mergeLocalAuthHeaders(),
         body: JSON.stringify(session),
       });
-      if (!response.ok) {
-        lastError = new Error('Could not save evening reset session.');
-        continue;
-      }
       removePendingSession(SESSIONS_KEY, session.id);
-      const data = (await response.json()) as {session?: EveningResetSession};
       return data.session ?? session;
     } catch (err) {
       lastError = err;

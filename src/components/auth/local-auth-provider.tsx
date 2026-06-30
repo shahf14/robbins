@@ -11,8 +11,8 @@ import {LocalAuthGate} from '@/components/auth/local-auth-gate';
 
 type GatePhase = 'idle' | 'checking' | 'blocked';
 
-async function fetchAuthContext(): Promise<LocalAuthContext> {
-  const response = await fetch('/api/auth/context');
+async function fetchAuthContext(signal?: AbortSignal): Promise<LocalAuthContext> {
+  const response = await fetch('/api/auth/context', {signal});
   if (!response.ok) {
     return {mode: 'local', openAccess: false};
   }
@@ -28,9 +28,10 @@ async function fetchAuthContext(): Promise<LocalAuthContext> {
   return {mode: 'local', openAccess: false};
 }
 
-async function hasValidSession(): Promise<boolean> {
+async function hasValidSession(signal?: AbortSignal): Promise<boolean> {
   const token = getStoredLocalAuthToken();
   const response = await fetch('/api/auth/session', {
+    signal,
     headers: token ? {Authorization: `Bearer ${token}`} : {},
   });
   return response.ok;
@@ -41,8 +42,8 @@ export function LocalAuthProvider({children}: {children: ReactNode}) {
   const authContextRef = useRef<LocalAuthContext | null>(null);
   const localAuthRequiredRef = useRef(false);
 
-  const evaluateAccess = useCallback(async (): Promise<boolean> => {
-    const context = authContextRef.current ?? (await fetchAuthContext());
+  const evaluateAccess = useCallback(async (signal?: AbortSignal): Promise<boolean> => {
+    const context = authContextRef.current ?? (await fetchAuthContext(signal));
     authContextRef.current = context;
 
     if (context.mode === 'clerk' || (context.mode === 'local' && context.openAccess)) {
@@ -52,36 +53,40 @@ export function LocalAuthProvider({children}: {children: ReactNode}) {
     }
 
     localAuthRequiredRef.current = true;
-    const authenticated = await hasValidSession();
+    const authenticated = await hasValidSession(signal);
     setPhase(authenticated ? 'idle' : 'blocked');
     return authenticated;
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     async function bootstrap() {
       setPhase('checking');
       try {
-        await evaluateAccess();
-      } catch {
-        if (!cancelled) {
-          localAuthRequiredRef.current = true;
-          setPhase('blocked');
-        }
+        await evaluateAccess(controller.signal);
+      } catch (err) {
+        if (controller.signal.aborted) return;
+        localAuthRequiredRef.current = true;
+        setPhase('blocked');
       }
     }
 
     void bootstrap();
 
-    return subscribeLocalAuthRequired(() => {
+    const unsubscribe = subscribeLocalAuthRequired(() => {
       if (!localAuthRequiredRef.current) return;
       setPhase('blocked');
     });
+
+    return () => {
+      controller.abort();
+      unsubscribe();
+    };
   }, [evaluateAccess]);
 
   const handleRetry = useCallback(() => {
-    void evaluateAccess().then((authenticated) => {
+    void evaluateAccess(undefined).then((authenticated) => {
       if (authenticated) {
         notifyLocalAuthReady();
       }

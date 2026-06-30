@@ -10,6 +10,7 @@ const OPENAI_RESPONSES_URL = 'https://api.openai.com/v1/responses';
 
 /** Upstream calls are aborted after this long so a hung provider can't hang the request. */
 const REQUEST_TIMEOUT_MS = 15_000;
+const MAX_RETRIES = 3;
 
 export type OpenAiResponseBody = {
   output_text?: string;
@@ -63,34 +64,47 @@ export async function callOpenAiResponses(opts: {
   if (!apiKey) return null;
 
   const startMs = Date.now();
-  try {
-    const response = await fetch(OPENAI_RESPONSES_URL, {
-      method: 'POST',
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: opts.model,
-        instructions: opts.instructions,
-        input: opts.input,
-        max_output_tokens: opts.maxOutputTokens,
-        ...(opts.jsonObject ? {text: {format: {type: 'json_object'}}} : {}),
-      }),
-    });
+  const body = JSON.stringify({
+    model: opts.model,
+    instructions: opts.instructions,
+    input: opts.input,
+    max_output_tokens: opts.maxOutputTokens,
+    ...(opts.jsonObject ? {text: {format: {type: 'json_object'}}} : {}),
+  });
 
-    if (!response.ok) return null;
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    if (attempt > 0) {
+      await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
+    }
+    try {
+      const response = await fetch(OPENAI_RESPONSES_URL, {
+        method: 'POST',
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body,
+      });
 
-    const body = (await response.json()) as OpenAiResponseBody;
-    return {
-      text: extractOpenAiText(body),
-      tokensUsed: body.usage?.total_tokens ?? null,
-      durationMs: Date.now() - startMs,
-      // Prefer the model echoed back by the API, falling back to the requested one.
-      model: body.model ?? opts.model,
-    };
-  } catch {
-    return null;
+      if (!response.ok) {
+        if (attempt < MAX_RETRIES - 1 && (response.status === 429 || response.status >= 500)) {
+          continue;
+        }
+        return null;
+      }
+
+      const responseBody = (await response.json()) as OpenAiResponseBody;
+      return {
+        text: extractOpenAiText(responseBody),
+        tokensUsed: responseBody.usage?.total_tokens ?? null,
+        durationMs: Date.now() - startMs,
+        model: responseBody.model ?? opts.model,
+      };
+    } catch {
+      if (attempt < MAX_RETRIES - 1) continue;
+      return null;
+    }
   }
+  return null;
 }

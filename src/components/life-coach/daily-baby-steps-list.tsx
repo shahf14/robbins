@@ -289,8 +289,8 @@ export function DailyBabyStepsList({
       toast.success(t('lifeCoach.valueFeedback.thanks'));
       setValueFeedbackPromptId(null);
       await onRefresh?.();
-    } catch {
-      toast.error(t('feedback.failed'));
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
     }
   }
   const displaySteps = recoveryMode && recoveryQuest
@@ -358,8 +358,8 @@ export function DailyBabyStepsList({
       setSkipRecoveryHighlightId(null);
       await onRefresh?.();
       toast.success(t('lifeCoach.skipRecovery.done'));
-    } catch {
-      toast.error(t('feedback.failed'));
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
     } finally {
       setSkipRecoveryLoadingId(null);
     }
@@ -379,8 +379,8 @@ export function DailyBabyStepsList({
       });
       await onRefresh?.();
       toast.success(t('lifeCoach.microStepTomorrowCreated'));
-    } catch {
-      toast.error(t('feedback.failed'));
+    } catch (error) {
+      toast.error(resolveLifeCoachErrorMessage(error, t));
     } finally {
       setMicroCreatingId(null);
     }
@@ -736,8 +736,8 @@ export function DailyBabyStepsList({
                       await lifeCoachApi.updateDailyStepContent(step.id, planB);
                       await onRefresh?.();
                       toast.success(t('lifeCoach.easierStepDone'));
-                    } catch {
-                      toast.error(t('feedback.failed'));
+                    } catch (error) {
+                      toast.error(resolveLifeCoachErrorMessage(error, t));
                     } finally {
                       setFrictionShrinkingId(null);
                     }
@@ -921,8 +921,8 @@ export function DailyBabyStepsList({
                           showIdentityFlash(partialMsg);
                           toast.success(partialMsg);
                           await onRefresh?.();
-                        } catch {
-                          toast.error(t('feedback.failed'));
+                        } catch (error) {
+                          toast.error(resolveLifeCoachErrorMessage(error, t));
                         } finally {
                           setLoadingId(null);
                         }
@@ -942,8 +942,8 @@ export function DailyBabyStepsList({
                             await lifeCoachApi.updateDailyStepContent(step.id, planB);
                             await onRefresh?.();
                             toast.success(t('lifeCoach.easierStepDone'));
-                          } catch {
-                            toast.error(t('feedback.failed'));
+                          } catch (error) {
+                            toast.error(resolveLifeCoachErrorMessage(error, t));
                           } finally {
                             setLoadingId(null);
                           }
@@ -989,8 +989,8 @@ export function DailyBabyStepsList({
                       await lifeCoachApi.rescheduleDailyStep(step.id, getTomorrow(), originalDate);
                       await onRefresh?.();
                       toast.success(t('feedback.saved'));
-                    } catch {
-                      toast.error(t('feedback.failed'));
+                    } catch (error) {
+                      toast.error(resolveLifeCoachErrorMessage(error, t));
                     } finally {
                       setLoadingId(null);
                     }
@@ -1014,8 +1014,8 @@ export function DailyBabyStepsList({
                       await lifeCoachApi.deleteDailyStep(step.id);
                       await onRefresh?.();
                       toast.success(t('feedback.saved'));
-                    } catch {
-                      toast.error(t('feedback.failed'));
+                    } catch (error) {
+                      toast.error(resolveLifeCoachErrorMessage(error, t));
                     } finally {
                       setLoadingId(null);
                     }

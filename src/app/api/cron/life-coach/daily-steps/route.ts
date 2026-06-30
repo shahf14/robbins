@@ -2,6 +2,7 @@ import {isPastWakeTimeInTimezone} from '@/lib/schedule-content';
 import {generateDailyStepsForUser} from '@/lib/life-coach/generate-daily-steps-for-user';
 import {getUserGenerationContext, getUserParticipantProfile, listActiveGoalUsers} from '@/lib/life-coach/repository';
 import {jsonError, jsonOk, startOfToday, verifyCronRequest} from '@/lib/life-coach/server';
+import {logCronRun} from '@/lib/db/cron-log';
 
 export async function POST(request: Request) {
   const unauthorized = verifyCronRequest(request);
@@ -59,8 +60,16 @@ export async function POST(request: Request) {
       }
     }
 
+    logCronRun({
+      job: 'daily-steps',
+      status: failedCount === 0 ? 'success' : generatedCount === 0 ? 'failed' : 'partial',
+      generatedCount,
+      failedCount,
+      errors,
+    });
     return jsonOk({ok: true, generatedCount, failedCount, errors});
   } catch (error) {
+    logCronRun({job: 'daily-steps', status: 'failed', generatedCount: 0, failedCount: 1, errors: [{userId: 'unknown', error: String(error)}]});
     return jsonError('Could not run daily life coach cron.', 500, String(error));
   }
 }

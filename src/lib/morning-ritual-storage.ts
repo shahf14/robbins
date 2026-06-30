@@ -1,6 +1,7 @@
 import {mergeLocalAuthHeaders} from '@/lib/auth/client-headers';
 import {observeAuthResponse} from '@/lib/auth/observe-auth-response';
 import {throwIfNotOk} from '@/lib/http/api-response-error';
+import {storageFetch} from '@/lib/http/storage-fetch';
 import type {AffirmationItem, IdentityOption, MorningRitualSession} from './morning-ritual-types';
 import type {MorningRitualYesterdayContext} from './morning-ritual/yesterday-context';
 import type {MorningRitualGoalContext} from './morning-ritual/goal-context';
@@ -77,15 +78,10 @@ async function persistSession(session: MorningRitualSession): Promise<void> {
       await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
     }
     try {
-      const response = await fetch('/api/morning-rituals', {
+      await storageFetch('/api/morning-rituals', {
         method: 'POST',
-        headers: mergeLocalAuthHeaders(),
         body: JSON.stringify(session),
       });
-      if (!response.ok) {
-        lastError = new Error('Could not save morning ritual session.');
-        continue;
-      }
       removePendingSession(SESSIONS_KEY, session.id);
       return;
     } catch (err) {
